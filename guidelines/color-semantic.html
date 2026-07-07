@@ -1,0 +1,27 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Semantic & text" subtitle="UI status colors + text emphasis on night" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;padding:20px;background:var(--night-900);display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .lbl{font:700 10px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;}
+  .row{display:flex;gap:10px;}
+  .sw{flex:1;height:40px;border-radius:9px;display:grid;place-items:center;font:700 10px var(--font-mono);}
+  .txt div{margin-bottom:5px;}
+</style></head>
+<body>
+<div>
+  <div class="lbl">Semantic</div>
+  <div class="row">
+    <div class="sw" style="background:var(--success);color:#06111f">success</div>
+    <div class="sw" style="background:var(--warning);color:#06111f">warning</div>
+    <div class="sw" style="background:var(--danger);color:#fff">danger</div>
+    <div class="sw" style="background:var(--info);color:#06111f">info</div>
+  </div>
+</div>
+<div class="txt">
+  <div class="lbl">Text on night</div>
+  <div style="font:800 18px var(--font-display);color:var(--text-1)">text-1 · 主要標題</div>
+  <div style="font:400 14px var(--font-body);color:var(--text-2)">text-2 · body 內文</div>
+  <div style="font:400 13px var(--font-body);color:var(--text-3)">text-3 · 次要 / metadata</div>
+  <div style="font:400 12px var(--font-body);color:var(--text-4)">text-4 · disabled / faint</div>
+</div>
+</body></html>

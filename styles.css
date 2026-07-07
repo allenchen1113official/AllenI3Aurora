@@ -1,0 +1,12 @@
+/* ============================================================
+   艾倫報報 · Allen³ Aurora — Design System entry point
+   Consumers link THIS file only. Import order matters:
+   fonts → tokens → base.
+   ============================================================ */
+
+@import "tokens/fonts.css";
+@import "tokens/colors.css";
+@import "tokens/typography.css";
+@import "tokens/spacing.css";
+@import "tokens/effects.css";
+@import "tokens/base.css";

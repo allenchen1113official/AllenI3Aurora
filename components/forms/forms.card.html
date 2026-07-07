@@ -1,0 +1,72 @@
+<!-- @dsCard group="Components" viewport="700x400" name="Forms — Input, Switch, Tabs" subtitle="Subscribe form + dashboard controls" -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; padding: 26px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+  .block { border-radius: var(--radius-lg); padding: 18px; border: 1px solid var(--border); }
+  .block.insight { background: var(--insight-soft); border-color: color-mix(in oklab, var(--insight) 32%, transparent); }
+  .block.intelligence { background: var(--intelligence-soft); border-color: color-mix(in oklab, var(--intelligence) 32%, transparent); }
+  .block.illumination { background: var(--illumination-soft); border-color: color-mix(in oklab, var(--illumination) 32%, transparent); }
+  .lbl { display: flex; align-items: center; gap: 7px; font: 800 11px/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+  .lbl::before { content: ""; width: 8px; height: 8px; border-radius: 3px; background: currentColor; }
+  .lbl.insight { color: var(--insight); }
+  .lbl.intelligence { color: var(--intelligence); }
+  .lbl.illumination { color: var(--illumination); }
+</style>
+</head>
+<body class="aurora-bg">
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { Input, Switch, Tabs, Divider } = window.AllenAuroraDesignSystem_e6fd5f;
+const Mail = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>;
+const Search = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>;
+
+function Demo() {
+  const [tab, setTab] = React.useState("week");
+  return (
+    <div className="grid">
+    <div className="stack">
+      <div className="block insight">
+        <div className="lbl insight">Inputs · 輸入</div>
+        <div className="stack">
+          <Input label="Email 訂閱" icon={<Mail/>} placeholder="you@example.com" hint="每週一早晨 07:00 送達" />
+          <Input label="搜尋動態" icon={<Search/>} placeholder="關鍵字、股票代號…" />
+          <Input label="每月預算" suffix="TWD" defaultValue="30,000" error="請輸入有效金額" />
+        </div>
+      </div>
+    </div>
+    <div className="stack">
+      <div className="block intelligence">
+        <div className="lbl intelligence">Tabs · 切換</div>
+        <div className="stack">
+          <Tabs items={[{id:"day",label:"日報"},{id:"week",label:"週報"},{id:"month",label:"月報"}]} value={tab} onChange={setTab} />
+          <Tabs variant="underline" defaultValue="finance"
+            items={[{id:"finance",label:"理財"},{id:"work",label:"工作"},{id:"research",label:"研究"},{id:"hobby",label:"興趣"}]} />
+        </div>
+      </div>
+      <div className="block illumination">
+        <div className="lbl illumination">Switches · 開關</div>
+        <div className="stack">
+          <Switch defaultChecked label="每日報 · 每早 07:00" />
+          <Switch defaultChecked label="週報 · 週一" />
+          <Switch label="月報 · 每月 1 號" />
+        </div>
+      </div>
+    </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo/>);
+</script>
+</body>
+</html>

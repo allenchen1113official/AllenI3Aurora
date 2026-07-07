@@ -1,0 +1,15 @@
+<!-- @dsCard group="Colors" viewport="700x160" name="Finance — 紅漲綠跌" subtitle="Taiwan market convention: red = up, green = down" -->
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;padding:20px;background:var(--night-900);display:flex;gap:14px;}
+  .card{flex:1;border-radius:14px;padding:16px 18px;border:1px solid var(--border);background:var(--night-800);}
+  .k{font:700 11px var(--font-body);color:var(--text-3);}
+  .v{font:900 26px var(--font-display);font-variant-numeric:tabular-nums;margin-top:4px;}
+  .d{font:700 14px var(--font-mono);margin-top:4px;}
+  .note{align-self:center;max-width:150px;font:400 12px/1.5 var(--font-body);color:var(--text-3);}
+</style></head>
+<body>
+<div class="card"><div class="k">加權指數 · 漲</div><div class="v" style="color:var(--finance-up)">23,412</div><div class="d" style="color:var(--finance-up)">▲ +1.24%</div></div>
+<div class="card"><div class="k">某個股 · 跌</div><div class="v" style="color:var(--finance-down)">218.5</div><div class="d" style="color:var(--finance-down)">▼ -0.83%</div></div>
+<div class="note">台股慣例與歐美相反：<b style="color:var(--finance-up)">紅漲</b> / <b style="color:var(--finance-down)">綠跌</b>。一般 UI 狀態仍用綠=成功、紅=危險。</div>
+</body></html>

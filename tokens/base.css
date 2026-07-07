@@ -1,0 +1,83 @@
+/* ============================================================
+   艾倫報報 · Allen³ Aurora — BASE / RESET
+   Global element defaults built on the token layer.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: var(--lh-normal);
+  font-weight: var(--fw-regular);
+  color: var(--text-2);
+  background-color: var(--night-900);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Aurora ambience: faint aurora light bleeding from the top of the sky.
+   Applied as a fixed backdrop so it stays put behind scrolling content. */
+body.aurora-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 45% at 15% -5%, rgba(61, 220, 151, 0.18), transparent 60%),
+    radial-gradient(55% 40% at 85% -8%, rgba(124, 58, 237, 0.20), transparent 62%),
+    radial-gradient(70% 55% at 50% -20%, rgba(53, 201, 232, 0.10), transparent 70%);
+}
+body.aurora-bg > * { position: relative; z-index: 1; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--text-1);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-snug);
+  font-weight: var(--fw-bold);
+  text-wrap: balance;
+}
+
+p { text-wrap: pretty; }
+
+a {
+  color: var(--aurora-teal);
+  text-decoration: none;
+  transition: color var(--dur) var(--ease-out);
+}
+a:hover { color: var(--aurora-green); }
+
+code, kbd, samp, pre {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+img, svg, video { display: block; max-width: 100%; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+::selection { background: var(--brand-soft); color: var(--text-1); }
+
+:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-xs); }
+
+/* Thin aurora-tinted scrollbars */
+* { scrollbar-width: thin; scrollbar-color: var(--night-600) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: var(--night-600); border-radius: var(--radius-pill); border: 2px solid transparent; background-clip: padding-box; }
+*::-webkit-scrollbar-thumb:hover { background: var(--night-500); }
+
+@keyframes aurora-spin { to { transform: rotate(360deg); } }
+@keyframes aurora-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+@keyframes aurora-shift { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+@keyframes aurora-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

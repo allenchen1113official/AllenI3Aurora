@@ -1,0 +1,47 @@
+/* ============================================================
+   艾倫報報 · Allen³ Aurora — TYPOGRAPHY TOKENS
+   Warm humanist / rounded. Bilingual 繁體中文 + English.
+   Display + body : Nunito / Nunito Sans (rounded humanist)
+   CJK           : Noto Sans TC   (see fonts.css — substitution flagged)
+   Numeric / code: JetBrains Mono
+   ============================================================ */
+
+:root {
+  /* ---- Font families ---- */
+  --font-display: "Nunito", "Noto Sans TC", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --font-body:    "Nunito Sans", "Noto Sans TC", "Segoe UI", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* ---- Weights ---- */
+  --fw-regular:  400; /* @kind font */
+  --fw-medium:   600; /* @kind font */
+  --fw-semibold: 700; /* @kind font */
+  --fw-bold:     800; /* @kind font */
+  --fw-black:    900; /* @kind font */
+
+  /* ---- Type scale (editorial, 1.25–1.333 ratio) ---- */
+  --text-xs:   0.75rem;   /* 12 — micro labels, badges           */
+  --text-sm:   0.8125rem; /* 13 — captions, metadata             */
+  --text-base: 0.9375rem; /* 15 — dense UI body                  */
+  --text-md:   1rem;      /* 16 — reading body                   */
+  --text-lg:   1.125rem;  /* 18 — lede / large body              */
+  --text-xl:   1.375rem;  /* 22 — card titles                    */
+  --text-2xl:  1.75rem;   /* 28 — section titles                 */
+  --text-3xl:  2.25rem;   /* 36 — page titles                    */
+  --text-4xl:  3rem;      /* 48 — feature headline               */
+  --text-5xl:  4rem;      /* 64 — hero                           */
+  --text-6xl:  5.25rem;   /* 84 — display / masthead             */
+
+  /* ---- Line heights ---- */
+  --lh-tight:   1.08; /* @kind font */
+  --lh-snug:    1.22; /* @kind font */
+  --lh-normal:  1.5;  /* @kind font */
+  --lh-relaxed: 1.72; /* @kind font */
+
+  /* ---- Letter spacing ---- */
+  --ls-tight:  -0.02em;  /* large display  @kind font */
+  --ls-snug:   -0.01em;  /* headings       @kind font */
+  --ls-normal: 0;        /* @kind font */
+  --ls-wide:   0.04em;   /* small caps     @kind font */
+  --ls-wider:  0.14em;   /* eyebrow/kicker @kind font */
+}

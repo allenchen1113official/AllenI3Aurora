@@ -1,0 +1,111 @@
+/* ============================================================
+   艾倫報報 · Allen³ Aurora — COLOR TOKENS
+   Dark-first "night sky + aurora glow" system.
+   Base scale = deep night. Accents = aurora (green→teal→violet)
+   + the three I's (Insight / Intelligence / Illumination).
+   ============================================================ */
+
+:root {
+  /* ---- Night sky: base surface scale (darkest → lightest) ---- */
+  --night-1000: #05070F;   /* page void / behind everything     */
+  --night-900:  #0B1020;   /* app background (primary)           */
+  --night-850:  #0E1426;   /* section background                 */
+  --night-800:  #121A30;   /* card surface                       */
+  --night-700:  #1A2440;   /* elevated surface / popover         */
+  --night-650:  #212D50;   /* hover surface                      */
+  --night-600:  #2A3760;   /* strong hairline / active           */
+  --night-500:  #3A4874;   /* muted stroke                       */
+
+  /* ---- Text on night ---- */
+  --text-1: #F4F7FF;       /* primary headings / high emphasis   */
+  --text-2: #B8C2E0;       /* body / secondary                   */
+  --text-3: #7C88AC;       /* muted / captions / metadata        */
+  --text-4: #58628A;       /* disabled / faint                   */
+  --text-on-accent: #06111F;/* text sitting on bright aurora fill */
+
+  /* ---- Aurora spectrum (the signature gradient stops) ---- */
+  --aurora-green:  #3DDC97;
+  --aurora-teal:   #2DD4BF;
+  --aurora-cyan:   #35C9E8;
+  --aurora-blue:   #4F7BF0;
+  --aurora-violet: #7C3AED;
+  --aurora-magenta:#B15CF0;
+
+  /* ---- The three I's (洞察 · 智慧 · 啟發) ---- */
+  --insight:        #34E0A1;   /* Insight  — teal-green : seeing clearly   */
+  --insight-strong: #17B87E;
+  --insight-soft:   rgba(52, 224, 161, 0.14);
+
+  --intelligence:        #8B7CF6;  /* Intelligence — violet : accumulated  */
+  --intelligence-strong: #6D4EE6;
+  --intelligence-soft:   rgba(139, 124, 246, 0.16);
+
+  --illumination:        #FFC24B;  /* Illumination — gold : lighting up    */
+  --illumination-strong: #F5A623;
+  --illumination-soft:   rgba(255, 194, 75, 0.15);
+
+  /* ---- Primary interactive brand color ---- */
+  --brand:        var(--aurora-teal);
+  --brand-strong: #17B8A6;
+  --brand-soft:   rgba(45, 212, 191, 0.14);
+  --brand-ring:   rgba(45, 212, 191, 0.45);
+
+  /* ---- Semantic (general UI) ---- */
+  --success: #3DDC97;
+  --warning: #FFB020;
+  --danger:  #FF5C7A;
+  --info:    #4FC3F7;
+  --success-soft: rgba(61, 220, 151, 0.14);
+  --warning-soft: rgba(255, 176, 32, 0.14);
+  --danger-soft:  rgba(255, 92, 122, 0.14);
+  --info-soft:    rgba(79, 195, 247, 0.14);
+
+  /* ---- Finance (Taiwan convention: 紅漲綠跌) ---- */
+  --finance-up:   #FF4D5E;   /* 漲 gain  = RED   */
+  --finance-down: #22C55E;   /* 跌 loss  = GREEN */
+  --finance-flat: var(--text-3);
+
+  /* ---- Hairlines & strokes ---- */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border:        rgba(255, 255, 255, 0.11);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --border-aurora: rgba(45, 212, 191, 0.40);
+
+  /* ---- Glass / overlay ---- */
+  --glass-fill:   rgba(18, 26, 48, 0.66);
+  --glass-stroke: rgba(255, 255, 255, 0.10);
+  --scrim:        rgba(5, 7, 15, 0.66);
+
+  /* ---- Gradients ---- */
+  --aurora-gradient:      linear-gradient(115deg, #3DDC97 0%, #2DD4BF 38%, #4F7BF0 70%, #7C3AED 100%); /* @kind color */
+  --aurora-gradient-soft: linear-gradient(115deg, rgba(61,220,151,0.22) 0%, rgba(45,212,191,0.18) 40%, rgba(124,58,237,0.24) 100%); /* @kind color */
+  --insight-gradient:      linear-gradient(120deg, #3DDC97 0%, #2DD4BF 100%); /* @kind color */
+  --intelligence-gradient: linear-gradient(120deg, #6D4EE6 0%, #B15CF0 100%); /* @kind color */
+  --illumination-gradient: linear-gradient(120deg, #FFC24B 0%, #F5A623 100%); /* @kind color */
+  --text-gradient:        linear-gradient(100deg, #3DDC97 0%, #35C9E8 45%, #8B7CF6 100%); /* @kind color */
+  --aurora-warm:          linear-gradient(120deg, #FFC24B 0%, #F5A623 26%, #F06C9B 60%, #A855F7 100%); /* @kind color */
+  --aurora-warm-light:    linear-gradient(120deg, #FFD98A 0%, #F7A8C4 52%, #C9A8F5 100%); /* @kind color */
+  --aurora-cool-light:    linear-gradient(120deg, #9CF0C4 0%, #7EE0DA 50%, #96C9F2 100%); /* @kind color */
+  --aurora-warm-soft:     linear-gradient(120deg, rgba(255,194,75,0.22) 0%, rgba(240,108,155,0.20) 55%, rgba(168,85,247,0.22) 100%); /* @kind color */
+}
+
+/* Optional light scope — brand stays dark-first, this is a courtesy surface */
+[data-theme="light"] {
+  --night-1000: #E9EDF7;
+  --night-900:  #F5F7FD;
+  --night-850:  #FFFFFF;
+  --night-800:  #FFFFFF;
+  --night-700:  #FFFFFF;
+  --night-650:  #EEF2FB;
+  --night-600:  #E1E7F4;
+  --night-500:  #C6D0E6;
+  --text-1: #0B1020;
+  --text-2: #33406B;
+  --text-3: #6B77A0;
+  --text-4: #9AA4C4;
+  --border-subtle: rgba(11, 16, 32, 0.06);
+  --border:        rgba(11, 16, 32, 0.10);
+  --border-strong: rgba(11, 16, 32, 0.16);
+  --glass-fill:   rgba(255, 255, 255, 0.72);
+  --scrim:        rgba(11, 16, 32, 0.40);
+}

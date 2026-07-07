@@ -1,0 +1,20 @@
+<!-- @dsCard group="Spacing" viewport="700x200" name="Spacing in use" subtitle="A card built from the grid: p-6, gap-4, radius-xl" -->
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;padding:20px;background:var(--night-900);}
+  .card{background:var(--night-800);border:1px solid var(--border);border-radius:var(--radius-xl);padding:var(--space-6);box-shadow:var(--shadow-card);max-width:420px;}
+  .head{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4);}
+  .ic{width:40px;height:40px;border-radius:12px;background:var(--insight-soft);color:var(--insight);display:grid;place-items:center;font:900 15px var(--font-display);}
+  .t{font:800 17px var(--font-display);color:var(--text-1);}
+  .s{font:400 13px var(--font-body);color:var(--text-3);}
+  .body{color:var(--text-2);font-size:14px;line-height:1.6;margin:0 0 var(--space-4);}
+  .tags{display:flex;gap:var(--space-2);}
+  .tag{padding:4px 12px;border-radius:99px;background:var(--night-700);border:1px solid var(--border);font:600 12px var(--font-body);color:var(--text-2);}
+</style></head>
+<body>
+<div class="card">
+  <div class="head"><div class="ic">洞</div><div><div class="t">籌碼洞察</div><div class="s">space-3 gap · p-6 · radius-xl</div></div></div>
+  <p class="body">卡片以 4px 網格構成：外距 space-6、元素間距 space-3/4、圓角 radius-xl，並套用 shadow-card。</p>
+  <div class="tags"><span class="tag">#理財</span><span class="tag">#今日</span></div>
+</div>
+</body></html>
