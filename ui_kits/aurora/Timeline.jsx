@@ -6,7 +6,7 @@
   function Timeline() {
     const K = window.KIT, I = window.Icons;
     return (
-      <div style={{ padding: "var(--space-8)", maxWidth: 1040, margin: "0 auto" }}>
+      <div className="kit-page" style={{ padding: "var(--space-8)", maxWidth: 1040, margin: "0 auto" }}>
         {/* Hero */}
         <div style={{ textAlign: "center", marginBottom: "var(--space-12)" }}>
           <Badge tone="intelligence" dot>ANNULI · 個人年輪</Badge>

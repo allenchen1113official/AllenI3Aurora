@@ -33,7 +33,7 @@
     const map = { all: null, day: "日報", week: "週報", month: "月報" };
     const list = K.issues.filter((x) => !map[filter] || x.kind === map[filter]);
     return (
-      <div style={{ padding: "var(--space-8)" }}>
+      <div className="kit-page" style={{ padding: "var(--space-8)" }}>
         <SectionHeader kicker="ARCHIVE · 歷期彙整" title="每一期，都是一圈年輪"
           description="日報捕捉當下，週報收斂脈絡，月報沉澱成長。翻閱過去，看見自己的變化。"
           action={<Button variant="secondary" icon={<I.search size={16} />}>搜尋歷期</Button>} />
