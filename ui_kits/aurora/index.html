@@ -15,18 +15,27 @@
 <style>
   html, body { height: 100%; }
   body { margin: 0; overflow: hidden; }
-  #root { height: 100vh; }
-  .kit-shell { display: flex; height: 100vh; overflow: hidden; }
-  .kit-side { height: 100vh; overflow-y: auto; }
-  .kit-main { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; min-width: 0; }
+  /* 100dvh follows the visible area when mobile browser chrome expands/collapses */
+  #root { height: 100vh; height: 100dvh; }
+  .kit-shell { display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
+  .kit-side { height: 100vh; height: 100dvh; overflow-y: auto; }
+  .kit-main { flex: 1; height: 100vh; height: 100dvh; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; min-width: 0; }
   .kit-scrim { display: none; }
   @media (max-width: 900px) {
-    .kit-side { position: fixed; left: 0; top: 0; bottom: 0; z-index: 200; transform: translateX(-102%); transition: transform .28s cubic-bezier(.22,1,.36,1); box-shadow: var(--shadow-lg); }
+    .kit-side { position: fixed; left: 0; top: 0; bottom: 0; z-index: 200; width: min(var(--sidebar-w), 84vw); transform: translateX(-102%); transition: transform .28s cubic-bezier(.22,1,.36,1); box-shadow: var(--shadow-lg); }
     .kit-shell.open .kit-side { transform: translateX(0); }
     .kit-shell.open .kit-scrim { display: block; position: fixed; inset: 0; background: var(--scrim); z-index: 150; }
     .kit-menu { display: inline-flex !important; }
     .kit-search { display: none !important; }
     .kit-2col { grid-template-columns: 1fr !important; }
+    /* grid items default to min-content width; without this, no-wrap text
+       (e.g. podcast titles) forces the collapsed column wider than the phone screen */
+    .kit-2col > * { min-width: 0; }
+  }
+  @media (max-width: 640px) {
+    .kit-page { padding: var(--space-5) var(--space-4) var(--space-10) !important; gap: var(--space-6) !important; }
+    .kit-topbar { padding: 12px var(--space-4) !important; }
+    .kit-2col { gap: var(--space-5) !important; }
   }
 </style>
 </head>

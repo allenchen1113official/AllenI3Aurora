@@ -141,7 +141,7 @@ function Sidebar({ active, onNav }) {
 /* ---------- Topbar ---------- */
 function Topbar({ title, sub, onMenu }) {
   return (
-    <header style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px var(--space-8)", borderBottom: "1px solid var(--border)", background: "var(--glass-fill)", backdropFilter: "var(--blur)", WebkitBackdropFilter: "var(--blur)", position: "sticky", top: 0, zIndex: 50 }}>
+    <header className="kit-topbar" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px var(--space-8)", borderBottom: "1px solid var(--border)", background: "var(--glass-fill)", backdropFilter: "var(--blur)", WebkitBackdropFilter: "var(--blur)", position: "sticky", top: 0, zIndex: 50 }}>
       <button className="kit-menu" onClick={onMenu} style={{ display: "none", border: "1px solid var(--border)", background: "var(--night-800)", color: "var(--text-2)", borderRadius: 10, padding: 8, cursor: "pointer" }}><Icons.menu size={20} /></button>
       <div style={{ flex: 1, minWidth: 0 }}>
         <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "var(--text-2xl)", color: "var(--text-1)", margin: 0, lineHeight: 1.1 }}>{title}</h1>
