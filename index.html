@@ -1,23 +1,98 @@
+本 session 的 git proxy 只授權 `showmethemoney`，AllenI3Aurora 被封鎖無法推送。本地的 2 個 commit 已準備好，但需要你授權後才能上傳。
+
+---
+
+**最快解法：GitHub 網頁直接編輯（不需安裝任何工具）**
+
+**步驟 1** — 新增 `.nojekyll`：
+前往 → https://github.com/allenchen1113official/AllenI3Aurora/new/main
+- 檔名：`.nojekyll`
+- 內容：空白
+- 點 **Commit changes**
+
+**步驟 2** — 編輯 `index.html`：
+前往 → https://github.com/allenchen1113official/AllenI3Aurora/edit/main/index.html
+- 清空全部內容，貼上以下內容，點 **Commit changes**
+
+```html
+<!-- @dsCard group="Aurora Product" viewport="1340x880" name="艾倫報報 · Aurora — Product" subtitle="Interactive dashboard · newsletter · archive · annuli · subscribe" -->
+<!-- @startingPoint section="Aurora Product" subtitle="Full personal-dashboard + newsletter web app" viewport="1340x880" -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="refresh" content="0; url=./ui_kits/aurora/index.html">
-<title>艾倫報報 · Allen I³ Aurora</title>
+<title>艾倫報報 · Allen³ Aurora</title>
 <link rel="icon" href="./assets/favicon-32x32.png">
 <link rel="stylesheet" href="./styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="./_ds_bundle.js"></script>
 <style>
-  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; min-height: 100dvh; margin: 0; padding: 0 var(--gutter, 1rem); }
-  .land { text-align: center; }
-  .land h1 { font-family: var(--font-display, Nunito, sans-serif); font-weight: 900; }
-  .land a { color: var(--brand, #2DD4BF); }
+  html, body { height: 100%; }
+  body { margin: 0; overflow: hidden; }
+  #root { height: 100vh; height: 100dvh; }
+  .kit-shell { display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
+  .kit-side { height: 100vh; height: 100dvh; overflow-y: auto; }
+  .kit-main { flex: 1; height: 100vh; height: 100dvh; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; min-width: 0; }
+  .kit-scrim { display: none; }
+  @media (max-width: 900px) {
+    .kit-side { position: fixed; left: 0; top: 0; bottom: 0; z-index: 200; width: min(var(--sidebar-w), 84vw); transform: translateX(-102%); transition: transform .28s cubic-bezier(.22,1,.36,1); box-shadow: var(--shadow-lg); }
+    .kit-shell.open .kit-side { transform: translateX(0); }
+    .kit-shell.open .kit-scrim { display: block; position: fixed; inset: 0; background: var(--scrim); z-index: 150; }
+    .kit-menu { display: inline-flex !important; }
+    .kit-search { display: none !important; }
+    .kit-2col { grid-template-columns: 1fr !important; }
+    .kit-2col > * { min-width: 0; }
+  }
+  @media (max-width: 640px) {
+    .kit-page { padding: var(--space-5) var(--space-4) var(--space-10) !important; gap: var(--space-6) !important; }
+    .kit-topbar { padding: 12px var(--space-4) !important; }
+    .kit-2col { gap: var(--space-5) !important; }
+  }
 </style>
 </head>
 <body class="aurora-bg">
-<div class="land">
-  <h1>艾倫報報 · Allen I³ Aurora</h1>
-  <p>正在前往儀表板…若未自動跳轉，請點 <a href="./ui_kits/aurora/index.html">這裡</a>。</p>
-</div>
+<div id="root"></div>
+<script type="text/babel" src="./ui_kits/aurora/kit.jsx" data-presets="react"></script>
+<script type="text/babel" src="./ui_kits/aurora/Dashboard.jsx" data-presets="react"></script>
+<script type="text/babel" src="./ui_kits/aurora/NewsletterIssue.jsx" data-presets="react"></script>
+<script type="text/babel" src="./ui_kits/aurora/Archive.jsx" data-presets="react"></script>
+<script type="text/babel" src="./ui_kits/aurora/Timeline.jsx" data-presets="react"></script>
+<script type="text/babel" src="./ui_kits/aurora/Subscribe.jsx" data-presets="react"></script>
+<script type="text/babel" data-presets="react">
+function App() {
+  const [screen, setScreen] = React.useState("dashboard");
+  const [open, setOpen] = React.useState(false);
+  const go = (id) => { setScreen(id); setOpen(false); };
+  const meta = {
+    dashboard: { title: "儀表板", sub: window.KIT.brand.tagline, C: window.Dashboard },
+    issue:     { title: "本期報報", sub: "週報 · 第 26 期 · 2026.06.29", C: window.NewsletterIssue },
+    archive:   { title: "歷期彙整", sub: "日報 · 週報 · 月報", C: window.Archive },
+    timeline:  { title: "個人年輪", sub: "1975 → 2026", C: window.Timeline },
+    subscribe: { title: "訂閱管理", sub: "選擇你的閱讀節奏", C: window.Subscribe },
+  }[screen];
+  const Screen = meta.C;
+  return (
+    <div className={"kit-shell" + (open ? " open" : "")}>
+      <div className="kit-scrim" onClick={() => setOpen(false)} />
+      <div className="kit-side"><window.Sidebar active={screen} onNav={go} /></div>
+      <div className="kit-main">
+        <window.Topbar title={meta.title} sub={meta.sub} onMenu={() => setOpen(true)} />
+        <div style={{ flex: 1 }}><Screen /></div>
+      </div>
+    </div>
+  );
+}
+function boot() {
+  if (!window.Dashboard || !window.Subscribe || !window.Sidebar) { return setTimeout(boot, 40); }
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+}
+boot();
+</script>
 </body>
 </html>
+```
+
+完成後 1-2 分鐘，`https://allenchen1113official.github.io/AllenI3Aurora` 就會直接顯示儀表板。
