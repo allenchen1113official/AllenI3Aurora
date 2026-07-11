@@ -1,0 +1,13 @@
+{
+  "name": "allen-i3-aurora",
+  "version": "1.0.0",
+  "private": true,
+  "description": "艾倫報報・Allen I³ Aurora — Design System (dark-first, aurora-themed design tokens, React components, and UI kit).",
+  "license": "UNLICENSED",
+  "scripts": {
+    "lint": "oxlint -c _adherence.oxlintrc.json ."
+  },
+  "devDependencies": {
+    "oxlint": "^0.15.0"
+  }
+}

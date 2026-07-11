@@ -26,8 +26,12 @@ Input, Switch, Callout, SectionHeader, AuroraText, …). See each component's
 `ui_kits/aurora/` (open `index.html`).
 
 > `_ds_bundle.js`, `_ds_manifest.json`, `_adherence.oxlintrc.json` are generated
-> artifacts (git-ignored by default). The `.html` specimen cards under
-> `guidelines/` render the living style guide.
+> artifacts, committed intentionally (they are **not** git-ignored) so the
+> static site works with no build step — `index.html` and
+> `ui_kits/aurora/index.html` load `_ds_bundle.js` directly at runtime.
+> Regenerate them with your design-system build tool after editing
+> `components/*` or `tokens/*`; do not hand-edit the generated files. The
+> `.html` specimen cards under `guidelines/` render the living style guide.
 
 ---
 
@@ -35,7 +39,7 @@ Input, Switch, Callout, SectionHeader, AuroraText, …). See each component's
 
 The brand was established green-field from Allen Chen's existing ecosystem. The originally-attached repo was empty, so identity was derived from the surrounding public projects. Explore these to design more faithfully:
 
-- **Target product repo (empty at time of build):** `https://github.com/allenchen1113official/Allen3IAurora`
+- **Target product repo (empty at time of build; link unverified — returns 404 as of 2026-07, may be private/renamed/removed, please confirm):** `https://github.com/allenchen1113official/Allen3IAurora`
 - **Personal website (Hugo, dark theme):** `https://github.com/allenchen1113official/allenchen1113official` — source of the avatar, favicons, dark colour scheme, and the painterly **blue-eyed-rabbit** illustration library (`assets/rabbit-*.jpeg`).
 - **Showmethemoney — 台股看盤系統:** `https://github.com/allenchen1113official/Showmethemoney` — source of the brand **voice** (see `MARKETING.md` there) and the Taiwan-market finance conventions.
 - Other context repos: `Mx.Ada` (finance LINE bot), `AntsiSeCare` (長照 app), `AllenDashboard`, `allenannuli` (personal timeline).

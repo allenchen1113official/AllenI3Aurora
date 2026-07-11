@@ -17,7 +17,10 @@ between the five surfaces. Fully responsive (sidebar collapses to a drawer under
 ## How it's wired
 `index.html` loads React + Babel + the compiled design-system bundle
 (`../../_ds_bundle.js`), then `kit.jsx` and each screen. Screens read the DS
-components off `window.AllenAuroraDesignSystem_e6fd5f` and register themselves on
+components off `window.AllenAuroraDesignSystem_*` (the exact suffix is a build
+hash — read the current value from the `namespace` field in `_ds_manifest.json`
+rather than hardcoding it here, since it changes on every rebuild) and register
+themselves on
 `window`. No build step.
 
 ## Composition, not reinvention

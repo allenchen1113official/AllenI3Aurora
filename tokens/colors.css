@@ -22,6 +22,9 @@
   --text-3: #7C88AC;       /* muted / captions / metadata        */
   --text-4: #58628A;       /* disabled / faint                   */
   --text-on-accent: #06111F;/* text sitting on bright aurora fill */
+  --on-solid: #FFFFFF;      /* fixed white for knobs/icons/text on saturated solid fills
+                                (danger buttons, photo scrims) — stays white in both themes,
+                                unlike --text-1 which flips with [data-theme="light"] */
 
   /* ---- Aurora spectrum (the signature gradient stops) ---- */
   --aurora-green:  #3DDC97;

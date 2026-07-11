@@ -1,0 +1,8 @@
+# Dependencies (installed for running `npm run lint` locally; not required at runtime —
+# this project ships as static files with no build step)
+node_modules/
+package-lock.json
+
+# OS / editor cruft
+.DS_Store
+*.log

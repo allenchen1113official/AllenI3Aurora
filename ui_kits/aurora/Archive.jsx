@@ -13,7 +13,7 @@
           <div style={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 8 }}>
             <Badge tone={it.tone} variant="solid">{it.kind}</Badge>
           </div>
-          <div style={{ position: "absolute", bottom: 10, right: 12, fontFamily: "var(--font-mono)", fontWeight: 700, color: "#fff", fontSize: 13, textShadow: "0 1px 6px rgba(0,0,0,.6)" }}>No.{it.no}</div>
+          <div style={{ position: "absolute", bottom: 10, right: 12, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--on-solid)", fontSize: 13, textShadow: "0 1px 6px rgba(0,0,0,.6)" }}>No.{it.no}</div>
         </div>
         <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
           <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{it.date}</div>

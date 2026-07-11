@@ -48,7 +48,7 @@ export function Switch({ checked, defaultChecked = false, onChange, disabled = f
           width: knob,
           height: knob,
           borderRadius: "50%",
-          background: "#fff",
+          background: "var(--on-solid)",
           boxShadow: "var(--shadow-sm)",
           transition: "left var(--dur) var(--ease-soft)",
         }}
