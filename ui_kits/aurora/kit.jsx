@@ -41,7 +41,7 @@ window.Icons = Icons;
 
 /* ---------- Mock data ---------- */
 window.KIT = {
-  brand: { zh: "艾倫報報", en: "Allen³ Aurora", tagline: "洞察世界．累積智慧．點亮未來。" },
+  brand: { zh: "艾倫報報", en: "Allen I³ Aurora", tagline: "洞察世界．累積智慧．點亮未來。" },
   nav: [
     { id: "dashboard", label: "儀表板", en: "Dashboard", icon: "home" },
     { id: "issue", label: "本期報報", en: "This Issue", icon: "paper" },
@@ -103,7 +103,7 @@ function Sidebar({ active, onNav }) {
   return (
     <aside style={{ width: "var(--sidebar-w)", flex: "none", background: "var(--night-850)", borderRight: "1px solid var(--border)", padding: "20px 16px", display: "flex", flexDirection: "column", gap: 22, minHeight: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "4px 6px" }}>
-        <span style={{ width: 38, height: 38, borderRadius: 12, background: "var(--aurora-gradient)", display: "grid", placeItems: "center", fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 17, color: "var(--text-on-accent)", boxShadow: "var(--glow-brand)" }}>I³</span>
+        <span style={{ width: 38, height: 38, borderRadius: 12, background: "var(--aurora-gradient)", display: "grid", placeItems: "center", fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 13, color: "var(--text-on-accent)", boxShadow: "var(--glow-brand)", letterSpacing: "-.5px" }}>AI³A</span>
         <div style={{ lineHeight: 1.15 }}>
           <div style={{ fontFamily: "var(--font-display)", fontWeight: 900, color: "var(--text-1)", fontSize: 16 }}>{brand.zh}</div>
           <div style={{ fontSize: 11, color: "var(--text-3)", letterSpacing: ".08em" }}>{brand.en}</div>
@@ -139,7 +139,58 @@ function Sidebar({ active, onNav }) {
 }
 
 /* ---------- Topbar ---------- */
-function Topbar({ title, sub, onMenu }) {
+function Topbar({ title, sub, onMenu, onNav }) {
+  const [q, setQ] = React.useState("");
+  const [open, setOpen] = React.useState(false);
+  const inputRef = React.useRef(null);
+
+  const results = React.useMemo(() => {
+    const ql = q.trim().toLowerCase();
+    if (!ql) return [];
+    const hits = [];
+    const { nav, issues, focus, reading, podcasts, annuli, links } = window.KIT;
+
+    nav.forEach(n => {
+      if (n.label.includes(q) || n.en.toLowerCase().includes(ql))
+        hits.push({ kind: "頁面", label: n.label, sub: n.en, navId: n.id });
+    });
+    issues.forEach(iss => {
+      if (iss.title.includes(q) || iss.kind.includes(q) || iss.date.includes(q))
+        hits.push({ kind: "報報", label: iss.title, sub: `${iss.kind} · ${iss.date}`, navId: "archive" });
+    });
+    focus.forEach(f => {
+      if (f.title.includes(q) || f.tag.includes(q) || f.meta.toLowerCase().includes(ql))
+        hits.push({ kind: "焦點", label: f.title, sub: f.meta, navId: "dashboard" });
+    });
+    reading.forEach(r => {
+      if (r.title.toLowerCase().includes(ql) || r.src.includes(q))
+        hits.push({ kind: "閱讀", label: r.title, sub: r.src, navId: "dashboard" });
+    });
+    podcasts.forEach(p => {
+      if (p.title.toLowerCase().includes(ql) || p.meta.toLowerCase().includes(ql))
+        hits.push({ kind: "Podcast", label: p.title, sub: p.meta, navId: "dashboard" });
+    });
+    annuli.forEach(a => {
+      if (a.title.includes(q) || a.body.includes(q) || a.year.includes(q))
+        hits.push({ kind: "年輪", label: a.title, sub: `${a.year} · ${a.body.slice(0, 28)}…`, navId: "timeline" });
+    });
+    links.forEach(lk => {
+      if (lk.label.toLowerCase().includes(ql))
+        hits.push({ kind: "連結", label: lk.label, sub: "快速連結", navId: "dashboard" });
+    });
+
+    return hits.slice(0, 8);
+  }, [q]);
+
+  const commit = (navId) => {
+    if (onNav) onNav(navId);
+    setQ(""); setOpen(false);
+  };
+
+  const handleKey = (e) => {
+    if (e.key === "Escape") { setQ(""); setOpen(false); inputRef.current?.blur(); }
+  };
+
   return (
     <header className="kit-topbar" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px var(--space-8)", borderBottom: "1px solid var(--border)", background: "var(--glass-fill)", backdropFilter: "var(--blur)", WebkitBackdropFilter: "var(--blur)", position: "sticky", top: 0, zIndex: 50 }}>
       <button className="kit-menu" onClick={onMenu} style={{ display: "none", border: "1px solid var(--border)", background: "var(--night-800)", color: "var(--text-2)", borderRadius: 10, padding: 8, cursor: "pointer" }}><Icons.menu size={20} /></button>
@@ -148,8 +199,42 @@ function Topbar({ title, sub, onMenu }) {
         {sub && <div style={{ color: "var(--text-3)", fontSize: 13.5, marginTop: 3 }}>{sub}</div>}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <div className="kit-search" style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-pill)", color: "var(--text-3)", fontSize: 13.5, width: 220 }}>
-          <Icons.search size={16} /><span>搜尋動態、個股、筆記…</span>
+        <div className="kit-search" style={{ position: "relative" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", background: "var(--night-800)", border: "1px solid " + (open ? "var(--brand)" : "var(--border)"), borderRadius: "var(--radius-pill)", fontSize: 13.5, width: 220, transition: "border-color var(--dur)", boxSizing: "border-box" }}>
+            <Icons.search size={16} style={{ color: "var(--text-3)", flexShrink: 0 }} />
+            <input
+              ref={inputRef}
+              value={q}
+              onChange={e => { setQ(e.target.value); setOpen(true); }}
+              onFocus={() => setOpen(true)}
+              onBlur={() => setTimeout(() => setOpen(false), 160)}
+              onKeyDown={handleKey}
+              placeholder="搜尋動態、個股、筆記…"
+              style={{ border: "none", background: "transparent", outline: "none", color: "var(--text-1)", fontSize: 13.5, flex: 1, minWidth: 0, fontFamily: "var(--font-body)" }}
+            />
+            {q && (
+              <button onClick={() => { setQ(""); inputRef.current?.focus(); }} style={{ border: "none", background: "none", color: "var(--text-3)", cursor: "pointer", padding: 0, lineHeight: 1, fontSize: 14 }}>✕</button>
+            )}
+          </div>
+          {open && q.trim() && results.length > 0 && (
+            <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, width: 320, background: "var(--night-850)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)", zIndex: 200, overflow: "hidden" }}>
+              {results.map((r, i) => (
+                <button key={i} onMouseDown={() => commit(r.navId)} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "10px 14px", border: "none", borderBottom: i < results.length - 1 ? "1px solid var(--border)" : "none", background: "transparent", cursor: "pointer", textAlign: "left" }}>
+                  <span style={{ fontSize: 10.5, color: "var(--brand)", background: "var(--brand-soft)", borderRadius: 6, padding: "2px 6px", flexShrink: 0, fontWeight: 700, letterSpacing: ".03em" }}>{r.kind}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-1)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.label}</div>
+                    {r.sub && <div style={{ fontSize: 11.5, color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 1 }}>{r.sub}</div>}
+                  </div>
+                  <Icons.arrow size={13} style={{ color: "var(--text-3)", flexShrink: 0 }} />
+                </button>
+              ))}
+            </div>
+          )}
+          {open && q.trim() && results.length === 0 && (
+            <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, width: 260, background: "var(--night-850)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)", zIndex: 200, padding: "20px 16px", textAlign: "center", color: "var(--text-3)", fontSize: 13 }}>
+              找不到「{q}」的相關結果
+            </div>
+          )}
         </div>
         <IconButton variant="surface" label="通知"><Icons.bell size={19} /></IconButton>
       </div>

@@ -65,7 +65,7 @@ function App() {
       <div className="kit-scrim" onClick={() => setOpen(false)} />
       <div className="kit-side"><window.Sidebar active={screen} onNav={go} /></div>
       <div className="kit-main">
-        <window.Topbar title={meta.title} sub={meta.sub} onMenu={() => setOpen(true)} />
+        <window.Topbar title={meta.title} sub={meta.sub} onMenu={() => setOpen(true)} onNav={go} />
         <div style={{ flex: 1 }}><Screen /></div>
       </div>
     </div>
