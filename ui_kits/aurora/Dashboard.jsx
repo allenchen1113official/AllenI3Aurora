@@ -20,6 +20,11 @@
     }
   }
 
+  /* Google 行事曆（帳號 + 台北時區）— 嵌入與跳轉共用 */
+  const CAL_EMAIL = "allenchen1113.official@gmail.com";
+  const CAL_EMBED_SRC = `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CAL_EMAIL)}&ctz=Asia%2FTaipei&mode=AGENDA&bgcolor=%23070B14&showTitle=0&showPrint=0&showCalendars=0&showTz=0`;
+  const openCalendar = () => window.open(`https://calendar.google.com/calendar/u/${CAL_EMAIL}/r`, "_blank", "noopener,noreferrer");
+
   function Dashboard() {
     const K = window.KIT, I = window.Icons;
     return (
@@ -35,8 +40,7 @@
           </div>
           <div style={{ display: "flex", gap: 10 }}>
             <Button variant="primary" iconRight={<I.arrow size={16} />}>撰寫今日速報</Button>
-            <Button variant="secondary" icon={<I.cal size={16} />}
-              onClick={() => window.open("https://calendar.google.com/calendar/u/allenchen1113.official@gmail.com/r", "_blank", "noopener,noreferrer")}>行事曆</Button>
+            <Button variant="secondary" icon={<I.cal size={16} />} onClick={openCalendar}>行事曆</Button>
           </div>
         </Card>
 
@@ -151,6 +155,18 @@
               </div>
             </Card>
           </div>
+        </div>
+
+        {/* Embedded Google Calendar — allenchen1113.official@gmail.com */}
+        <div>
+          <SectionHeader kicker="行事曆 · CALENDAR" title="我的 Google 行事曆"
+            description="即時同步 allenchen1113.official@gmail.com 的行程（台北時區）。"
+            action={<Button variant="secondary" size="sm" icon={<I.cal size={15} />} onClick={openCalendar}>開啟完整行事曆</Button>} />
+          <Card padding="0" style={{ overflow: "hidden" }}>
+            <iframe title="Google 行事曆" src={CAL_EMBED_SRC}
+              style={{ width: "100%", height: 520, border: 0, display: "block", colorScheme: "light" }}
+              loading="lazy" />
+          </Card>
         </div>
       </div>
     );
