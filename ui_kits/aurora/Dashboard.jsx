@@ -8,6 +8,18 @@
     return <span style={{ width: 8, height: 8, borderRadius: 99, background: c, flex: "none", boxShadow: `0 0 10px ${c}` }} />;
   }
 
+  /* 以台灣台北時區（Asia/Taipei）即時取得今天日期，格式：2026 年 6 月 30 日 · 星期一 */
+  function taipeiDateLabel(date = new Date()) {
+    try {
+      const parts = new Intl.DateTimeFormat("zh-TW", {
+        timeZone: "Asia/Taipei", year: "numeric", month: "numeric", day: "numeric", weekday: "long",
+      }).formatToParts(date).reduce((acc, p) => (acc[p.type] = p.value, acc), {});
+      return `${parts.year} 年 ${parts.month} 月 ${parts.day} 日 · ${parts.weekday}`;
+    } catch {
+      return "";
+    }
+  }
+
   function Dashboard() {
     const K = window.KIT, I = window.Icons;
     return (
@@ -16,7 +28,7 @@
         <Card accent="aurora" glow padding="var(--space-6)" style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
           <div style={{ flex: 1, minWidth: 240 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <Badge tone="illumination" dot>2026 年 6 月 30 日 · 星期一</Badge>
+              <Badge tone="illumination" dot>{taipeiDateLabel()}</Badge>
             </div>
             <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "var(--text-3xl)", color: "var(--text-1)", margin: 0, lineHeight: 1.1 }}>早安，Allen ☀️</h2>
             <p style={{ color: "var(--text-2)", margin: "8px 0 0", fontSize: "var(--text-md)" }}>{K.brand.tagline}　今天有 <b style={{ color: "var(--insight)" }}>4</b> 則關注動態、<b style={{ color: "var(--intelligence)" }}>1</b> 場會議與 <b style={{ color: "var(--illumination)" }}>2</b> 集必聽 Podcast。</p>
