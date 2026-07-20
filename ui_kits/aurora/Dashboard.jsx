@@ -35,7 +35,8 @@
           </div>
           <div style={{ display: "flex", gap: 10 }}>
             <Button variant="primary" iconRight={<I.arrow size={16} />}>撰寫今日速報</Button>
-            <Button variant="secondary" icon={<I.cal size={16} />}>行事曆</Button>
+            <Button variant="secondary" icon={<I.cal size={16} />}
+              onClick={() => window.open("https://calendar.google.com/calendar/u/allenchen1113.official@gmail.com/r", "_blank", "noopener,noreferrer")}>行事曆</Button>
           </div>
         </Card>
 
