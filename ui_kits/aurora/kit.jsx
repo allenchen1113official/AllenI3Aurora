@@ -50,7 +50,7 @@ window.KIT = {
     { id: "subscribe", label: "訂閱管理", en: "Subscribe", icon: "mail" },
   ],
   stats: [
-    { label: "加權指數 TAIEX", value: "23,412", unit: "pt", delta: "+1.24%", tone: "insight", mode: "finance", data: [5,5.4,5.1,6,5.8,6.6,6.2,7,7.4] },
+    { label: "加權指數 TAIEX", value: "23,588", unit: "pt", delta: "+0.75%", tone: "insight", mode: "finance", data: [6.2,6.6,6.3,7,6.8,7.2,7.1,7.5,7.8] },
     { label: "本月結餘", value: "42,180", unit: "TWD", delta: "+8.0%", tone: "intelligence", mode: "semantic", data: [4,4.2,4.1,4.5,4.4,4.8,5,5.2] },
     { label: "深度工作", value: "26.5", unit: "hr", delta: "+12%", tone: "illumination", mode: "semantic", data: [3,3.5,3.2,4,3.8,4.4,4.6,5] },
     { label: "待讀清單", value: "12", unit: "篇", delta: "-3", tone: "insight", mode: "semantic", data: [8,7,9,6,5,6,5,4] },
@@ -59,7 +59,7 @@ window.KIT = {
     { tag: "理財", tone: "insight", title: "外資投信「雙連買」新增 3 檔", meta: "半導體 · 航運 · 今日 09:41", icon: "chart" },
     { tag: "工作", tone: "intelligence", title: "Q3 產品藍圖評審會議前置準備", meta: "明日 14:00 · 附 3 份文件", icon: "briefcase" },
     { tag: "研究", tone: "illumination", title: "LLM Agent 記憶架構 — 讀書筆記整理", meta: "進度 60% · 待續 2 節", icon: "compass" },
-    { tag: "興趣", tone: "insight", title: "薩克斯風 · 週末錄音清單", meta: "3 首待練 · 上次 11/18", icon: "sparkle" },
+    { tag: "興趣", tone: "insight", title: "薩克斯風 · 週末錄音清單", meta: "3 首待練 · 上次 06/28", icon: "sparkle" },
   ],
   reading: [
     { title: "原子習慣：微小改變的複利效應", src: "重讀筆記", pct: 82 },
@@ -85,7 +85,7 @@ window.KIT = {
     { no: "06", kind: "月報", date: "2026.06.01", tone: "intelligence", title: "六月總結：三個決定，一次轉身", items: 14, cover: "../../assets/rabbit-mountain.jpeg" },
     { no: 24, kind: "週報", date: "2026.06.15", tone: "insight", title: "被高估的專注，與被低估的休息", items: 6, cover: "../../assets/rabbit-bike.jpeg" },
     { no: 23, kind: "週報", date: "2026.06.08", tone: "insight", title: "把研究做成產品：從筆記到電子報", items: 9, cover: "../../assets/rabbit-forest.jpeg" },
-    { no: "182", kind: "日報", date: "2026.06.30", tone: "illumination", title: "早晨速報：三則你該知道的事", items: 3, cover: "../../assets/rabbit-golden.jpeg" },
+    { no: "183", kind: "日報", date: "2026.06.30", tone: "illumination", title: "週一速報：新的一週，三個先看的訊號", items: 3, cover: "../../assets/rabbit-golden.jpeg" },
   ],
   annuli: [
     { year: "1975", tone: "insight", title: "序章 · 出生", body: "一切的起點。" },
