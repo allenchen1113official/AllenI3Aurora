@@ -175,7 +175,10 @@
             const col = { insight: "var(--insight)", intelligence: "var(--intelligence)", illumination: "var(--illumination)" }[s.tone];
             return (
               <StatCard key={i} label={s.label} value={s.value} unit={s.unit} delta={s.delta} deltaMode={s.mode} tone={s.tone}
-                icon={<I.chart size={18} />}
+                icon={s.link ? <I.ext size={16} /> : <I.chart size={18} />}
+                onClick={s.link ? () => window.open(s.link, "_blank", "noopener,noreferrer") : undefined}
+                style={s.link ? { cursor: "pointer" } : undefined}
+                title={s.link ? "查看線上即時報價（Yahoo 股市）" : undefined}
                 spark={<Sparkline data={s.data} color={s.mode === "finance" ? "var(--finance-up)" : col} />} />
             );
           })}

@@ -50,7 +50,7 @@ window.KIT = {
     { id: "subscribe", label: "訂閱管理", en: "Subscribe", icon: "mail" },
   ],
   stats: [
-    { label: "加權指數 TAIEX", value: "23,588", unit: "pt", delta: "+0.75%", tone: "insight", mode: "finance", data: [6.2,6.6,6.3,7,6.8,7.2,7.1,7.5,7.8] },
+    { label: "加權指數 TAIEX", value: "23,588", unit: "pt", delta: "+0.75%", tone: "insight", mode: "finance", data: [6.2,6.6,6.3,7,6.8,7.2,7.1,7.5,7.8], link: "https://tw.stock.yahoo.com/quote/%5ETWII" },
     { label: "本月結餘", value: "42,180", unit: "TWD", delta: "+8.0%", tone: "intelligence", mode: "semantic", data: [4,4.2,4.1,4.5,4.4,4.8,5,5.2] },
     { label: "深度工作", value: "26.5", unit: "hr", delta: "+12%", tone: "illumination", mode: "semantic", data: [3,3.5,3.2,4,3.8,4.4,4.6,5] },
     { label: "待讀清單", value: "12", unit: "篇", delta: "-3", tone: "insight", mode: "semantic", data: [8,7,9,6,5,6,5,4] },
