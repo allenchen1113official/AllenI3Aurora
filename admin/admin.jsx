@@ -1,13 +1,14 @@
 /* =====================================================================
-   艾倫報報 · 後台管理 — 各區塊資料 CRUD（Supabase）
-   讀寫走 Supabase；寫入受 RLS 保護，僅指定 email 登入後可異動。
+   艾倫報報 · 後台管理 — 各區塊資料 CRUD（Firebase / Firestore）
+   讀寫走 Firestore；寫入受安全規則保護，僅指定 email 登入後可異動。
    ===================================================================== */
 const { useState, useEffect, useCallback } = React;
 
-const SB_URL = window.SUPABASE_URL;
-const SB_KEY = window.SUPABASE_ANON_KEY;
-const configured = !!(SB_URL && SB_KEY && window.supabase && window.supabase.createClient);
-const client = configured ? window.supabase.createClient(SB_URL, SB_KEY) : null;
+const FB = window.FIREBASE_CONFIG || {};
+const configured = !!(FB.apiKey && FB.projectId && window.firebase && window.firebase.firestore);
+if (configured && !window.firebase.apps.length) window.firebase.initializeApp(FB);
+const auth = configured ? window.firebase.auth() : null;
+const db = configured ? window.firebase.firestore() : null;
 
 const TONE_OPTS = ["insight", "intelligence", "illumination", "neutral"];
 
@@ -41,6 +42,56 @@ const SECTIONS = [
   ] },
 ];
 
+/* 預設種子資料（供空 collection 一鍵初始化） */
+const SEED = {
+  stats: [
+    { sort: 1, label: "加權指數 TAIEX", value: "23,588", unit: "pt", delta: "+0.75%", tone: "insight", mode: "finance", data: [6.2, 6.6, 6.3, 7, 6.8, 7.2, 7.1, 7.5, 7.8], link: "https://tw.stock.yahoo.com/quote/%5ETWII" },
+    { sort: 2, label: "本月結餘", value: "42,180", unit: "TWD", delta: "+8.0%", tone: "intelligence", mode: "semantic", data: [4, 4.2, 4.1, 4.5, 4.4, 4.8, 5, 5.2], link: "" },
+    { sort: 3, label: "深度工作", value: "26.5", unit: "hr", delta: "+12%", tone: "illumination", mode: "semantic", data: [3, 3.5, 3.2, 4, 3.8, 4.4, 4.6, 5], link: "" },
+    { sort: 4, label: "待讀清單", value: "12", unit: "篇", delta: "-3", tone: "insight", mode: "semantic", data: [8, 7, 9, 6, 5, 6, 5, 4], link: "" },
+  ],
+  focus: [
+    { sort: 1, tag: "理財", tone: "insight", title: "外資投信「雙連買」新增 3 檔", meta: "半導體 · 航運 · 今日 09:41", icon: "chart" },
+    { sort: 2, tag: "工作", tone: "intelligence", title: "Q3 產品藍圖評審會議前置準備", meta: "明日 14:00 · 附 3 份文件", icon: "briefcase" },
+    { sort: 3, tag: "研究", tone: "illumination", title: "LLM Agent 記憶架構 — 讀書筆記整理", meta: "進度 60% · 待續 2 節", icon: "compass" },
+    { sort: 4, tag: "興趣", tone: "insight", title: "薩克斯風 · 週末錄音清單", meta: "3 首待練 · 上次 06/28", icon: "sparkle" },
+  ],
+  reading: [
+    { sort: 1, title: "原子習慣：微小改變的複利效應", src: "重讀筆記", pct: 82 },
+    { sort: 2, title: "The Almanack of Naval Ravikant", src: "Kindle", pct: 45 },
+    { sort: 3, title: "台股籌碼面實戰：三大法人解讀", src: "PDF", pct: 12 },
+  ],
+  podcasts: [
+    { sort: 1, title: "股癌 Gooaye — EP.整理盤心法", meta: "1h 12m · 昨天", tone: "insight" },
+    { sort: 2, title: "曼報 Manny's Newsletter Radio", meta: "38m · 2 天前", tone: "intelligence" },
+    { sort: 3, title: "Lex Fridman — Memory & Agents", meta: "2h 04m · 本週", tone: "illumination" },
+  ],
+  links: [
+    { sort: 1, label: "Showmethemoney 看盤", icon: "chart" },
+    { sort: 2, label: "TradingView", icon: "chart" },
+    { sort: 3, label: "Notion 研究庫", icon: "book" },
+    { sort: 4, label: "GitHub", icon: "link" },
+    { sort: 5, label: "Medium 草稿", icon: "paper" },
+    { sort: 6, label: "Google Scholar", icon: "compass" },
+  ],
+  issues: [
+    { sort: 1, no: "26", kind: "週報", date: "2026.06.29", tone: "insight", title: "AI 代理的記憶戰爭，與台股的靜默輪動", items: 8, cover: "../../assets/rabbit-reading.jpeg" },
+    { sort: 2, no: "25", kind: "週報", date: "2026.06.22", tone: "insight", title: "當利率轉彎，現金流的重新定價", items: 7, cover: "../../assets/rabbit-proposal.jpeg" },
+    { sort: 3, no: "06", kind: "月報", date: "2026.06.01", tone: "intelligence", title: "六月總結：三個決定，一次轉身", items: 14, cover: "../../assets/rabbit-mountain.jpeg" },
+    { sort: 4, no: "24", kind: "週報", date: "2026.06.15", tone: "insight", title: "被高估的專注，與被低估的休息", items: 6, cover: "../../assets/rabbit-bike.jpeg" },
+    { sort: 5, no: "23", kind: "週報", date: "2026.06.08", tone: "insight", title: "把研究做成產品：從筆記到電子報", items: 9, cover: "../../assets/rabbit-forest.jpeg" },
+    { sort: 6, no: "183", kind: "日報", date: "2026.06.30", tone: "illumination", title: "週一速報：新的一週，三個先看的訊號", items: 3, cover: "../../assets/rabbit-golden.jpeg" },
+  ],
+  annuli: [
+    { sort: 1, year: "1975", tone: "insight", title: "序章 · 出生", body: "一切的起點。" },
+    { sort: 2, year: "1998", tone: "intelligence", title: "投入資訊科技", body: "以 ITS 專業踏入職場，開始累積系統思維。" },
+    { sort: 3, year: "2011", tone: "illumination", title: "拿起薩克斯風", body: "音樂成為生活的另一種語言與節奏。" },
+    { sort: 4, year: "2020", tone: "insight", title: "開始寫作與研究", body: "把每天的觀察，變成可累積的筆記與洞察。" },
+    { sort: 5, year: "2024", tone: "intelligence", title: "Showmethemoney 上線", body: "開源台股看盤儀表板，工具服務更多人。" },
+    { sort: 6, year: "2026", tone: "illumination", title: "艾倫報報 創刊", body: "洞察世界．累積智慧．點亮未來 — 個人品牌成形。" },
+  ],
+};
+
 const wrap = { maxWidth: 1080, margin: "0 auto", padding: "0 20px" };
 
 function Center({ children }) {
@@ -53,8 +104,8 @@ function Setup() {
     <Center>
       <div style={{ maxWidth: 460, textAlign: "center", color: "var(--text-2)" }}>
         <h1 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)" }}>後台尚未啟用</h1>
-        <p style={{ lineHeight: 1.7, fontSize: 14 }}>請先在 <code>supabase-config.js</code> 填入 Supabase 專案的
-          <b> URL</b> 與 <b>anon key</b>，並於 SQL Editor 執行 <code>db/aurora_backend.sql</code>。</p>
+        <p style={{ lineHeight: 1.7, fontSize: 14 }}>請先在 <code>firebase-config.js</code> 填入 Firebase 專案設定
+          （apiKey / projectId 等），並於 Firestore 部署 <code>firebase/firestore.rules</code> 安全規則。</p>
       </div>
     </Center>
   );
@@ -68,8 +119,8 @@ function Login() {
   const [busy, setBusy] = useState(false);
   const submit = async (e) => {
     e.preventDefault(); setBusy(true); setErr("");
-    const { error } = await client.auth.signInWithPassword({ email, password: pw });
-    if (error) setErr(error.message);
+    try { await auth.signInWithEmailAndPassword(email, pw); }
+    catch (ex) { setErr(ex && ex.message ? ex.message : "登入失敗"); }
     setBusy(false);
   };
   return (
@@ -86,7 +137,7 @@ function Login() {
         <input className="ad-in" type="password" value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="current-password" required style={{ marginBottom: 18 }} />
         {err && <div style={{ color: "var(--danger)", fontSize: 12.5, marginBottom: 14 }}>{err}</div>}
         <button className="ad-btn primary" type="submit" disabled={busy} style={{ width: "100%" }}>{busy ? "登入中…" : "登入"}</button>
-        <p style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 16, lineHeight: 1.6 }}>帳號請於 Supabase → Authentication → Users 建立，email 需與 SQL 中的管理者 email 一致。</p>
+        <p style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 16, lineHeight: 1.6 }}>帳號請於 Firebase → Authentication 建立（Email/密碼），email 需與安全規則中的管理者 email 一致。</p>
       </form>
     </Center>
   );
@@ -121,22 +172,19 @@ function RowCard({ sec, row, onChanged }) {
       }
       payload[f.k] = v;
     }
-    const res = row.__new
-      ? await client.from(sec.table).insert(payload)
-      : await client.from(sec.table).update(payload).eq("id", row.id);
-    setBusy(false);
-    if (res.error) { setMsg("儲存失敗：" + res.error.message); return; }
-    onChanged();
+    try {
+      if (row.__new) await db.collection(sec.table).add(payload);
+      else await db.collection(sec.table).doc(row.id).update(payload);
+      onChanged();
+    } catch (ex) { setMsg("儲存失敗：" + (ex && ex.message ? ex.message : ex)); setBusy(false); }
   };
 
   const del = async () => {
     if (row.__new) { onChanged(); return; }
     if (!window.confirm("確定刪除這一筆？")) return;
     setBusy(true);
-    const { error } = await client.from(sec.table).delete().eq("id", row.id);
-    setBusy(false);
-    if (error) { setMsg("刪除失敗：" + error.message); return; }
-    onChanged();
+    try { await db.collection(sec.table).doc(row.id).delete(); onChanged(); }
+    catch (ex) { setMsg("刪除失敗：" + (ex && ex.message ? ex.message : ex)); setBusy(false); }
   };
 
   return (
@@ -180,12 +228,14 @@ function RowCard({ sec, row, onChanged }) {
 function SectionEditor({ sec }) {
   const [rows, setRows] = useState(null);
   const [err, setErr] = useState("");
+  const [seeding, setSeeding] = useState(false);
 
   const load = useCallback(async () => {
     setErr("");
-    const { data, error } = await client.from(sec.table).select("*").order("sort", { ascending: true });
-    if (error) { setErr("讀取失敗：" + error.message); setRows([]); }
-    else setRows(data || []);
+    try {
+      const snap = await db.collection(sec.table).orderBy("sort").get();
+      setRows(snap.docs.map((d) => Object.assign({ id: d.id }, d.data())));
+    } catch (ex) { setErr("讀取失敗：" + (ex && ex.message ? ex.message : ex)); setRows([]); }
   }, [sec.table]);
 
   useEffect(() => { setRows(null); load(); }, [load]);
@@ -195,6 +245,14 @@ function SectionEditor({ sec }) {
     const maxSort = (rows || []).reduce((m, r) => Math.max(m, Number(r.sort) || 0), 0);
     sec.fields.forEach((f) => { blank[f.k] = f.t === "number" ? (f.k === "sort" ? maxSort + 1 : 0) : (f.t === "json" ? "[]" : ""); });
     setRows((r) => [...(r || []), blank]);
+  };
+
+  const seed = async () => {
+    if (!window.confirm("寫入這個區塊的預設種子資料？")) return;
+    setSeeding(true);
+    try { await Promise.all((SEED[sec.id] || []).map((r) => db.collection(sec.table).add(r))); await load(); }
+    catch (ex) { setErr("種子寫入失敗：" + (ex && ex.message ? ex.message : ex)); }
+    setSeeding(false);
   };
 
   return (
@@ -210,7 +268,10 @@ function SectionEditor({ sec }) {
       {rows == null ? (
         <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>
       ) : rows.length === 0 ? (
-        <div style={{ color: "var(--text-3)", padding: 20 }}>尚無資料，點「新增一筆」開始。</div>
+        <div style={{ color: "var(--text-3)", padding: 20 }}>
+          尚無資料，點「新增一筆」開始，或
+          <button className="ad-btn ghost" onClick={seed} disabled={seeding} style={{ marginLeft: 8 }}>{seeding ? "寫入中…" : "載入預設種子資料"}</button>
+        </div>
       ) : (
         rows.map((r, i) => <RowCard key={r.id || "new-" + i} sec={sec} row={r} onChanged={load} />)
       )}
@@ -219,7 +280,7 @@ function SectionEditor({ sec }) {
 }
 
 /* ---------- 主控台 ---------- */
-function Console({ session }) {
+function Console({ user }) {
   const [active, setActive] = useState(SECTIONS[0].id);
   const sec = SECTIONS.find((s) => s.id === active);
   return (
@@ -229,10 +290,10 @@ function Console({ session }) {
           <span style={{ display: "inline-grid", placeItems: "center", width: 34, height: 34, borderRadius: 10, background: "var(--aurora-gradient)", color: "var(--text-on-accent)", fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 12 }}>AI³A</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "var(--font-display)", fontWeight: 900, color: "var(--text-1)", fontSize: 16 }}>後台管理</div>
-            <div style={{ color: "var(--text-3)", fontSize: 11.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{session.user.email}</div>
+            <div style={{ color: "var(--text-3)", fontSize: 11.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
           </div>
           <a className="ad-btn ghost" href="/AllenI3Aurora/" target="_blank" rel="noopener">前往網站 ↗</a>
-          <button className="ad-btn" onClick={() => client.auth.signOut()}>登出</button>
+          <button className="ad-btn" onClick={() => auth.signOut()}>登出</button>
         </div>
       </header>
       <div style={{ ...wrap, display: "flex", gap: 22, padding: "22px 20px", alignItems: "flex-start" }}>
@@ -258,19 +319,18 @@ function Console({ session }) {
 
 /* ---------- 根 ---------- */
 function App() {
-  const [session, setSession] = useState(null);
+  const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
   useEffect(() => {
     if (!configured) { setReady(true); return; }
-    client.auth.getSession().then(({ data }) => { setSession(data.session); setReady(true); });
-    const { data: sub } = client.auth.onAuthStateChange((_e, s) => setSession(s));
-    return () => sub.subscription.unsubscribe();
+    const unsub = auth.onAuthStateChanged((u) => { setUser(u); setReady(true); });
+    return () => unsub();
   }, []);
 
   if (!configured) return <Setup />;
   if (!ready) return <Center><div style={{ color: "var(--text-3)" }}>載入中…</div></Center>;
-  if (!session) return <Login />;
-  return <Console session={session} />;
+  if (!user) return <Login />;
+  return <Console user={user} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);

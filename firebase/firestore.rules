@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// =====================================================================
+// 艾倫報報 · Allen I³ Aurora — Firestore 安全規則
+// ---------------------------------------------------------------------
+// 任何人可「讀」各區塊資料（前台顯示用）；
+// 僅指定 email 登入後可「寫」（新增 / 修改 / 刪除）。
+// 部署：Firebase Console → Firestore Database → 規則(Rules) 貼上並發布，
+//       或 CLI： firebase deploy --only firestore:rules
+// 若要更換管理者 email，改下方 OWNER_EMAIL。
+// 未列出的其他 collection 一律拒絕（預設安全）。
+// =====================================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == 'allenchen1113.official@gmail.com'; // OWNER_EMAIL
+    }
+
+    // 各區塊 collection：公開讀、管理者寫
+    match /aurora_stats/{doc}    { allow read: if true; allow write: if isOwner(); }
+    match /aurora_focus/{doc}    { allow read: if true; allow write: if isOwner(); }
+    match /aurora_reading/{doc}  { allow read: if true; allow write: if isOwner(); }
+    match /aurora_podcasts/{doc} { allow read: if true; allow write: if isOwner(); }
+    match /aurora_links/{doc}    { allow read: if true; allow write: if isOwner(); }
+    match /aurora_issues/{doc}   { allow read: if true; allow write: if isOwner(); }
+    match /aurora_annuli/{doc}   { allow read: if true; allow write: if isOwner(); }
+  }
+}
