@@ -15,6 +15,10 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="/AllenI3Aurora/_ds_bundle.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/AllenI3Aurora/firebase-config.js"></script>
+<script src="/AllenI3Aurora/aurora-data.js"></script>
 <style>
   html, body { height: 100%; }
   body { margin: 0; overflow: hidden; }
@@ -71,8 +75,9 @@ function App() {
     </div>
   );
 }
-function boot() {
+async function boot() {
   if (!window.Dashboard || !window.Subscribe || !window.Sidebar) { return setTimeout(boot, 40); }
+  try { const d = window.AURORA && await window.AURORA.ready; if (d) Object.assign(window.KIT, d); } catch (e) { /* fall back to built-in data */ }
   ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 }
 boot();
