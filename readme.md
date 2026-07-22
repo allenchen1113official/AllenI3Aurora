@@ -119,11 +119,28 @@ Derived from Allen's real marketing copy and blog voice.
 
 - `ui_kits/aurora/` — interactive product recreation: `index.html` + Dashboard, NewsletterIssue, Archive, Timeline, Subscribe screens (see its README).
 
+**Deployed app** (GitHub Pages, served at `/AllenI3Aurora/`)
+
+- `index.html` — production entry point (absolute-path build of the UI kit).
+- `aurora-data.js` — front-end data layer: reads each dashboard section from Firebase (Firestore) when configured, else falls back to the built-in mock data in `kit.jsx` so the site always renders.
+- `firebase-config.js` — public Firebase web config (safe to ship; empty by default → mock-data fallback).
+- `admin/` — owner-only back office (Firebase Auth + Firestore CRUD) for editing each dashboard section.
+- `firebase/firestore.rules` — public-read / owner-write security rules.
+
 **Specimen cards** — `guidelines/*.html` (Colors · Type · Spacing · Brand), rendered in the Design System tab.
 
 **Assets** — `assets/` (avatar, favicons, `rabbit-*.jpeg` illustration library).
 
 **Skill** — `SKILL.md` (Agent-Skills compatible).
+
+---
+
+## Deployment & launch
+
+- **Hosting.** Static GitHub Pages — no build step. `index.html`, `ui_kits/aurora/index.html`, and `admin/index.html` load React (UMD), Babel-standalone, and Firebase from CDN at runtime.
+- **Production builds.** The shipped pages load React's **`.production.min.js`** UMD builds (SRI-pinned) — smaller and faster, with dev-mode warnings off. The `components/*/*.card.html` specimen files keep the dev builds on purpose (their warnings help while authoring).
+- **Validation.** `npm run lint` (oxlint adherence rules) runs locally and in CI (`.github/workflows/ci.yml`) on every push / PR.
+- **Firebase (optional).** Fill in `firebase-config.js`, publish `firebase/firestore.rules`, and sign in to `admin/` as the owner email to drive live data; leave it empty to ship on the built-in mock data.
 
 ---
 
