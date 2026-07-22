@@ -1,0 +1,27 @@
+name: CI
+
+# 驗證測試：對每次 push / PR 執行設計系統 lint 守門（oxlint）。
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint (oxlint adherence)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 專案無 committed lockfile（package-lock 於 .gitignore），故用 npm install
+      - name: Install dev dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run oxlint
+        run: npm run lint
