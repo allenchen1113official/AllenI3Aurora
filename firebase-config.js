@@ -5,10 +5,11 @@
    欄位留空時，前台會自動改用 kit.jsx 內建的預設資料，網站照常運作。
    ===================================================================== */
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",        // e.g. your-project.firebaseapp.com
-  projectId: "",         // e.g. your-project
-  storageBucket: "",     // e.g. your-project.appspot.com
-  messagingSenderId: "",
-  appId: "",
+  apiKey: "AIzaSyCWMxPfxKUQQI4lV0rH8Iq_sEIB2Xim69k",
+  authDomain: "alleni3aurora.firebaseapp.com",        // e.g. your-project.firebaseapp.com
+  projectId: "alleni3aurora",         // e.g. your-project
+  storageBucket: "alleni3aurora.firebasestorage.app",     // e.g. your-project.appspot.com
+  messagingSenderId: "219821668201",
+  appId: "1:219821668201:web:4c942bdd435b40c1dd6ff8",
+  measurementId: "G-NY79BVZMQ1"
 };
