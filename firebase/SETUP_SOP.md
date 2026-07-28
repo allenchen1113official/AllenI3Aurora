@@ -114,11 +114,17 @@ window.FIREBASE_CONFIG = {
 
 **方式 B — Firebase CLI**
 
+本 repo 已附 `firebase.json`（規則指向 `firebase/firestore.rules`）與 `.firebaserc`（預設專案 `alleni3aurora`），
+於專案根目錄可直接部署：
+
 ```bash
 npm install -g firebase-tools
 firebase login
-firebase deploy --only firestore:rules   # 需先於專案設定 firebase.json 指向此規則檔
+firebase deploy --only firestore:rules
 ```
+
+> ⚠️ **這一步不可省略。** 在 Firestore 建立資料庫時選「正式版 / Production mode」，其預設規則會**拒絕所有讀寫**；
+> 未把本專案規則發布上去，後台任何寫入都會出現 **Missing or insufficient permissions**。
 
 ## 7. 初始化資料
 
@@ -151,6 +157,7 @@ firebase deploy --only firestore:rules   # 需先於專案設定 firebase.json �
 | 後台顯示「後台尚未啟用」 | `firebase-config.js` 的 `apiKey` 或 `projectId` 未填；補齊後重新整理 |
 | 前台 Console 出現讀取失敗警告，改用預設資料 | Firestore 尚未建立、規則未發布、或網路/網域限制；檢查步驟 5、6 |
 | 登入報 `auth/...` 錯誤 | 未啟用 Email/密碼登入，或該 Email 未在 Authentication → Users 建立 |
+| **種子/儲存寫入失敗：Missing or insufficient permissions** | 兩種原因之一：① 尚未把 `firebase/firestore.rules` 發布到專案（見步驟 6）；② 登入 Email ≠ 規則的 `OWNER_EMAIL`。後台錯誤訊息現會直接標示目前登入身分以協助判斷 |
 | 可讀不可寫（寫入被拒） | 登入 Email 與 `firestore.rules` 的 `OWNER_EMAIL` 不一致；兩處需相同 |
 | 資料順序錯亂 | 文件缺少數值 `sort` 欄位；補上並重新整理（前台以 `orderBy("sort")` 排序） |
 

@@ -10,6 +10,22 @@ if (configured && !window.firebase.apps.length) window.firebase.initializeApp(FB
 const auth = configured ? window.firebase.auth() : null;
 const db = configured ? window.firebase.firestore() : null;
 
+const OWNER_EMAIL = "allenchen1113.official@gmail.com"; // 需與 firebase/firestore.rules 一致
+
+/* 將 Firestore 錯誤轉為可操作訊息；permission-denied 給出明確排查方向 */
+function errText(ex) {
+  const code = ex && ex.code ? ex.code : "";
+  const raw = ex && ex.message ? ex.message : String(ex);
+  if (code === "permission-denied" || /insufficient permissions/i.test(raw)) {
+    const who = (auth && auth.currentUser && auth.currentUser.email) || "（未登入）";
+    if (who !== OWNER_EMAIL) {
+      return `權限不足：目前登入為「${who}」，但安全規則僅允許「${OWNER_EMAIL}」寫入。請改用管理者帳號登入，或同步更新 firestore.rules 的 OWNER_EMAIL。`;
+    }
+    return `權限不足：登入身分正確（${who}），但 Firestore 尚未套用本專案的安全規則。請至 Firebase Console → Firestore Database → 規則，貼上 firebase/firestore.rules 全文並「發布」（或執行 firebase deploy --only firestore:rules）。`;
+  }
+  return raw;
+}
+
 const TONE_OPTS = ["insight", "intelligence", "illumination", "neutral"];
 
 /* 各區塊與欄位定義（type: text | number | textarea | json | tone | select） */
@@ -176,7 +192,7 @@ function RowCard({ sec, row, onChanged }) {
       if (row.__new) await db.collection(sec.table).add(payload);
       else await db.collection(sec.table).doc(row.id).update(payload);
       onChanged();
-    } catch (ex) { setMsg("儲存失敗：" + (ex && ex.message ? ex.message : ex)); setBusy(false); }
+    } catch (ex) { setMsg("儲存失敗：" + errText(ex)); setBusy(false); }
   };
 
   const del = async () => {
@@ -184,7 +200,7 @@ function RowCard({ sec, row, onChanged }) {
     if (!window.confirm("確定刪除這一筆？")) return;
     setBusy(true);
     try { await db.collection(sec.table).doc(row.id).delete(); onChanged(); }
-    catch (ex) { setMsg("刪除失敗：" + (ex && ex.message ? ex.message : ex)); setBusy(false); }
+    catch (ex) { setMsg("刪除失敗：" + errText(ex)); setBusy(false); }
   };
 
   return (
@@ -235,7 +251,7 @@ function SectionEditor({ sec }) {
     try {
       const snap = await db.collection(sec.table).orderBy("sort").get();
       setRows(snap.docs.map((d) => Object.assign({ id: d.id }, d.data())));
-    } catch (ex) { setErr("讀取失敗：" + (ex && ex.message ? ex.message : ex)); setRows([]); }
+    } catch (ex) { setErr("讀取失敗：" + errText(ex)); setRows([]); }
   }, [sec.table]);
 
   useEffect(() => { setRows(null); load(); }, [load]);
@@ -251,7 +267,7 @@ function SectionEditor({ sec }) {
     if (!window.confirm("寫入這個區塊的預設種子資料？")) return;
     setSeeding(true);
     try { await Promise.all((SEED[sec.id] || []).map((r) => db.collection(sec.table).add(r))); await load(); }
-    catch (ex) { setErr("種子寫入失敗：" + (ex && ex.message ? ex.message : ex)); }
+    catch (ex) { setErr("種子寫入失敗：" + errText(ex)); }
     setSeeding(false);
   };
 
