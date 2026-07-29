@@ -26,7 +26,8 @@
   // 並把網站來源（例如 https://allenchen1113official.github.io）加入「已授權的 JavaScript 來源」。
   // Client ID 為公開值、非密鑰，可安全放進前端。
   const GOOGLE_CLIENT_ID = ""; // e.g. "1234567890-abcdefg.apps.googleusercontent.com"
-  const openCalendar = () => window.open(`https://calendar.google.com/calendar/u/${CAL_EMAIL}/r`, "_blank", "noopener,noreferrer");
+  // 以 authuser=<email> 指定帳號（/calendar/u/<...>/ 的路徑只接受數字索引，放 email 會失效）
+  const openCalendar = () => window.open(`https://calendar.google.com/calendar/r?authuser=${encodeURIComponent(CAL_EMAIL)}`, "_blank", "noopener,noreferrer");
 
   /* 前端 Google 登入 → 讀取本人私人行事曆，以極光深色主題呈現。
      access token 僅存在瀏覽器記憶體，不落地、不上傳任何伺服器。 */
