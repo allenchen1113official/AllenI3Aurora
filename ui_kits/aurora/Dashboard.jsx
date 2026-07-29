@@ -20,6 +20,82 @@
     }
   }
 
+  /* ===== 加權指數 TAIEX 即時報價 =====
+     前端直接向 Yahoo Finance v8 chart API 抓取（該端點回傳 CORS 標頭，可跨網域）。
+     每 60 秒更新一次；抓取失敗時保留 kit.jsx 內建的最後已知數據，網站照常運作。 */
+  async function fetchYahooChart(symbol) {
+    const hosts = ["https://query1.finance.yahoo.com", "https://query2.finance.yahoo.com"];
+    const path = `/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=5m`;
+    for (const h of hosts) {
+      try {
+        const r = await fetch(h + path, { cache: "no-store" });
+        if (!r.ok) continue;
+        const j = await r.json();
+        const res = j && j.chart && j.chart.result && j.chart.result[0];
+        if (res && res.meta && res.meta.regularMarketPrice != null) return res;
+      } catch { /* 換下一個 host，皆失敗則退回內建資料 */ }
+    }
+    return null;
+  }
+
+  function parseQuote(res) {
+    const meta = res.meta || {};
+    const price = meta.regularMarketPrice;
+    const prev = meta.chartPreviousClose != null ? meta.chartPreviousClose : meta.previousClose;
+    const closes = (((res.indicators || {}).quote || [])[0] || {}).close || [];
+    const series = closes.filter((v) => v != null);
+    const delta = (price != null && prev) ? ((price - prev) / prev) * 100 : null;
+    const asOf = meta.regularMarketTime
+      ? new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(meta.regularMarketTime * 1000))
+      : null;
+    return {
+      value: price != null ? price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : null,
+      delta: delta != null ? `${delta >= 0 ? "+" : ""}${delta.toFixed(2)}%` : null,
+      data: series.length > 1 ? series : null,
+      asOf,
+    };
+  }
+
+  function useLiveQuote(symbol) {
+    const [q, setQ] = React.useState(null);
+    React.useEffect(() => {
+      if (!symbol) return undefined;
+      let alive = true;
+      const tick = async () => {
+        const res = await fetchYahooChart(symbol);
+        if (alive && res) setQ(parseQuote(res));
+      };
+      tick();
+      const id = setInterval(tick, 60000);
+      return () => { alive = false; clearInterval(id); };
+    }, [symbol]);
+    return q;
+  }
+
+  /* 單張統計卡：具 symbol 者接上即時報價，其餘沿用內建資料。 */
+  function StatTile({ s }) {
+    const I = window.Icons;
+    const col = { insight: "var(--insight)", intelligence: "var(--intelligence)", illumination: "var(--illumination)" }[s.tone];
+    const symbol = s.symbol || (s.mode === "finance" ? "^TWII" : null);
+    const live = useLiveQuote(symbol);
+    const value = (live && live.value) || s.value;
+    const delta = (live && live.delta) || s.delta;
+    const data = (live && live.data) || s.data;
+    const asOf = live && live.asOf;
+    const isDown = String(delta || "").trim().startsWith("-");
+    const title = s.link
+      ? (asOf ? `台北時間 ${asOf} 即時報價 · 點擊查看 Yahoo 股市` : "查看線上即時報價（Yahoo 股市）")
+      : undefined;
+    return (
+      <StatCard label={s.label} value={value} unit={s.unit} delta={delta} deltaMode={s.mode} tone={s.tone}
+        icon={s.link ? <I.ext size={16} /> : <I.chart size={18} />}
+        onClick={s.link ? () => window.open(s.link, "_blank", "noopener,noreferrer") : undefined}
+        style={s.link ? { cursor: "pointer" } : undefined}
+        title={title}
+        spark={<Sparkline data={data} color={s.mode === "finance" ? (isDown ? "var(--finance-down)" : "var(--finance-up)") : col} />} />
+    );
+  }
+
   /* Google 行事曆整合（帳號 + 台北時區）— 前端登入後直接讀取，不經任何後端 */
   const CAL_EMAIL = "allenchen1113.official@gmail.com";
   // 在 Google Cloud Console 建立「OAuth 用戶端 ID（網頁應用程式）」後，把 Client ID 貼在這裡，
@@ -171,17 +247,7 @@
 
         {/* Stat row */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-4)" }}>
-          {K.stats.map((s, i) => {
-            const col = { insight: "var(--insight)", intelligence: "var(--intelligence)", illumination: "var(--illumination)" }[s.tone];
-            return (
-              <StatCard key={i} label={s.label} value={s.value} unit={s.unit} delta={s.delta} deltaMode={s.mode} tone={s.tone}
-                icon={s.link ? <I.ext size={16} /> : <I.chart size={18} />}
-                onClick={s.link ? () => window.open(s.link, "_blank", "noopener,noreferrer") : undefined}
-                style={s.link ? { cursor: "pointer" } : undefined}
-                title={s.link ? "查看線上即時報價（Yahoo 股市）" : undefined}
-                spark={<Sparkline data={s.data} color={s.mode === "finance" ? "var(--finance-up)" : col} />} />
-            );
-          })}
+          {K.stats.map((s, i) => <StatTile key={i} s={s} />)}
         </div>
 
         {/* Two-column body */}
