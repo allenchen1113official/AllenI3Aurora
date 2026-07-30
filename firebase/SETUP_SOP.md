@@ -103,6 +103,16 @@ window.FIREBASE_CONFIG = {
 | `aurora_issues` | 歷期報報 | `sort, no, kind, date, tone, title, items, cover` |
 | `aurora_annuli` | 個人年輪 | `sort, year, tone, title, body` |
 
+此外還有 1 個由前台「訂閱管理」頁寫入的 collection（**不含 `sort`**，依 `createdAt` 排序）：
+
+| Collection（node） | 用途 | 主要欄位 |
+| --- | --- | --- |
+| `aurora_subscribers` | 電子報訂閱者名單 | `email`（訂閱者信箱）、`cadences{day,week,month}`、`consent`、`status`、`source`、`createdAt`、`updatedAt` |
+
+> **訂閱者 collection / 欄位命名**：collection（node）名稱為 **`aurora_subscribers`**，Email 欄位名稱為 **`email`**（字串，前台已轉小寫並去除前後空白）。
+> 權限與其他 collection 不同：訪客**只能新增**（經安全規則欄位驗證，防灌水），名單含個資，**讀取／修改／刪除僅限管理者**。
+> 每次送出訂閱皆新增一筆文件（採自動文件 ID），同一 Email 重複訂閱會產生多筆，可於後台「訂閱者」面板檢視、刪除或匯出 CSV 後自行去重。
+
 ## 6. 部署 Firestore 安全規則
 
 把 `firebase/firestore.rules` 的內容套用到專案。規則語意：**任何人可讀、僅管理者 Email 可寫**。
@@ -144,6 +154,9 @@ firebase deploy --only firestore:rules
 - [ ] **後台登入** — 開 `admin/`，以管理者帳密登入成功（未設定時應顯示「後台尚未啟用」）。
 - [ ] **寫入權限** — 後台新增/修改/刪除一筆，重新整理前台可見變更。
 - [ ] **權限隔離** — 用非管理者帳號登入後嘗試寫入應被拒絕（規則生效）。
+- [ ] **訂閱寫入** — 前台「訂閱管理」頁填 Email、選節奏、送出，出現「訂閱成功」；
+      後台「訂閱者」面板可見該筆（`aurora_subscribers` collection、`email` 欄位）。
+- [ ] **訂閱者隱私** — 以未登入無痕視窗嘗試讀 `aurora_subscribers` 應被拒絕（名單不公開）。
 - [ ] **回退機制** — 暫時清空 `firebase-config.js` 任一必填欄位，前台仍以內建預設資料正常顯示。
 
 全部通過即設定完成。

@@ -150,8 +150,45 @@
     );
   }
 
+  /* 加權指數 TAIEX：交易時間內即時、非交易時段顯示最新收盤資訊
+     說明文字（tooltip / 來源標註） */
+  function taiexTitle(m) {
+    if (!m) return "查看線上即時報價（Yahoo 股市）";
+    const when = m.intraday
+      ? (m.asOf ? `即時報價 · 更新於 ${m.asOf}` : "交易時間即時報價")
+      : (m.date ? `最新收盤 · ${m.date.slice(4, 6)}/${m.date.slice(6, 8)}` : "最新收盤資訊");
+    return `${when}｜點擊查看 Yahoo 股市`;
+  }
+
   function Dashboard() {
     const K = window.KIT, I = window.Icons;
+
+    /* 以 kit.jsx／Firebase 的資料為初始值，掛載後向 TWSE OpenAPI 取得
+       加權指數的即時／最新交易資訊並覆蓋；抓取失敗則沿用內建靜態值。 */
+    const [stats, setStats] = React.useState(() => K.stats);
+    const [taiex, setTaiex] = React.useState(null);
+
+    React.useEffect(() => {
+      const T = window.TAIEX;
+      if (!T || !T.fetchLatest) return;
+      let alive = true;
+      const apply = (r) => {
+        if (!alive || !r) return;
+        setTaiex(r);
+        setStats((prev) => prev.map((s) => (
+          s.mode !== "finance" ? s : Object.assign({}, s, {
+            value: r.value,
+            delta: r.delta != null ? r.delta : s.delta,
+            data: (r.series && r.series.length > 1) ? r.series : s.data,
+          })
+        )));
+      };
+      const run = () => T.fetchLatest().then(apply).catch(() => {});
+      run();
+      const id = setInterval(run, 60000); // 交易時間內每分鐘刷新
+      return () => { alive = false; clearInterval(id); };
+    }, []);
+
     return (
       <div className="kit-page" style={{ padding: "var(--space-8)", display: "flex", flexDirection: "column", gap: "var(--space-8)" }}>
         {/* Greeting / hero strip */}
@@ -171,18 +208,34 @@
 
         {/* Stat row */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-4)" }}>
-          {K.stats.map((s, i) => {
+          {stats.map((s, i) => {
             const col = { insight: "var(--insight)", intelligence: "var(--intelligence)", illumination: "var(--illumination)" }[s.tone];
+            const isFinance = s.mode === "finance";
             return (
               <StatCard key={i} label={s.label} value={s.value} unit={s.unit} delta={s.delta} deltaMode={s.mode} tone={s.tone}
                 icon={s.link ? <I.ext size={16} /> : <I.chart size={18} />}
                 onClick={s.link ? () => window.open(s.link, "_blank", "noopener,noreferrer") : undefined}
                 style={s.link ? { cursor: "pointer" } : undefined}
-                title={s.link ? "查看線上即時報價（Yahoo 股市）" : undefined}
+                title={s.link ? (isFinance ? taiexTitle(taiex) : "查看線上即時報價（Yahoo 股市）") : undefined}
                 spark={<Sparkline data={s.data} color={s.mode === "finance" ? "var(--finance-up)" : col} />} />
             );
           })}
         </div>
+
+        {/* 加權指數即時／最新交易資訊來源標註 */}
+        {taiex && (
+          <div style={{ marginTop: "calc(var(--space-6) * -1)", display: "flex", alignItems: "center", gap: 7, fontSize: 12, color: "var(--text-4)" }}>
+            <span style={{ width: 6, height: 6, borderRadius: 99, flex: "none",
+              background: taiex.intraday ? "var(--finance-up)" : "var(--text-4)",
+              boxShadow: taiex.intraday ? "0 0 8px var(--finance-up)" : "none" }} />
+            <span>
+              加權指數 TAIEX：{taiex.intraday ? "交易時間即時報價" : "最新收盤資訊"}
+              {taiex.intraday && taiex.asOf ? `，更新於 ${taiex.asOf}` : ""}
+              {!taiex.intraday && taiex.date ? `，${taiex.date.slice(4, 6)}/${taiex.date.slice(6, 8)}` : ""}
+              　·　資料來源：臺灣證券交易所 OpenAPI
+            </span>
+          </div>
+        )}
 
         {/* Two-column body */}
         <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: "var(--space-6)", alignItems: "start" }} className="kit-2col">

@@ -56,6 +56,8 @@ const SECTIONS = [
     { k: "sort", t: "number" }, { k: "year", t: "text" }, { k: "tone", t: "tone" },
     { k: "title", t: "text" }, { k: "body", t: "textarea" },
   ] },
+  // 電子報訂閱者：由前台訪客寫入，後台唯讀檢視 + 刪除 + 匯出（非 sort 排序，採專屬面板）
+  { id: "subscribers", table: "aurora_subscribers", label: "訂閱者", kind: "subscribers" },
 ];
 
 /* 預設種子資料（供空 collection 一鍵初始化） */
@@ -295,6 +297,107 @@ function SectionEditor({ sec }) {
   );
 }
 
+/* ---------- 訂閱者面板（唯讀檢視 + 刪除 + CSV 匯出） ---------- */
+function fmtTime(ts) {
+  try {
+    const d = ts && typeof ts.toDate === "function" ? ts.toDate() : (ts ? new Date(ts) : null);
+    if (!d || isNaN(d.getTime())) return "—";
+    return new Intl.DateTimeFormat("zh-TW", {
+      timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false,
+    }).format(d);
+  } catch (e) { return "—"; }
+}
+
+function cadenceText(c) {
+  if (!c || typeof c !== "object") return "—";
+  const on = [c.day && "日報", c.week && "週報", c.month && "月報"].filter(Boolean);
+  return on.length ? on.join("、") : "（未選）";
+}
+
+function SubscribersPanel() {
+  const [rows, setRows] = useState(null);
+  const [err, setErr] = useState("");
+  const [busyId, setBusyId] = useState("");
+
+  const load = useCallback(async () => {
+    setErr("");
+    try {
+      let snap;
+      try {
+        snap = await db.collection("aurora_subscribers").orderBy("createdAt", "desc").get();
+      } catch (inner) {
+        // createdAt 尚未建索引或部分文件缺欄位時，退回不排序讀取
+        snap = await db.collection("aurora_subscribers").get();
+      }
+      setRows(snap.docs.map((d) => Object.assign({ id: d.id }, d.data())));
+    } catch (ex) { setErr("讀取失敗：" + errText(ex)); setRows([]); }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const del = async (row) => {
+    if (!window.confirm(`確定刪除訂閱者「${row.email}」？`)) return;
+    setBusyId(row.id);
+    try { await db.collection("aurora_subscribers").doc(row.id).delete(); await load(); }
+    catch (ex) { setErr("刪除失敗：" + errText(ex)); }
+    setBusyId("");
+  };
+
+  const exportCsv = () => {
+    const list = rows || [];
+    const esc = (v) => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+    const header = ["email", "cadences", "status", "source", "createdAt"];
+    const lines = [header.join(",")].concat(list.map((r) => [
+      esc(r.email), esc(cadenceText(r.cadences)), esc(r.status || ""), esc(r.source || ""), esc(fmtTime(r.createdAt)),
+    ].join(",")));
+    const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "aurora_subscribers_" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+        <div>
+          <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>訂閱者</h2>
+          <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>aurora_subscribers · {rows ? rows.length : "…"} 位</div>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className="ad-btn ghost" onClick={load}>重新整理</button>
+          <button className="ad-btn primary" onClick={exportCsv} disabled={!rows || !rows.length}>匯出 CSV</button>
+        </div>
+      </div>
+      {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+      {rows == null ? (
+        <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>
+      ) : rows.length === 0 ? (
+        <div style={{ color: "var(--text-3)", padding: 20 }}>目前尚無訂閱者。前台「訂閱管理」頁送出 Email 後會出現在這裡。</div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {rows.map((r) => (
+            <div key={r.id} style={{ background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: "14px 16px", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <div style={{ color: "var(--text-1)", fontWeight: 700, fontFamily: "var(--font-mono)", fontSize: 14, wordBreak: "break-all" }}>{r.email}</div>
+                <div style={{ color: "var(--text-3)", fontSize: 12, marginTop: 3 }}>
+                  {cadenceText(r.cadences)} · {r.status || "—"} · {fmtTime(r.createdAt)}
+                </div>
+              </div>
+              <button className="ad-btn danger" onClick={() => del(r)} disabled={busyId === r.id}>
+                {busyId === r.id ? "刪除中…" : "刪除"}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ---------- 主控台 ---------- */
 function Console({ user }) {
   const [active, setActive] = useState(SECTIONS[0].id);
@@ -326,7 +429,9 @@ function Console({ user }) {
           })}
         </nav>
         <main style={{ flex: 1, minWidth: 0 }}>
-          <SectionEditor key={sec.id} sec={sec} />
+          {sec.kind === "subscribers"
+            ? <SubscribersPanel key={sec.id} />
+            : <SectionEditor key={sec.id} sec={sec} />}
         </main>
       </div>
     </div>
