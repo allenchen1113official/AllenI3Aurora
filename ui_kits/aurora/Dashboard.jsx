@@ -25,7 +25,10 @@
      只要日曆對外公開分享，訪客即可看到行程。 */
   const CAL_EMAIL = "allenchen1113.official@gmail.com";
   const CAL_EMBED_SRC = `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CAL_EMAIL)}&ctz=Asia%2FTaipei&mode=AGENDA&bgcolor=%23070B14&showTitle=0&showPrint=0&showCalendars=0&showTz=0`;
-  const openCalendar = () => window.open(`https://calendar.google.com/calendar/u/${CAL_EMAIL}/r`, "_blank", "noopener,noreferrer");
+  // 以 authuser 參數指定帳號；/calendar/u/ 後面須為帳號索引（0、1…）而非 email，
+  // 直接放 email 會產生 Google 無法解析的網址而失效。
+  const CAL_URL = `https://calendar.google.com/calendar/u/0/r?authuser=${encodeURIComponent(CAL_EMAIL)}`;
+  const openCalendar = () => window.open(CAL_URL, "_blank", "noopener,noreferrer");
 
   /* 以官方 iframe 嵌入我的 Google 行事曆（AGENDA 模式、台北時區）。 */
   function CalendarPanel() {
