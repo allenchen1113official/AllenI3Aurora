@@ -30,6 +30,71 @@
   const CAL_URL = `https://calendar.google.com/calendar/u/0/r?authuser=${encodeURIComponent(CAL_EMAIL)}`;
   const openCalendar = () => window.open(CAL_URL, "_blank", "noopener,noreferrer");
 
+  /* ── 加權指數 TAIEX 即時資料 ──────────────────────────────────────────
+     資料來源：證交所官方 OpenAPI（openapi.twse.com.tw，原生支援 CORS，免後端／免代理）。
+     「發行量加權股價指數歷史資料」提供每日開高低收，取最新收盤指數與前一日相比計算漲跌，
+     並以近 9 個交易日收盤價繪製迷你走勢。此為官方盤後／收盤資料，
+     真正的盤中逐筆即時報價請點卡片前往 Yahoo 股市（見 kit.jsx 之 stats.link）。 */
+  const TAIEX_HISTORY_API = "https://openapi.twse.com.tw/v1/indicesReport/MI_5MINS_HIST";
+  const taiexNumFmt = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  /* 台股交易時段（台北時區，週一至週五 09:00–13:30） */
+  function isTaiexTradingHours(now = new Date()) {
+    try {
+      const p = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Taipei", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
+      }).formatToParts(now).reduce((a, x) => (a[x.type] = x.value, a), {});
+      if (p.weekday === "Sat" || p.weekday === "Sun") return false;
+      const mins = (+p.hour) * 60 + (+p.minute);
+      return mins >= 9 * 60 && mins <= 13 * 60 + 30;
+    } catch { return false; }
+  }
+
+  /* 解析 OpenAPI 回傳，計算最新收盤、漲跌% 與走勢資料。回傳 null 代表無法解析（保留內建值）。 */
+  function parseTaiexHistory(items) {
+    if (!Array.isArray(items)) return null;
+    const rows = items
+      .map((it) => ({
+        date: String((it && (it.Date || it.date)) || ""),
+        close: parseFloat(String((it && (it.ClosingIndex || it.closingIndex)) || "").replace(/,/g, "")),
+      }))
+      .filter((r) => r.date && isFinite(r.close));
+    if (!rows.length) return null;
+    rows.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    const closes = rows.map((r) => r.close);
+    const last = closes[closes.length - 1];
+    const prev = closes.length > 1 ? closes[closes.length - 2] : last;
+    const pct = prev ? ((last - prev) / prev) * 100 : 0;
+    return {
+      value: taiexNumFmt.format(last),
+      delta: `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%`,
+      data: closes.slice(-9),
+      asOf: rows[rows.length - 1].date,
+    };
+  }
+
+  /* 掛載時抓一次；交易時段內每 60 秒刷新一次（收盤後官方資料更新即會反映）。 */
+  function useTaiexLive() {
+    const [live, setLive] = React.useState(null);
+    React.useEffect(() => {
+      let alive = true;
+      const load = async () => {
+        try {
+          const res = await fetch(TAIEX_HISTORY_API, { headers: { Accept: "application/json" } });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const parsed = parseTaiexHistory(await res.json());
+          if (alive && parsed) setLive(parsed);
+        } catch { /* 靜默失敗，保留 kit.jsx 內建值 */ }
+      };
+      load();
+      const timer = setInterval(() => { if (isTaiexTradingHours()) load(); }, 60000);
+      return () => { alive = false; clearInterval(timer); };
+    }, []);
+    return live;
+  }
+
+  const isTaiexStat = (s) => /TAIEX/i.test(s.label || "") || /TWII/i.test(s.link || "");
+
   /* 以官方 iframe 嵌入我的 Google 行事曆（AGENDA 模式、台北時區）。 */
   function CalendarPanel() {
     const I = window.Icons;
@@ -49,6 +114,7 @@
 
   function Dashboard() {
     const K = window.KIT, I = window.Icons;
+    const taiex = useTaiexLive();
     return (
       <div className="kit-page" style={{ padding: "var(--space-8)", display: "flex", flexDirection: "column", gap: "var(--space-8)" }}>
         {/* Greeting / hero strip */}
@@ -70,13 +136,21 @@
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-4)" }}>
           {K.stats.map((s, i) => {
             const col = { insight: "var(--insight)", intelligence: "var(--intelligence)", illumination: "var(--illumination)" }[s.tone];
+            // 加權指數 TAIEX：若即時資料已載入，覆蓋內建值（收盤指數、漲跌%、走勢）。
+            const live = isTaiexStat(s) ? taiex : null;
+            const value = live ? live.value : s.value;
+            const delta = live ? live.delta : s.delta;
+            const data = live && live.data && live.data.length ? live.data : s.data;
+            const title = isTaiexStat(s)
+              ? (live ? `最新收盤指數 ${live.value}（資料日 ${live.asOf}，來源：證交所 OpenAPI）· 點擊看盤中即時報價` : "查看線上即時報價（Yahoo 股市）")
+              : (s.link ? "查看線上即時報價（Yahoo 股市）" : undefined);
             return (
-              <StatCard key={i} label={s.label} value={s.value} unit={s.unit} delta={s.delta} deltaMode={s.mode} tone={s.tone}
+              <StatCard key={i} label={s.label} value={value} unit={s.unit} delta={delta} deltaMode={s.mode} tone={s.tone}
                 icon={s.link ? <I.ext size={16} /> : <I.chart size={18} />}
                 onClick={s.link ? () => window.open(s.link, "_blank", "noopener,noreferrer") : undefined}
                 style={s.link ? { cursor: "pointer" } : undefined}
-                title={s.link ? "查看線上即時報價（Yahoo 股市）" : undefined}
-                spark={<Sparkline data={s.data} color={s.mode === "finance" ? "var(--finance-up)" : col} />} />
+                title={title}
+                spark={<Sparkline data={data} color={s.mode === "finance" ? "var(--finance-up)" : col} />} />
             );
           })}
         </div>
