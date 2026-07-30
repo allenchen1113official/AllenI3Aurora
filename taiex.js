@@ -50,7 +50,7 @@
   // 去除 HTML 標籤、千分位逗號後轉數字（保留正負號與小數點）
   function parseNum(x) {
     if (x == null) return NaN;
-    var s = String(x).replace(/<[^>]*>/g, "").replace(/,/g, "").replace(/[^\d.+\-]/g, "");
+    var s = String(x).replace(/<[^>]*>/g, "").replace(/,/g, "").replace(/[^\d.+-]/g, "");
     return parseFloat(s);
   }
 
