@@ -31,25 +31,23 @@
   const openCalendar = () => window.open(CAL_URL, "_blank", "noopener,noreferrer");
 
   /* ── 加權指數 TAIEX 即時／收盤資料 ────────────────────────────────────
-     需求：盤中顯示「即時」指數，盤後／非交易時段顯示最新收盤，並自動更新、
-     依台股交易時段與非交易時段採不同刷新頻率。皆為前端直接抓取，無自建後端。
+     為確保「儀表板首頁永遠是最新」，主要資料來源改為同源的 data/taiex.json：
+     由 GitHub Actions 定時任務（.github/workflows/taiex-update.yml）在伺服器端
+     向證交所抓取——交易時段抓 MIS 即時、非交易抓 OpenAPI 收盤——寫入此檔。
+     前端同源讀取，無 CORS 問題、必定可用，故不再依賴不穩定的公用代理。
 
-     資料來源：
-     1) 盤中即時：證交所 MIS 行情 API（ex_ch=tse_t00.tw ＝發行量加權股價指數），
-        提供當前指數 z 與昨收 y，可即時計算漲跌點與漲跌%。此端點未開放 CORS，
-        故經公用 CORS 代理轉發；代理不可用時自動退回官方收盤資料。
-     2) 收盤／非交易：證交所 OpenAPI「加權指數歷史資料」（原生支援 CORS），
-        取最新收盤與昨收計算漲跌，並以近 9 個交易日收盤繪製迷你走勢。
-     任一來源失敗都靜默退回下一層，最終退回 kit.jsx 內建預設值，不影響其他區塊。
+     額外強化：交易時段另嘗試由瀏覽器直接抓 MIS 即時（經公用 CORS 代理），
+     成功則覆蓋為更即時的值；失敗則沿用 taiex.json 的基準值。
+     所有來源皆失敗才退回 kit.jsx 內建值，不影響儀表板其他區塊。
      卡片點擊仍前往 Yahoo ^TWII 完整即時報價頁（見 kit.jsx 之 stats.link）。 */
-  const TAIEX_HISTORY_API = "https://openapi.twse.com.tw/v1/indicesReport/MI_5MINS_HIST";
+  const TAIEX_JSON_URL = "/AllenI3Aurora/data/taiex.json";
   const TAIEX_REALTIME_API = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw&json=1&delay=0";
-  // 公用 CORS 代理（依序嘗試）；僅用於轉發未開放 CORS 的來源。
+  // 公用 CORS 代理（依序嘗試）；僅用於瀏覽器端轉發未開放 CORS 的即時來源。
   const CORS_PROXIES = [
     (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
     (u) => "https://corsproxy.io/?url=" + encodeURIComponent(u),
   ];
-  // 交易時段每 20 秒刷新；非交易時段每 10 分鐘檢查一次（收盤結算／隔日更新）。
+  // 交易時段每 20 秒刷新；非交易時段每 10 分鐘刷新一次。
   const TAIEX_POLL_TRADING = 20 * 1000;
   const TAIEX_POLL_IDLE = 10 * 60 * 1000;
 
@@ -91,29 +89,21 @@
     return null;
   }
 
-  /* 解析 OpenAPI 收盤歷史，計算最新收盤、漲跌與近 9 日走勢。null＝無法解析。 */
-  function parseTaiexHistory(items) {
-    if (!Array.isArray(items)) return null;
-    const rows = items
-      .map((it) => ({
-        date: String((it && (it.Date || it.date)) || ""),
-        close: parseFloat(String((it && (it.ClosingIndex || it.closingIndex)) || "").replace(/,/g, "")),
-      }))
-      .filter((r) => r.date && isFinite(r.close));
-    if (!rows.length) return null;
-    rows.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-    const closes = rows.map((r) => r.close);
-    const last = closes[closes.length - 1];
-    const prev = closes.length > 1 ? closes[closes.length - 2] : last;
-    const pts = last - prev;
-    const pct = prev ? (pts / prev) * 100 : 0;
-    return {
-      value: taiexNumFmt.format(last),
-      delta: taiexDeltaLabel(pct, pts),
-      data: closes.slice(-9),
-      asOf: rows[rows.length - 1].date,
-      live: false,
-    };
+  /* 讀取同源 data/taiex.json（GitHub Actions 定時更新）。此為主要、必定可用的來源。 */
+  async function fetchTaiexBaseline() {
+    try {
+      const res = await fetch(TAIEX_JSON_URL, { cache: "no-store" });
+      if (!res.ok) return null;
+      const j = await res.json();
+      if (!j || j.value == null || j.delta == null) return null;
+      return {
+        value: String(j.value),
+        delta: String(j.delta),
+        data: Array.isArray(j.data) ? j.data : undefined,
+        asOf: j.asOf ? String(j.asOf) : "",
+        live: !!j.live,
+      };
+    } catch { return null; }
   }
 
   /* 解析 MIS 盤中即時資料。null＝非交易中／無有效即時值（改用收盤）。 */
@@ -136,42 +126,33 @@
     };
   }
 
-  /* 自動更新：先抓收盤歷史（走勢＋收盤基準），再依交易時段決定顯示即時或收盤，
-     並以交易／非交易不同頻率持續刷新。任何失敗都退回上一層可用值。 */
+  /* 自動更新：以 data/taiex.json 為基準（同源、必定可用），交易時段另嘗試
+     瀏覽器端 MIS 即時覆蓋為更新的值；依交易／非交易採不同刷新頻率。 */
   function useTaiexLive() {
     const [live, setLive] = React.useState(null);
     React.useEffect(() => {
       let alive = true;
       let timer = null;
-      const histRef = { current: null }; // 收盤走勢（sparkline）與收盤基準快取
+      const baseRef = { current: null }; // data/taiex.json 基準值（含走勢）
 
-      const loadHistory = async () => {
-        const parsed = parseTaiexHistory(await fetchJSONResilient(TAIEX_HISTORY_API));
-        if (parsed) histRef.current = parsed;
-        return parsed;
-      };
-
-      const tick = async () => {
+      const refresh = async () => {
+        // 1) 先更新同源基準值（伺服器端即時／收盤與走勢）。
+        const base = await fetchTaiexBaseline();
+        if (base) baseRef.current = base;
+        // 2) 交易時段：另嘗試瀏覽器端 MIS 即時，成功則以更即時的值覆蓋。
         if (isTaiexTradingHours()) {
-          const spark = histRef.current && histRef.current.data;
+          const spark = baseRef.current && baseRef.current.data;
           const rt = parseTaiexRealtime(await fetchJSONResilient(TAIEX_REALTIME_API), spark);
           if (alive && rt) return setLive(rt);
         }
-        // 非交易時段，或即時抓取失敗：顯示最新官方收盤。
-        const hist = histRef.current || (await loadHistory());
-        if (alive && hist) setLive(hist);
+        if (alive && baseRef.current) setLive(baseRef.current);
       };
 
-      const schedule = () => {
-        const ms = isTaiexTradingHours() ? TAIEX_POLL_TRADING : TAIEX_POLL_IDLE;
-        timer = setTimeout(async () => { await tick(); if (alive) schedule(); }, ms);
+      const loop = async () => {
+        await refresh();
+        if (alive) timer = setTimeout(loop, isTaiexTradingHours() ? TAIEX_POLL_TRADING : TAIEX_POLL_IDLE);
       };
-
-      (async () => {
-        await loadHistory(); // 先取得走勢與收盤基準
-        await tick();        // 依當下交易時段顯示即時或收盤
-        if (alive) schedule();
-      })();
+      loop();
 
       return () => { alive = false; if (timer) clearTimeout(timer); };
     }, []);
