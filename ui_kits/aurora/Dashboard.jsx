@@ -208,7 +208,7 @@
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
               <Badge tone="illumination" dot>{taipeiDateLabel()}</Badge>
             </div>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "var(--text-3xl)", color: "var(--text-1)", margin: 0, lineHeight: 1.1 }}>早安，Allen ☀️</h2>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "var(--text-3xl)", color: "var(--text-1)", margin: 0, lineHeight: 1.1 }}>Carpe Diem，{(K.brand && K.brand.owner) || "Allen"} ✨</h2>
             <p style={{ color: "var(--text-2)", margin: "8px 0 0", fontSize: "var(--text-md)" }}>{K.brand.tagline}　今天有 <b style={{ color: "var(--insight)" }}>4</b> 則關注動態、<b style={{ color: "var(--intelligence)" }}>1</b> 場會議與 <b style={{ color: "var(--illumination)" }}>2</b> 集必聽 Podcast。</p>
           </div>
           <div style={{ display: "flex", gap: 10 }}>
