@@ -85,9 +85,11 @@ function parseRealtime(json, sparkFallback) {
   const pts = cur - prev, pct = prev ? (pts / prev) * 100 : 0;
   // 交易時段內為即時（盤中）；收盤後 MIS 仍保留當日收盤快照，標為收盤。
   const trading = isTradingHours();
+  // 走勢以近幾日收盤為底，末點換成當前指數，讓走勢線收在與大字相同的水準。
+  const spark = sparkFallback && sparkFallback.length ? [...sparkFallback.slice(-8), cur] : undefined;
   return {
     value: numFmt.format(cur), delta: deltaLabel(pct, pts), points: +pts.toFixed(2), pct: +pct.toFixed(2),
-    data: sparkFallback && sparkFallback.length ? sparkFallback : undefined,
+    data: spark,
     asOf: trading ? `${a.t || ""} 盤中`.trim() : `${formatTwDate(a.d)} 收盤`,
     live: trading,
   };
