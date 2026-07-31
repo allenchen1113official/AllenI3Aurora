@@ -34,6 +34,15 @@ function isTradingHours(now = new Date()) {
   return t.minutes >= 9 * 60 && t.minutes <= 13 * 60 + 30;
 }
 
+/* 證交所日期字串轉西元 YYYY-MM-DD：OpenAPI 用民國年（7 碼 yyymmdd，
+   如 1150730＝民國115年）；MIS 用西元（8 碼 yyyymmdd，如 20260731）。 */
+function formatTwDate(raw) {
+  const s = String(raw || "").trim();
+  if (/^\d{8}$/.test(s)) return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
+  if (/^\d{7}$/.test(s)) return `${+s.slice(0, 3) + 1911}-${s.slice(3, 5)}-${s.slice(5, 7)}`;
+  return s;
+}
+
 async function fetchJSON(url) {
   const res = await fetch(url, {
     headers: {
@@ -61,8 +70,7 @@ function parseHistory(items) {
   const last = closes[closes.length - 1];
   const prev = closes.length > 1 ? closes[closes.length - 2] : last;
   const pts = last - prev, pct = prev ? (pts / prev) * 100 : 0;
-  const ymd = rows[rows.length - 1].date; // yyyymmdd
-  const asOf = ymd.length === 8 ? `${ymd.slice(0, 4)}-${ymd.slice(4, 6)}-${ymd.slice(6, 8)} 收盤` : `${ymd} 收盤`;
+  const asOf = `${formatTwDate(rows[rows.length - 1].date)} 收盤`;
   return { value: numFmt.format(last), delta: deltaLabel(pct, pts), points: +pts.toFixed(2), pct: +pct.toFixed(2), data: closes.slice(-9), asOf, live: false };
 }
 
@@ -73,30 +81,35 @@ function parseRealtime(json, sparkFallback) {
   const cur = parseFloat(String(a.z || "").replace(/,/g, ""));
   const prev = parseFloat(String(a.y || "").replace(/,/g, ""));
   if (!Number.isFinite(cur) || cur <= 0 || !Number.isFinite(prev) || prev <= 0) return null;
-  if (a.d && String(a.d) !== taipeiNowParts().ymd) return null; // 僅接受今日即時
+  if (a.d && String(a.d) !== taipeiNowParts().ymd) return null; // 僅接受今日資料
   const pts = cur - prev, pct = prev ? (pts / prev) * 100 : 0;
+  // 交易時段內為即時（盤中）；收盤後 MIS 仍保留當日收盤快照，標為收盤。
+  const trading = isTradingHours();
   return {
     value: numFmt.format(cur), delta: deltaLabel(pct, pts), points: +pts.toFixed(2), pct: +pct.toFixed(2),
     data: sparkFallback && sparkFallback.length ? sparkFallback : undefined,
-    asOf: a.t ? `${a.t} 盤中` : "盤中", live: true,
+    asOf: trading ? `${a.t || ""} 盤中`.trim() : `${formatTwDate(a.d)} 收盤`,
+    live: trading,
   };
 }
 
 async function main() {
-  // 走勢與收盤基準（也是非交易時段的主要值）。
+  // 走勢（sparkline）與收盤基準：一律取 OpenAPI 近 9 日收盤。
   let history = null;
   try { history = parseHistory(await fetchJSON(OPENAPI_HIST)); }
   catch (e) { console.error("OpenAPI 收盤抓取失敗：", e.message); }
 
-  let result = history;
+  // 優先採用 MIS：交易時段為即時；收盤後 MIS 仍保留「當日」收盤快照，
+  // 比 OpenAPI（每日收盤更新有延遲，收盤後可能仍是前一日）更早反映當日
+  // 最新指數。parseRealtime 已限定僅接受台北時區「今日」的資料。
+  let result = null;
+  try {
+    const rt = parseRealtime(await fetchJSON(MIS_REALTIME), history && history.data);
+    if (rt) result = rt;
+  } catch (e) { console.error("MIS 抓取失敗：", e.message); }
 
-  // 交易時段：以 MIS 即時覆蓋。
-  if (isTradingHours()) {
-    try {
-      const rt = parseRealtime(await fetchJSON(MIS_REALTIME), history && history.data);
-      if (rt) result = rt;
-    } catch (e) { console.error("MIS 即時抓取失敗，改用收盤：", e.message); }
-  }
+  // MIS 無今日資料（週末／假日／夜間重置後）才退回 OpenAPI 收盤。
+  if (!result) result = history;
 
   if (!result) {
     // 全數失敗：保留現有檔案，不覆蓋成空值。
