@@ -7,7 +7,7 @@ between the five surfaces. Fully responsive (sidebar collapses to a drawer under
 ## Screens
 | File | Surface | Notes |
 |------|---------|-------|
-| `Dashboard.jsx` | 儀表板 — home control panel | Greeting hero, stat row (TAIEX/結餘/深度工作/待讀), 今日關注動態 feed, 待讀進度, 常聽 Podcast, 常用網站, 個人年輪 mini. |
+| `Dashboard.jsx` | 儀表板 — home control panel | Greeting hero, stat row (TAIEX/財富自由指數/深度工作/待讀), 今日關注動態 feed, 待讀進度, 常聽 Podcast, 常用網站, 個人年輪 mini. |
 | `NewsletterIssue.jsx` | 本期報報 — editorial reading view | Centered masthead, cover image, 洞察/理財/啟發 sections, mini stock table (紅漲綠跌), pull-quote, footer CTA. |
 | `Archive.jsx` | 歷期彙整 — past issues | Cadence tabs (全部/日報/週報/月報), year filter chips, cover-card grid. |
 | `Timeline.jsx` | 個人年輪 — life timeline | Aurora-spine vertical timeline, ring stat band, 1975→2026 milestones. |
