@@ -41,7 +41,7 @@ window.Icons = Icons;
 
 /* ---------- Mock data ---------- */
 window.KIT = {
-  brand: { zh: "艾倫報報", en: "Allen I³ Aurora", tagline: "洞察世界．累積智慧．點亮未來。" },
+  brand: { zh: "艾倫報報", en: "Allen I³ Aurora", tagline: "洞察世界．累積智慧．點亮未來。", owner: "Allen" },
   nav: [
     { id: "dashboard", label: "儀表板", en: "Dashboard", icon: "home" },
     { id: "issue", label: "本期報報", en: "This Issue", icon: "paper" },
