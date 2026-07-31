@@ -117,10 +117,12 @@
     if (a.d && String(a.d) !== taipeiNowParts().ymd) return null;
     const pts = cur - prev;
     const pct = prev ? (pts / prev) * 100 : 0;
+    // 走勢末點換成當前指數，讓走勢線收在與大字相同的水準。
+    const spark = sparkFallback && sparkFallback.length ? [...sparkFallback.slice(-8), cur] : undefined;
     return {
       value: taiexNumFmt.format(cur),
       delta: taiexDeltaLabel(pct, pts),
-      data: sparkFallback && sparkFallback.length ? sparkFallback : undefined,
+      data: spark,
       asOf: a.t ? `${a.t} 盤中` : "盤中",
       live: true,
     };
