@@ -30,27 +30,68 @@
   const CAL_URL = `https://calendar.google.com/calendar/u/0/r?authuser=${encodeURIComponent(CAL_EMAIL)}`;
   const openCalendar = () => window.open(CAL_URL, "_blank", "noopener,noreferrer");
 
-  /* ── 加權指數 TAIEX 即時資料 ──────────────────────────────────────────
-     資料來源：證交所官方 OpenAPI（openapi.twse.com.tw，原生支援 CORS，免後端／免代理）。
-     「發行量加權股價指數歷史資料」提供每日開高低收，取最新收盤指數與前一日相比計算漲跌，
-     並以近 9 個交易日收盤價繪製迷你走勢。此為官方盤後／收盤資料，
-     真正的盤中逐筆即時報價請點卡片前往 Yahoo 股市（見 kit.jsx 之 stats.link）。 */
-  const TAIEX_HISTORY_API = "https://openapi.twse.com.tw/v1/indicesReport/MI_5MINS_HIST";
-  const taiexNumFmt = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  /* ── 加權指數 TAIEX 即時／收盤資料 ────────────────────────────────────
+     需求：盤中顯示「即時」指數，盤後／非交易時段顯示最新收盤，並自動更新、
+     依台股交易時段與非交易時段採不同刷新頻率。皆為前端直接抓取，無自建後端。
 
-  /* 台股交易時段（台北時區，週一至週五 09:00–13:30） */
+     資料來源：
+     1) 盤中即時：證交所 MIS 行情 API（ex_ch=tse_t00.tw ＝發行量加權股價指數），
+        提供當前指數 z 與昨收 y，可即時計算漲跌點與漲跌%。此端點未開放 CORS，
+        故經公用 CORS 代理轉發；代理不可用時自動退回官方收盤資料。
+     2) 收盤／非交易：證交所 OpenAPI「加權指數歷史資料」（原生支援 CORS），
+        取最新收盤與昨收計算漲跌，並以近 9 個交易日收盤繪製迷你走勢。
+     任一來源失敗都靜默退回下一層，最終退回 kit.jsx 內建預設值，不影響其他區塊。
+     卡片點擊仍前往 Yahoo ^TWII 完整即時報價頁（見 kit.jsx 之 stats.link）。 */
+  const TAIEX_HISTORY_API = "https://openapi.twse.com.tw/v1/indicesReport/MI_5MINS_HIST";
+  const TAIEX_REALTIME_API = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw&json=1&delay=0";
+  // 公用 CORS 代理（依序嘗試）；僅用於轉發未開放 CORS 的來源。
+  const CORS_PROXIES = [
+    (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+    (u) => "https://corsproxy.io/?url=" + encodeURIComponent(u),
+  ];
+  // 交易時段每 20 秒刷新；非交易時段每 10 分鐘檢查一次（收盤結算／隔日更新）。
+  const TAIEX_POLL_TRADING = 20 * 1000;
+  const TAIEX_POLL_IDLE = 10 * 60 * 1000;
+
+  const taiexNumFmt = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const taiexSigned = (n) => (n >= 0 ? "+" : "-") + taiexNumFmt.format(Math.abs(n));
+  // 漲跌顯示：「+7.98% · +3,186.45」。以 + / − 開頭讓 StatCard 判定紅漲綠跌。
+  function taiexDeltaLabel(pct, pts) {
+    return `${pct >= 0 ? "+" : "-"}${Math.abs(pct).toFixed(2)}% · ${taiexSigned(pts)}`;
+  }
+
+  /* 台北時區當下的 週幾 / 分鐘數 / yyyymmdd。 */
+  function taipeiNowParts(now = new Date()) {
+    const p = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Taipei", weekday: "short", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false,
+    }).formatToParts(now).reduce((a, x) => (a[x.type] = x.value, a), {});
+    return { weekday: p.weekday, minutes: (+p.hour) * 60 + (+p.minute), ymd: `${p.year}${p.month}${p.day}` };
+  }
+
+  /* 台股交易時段（台北時區，週一至週五 09:00–13:30）。 */
   function isTaiexTradingHours(now = new Date()) {
     try {
-      const p = new Intl.DateTimeFormat("en-GB", {
-        timeZone: "Asia/Taipei", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
-      }).formatToParts(now).reduce((a, x) => (a[x.type] = x.value, a), {});
-      if (p.weekday === "Sat" || p.weekday === "Sun") return false;
-      const mins = (+p.hour) * 60 + (+p.minute);
-      return mins >= 9 * 60 && mins <= 13 * 60 + 30;
+      const t = taipeiNowParts(now);
+      if (t.weekday === "Sat" || t.weekday === "Sun") return false;
+      return t.minutes >= 9 * 60 && t.minutes <= 13 * 60 + 30;
     } catch { return false; }
   }
 
-  /* 解析 OpenAPI 回傳，計算最新收盤、漲跌% 與走勢資料。回傳 null 代表無法解析（保留內建值）。 */
+  /* 依序嘗試直接抓取與各 CORS 代理，回傳解析後 JSON；全數失敗回傳 null。 */
+  async function fetchJSONResilient(url) {
+    const attempts = [url, ...CORS_PROXIES.map((f) => f(url))];
+    for (const u of attempts) {
+      try {
+        const res = await fetch(u, { headers: { Accept: "application/json" } });
+        if (!res.ok) continue;
+        return await res.json();
+      } catch { /* 換下一個來源 */ }
+    }
+    return null;
+  }
+
+  /* 解析 OpenAPI 收盤歷史，計算最新收盤、漲跌與近 9 日走勢。null＝無法解析。 */
   function parseTaiexHistory(items) {
     if (!Array.isArray(items)) return null;
     const rows = items
@@ -64,31 +105,75 @@
     const closes = rows.map((r) => r.close);
     const last = closes[closes.length - 1];
     const prev = closes.length > 1 ? closes[closes.length - 2] : last;
-    const pct = prev ? ((last - prev) / prev) * 100 : 0;
+    const pts = last - prev;
+    const pct = prev ? (pts / prev) * 100 : 0;
     return {
       value: taiexNumFmt.format(last),
-      delta: `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%`,
+      delta: taiexDeltaLabel(pct, pts),
       data: closes.slice(-9),
       asOf: rows[rows.length - 1].date,
+      live: false,
     };
   }
 
-  /* 掛載時抓一次；交易時段內每 60 秒刷新一次（收盤後官方資料更新即會反映）。 */
+  /* 解析 MIS 盤中即時資料。null＝非交易中／無有效即時值（改用收盤）。 */
+  function parseTaiexRealtime(json, sparkFallback) {
+    const a = json && json.msgArray && json.msgArray[0];
+    if (!a) return null;
+    const cur = parseFloat(String(a.z || "").replace(/,/g, ""));
+    const prev = parseFloat(String(a.y || "").replace(/,/g, ""));
+    if (!isFinite(cur) || cur <= 0 || !isFinite(prev) || prev <= 0) return null;
+    // 僅接受「今日」（台北時區）的即時報價，避免假日／盤前誤用舊值。
+    if (a.d && String(a.d) !== taipeiNowParts().ymd) return null;
+    const pts = cur - prev;
+    const pct = prev ? (pts / prev) * 100 : 0;
+    return {
+      value: taiexNumFmt.format(cur),
+      delta: taiexDeltaLabel(pct, pts),
+      data: sparkFallback && sparkFallback.length ? sparkFallback : undefined,
+      asOf: a.t ? `${a.t} 盤中` : "盤中",
+      live: true,
+    };
+  }
+
+  /* 自動更新：先抓收盤歷史（走勢＋收盤基準），再依交易時段決定顯示即時或收盤，
+     並以交易／非交易不同頻率持續刷新。任何失敗都退回上一層可用值。 */
   function useTaiexLive() {
     const [live, setLive] = React.useState(null);
     React.useEffect(() => {
       let alive = true;
-      const load = async () => {
-        try {
-          const res = await fetch(TAIEX_HISTORY_API, { headers: { Accept: "application/json" } });
-          if (!res.ok) throw new Error("HTTP " + res.status);
-          const parsed = parseTaiexHistory(await res.json());
-          if (alive && parsed) setLive(parsed);
-        } catch { /* 靜默失敗，保留 kit.jsx 內建值 */ }
+      let timer = null;
+      const histRef = { current: null }; // 收盤走勢（sparkline）與收盤基準快取
+
+      const loadHistory = async () => {
+        const parsed = parseTaiexHistory(await fetchJSONResilient(TAIEX_HISTORY_API));
+        if (parsed) histRef.current = parsed;
+        return parsed;
       };
-      load();
-      const timer = setInterval(() => { if (isTaiexTradingHours()) load(); }, 60000);
-      return () => { alive = false; clearInterval(timer); };
+
+      const tick = async () => {
+        if (isTaiexTradingHours()) {
+          const spark = histRef.current && histRef.current.data;
+          const rt = parseTaiexRealtime(await fetchJSONResilient(TAIEX_REALTIME_API), spark);
+          if (alive && rt) return setLive(rt);
+        }
+        // 非交易時段，或即時抓取失敗：顯示最新官方收盤。
+        const hist = histRef.current || (await loadHistory());
+        if (alive && hist) setLive(hist);
+      };
+
+      const schedule = () => {
+        const ms = isTaiexTradingHours() ? TAIEX_POLL_TRADING : TAIEX_POLL_IDLE;
+        timer = setTimeout(async () => { await tick(); if (alive) schedule(); }, ms);
+      };
+
+      (async () => {
+        await loadHistory(); // 先取得走勢與收盤基準
+        await tick();        // 依當下交易時段顯示即時或收盤
+        if (alive) schedule();
+      })();
+
+      return () => { alive = false; if (timer) clearTimeout(timer); };
     }, []);
     return live;
   }
@@ -142,7 +227,11 @@
             const delta = live ? live.delta : s.delta;
             const data = live && live.data && live.data.length ? live.data : s.data;
             const title = isTaiexStat(s)
-              ? (live ? `最新收盤指數 ${live.value}（資料日 ${live.asOf}，來源：證交所 OpenAPI）· 點擊看盤中即時報價` : "查看線上即時報價（Yahoo 股市）")
+              ? (live
+                  ? (live.live
+                      ? `盤中即時指數 ${live.value}（${live.asOf}，來源：證交所 MIS）· 點擊看完整即時報價`
+                      : `最新收盤指數 ${live.value}（資料日 ${live.asOf}，來源：證交所 OpenAPI）· 點擊看盤中即時報價`)
+                  : "查看線上即時報價（Yahoo 股市）")
               : (s.link ? "查看線上即時報價（Yahoo 股市）" : undefined);
             return (
               <StatCard key={i} label={s.label} value={value} unit={s.unit} delta={delta} deltaMode={s.mode} tone={s.tone}
