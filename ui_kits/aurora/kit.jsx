@@ -52,7 +52,7 @@ window.KIT = {
   stats: [
     { label: "加權指數 TAIEX", value: "43,119.75", unit: "pt", delta: "+7.98% · +3,186.45", tone: "insight", mode: "finance", data: [39.9,40.4,40.1,41.0,41.6,42.2,42.5,42.8,43.1], link: "https://tw.stock.yahoo.com/quote/%5ETWII" },
     { label: "本月結餘", value: "42,180", unit: "TWD", delta: "+8.0%", tone: "intelligence", mode: "semantic", data: [4,4.2,4.1,4.5,4.4,4.8,5,5.2] },
-    { label: "深度工作", value: "26.5", unit: "hr", delta: "+12%", tone: "illumination", mode: "semantic", data: [3,3.5,3.2,4,3.8,4.4,4.6,5] },
+    { label: "運動", value: "26.5", unit: "hr", delta: "+12%", tone: "illumination", mode: "semantic", data: [3,3.5,3.2,4,3.8,4.4,4.6,5], link: "https://connect.garmin.com/app/profile/50e697d9-3333-4ec3-a1e1-eebf531414c3" },
     { label: "待讀清單", value: "12", unit: "篇", delta: "-3", tone: "insight", mode: "semantic", data: [8,7,9,6,5,6,5,4] },
   ],
   focus: [

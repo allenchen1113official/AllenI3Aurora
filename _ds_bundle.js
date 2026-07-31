@@ -2911,13 +2911,14 @@ window.KIT = {
     mode: "semantic",
     data: [4, 4.2, 4.1, 4.5, 4.4, 4.8, 5, 5.2]
   }, {
-    label: "深度工作",
+    label: "運動",
     value: "26.5",
     unit: "hr",
     delta: "+12%",
     tone: "illumination",
     mode: "semantic",
-    data: [3, 3.5, 3.2, 4, 3.8, 4.4, 4.6, 5]
+    data: [3, 3.5, 3.2, 4, 3.8, 4.4, 4.6, 5],
+    link: "https://connect.garmin.com/app/profile/50e697d9-3333-4ec3-a1e1-eebf531414c3"
   }, {
     label: "待讀清單",
     value: "12",
