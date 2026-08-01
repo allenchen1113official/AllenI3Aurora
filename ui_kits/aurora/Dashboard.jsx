@@ -316,6 +316,8 @@
     const exercise = useExerciseLive();
     const wealth = useWealthLive();
     const focus = useFocusLive();
+    const focusList = focus || K.focus;                 // 實際顯示的今日關注動態
+    const podcastCount = (K.podcasts || []).length;     // 實際 Podcast 則數
     return (
       <div className="kit-page" style={{ padding: "var(--space-8)", display: "flex", flexDirection: "column", gap: "var(--space-8)" }}>
         {/* Greeting / hero strip */}
@@ -325,7 +327,7 @@
               <Badge tone="illumination" dot>{taipeiDateLabel()}</Badge>
             </div>
             <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "var(--text-3xl)", color: "var(--text-1)", margin: 0, lineHeight: 1.1 }}>Carpe Diem，{(K.brand && K.brand.owner) || "Allen"} ✨</h2>
-            <p style={{ color: "var(--text-2)", margin: "8px 0 0", fontSize: "var(--text-md)" }}>{K.brand.tagline}　今天有 <b style={{ color: "var(--insight)" }}>4</b> 則關注動態、<b style={{ color: "var(--intelligence)" }}>1</b> 場會議與 <b style={{ color: "var(--illumination)" }}>2</b> 集必聽 Podcast。</p>
+            <p style={{ color: "var(--text-2)", margin: "8px 0 0", fontSize: "var(--text-md)" }}>{K.brand.tagline}　今天有 <b style={{ color: "var(--insight)" }}>{focusList.length}</b> 則關注動態、<b style={{ color: "var(--intelligence)" }}>1</b> 場會議與 <b style={{ color: "var(--illumination)" }}>{podcastCount}</b> 集必聽 Podcast。</p>
           </div>
           <div style={{ display: "flex", gap: 10 }}>
             <Button variant="primary" iconRight={<I.arrow size={16} />}>撰寫今日速報</Button>
@@ -380,7 +382,7 @@
             <SectionHeader kicker="INSIGHT · 洞察" title="今日關注動態"
               action={<Button variant="ghost" size="sm" iconRight={<I.arrow size={15} />}>全部</Button>} />
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {(focus || K.focus).map((f, i) => {
+              {focusList.map((f, i) => {
                 const I2 = I[f.icon] || I.sparkle;
                 return (
                   <Card key={i} interactive padding="var(--space-5)">
