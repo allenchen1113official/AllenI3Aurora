@@ -163,6 +163,54 @@
 
   const isTaiexStat = (s) => /TAIEX/i.test(s.label || "") || /TWII/i.test(s.link || "");
 
+  /* ── 運動 Garmin 資料 ─────────────────────────────────────────────────
+     比照 TAIEX：主要資料來源為同源的 data/exercise.json，由 GitHub Actions
+     定時任務（.github/workflows/exercise-update.yml）在伺服器端向 Garmin
+     Connect 抓取本週運動時數並寫入此檔。前端同源讀取，無 CORS 問題、必定
+     可用；讀取成功即覆蓋該統計卡（標籤、數值、走勢、連結），因此首頁不再
+     受 Firestore 舊值（如「深度工作」）影響。讀取失敗才退回既有值。
+     卡片點擊前往 Garmin Connect 個人檔案。 */
+  const EXERCISE_JSON_URL = "/AllenI3Aurora/data/exercise.json";
+  const EXERCISE_LABEL = "運動";
+  const EXERCISE_LINK = "https://connect.garmin.com/app/profile/50e697d9-3333-4ec3-a1e1-eebf531414c3";
+  const EXERCISE_POLL = 30 * 60 * 1000; // 每 30 分鐘刷新一次
+
+  /* 讀取同源 data/exercise.json（GitHub Actions 定時更新）。 */
+  async function fetchExercise() {
+    try {
+      const res = await fetch(EXERCISE_JSON_URL, { cache: "no-store" });
+      if (!res.ok) return null;
+      const j = await res.json();
+      if (!j || j.value == null) return null;
+      return {
+        value: String(j.value),
+        unit: j.unit != null ? String(j.unit) : undefined,
+        delta: j.delta != null ? String(j.delta) : undefined,
+        data: Array.isArray(j.data) && j.data.length ? j.data : undefined,
+        asOf: j.asOf ? String(j.asOf) : "",
+      };
+    } catch { return null; }
+  }
+
+  function useExerciseLive() {
+    const [live, setLive] = React.useState(null);
+    React.useEffect(() => {
+      let alive = true;
+      let timer = null;
+      const loop = async () => {
+        const d = await fetchExercise();
+        if (alive && d) setLive(d);
+        if (alive) timer = setTimeout(loop, EXERCISE_POLL);
+      };
+      loop();
+      return () => { alive = false; if (timer) clearTimeout(timer); };
+    }, []);
+    return live;
+  }
+
+  // 以「運動」或 Firestore 舊值「深度工作」或 Garmin 連結辨識該卡。
+  const isExerciseStat = (s) => /運動|深度工作/.test(s.label || "") || /garmin/i.test(s.link || "");
+
   /* 以官方 iframe 嵌入我的 Google 行事曆（AGENDA 模式、台北時區）。 */
   function CalendarPanel() {
     const I = window.Icons;
@@ -183,6 +231,7 @@
   function Dashboard() {
     const K = window.KIT, I = window.Icons;
     const taiex = useTaiexLive();
+    const exercise = useExerciseLive();
     return (
       <div className="kit-page" style={{ padding: "var(--space-8)", display: "flex", flexDirection: "column", gap: "var(--space-8)" }}>
         {/* Greeting / hero strip */}
@@ -206,21 +255,29 @@
             const col = { insight: "var(--insight)", intelligence: "var(--intelligence)", illumination: "var(--illumination)" }[s.tone];
             // 加權指數 TAIEX：若即時資料已載入，覆蓋內建值（收盤指數、漲跌%、走勢）。
             const live = isTaiexStat(s) ? taiex : null;
-            const value = live ? live.value : s.value;
-            const delta = live ? live.delta : s.delta;
-            const data = live && live.data && live.data.length ? live.data : s.data;
+            // 運動：若 Garmin 資料已載入，覆蓋標籤、數值、走勢與連結（不受 Firestore 舊值影響）。
+            const ex = isExerciseStat(s) ? exercise : null;
+            const label = ex ? EXERCISE_LABEL : s.label;
+            const link = ex ? EXERCISE_LINK : s.link;
+            const unit = ex && ex.unit != null ? ex.unit : s.unit;
+            const value = live ? live.value : (ex ? ex.value : s.value);
+            const delta = live ? live.delta : (ex && ex.delta != null ? ex.delta : s.delta);
+            const data = live && live.data && live.data.length ? live.data
+              : (ex && ex.data ? ex.data : s.data);
             const title = isTaiexStat(s)
               ? (live
                   ? (live.live
                       ? `盤中即時指數 ${live.value}（${live.asOf}，來源：證交所 MIS）· 點擊看完整即時報價`
                       : `最新收盤指數 ${live.value}（資料日 ${live.asOf}，來源：證交所 OpenAPI）· 點擊看盤中即時報價`)
                   : "查看線上即時報價（Yahoo 股市）")
-              : (s.link ? "查看線上即時報價（Yahoo 股市）" : undefined);
+              : (ex
+                  ? `運動資料來源：Garmin Connect${ex.asOf ? `（${ex.asOf}）` : ""} · 點擊前往個人檔案`
+                  : (s.link ? "查看線上即時報價（Yahoo 股市）" : undefined));
             return (
-              <StatCard key={i} label={s.label} value={value} unit={s.unit} delta={delta} deltaMode={s.mode} tone={s.tone}
-                icon={s.link ? <I.ext size={16} /> : <I.chart size={18} />}
-                onClick={s.link ? () => window.open(s.link, "_blank", "noopener,noreferrer") : undefined}
-                style={s.link ? { cursor: "pointer" } : undefined}
+              <StatCard key={i} label={label} value={value} unit={unit} delta={delta} deltaMode={s.mode} tone={s.tone}
+                icon={link ? <I.ext size={16} /> : <I.chart size={18} />}
+                onClick={link ? () => window.open(link, "_blank", "noopener,noreferrer") : undefined}
+                style={link ? { cursor: "pointer" } : undefined}
                 title={title}
                 spark={<Sparkline data={data} color={s.mode === "finance" ? "var(--finance-up)" : col} />} />
             );

@@ -1,0 +1,54 @@
+name: 更新運動資料 Garmin
+
+# 伺服器端定時向 Garmin Connect 抓取本週運動時數，寫入 data/exercise.json
+# （同源，供前端讀取）。比照 TAIEX 的更新機制。
+# 需在 Repo Settings → Secrets and variables → Actions 設定：
+#   GARMIN_EMAIL、GARMIN_PASSWORD
+# 未設定時腳本會維持現有 data/exercise.json 不變（不會失敗）。
+# 註：GitHub 排程以 UTC 計；台北 = UTC+8。
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # 每 6 小時更新一次
+    - cron: "0 15 * * *"    # 台北 23:00 收尾當日
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/exercise-update.yml"
+      - "scripts/update-exercise.mjs"
+  workflow_dispatch: {}
+
+# 避免多個排程重疊執行造成 push 衝突。
+concurrency:
+  group: exercise-update
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 安裝相依套件
+        run: npm install --no-save garmin-connect
+      - name: 抓取並更新 data/exercise.json
+        env:
+          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+        run: node scripts/update-exercise.mjs
+      - name: 有變動才提交
+        run: |
+          if [[ -n "$(git status --porcelain data/exercise.json)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/exercise.json
+            git commit -m "chore(exercise): 自動更新運動資料 [skip ci]"
+            git pull --rebase --autostash origin main || true
+            git push
+          else
+            echo "運動資料無變動，略過提交。"
+          fi
