@@ -1,7 +1,7 @@
 {
   "items": [
     { "tag": "理財", "tone": "insight", "title": "台股熱力圖 · 上市／上櫃", "desc": "尾盤拉回失守4萬點關卡", "meta": "2026.07.30 · 市值熱力圖（最新）", "icon": "chart", "link": "https://drive.google.com/file/d/17_-SXv-q2_nc0TutFCkeAmERFc2fpKEc/view" },
-    { "tag": "選股", "tone": "intelligence", "title": "台股選股雷達", "desc": "台塑石化領漲，KD黃金交叉", "meta": "2026.07.23 · 訊號雷達（最新）", "icon": "compass", "link": "https://drive.google.com/file/d/14m47J56EBVyy4R__AkTvtZr0x6vNZwxN/view" },
+    { "tag": "選股", "tone": "intelligence", "title": "台股選股雷達", "desc": "多檔逼近漲停，KD黃金交叉", "meta": "2026.07.31 · 訊號雷達（最新）", "icon": "compass", "link": "https://drive.google.com/file/d/1nq9FS5eBl-t7Z6tprpi3kvmJicx7s55-/view" },
     { "tag": "日報", "tone": "illumination", "title": "艾倫極光日報", "desc": "蘋果智慧家庭中樞加速布局", "meta": "2026.08.01 · 每日速報", "icon": "paper", "link": "https://drive.google.com/file/d/1TyJB7OLZ-UFW90dOdGXcZP1wD7WwDY57/view" }
   ],
   "asOf": "2026.08.01",
