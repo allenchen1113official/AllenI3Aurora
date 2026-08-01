@@ -54,12 +54,19 @@
 <script type="text/babel" src="Subscribe.jsx" data-presets="react"></script>
 <script type="text/babel" data-presets="react">
 function App() {
-  const [screen, setScreen] = React.useState("dashboard");
+  const wantIssue = (() => { try { return new URLSearchParams(location.search).get("issue"); } catch (e) { return null; } })();
+  const [screen, setScreen] = React.useState(wantIssue ? "issue" : "dashboard");
   const [open, setOpen] = React.useState(false);
   const go = (id) => { setScreen(id); setOpen(false); };
+  const issueSub = () => {
+    const list = (window.KIT && window.KIT.issues) || [];
+    let it = wantIssue ? list.find((i) => String(i.no) === String(wantIssue)) : null;
+    if (!it) it = list.find((i) => Array.isArray(i.blocks) && i.blocks.length) || list[0];
+    return it ? [it.kind, "第 " + it.no + " 期", it.date].filter(Boolean).join(" · ") : "週報 · 第 26 期 · 2026.06.29";
+  };
   const meta = {
     dashboard: { title: "儀表板", sub: window.KIT.brand.tagline, C: window.Dashboard },
-    issue:     { title: "本期報報", sub: "週報 · 第 26 期 · 2026.06.29", C: window.NewsletterIssue },
+    issue:     { title: "本期報報", sub: issueSub(), C: window.NewsletterIssue },
     archive:   { title: "歷期彙整", sub: "日報 · 週報 · 月報", C: window.Archive },
     timeline:  { title: "個人年輪", sub: "1975 → 2026", C: window.Timeline },
     subscribe: { title: "訂閱管理", sub: "選擇你的閱讀節奏", C: window.Subscribe },

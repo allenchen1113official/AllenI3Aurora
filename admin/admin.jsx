@@ -463,11 +463,400 @@ function WealthPanel() {
   );
 }
 
+/* =====================================================================
+   電子報編輯器 — 立即編修內文 / Facebook・Instagram 貼文，檢視成果並一鍵分享
+   讀寫同一個 aurora_issues collection，欄位向下相容（歷期報報仍可用）。
+   內文以結構化 blocks 儲存，前台 NewsletterIssue.jsx 會據此渲染。
+   ===================================================================== */
+const NL_NAV = "__newsletter";
+const NL_KINDS = ["日報", "週報", "月報", "特刊"];
+
+/* 各內文區塊型別與可編欄位（與前台 Block 對應） */
+const NL_BLOCKS = {
+  rule:    { label: "分隔線／小標", fields: [{ k: "label", t: "text", ph: "例：INSIGHT · 洞察" }] },
+  h2:      { label: "段落標題", fields: [{ k: "text", t: "text", ph: "例：一、記憶，是代理的護城河" }] },
+  lead:    { label: "內文段落", fields: [{ k: "text", t: "area", ph: "一段內文…" }] },
+  callout: { label: "重點框 Callout", fields: [{ k: "tone", t: "tone" }, { k: "title", t: "text", ph: "例：本週智慧 Intelligence" }, { k: "text", t: "area", ph: "重點一句話…" }] },
+  quote:   { label: "引言 Quote", fields: [{ k: "text", t: "area", ph: "「一句想被記住的話。」" }] },
+  note:    { label: "小字附註", fields: [{ k: "text", t: "area", ph: "※ 免責聲明或資料來源…" }] },
+  table:   { label: "行情小表格", fields: [{ k: "head", t: "text", ph: "標的,收盤,漲跌" }, { k: "rows", t: "json", ph: '[["台積電 2330","1,085","+2.4%",true]]' }, { k: "note", t: "text", ph: "※ 台股慣例 紅漲綠跌…" }] },
+};
+
+/* 前台公開網址（分享用）；admin 在 /AllenI3Aurora/admin/ 下，origin 相同 */
+function nlIssueUrl(issue) {
+  return location.origin + "/AllenI3Aurora/?issue=" + encodeURIComponent(issue && issue.no != null ? issue.no : "");
+}
+async function nlCopy(text, okLabel, setToast) {
+  try { await navigator.clipboard.writeText(text); setToast((okLabel || "已複製") + " ✓"); }
+  catch (e) { window.prompt("手動複製：", text); }
+  setTimeout(() => setToast(""), 2200);
+}
+function nlFacebookText(issue) {
+  const s = issue.social || {};
+  return [s.facebook || issue.title || "", nlIssueUrl(issue), s.hashtags || ""].filter(Boolean).join("\n\n");
+}
+function nlInstagramText(issue) {
+  const s = issue.social || {};
+  return [s.instagram || issue.title || "", s.hashtags || ""].filter(Boolean).join("\n\n");
+}
+async function nlShare(issue, setToast) {
+  const url = nlIssueUrl(issue);
+  const payload = { title: "艾倫報報 · " + (issue.title || ""), text: (issue.social && issue.social.facebook) || issue.subtitle || issue.title || "", url };
+  if (navigator.share) {
+    try { await navigator.share(payload); return; } catch (e) { if (e && e.name === "AbortError") return; }
+  }
+  nlCopy(url, "已複製分享連結", setToast);
+}
+
+/* ---------- 內文區塊編輯（單塊） ---------- */
+function BlockRow({ block, idx, total, onChange, onMove, onDel }) {
+  const def = NL_BLOCKS[block.t] || NL_BLOCKS.lead;
+  const set = (k, v) => onChange({ ...block, [k]: v });
+  return (
+    <div style={{ background: "var(--night-850)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", padding: 12, marginBottom: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
+        <select className="ad-in" style={{ width: "auto", flex: "0 0 auto", padding: "6px 10px" }} value={block.t}
+          onChange={(e) => onChange({ t: e.target.value })}>
+          {Object.keys(NL_BLOCKS).map((k) => <option key={k} value={k}>{NL_BLOCKS[k].label}</option>)}
+        </select>
+        <div style={{ flex: 1 }} />
+        <button className="ad-btn ghost" style={{ padding: "5px 9px" }} disabled={idx === 0} onClick={() => onMove(idx, -1)} title="上移">↑</button>
+        <button className="ad-btn ghost" style={{ padding: "5px 9px" }} disabled={idx === total - 1} onClick={() => onMove(idx, 1)} title="下移">↓</button>
+        <button className="ad-btn danger" style={{ padding: "5px 9px" }} onClick={() => onDel(idx)} title="刪除">✕</button>
+      </div>
+      <div style={{ display: "grid", gap: 8 }}>
+        {def.fields.map((f) => {
+          const val = block[f.k];
+          const strVal = f.t === "json" ? (typeof val === "string" ? val : JSON.stringify(val || [])) : (val == null ? "" : val);
+          if (f.t === "tone") {
+            return (
+              <div key={f.k}>
+                <label className="ad-lbl">{f.k}</label>
+                <select className="ad-in" value={strVal} onChange={(e) => set(f.k, e.target.value)}>
+                  <option value="">—</option>
+                  {TONE_OPTS.map((o) => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+            );
+          }
+          if (f.t === "area" || f.t === "json") {
+            return (
+              <div key={f.k}>
+                <label className="ad-lbl">{f.k}{f.t === "json" ? " (JSON)" : ""}</label>
+                <textarea className="ad-in" placeholder={f.ph || ""} value={strVal}
+                  onChange={(e) => set(f.k, f.t === "json" ? tryJson(e.target.value) : e.target.value)} />
+              </div>
+            );
+          }
+          return (
+            <div key={f.k}>
+              <label className="ad-lbl">{f.k}</label>
+              <input className="ad-in" placeholder={f.ph || ""} value={strVal} onChange={(e) => set(f.k, e.target.value)} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+/* table.rows 允許使用者暫時輸入非法 JSON（保留原字串直到合法） */
+function tryJson(s) { try { return JSON.parse(s); } catch { return s; } }
+function normHead(h) {
+  if (Array.isArray(h)) return h;
+  return String(h || "").split(",").map((x) => x.trim()).filter(Boolean);
+}
+
+/* ---------- 檢視成果（前台版型的忠實預覽） ---------- */
+function NLPreview({ issue }) {
+  const noText = issue.no != null && issue.no !== "" ? ("第 " + issue.no + " 期") : "";
+  const badge = (txt, solid) => (
+    <span style={{ padding: "4px 10px", borderRadius: "var(--radius-pill)", fontSize: 12, fontWeight: 800, fontFamily: "var(--font-display)",
+      background: solid ? "var(--insight)" : "var(--night-700)", color: solid ? "var(--text-on-accent)" : "var(--text-2)", border: "1px solid var(--border)" }}>{txt}</span>
+  );
+  const toneColor = { insight: "var(--insight)", intelligence: "var(--intelligence)", illumination: "var(--illumination)", neutral: "var(--text-3)" };
+  const renderBlock = (b, i) => {
+    if (!b || !b.t) return null;
+    if (b.t === "rule") return <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, margin: "28px 0 20px", color: "var(--text-3)", fontSize: 12, letterSpacing: ".12em", fontWeight: 700 }}><span style={{ flex: 1, height: 1, background: "var(--border)" }} />{b.label || ""}<span style={{ flex: 1, height: 1, background: "var(--border)" }} /></div>;
+    if (b.t === "h2") return <h2 key={i} style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 24, color: "var(--text-1)", margin: "0 0 14px" }}>{b.text}</h2>;
+    if (b.t === "lead") return <p key={i} style={{ color: "var(--text-2)", fontSize: 16, lineHeight: 1.72, margin: "0 0 14px", whiteSpace: "pre-wrap" }}>{b.text}</p>;
+    if (b.t === "callout") return (
+      <div key={i} style={{ borderRadius: "var(--radius-lg)", padding: 16, margin: "0 0 16px", background: "var(--night-800)", borderLeft: "3px solid " + (toneColor[b.tone] || toneColor.intelligence), border: "1px solid var(--border)" }}>
+        {b.title ? <div style={{ fontWeight: 800, color: "var(--text-1)", marginBottom: 6, fontFamily: "var(--font-display)" }}>{b.title}</div> : null}
+        <div style={{ color: "var(--text-2)", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{b.text}</div>
+      </div>
+    );
+    if (b.t === "quote") return <blockquote key={i} style={{ margin: "24px 0", padding: "4px 0 4px 22px", borderLeft: "3px solid var(--illumination)", fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 22, lineHeight: 1.45, color: "var(--text-1)", whiteSpace: "pre-wrap" }}>{b.text}</blockquote>;
+    if (b.t === "note") return <div key={i} style={{ fontSize: 12.5, color: "var(--text-4)", marginBottom: 24, whiteSpace: "pre-wrap" }}>{b.text}</div>;
+    if (b.t === "table") {
+      const head = normHead(b.head); const rows = Array.isArray(b.rows) ? b.rows : [];
+      return (
+        <div key={i} style={{ margin: "16px 0 24px" }}>
+          <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", padding: "12px 18px", background: "var(--night-850)", borderBottom: "1px solid var(--border)", fontSize: 12.5, color: "var(--text-3)", fontWeight: 700 }}>
+              <span>{head[0] || "標的"}</span><span style={{ textAlign: "right" }}>{head[1] || "收盤"}</span><span style={{ textAlign: "right" }}>{head[2] || "漲跌"}</span>
+            </div>
+            {rows.map((r, j) => (
+              <div key={j} style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", padding: "14px 18px", borderBottom: j < rows.length - 1 ? "1px solid var(--border-subtle)" : "none", alignItems: "center" }}>
+                <span style={{ color: "var(--text-1)", fontWeight: 700 }}>{r[0]}</span>
+                <span style={{ textAlign: "right", fontFamily: "var(--font-mono)", color: "var(--text-2)" }}>{r[1]}</span>
+                <span style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: 700, color: r[3] ? "var(--finance-up)" : "var(--finance-down)" }}>{r[2]}</span>
+              </div>
+            ))}
+          </div>
+          {b.note ? <div style={{ fontSize: 12.5, color: "var(--text-4)", marginTop: 10 }}>{b.note}</div> : null}
+        </div>
+      );
+    }
+    return null;
+  };
+  return (
+    <div style={{ maxWidth: 640, margin: "0 auto" }}>
+      <div style={{ textAlign: "center", marginBottom: 28 }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+          {issue.kind ? badge(issue.kind, true) : null}
+          {noText ? badge(noText) : null}
+          {issue.date ? badge(issue.date) : null}
+        </div>
+        <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 32, lineHeight: 1.12, color: "var(--text-1)", margin: 0 }}>{issue.title || "（尚未輸入標題）"}</h1>
+        <div style={{ marginTop: 14, color: "var(--text-3)", fontSize: 13 }}>{issue.author || "Allen Chen 主編"}{issue.readMinutes ? " · 閱讀約 " + issue.readMinutes + " 分鐘" : ""}</div>
+      </div>
+      {issue.cover ? (
+        <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--border)", marginBottom: 20, position: "relative" }}>
+          <img src={issue.cover} alt="cover" style={{ width: "100%", height: 260, objectFit: "cover", display: "block" }} onError={(e) => { e.target.style.display = "none"; }} />
+        </div>
+      ) : null}
+      {issue.subtitle ? <p style={{ color: "var(--text-3)", fontSize: 18, lineHeight: 1.6, margin: "0 0 24px" }}>{issue.subtitle}</p> : null}
+      {(issue.blocks || []).map(renderBlock)}
+    </div>
+  );
+}
+
+/* ---------- 電子報主面板 ---------- */
+function blankIssue(maxSort) {
+  return { __new: true, sort: (maxSort || 0) + 1, no: "", kind: "週報", date: "", tone: "insight",
+    title: "", subtitle: "", cover: "", coverCaption: "", author: "Allen Chen 主編", readMinutes: "", items: 0,
+    blocks: [], social: { facebook: "", instagram: "", hashtags: "" } };
+}
+function NewsletterPanel() {
+  const [list, setList] = useState(null);
+  const [sel, setSel] = useState(null);       // 目前編輯的 draft
+  const [tab, setTab] = useState("content");   // content | social | preview
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [toast, setToast] = useState("");
+
+  const load = useCallback(async () => {
+    setErr("");
+    try {
+      const snap = await db.collection("aurora_issues").orderBy("sort").get();
+      setList(snap.docs.map((d) => Object.assign({ id: d.id }, d.data())));
+    } catch (ex) { setErr("讀取失敗：" + errText(ex)); setList([]); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const maxSort = (list || []).reduce((m, r) => Math.max(m, Number(r.sort) || 0), 0);
+
+  const openIssue = (r) => {
+    setSel({
+      id: r.id, sort: r.sort ?? 0, no: r.no ?? "", kind: r.kind || "週報", tone: r.tone || "insight",
+      date: r.date || "", title: r.title || "", subtitle: r.subtitle || "", cover: r.cover || "",
+      coverCaption: r.coverCaption || "", author: r.author || "Allen Chen 主編",
+      readMinutes: r.readMinutes ?? "", items: r.items ?? 0,
+      blocks: Array.isArray(r.blocks) ? JSON.parse(JSON.stringify(r.blocks)) : [],
+      social: { facebook: (r.social && r.social.facebook) || "", instagram: (r.social && r.social.instagram) || "", hashtags: (r.social && r.social.hashtags) || "" },
+    });
+    setTab("content");
+  };
+  const newIssue = () => { setSel(blankIssue(maxSort)); setTab("content"); };
+  const setF = (k, v) => setSel((s) => ({ ...s, [k]: v }));
+  const setSocial = (k, v) => setSel((s) => ({ ...s, social: { ...s.social, [k]: v } }));
+
+  const addBlock = () => setSel((s) => ({ ...s, blocks: [...(s.blocks || []), { t: "lead", text: "" }] }));
+  const changeBlock = (i, nb) => setSel((s) => { const b = [...s.blocks]; b[i] = nb; return { ...s, blocks: b }; });
+  const moveBlock = (i, d) => setSel((s) => { const b = [...s.blocks]; const j = i + d; if (j < 0 || j >= b.length) return s; const t = b[i]; b[i] = b[j]; b[j] = t; return { ...s, blocks: b }; });
+  const delBlock = (i) => setSel((s) => ({ ...s, blocks: s.blocks.filter((_, x) => x !== i) }));
+
+  const save = async () => {
+    if (!sel) return;
+    setBusy(true); setErr("");
+    // table.rows 若仍是字串（未成合法 JSON）則擋下
+    for (const b of sel.blocks || []) {
+      if (b.t === "table" && b.rows != null && !Array.isArray(b.rows)) {
+        setErr("有一個「行情小表格」的 rows 不是合法 JSON，請修正後再儲存。"); setBusy(false); setTab("content"); return;
+      }
+    }
+    const payload = {
+      sort: Number(sel.sort) || 0, no: sel.no, kind: sel.kind, tone: sel.tone, date: sel.date,
+      title: sel.title, subtitle: sel.subtitle, cover: sel.cover, coverCaption: sel.coverCaption,
+      author: sel.author, readMinutes: sel.readMinutes === "" ? null : Number(sel.readMinutes),
+      items: Number(sel.items) || 0,
+      blocks: (sel.blocks || []).map((b) => b.t === "table" ? { ...b, head: normHead(b.head) } : b),
+      social: { facebook: sel.social.facebook || "", instagram: sel.social.instagram || "", hashtags: sel.social.hashtags || "" },
+      updatedAt: new Date().toISOString(),
+    };
+    try {
+      if (sel.__new) { const ref = await db.collection("aurora_issues").add(payload); setSel((s) => ({ ...s, __new: false, id: ref.id })); }
+      else await db.collection("aurora_issues").doc(sel.id).update(payload);
+      await load();
+      setToast("已儲存 ✓ 前台重新整理即可看到最新內容"); setTimeout(() => setToast(""), 3000);
+    } catch (ex) { setErr("儲存失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+  const removeIssue = async () => {
+    if (!sel || sel.__new) { setSel(null); return; }
+    if (!window.confirm("確定刪除整期電子報「" + (sel.title || sel.no) + "」？")) return;
+    setBusy(true);
+    try { await db.collection("aurora_issues").doc(sel.id).delete(); setSel(null); await load(); }
+    catch (ex) { setErr("刪除失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+
+  const box = { background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 16, marginBottom: 14 };
+  const tabBtn = (id, label) => (
+    <button className={"ad-btn" + (tab === id ? " primary" : " ghost")} onClick={() => setTab(id)} style={{ padding: "8px 14px" }}>{label}</button>
+  );
+
+  /* --- 列表視圖（未選任何一期） --- */
+  if (!sel) {
+    return (
+      <div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+          <div>
+            <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>電子報</h2>
+            <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>aurora_issues · {list ? list.length : "…"} 期 · 立即編修內文與社群貼文</div>
+          </div>
+          <button className="ad-btn primary" onClick={newIssue}>＋ 新增一期電子報</button>
+        </div>
+        {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+        {list == null ? <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>
+          : list.length === 0 ? <div style={{ color: "var(--text-3)", padding: 20 }}>尚無電子報，點右上角「新增一期電子報」開始。</div>
+          : (
+            <div style={{ display: "grid", gap: 10 }}>
+              {list.map((r) => (
+                <button key={r.id} onClick={() => openIssue(r)} style={{ textAlign: "left", cursor: "pointer", background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                    <span style={{ padding: "2px 9px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800, background: "var(--night-700)", color: "var(--text-2)" }}>{r.kind || "—"}</span>
+                    <span style={{ color: "var(--text-3)", fontSize: 12, fontFamily: "var(--font-mono)" }}>第 {r.no ?? "—"} 期 · {r.date || "—"}</span>
+                    {Array.isArray(r.blocks) && r.blocks.length ? <span style={{ color: "var(--success)", fontSize: 11.5 }}>● 已編內文（{r.blocks.length} 塊）</span> : <span style={{ color: "var(--text-4)", fontSize: 11.5 }}>○ 尚未編內文</span>}
+                    {r.social && (r.social.facebook || r.social.instagram) ? <span style={{ color: "var(--intelligence)", fontSize: 11.5 }}>◆ 已備社群貼文</span> : null}
+                  </div>
+                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: 16 }}>{r.title || "（未命名）"}</div>
+                </button>
+              ))}
+            </div>
+          )}
+      </div>
+    );
+  }
+
+  /* --- 編輯視圖 --- */
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button className="ad-btn ghost" onClick={() => setSel(null)}>← 返回列表</button>
+          <div>
+            <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 20, margin: 0 }}>{sel.__new ? "新增電子報" : "編輯電子報"}</h2>
+            <div style={{ color: "var(--text-3)", fontSize: 12, fontFamily: "var(--font-mono)" }}>{sel.kind} · 第 {sel.no || "—"} 期</div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button className="ad-btn primary" onClick={save} disabled={busy}>{busy ? "儲存中…" : "儲存"}</button>
+          <button className="ad-btn danger" onClick={removeIssue} disabled={busy}>{sel.__new ? "取消" : "刪除整期"}</button>
+        </div>
+      </div>
+      {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+      {toast && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{toast}</div>}
+
+      <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+        {tabBtn("content", "內文編輯")}
+        {tabBtn("social", "Facebook / IG 貼文")}
+        {tabBtn("preview", "檢視成果 · 分享")}
+      </div>
+
+      {tab === "content" && (
+        <div>
+          <div style={box}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
+              <div><label className="ad-lbl">期別 kind</label>
+                <select className="ad-in" value={sel.kind} onChange={(e) => setF("kind", e.target.value)}>{NL_KINDS.map((k) => <option key={k} value={k}>{k}</option>)}</select></div>
+              <div><label className="ad-lbl">期號 no</label><input className="ad-in" value={sel.no} onChange={(e) => setF("no", e.target.value)} placeholder="27" /></div>
+              <div><label className="ad-lbl">日期 date</label><input className="ad-in" value={sel.date} onChange={(e) => setF("date", e.target.value)} placeholder="2026.07.06" /></div>
+              <div><label className="ad-lbl">色調 tone</label>
+                <select className="ad-in" value={sel.tone} onChange={(e) => setF("tone", e.target.value)}>{TONE_OPTS.map((o) => <option key={o} value={o}>{o}</option>)}</select></div>
+              <div><label className="ad-lbl">排序 sort</label><input className="ad-in" type="number" value={sel.sort} onChange={(e) => setF("sort", e.target.value)} /></div>
+              <div><label className="ad-lbl">閱讀分鐘 readMinutes</label><input className="ad-in" type="number" value={sel.readMinutes} onChange={(e) => setF("readMinutes", e.target.value)} placeholder="6" /></div>
+              <div><label className="ad-lbl">彙整則數 items</label><input className="ad-in" type="number" value={sel.items} onChange={(e) => setF("items", e.target.value)} /></div>
+            </div>
+            <div style={{ marginTop: 12 }}><label className="ad-lbl">標題 title</label><input className="ad-in" value={sel.title} onChange={(e) => setF("title", e.target.value)} placeholder="本期主標題" /></div>
+            <div style={{ marginTop: 12 }}><label className="ad-lbl">前言 subtitle（封面下方導言）</label><textarea className="ad-in" value={sel.subtitle} onChange={(e) => setF("subtitle", e.target.value)} /></div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginTop: 12 }}>
+              <div><label className="ad-lbl">封面圖 cover（URL 或 ../../assets/…）</label><input className="ad-in" value={sel.cover} onChange={(e) => setF("cover", e.target.value)} placeholder="../../assets/rabbit-reading.jpeg" /></div>
+              <div><label className="ad-lbl">封面說明 coverCaption</label><input className="ad-in" value={sel.coverCaption} onChange={(e) => setF("coverCaption", e.target.value)} /></div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "0 0 10px" }}>
+            <div style={{ color: "var(--text-2)", fontSize: 14, fontWeight: 700, fontFamily: "var(--font-display)" }}>內文區塊（{(sel.blocks || []).length}）</div>
+            <button className="ad-btn primary" onClick={addBlock} style={{ padding: "7px 12px" }}>＋ 新增區塊</button>
+          </div>
+          {(sel.blocks || []).length === 0 ? (
+            <div style={{ color: "var(--text-3)", fontSize: 13, padding: "14px 16px", border: "1px dashed var(--border)", borderRadius: "var(--radius-md)" }}>還沒有內文。點「新增區塊」加入小標、段落、重點框、引言或行情表格。</div>
+          ) : (sel.blocks.map((b, i) => (
+            <BlockRow key={i} block={b} idx={i} total={sel.blocks.length} onChange={(nb) => changeBlock(i, nb)} onMove={moveBlock} onDel={delBlock} />
+          )))}
+        </div>
+      )}
+
+      {tab === "social" && (
+        <div>
+          <div style={box}>
+            <label className="ad-lbl">Facebook 貼文內文</label>
+            <textarea className="ad-in" style={{ minHeight: 150 }} value={sel.social.facebook} onChange={(e) => setSocial("facebook", e.target.value)} placeholder="貼在 Facebook 的完整貼文文字…" />
+            <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+              <button className="ad-btn ghost" onClick={() => nlCopy(nlFacebookText(sel), "已複製 FB 貼文", setToast)}>複製 FB 貼文（含連結與標籤）</button>
+              <button className="ad-btn ghost" onClick={() => window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(nlIssueUrl(sel)), "_blank", "noopener,width=640,height=640")}>開啟 Facebook 分享視窗 ↗</button>
+            </div>
+          </div>
+          <div style={box}>
+            <label className="ad-lbl">Instagram 貼文說明（Caption）</label>
+            <textarea className="ad-in" style={{ minHeight: 150 }} value={sel.social.instagram} onChange={(e) => setSocial("instagram", e.target.value)} placeholder="貼在 Instagram 的說明文字…" />
+            <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+              <button className="ad-btn ghost" onClick={() => nlCopy(nlInstagramText(sel), "已複製 IG 貼文", setToast)}>複製 IG 貼文（含標籤）</button>
+              <span style={{ color: "var(--text-4)", fontSize: 11.5, alignSelf: "center" }}>IG 無網頁直接發文；複製後於 App 貼上即可。</span>
+            </div>
+          </div>
+          <div style={box}>
+            <label className="ad-lbl">共用主題標籤 hashtags</label>
+            <textarea className="ad-in" value={sel.social.hashtags} onChange={(e) => setSocial("hashtags", e.target.value)} placeholder="#艾倫報報 #AI #台股" />
+          </div>
+        </div>
+      )}
+
+      {tab === "preview" && (
+        <div>
+          <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap", alignItems: "center" }}>
+            <button className="ad-btn primary" onClick={() => nlShare(sel, setToast)}>⤴ 一鍵分享</button>
+            <button className="ad-btn ghost" onClick={() => nlCopy(nlIssueUrl(sel), "已複製連結", setToast)}>複製分享連結</button>
+            <button className="ad-btn ghost" onClick={() => nlCopy(nlFacebookText(sel), "已複製 FB 貼文", setToast)}>複製 FB 貼文</button>
+            <button className="ad-btn ghost" onClick={() => nlCopy(nlInstagramText(sel), "已複製 IG 貼文", setToast)}>複製 IG 貼文</button>
+            <a className="ad-btn ghost" href={nlIssueUrl(sel)} target="_blank" rel="noopener">在新視窗開啟前台頁面 ↗</a>
+          </div>
+          <div style={{ color: "var(--text-4)", fontSize: 11.5, marginBottom: 14, wordBreak: "break-all" }}>分享連結：{nlIssueUrl(sel)}（需先「儲存」，前台才會顯示最新內容）</div>
+          <div style={{ background: "var(--night-850)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "28px 22px" }}>
+            <NLPreview issue={sel} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ---------- 主控台 ---------- */
 function Console({ user }) {
-  const [active, setActive] = useState(SECTIONS[0].id);
+  const [active, setActive] = useState(NL_NAV);
   const sec = SECTIONS.find((s) => s.id === active);
-  const NAV = [...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
+  const NAV = [{ id: NL_NAV, label: "電子報" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
       <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
@@ -495,7 +884,9 @@ function Console({ user }) {
           })}
         </nav>
         <main style={{ flex: 1, minWidth: 0 }}>
-          {active === WEALTH_NAV ? <WealthPanel /> : <SectionEditor key={sec.id} sec={sec} />}
+          {active === NL_NAV ? <NewsletterPanel />
+            : active === WEALTH_NAV ? <WealthPanel />
+            : <SectionEditor key={sec.id} sec={sec} />}
         </main>
       </div>
     </div>
