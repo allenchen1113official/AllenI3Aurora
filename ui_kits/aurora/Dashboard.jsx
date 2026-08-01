@@ -211,6 +211,44 @@
   // 以「運動」或 Firestore 舊值「深度工作」或 Garmin 連結辨識該卡。
   const isExerciseStat = (s) => /運動|深度工作/.test(s.label || "") || /garmin/i.test(s.link || "");
 
+  /* ── 財富自由指數 ─────────────────────────────────────────────────────
+     比照 TAIEX 的更新處理：以同源的 data/wealth.json 為資料來源，前端讀取後
+     覆蓋此卡片（含標題、數值、單位、漲跌、走勢），確保首頁永遠反映最新值，
+     不受 Firestore（aurora_stats）既有舊值（如「本月結餘」）影響。
+     TAIEX 有證交所公開 API 可由 GitHub Actions 定時抓取；財富自由指數無外部
+     來源，故值由 repo 內 data/wealth.json 維護（修改並 commit 即更新首頁）。 */
+  const WEALTH_JSON_URL = "/AllenI3Aurora/data/wealth.json";
+  // 同時比對新舊標題，即使 Firestore 仍是「本月結餘／每月結餘」也會被正確覆蓋。
+  const isWealthStat = (s) => /財富自由|本月結餘|每月結餘/.test(s.label || "");
+
+  /* 讀取同源 data/wealth.json（隨 repo 更新、必定可用）。 */
+  async function fetchWealthBaseline() {
+    try {
+      const res = await fetch(WEALTH_JSON_URL, { cache: "no-store" });
+      if (!res.ok) return null;
+      const j = await res.json();
+      if (!j || j.value == null) return null;
+      return {
+        label: j.label != null ? String(j.label) : undefined,
+        value: String(j.value),
+        unit: j.unit != null ? String(j.unit) : undefined,
+        delta: j.delta != null ? String(j.delta) : undefined,
+        data: Array.isArray(j.data) ? j.data : undefined,
+      };
+    } catch { return null; }
+  }
+
+  /* 掛載時抓一次；如需更新，改 data/wealth.json 並 commit，重新整理首頁即生效。 */
+  function useWealthLive() {
+    const [wealth, setWealth] = React.useState(null);
+    React.useEffect(() => {
+      let alive = true;
+      fetchWealthBaseline().then((w) => { if (alive && w) setWealth(w); });
+      return () => { alive = false; };
+    }, []);
+    return wealth;
+  }
+
   /* 以官方 iframe 嵌入我的 Google 行事曆（AGENDA 模式、台北時區）。 */
   function CalendarPanel() {
     const I = window.Icons;
@@ -232,6 +270,7 @@
     const K = window.KIT, I = window.Icons;
     const taiex = useTaiexLive();
     const exercise = useExerciseLive();
+    const wealth = useWealthLive();
     return (
       <div className="kit-page" style={{ padding: "var(--space-8)", display: "flex", flexDirection: "column", gap: "var(--space-8)" }}>
         {/* Greeting / hero strip */}
@@ -257,13 +296,16 @@
             const live = isTaiexStat(s) ? taiex : null;
             // 運動：若 Garmin 資料已載入，覆蓋標籤、數值、走勢與連結（不受 Firestore 舊值影響）。
             const ex = isExerciseStat(s) ? exercise : null;
-            const label = ex ? EXERCISE_LABEL : s.label;
+            // 財富自由指數：以 data/wealth.json 覆蓋（含標題、單位），蓋掉 Firestore 舊值。
+            const wov = isWealthStat(s) ? wealth : null;
+            const label = ex ? EXERCISE_LABEL : (wov && wov.label != null ? wov.label : s.label);
             const link = ex ? EXERCISE_LINK : s.link;
-            const unit = ex && ex.unit != null ? ex.unit : s.unit;
-            const value = live ? live.value : (ex ? ex.value : s.value);
-            const delta = live ? live.delta : (ex && ex.delta != null ? ex.delta : s.delta);
+            const unit = ex && ex.unit != null ? ex.unit : (wov && wov.unit != null ? wov.unit : s.unit);
+            const value = live ? live.value : (ex ? ex.value : (wov ? wov.value : s.value));
+            const delta = live ? live.delta : (ex && ex.delta != null ? ex.delta : (wov && wov.delta != null ? wov.delta : s.delta));
             const data = live && live.data && live.data.length ? live.data
-              : (ex && ex.data ? ex.data : s.data);
+              : (ex && ex.data ? ex.data
+              : (wov && wov.data && wov.data.length ? wov.data : s.data));
             const title = isTaiexStat(s)
               ? (live
                   ? (live.live
