@@ -1,0 +1,9 @@
+{
+  "items": [
+    { "tag": "理財", "tone": "insight", "title": "台股熱力圖 · 上市／上櫃", "meta": "2026.07.30 · 市值熱力圖（最新）", "icon": "chart" },
+    { "tag": "選股", "tone": "intelligence", "title": "台股選股雷達", "meta": "2026.07.23 · 訊號雷達（最新）", "icon": "compass" },
+    { "tag": "日報", "tone": "illumination", "title": "艾倫極光日報", "meta": "2026.08.01 · 每日速報", "icon": "paper" }
+  ],
+  "asOf": "2026.08.01",
+  "updatedAt": "2026-08-01T05:00:00Z"
+}
