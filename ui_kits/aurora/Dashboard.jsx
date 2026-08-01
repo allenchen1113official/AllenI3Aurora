@@ -249,6 +249,50 @@
     return wealth;
   }
 
+  /* ── 今日關注動態 ─────────────────────────────────────────────────────
+     資料來源改為同源的 data/focus.json：由 GitHub Actions 定時任務
+     （.github/workflows/focus-update.yml）在伺服器端讀取 Google Drive 今日
+     的 heatmap／stockradar／newsletter 資料夾彙整而成。前端同源讀取、無 CORS
+     問題；讀到即以其取代「今日關注動態」列表（版型不變，僅換資料來源）。
+     讀取失敗或無資料時，退回 kit.jsx／Firestore 既有的 focus 內容。 */
+  const FOCUS_JSON_URL = "/AllenI3Aurora/data/focus.json";
+  const FOCUS_POLL = 30 * 60 * 1000; // 每 30 分鐘刷新一次
+  const FOCUS_TONES = { insight: 1, intelligence: 1, illumination: 1 };
+
+  async function fetchFocus() {
+    try {
+      const res = await fetch(FOCUS_JSON_URL, { cache: "no-store" });
+      if (!res.ok) return null;
+      const j = await res.json();
+      const items = Array.isArray(j && j.items) ? j.items : (Array.isArray(j) ? j : null);
+      if (!items || !items.length) return null;
+      // 僅保留既有版型需要的欄位，並確保 tone／icon 合法，避免破版或渲染錯誤。
+      return items.map((f) => ({
+        tag: String(f.tag || ""),
+        tone: FOCUS_TONES[f.tone] ? f.tone : "insight",
+        title: String(f.title || ""),
+        meta: String(f.meta || ""),
+        icon: (f.icon && window.Icons && window.Icons[f.icon]) ? f.icon : "sparkle",
+      }));
+    } catch { return null; }
+  }
+
+  function useFocusLive() {
+    const [focus, setFocus] = React.useState(null);
+    React.useEffect(() => {
+      let alive = true;
+      let timer = null;
+      const loop = async () => {
+        const d = await fetchFocus();
+        if (alive && d) setFocus(d);
+        if (alive) timer = setTimeout(loop, FOCUS_POLL);
+      };
+      loop();
+      return () => { alive = false; if (timer) clearTimeout(timer); };
+    }, []);
+    return focus;
+  }
+
   /* 以官方 iframe 嵌入我的 Google 行事曆（AGENDA 模式、台北時區）。 */
   function CalendarPanel() {
     const I = window.Icons;
@@ -271,6 +315,7 @@
     const taiex = useTaiexLive();
     const exercise = useExerciseLive();
     const wealth = useWealthLive();
+    const focus = useFocusLive();
     return (
       <div className="kit-page" style={{ padding: "var(--space-8)", display: "flex", flexDirection: "column", gap: "var(--space-8)" }}>
         {/* Greeting / hero strip */}
@@ -335,8 +380,8 @@
             <SectionHeader kicker="INSIGHT · 洞察" title="今日關注動態"
               action={<Button variant="ghost" size="sm" iconRight={<I.arrow size={15} />}>全部</Button>} />
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {K.focus.map((f, i) => {
-                const I2 = I[f.icon];
+              {(focus || K.focus).map((f, i) => {
+                const I2 = I[f.icon] || I.sparkle;
                 return (
                   <Card key={i} interactive padding="var(--space-5)">
                     <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
