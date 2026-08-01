@@ -266,13 +266,15 @@
       const j = await res.json();
       const items = Array.isArray(j && j.items) ? j.items : (Array.isArray(j) ? j : null);
       if (!items || !items.length) return null;
-      // 僅保留既有版型需要的欄位，並確保 tone／icon 合法，避免破版或渲染錯誤。
+      // 僅保留既有版型需要的欄位，並確保 tone／icon／link 合法，避免破版或渲染錯誤。
       return items.map((f) => ({
         tag: String(f.tag || ""),
         tone: FOCUS_TONES[f.tone] ? f.tone : "insight",
         title: String(f.title || ""),
+        desc: f.desc != null ? String(f.desc) : "",
         meta: String(f.meta || ""),
         icon: (f.icon && window.Icons && window.Icons[f.icon]) ? f.icon : "sparkle",
+        link: (typeof f.link === "string" && /^https?:\/\//.test(f.link)) ? f.link : "",
       }));
     } catch { return null; }
   }
@@ -384,8 +386,8 @@
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {focusList.map((f, i) => {
                 const I2 = I[f.icon] || I.sparkle;
-                return (
-                  <Card key={i} interactive padding="var(--space-5)">
+                const card = (
+                  <Card interactive padding="var(--space-5)" style={f.link ? { cursor: "pointer" } : undefined}>
                     <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
                       <span style={{ width: 44, height: 44, flex: "none", borderRadius: 14, background: `var(--${f.tone}-soft)`, color: `var(--${f.tone})`, display: "grid", placeItems: "center" }}><I2 size={22} /></span>
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -394,12 +396,18 @@
                           <ToneDot tone={f.tone} />
                         </div>
                         <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: "var(--text-lg)", lineHeight: 1.3 }}>{f.title}</div>
+                        {f.desc ? <div style={{ color: "var(--text-2)", fontSize: 13.5, marginTop: 4, lineHeight: 1.4 }}>{f.desc}</div> : null}
                         <div style={{ color: "var(--text-3)", fontSize: 13, marginTop: 4 }}>{f.meta}</div>
                       </div>
-                      <IconButton size="sm" label="收藏"><I.bookmark size={17} /></IconButton>
+                      {f.link
+                        ? <IconButton size="sm" label="開啟內容"><I.ext size={16} /></IconButton>
+                        : <IconButton size="sm" label="收藏"><I.bookmark size={17} /></IconButton>}
                     </div>
                   </Card>
                 );
+                return f.link
+                  ? <a key={i} href={f.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", display: "block" }} title="開啟內容">{card}</a>
+                  : <div key={i}>{card}</div>;
               })}
             </div>
 

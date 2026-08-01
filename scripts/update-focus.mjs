@@ -4,6 +4,10 @@
    比照 TAIEX／運動：伺服器端讀取 Google Drive，將「今日」的內容彙整成
    同源 data/focus.json 供前端讀取，作為儀表板「今日關注動態」的資料來源。
 
+   每一則除標題外，另附：
+   - link：連結到該來源當日的代表檔案（可點擊開啟內容）。
+   - desc：約 10 字的簡要內容（自來源文字檔擷取，失敗則用預設）。
+
    資料來源（Google Drive，皆以 YYYYMMDD＝今日 命名的日期資料夾）：
      AllenI3Aurora/finance/heatmap/YYYYMMDD/      台股熱力圖
      AllenI3Aurora/finance/stockradar/YYYYMMDD/   選股雷達
@@ -12,16 +16,15 @@
    實際日期；三者皆無則保留現有 data/focus.json（不覆蓋）。
 
    授權：需以 Google 服務帳戶（Service Account）唯讀存取上述資料夾，
-   金鑰（JSON 全文）由 GitHub Actions Secrets 提供：
-     GDRIVE_SERVICE_ACCOUNT
-   並將 Drive 的「AllenI3Aurora」資料夾以「檢視者」分享給該服務帳戶 email。
-   未設定金鑰或讀取失敗時，維持現有 data/focus.json 不變（不會失敗）。
+   金鑰（JSON 全文）由 GitHub Actions Secrets 提供：GDRIVE_SERVICE_ACCOUNT。
+   詳見 docs/GDRIVE_SETUP_SOP.md。未設定或讀取失敗時，維持現有檔案不變。
    ===================================================================== */
 import { writeFileSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 const OUT = "data/focus.json";
 const SA = process.env.GDRIVE_SERVICE_ACCOUNT;
+const DESC_MAX = 18; // 約 10 餘字上限
 
 function keepExisting(reason) {
   console.error(reason + " → 維持現有 " + OUT + " 不變。");
@@ -37,12 +40,59 @@ function taipeiYmd(date = new Date()) {
 }
 const ymdDisplay = (ymd) => `${ymd.slice(0, 4)}.${ymd.slice(4, 6)}.${ymd.slice(6, 8)}`;
 
-/* 三個來源的定義：Drive 路徑（相對 AllenI3Aurora）與呈現用的卡片樣式。 */
+/* 三個來源：Drive 路徑、卡片樣式、代表檔（link）與文字檔（desc）挑選規則。 */
 const SOURCES = [
-  { key: "heatmap", path: ["finance", "heatmap"], tag: "理財", tone: "insight", icon: "chart", title: "台股熱力圖 · 上市／上櫃", note: "市值熱力圖" },
-  { key: "stockradar", path: ["finance", "stockradar"], tag: "選股", tone: "intelligence", icon: "compass", title: "台股選股雷達", note: "訊號雷達" },
-  { key: "newsletter", path: ["newsletter", "day"], tag: "日報", tone: "illumination", icon: "paper", title: "艾倫極光日報", note: "每日速報" },
+  {
+    key: "heatmap", path: ["finance", "heatmap"], tag: "理財", tone: "insight", icon: "chart",
+    title: "台股熱力圖 · 上市／上櫃", note: "市值熱力圖", descFallback: "台股上市櫃市值熱力圖",
+    linkPatterns: [/Heatmap.*Listed.*FB.*\.png$/i, /Heatmap.*\.png$/i],
+    textPatterns: [/SocialPost.*Listed.*\.txt$/i, /SocialPost.*\.txt$/i],
+  },
+  {
+    key: "stockradar", path: ["finance", "stockradar"], tag: "選股", tone: "intelligence", icon: "compass",
+    title: "台股選股雷達", note: "訊號雷達", descFallback: "台股 TOP10 訊號排行",
+    linkPatterns: [/StockRadar_IG_\d{4}-\d{2}-\d{2}\.png$/i, /StockRadar.*\d{4}-\d{2}-\d{2}\.png$/i, /StockRadar.*\.png$/i],
+    textPatterns: [/caption.*\.txt$/i, /\.txt$/i],
+  },
+  {
+    key: "newsletter", path: ["newsletter", "day"], tag: "日報", tone: "illumination", icon: "paper",
+    title: "艾倫極光日報", note: "每日速報", descFallback: "每日科技旅行攝影音樂動態",
+    linkPatterns: [/\.pdf$/i, /日報.*\.md$/i, /\.md$/i],
+    textPatterns: [/\.md$/i],
+  },
 ];
+
+/* 清理一行文字：移除 URL、markdown 記號、表情符號、多餘空白。 */
+function cleanLine(s) {
+  return String(s)
+    .replace(/https?:\/\/\S+/g, "")
+    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "") // emoji（代理對）
+    .replace(/[#>*_`~\\]/g, "")
+    .replace(/[｜|─—]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/* 自來源文字內容擷取「約 10 字」的簡要內容；找不到合適內容回傳空字串。
+   策略：跳過標題／分隔／宣告等非內文行（含中文字數不足者），取首個內文行，
+   於 8～上限字之間的標點處收尾，形成通順短句。 */
+const SKIP = /(社群分享文案|建議搭配圖片|盤後速報|每日科技|資料日期說明|今日重點|三項訊號|風險提醒|艾倫極光日報|艾倫報報|ALLEN|排行總覽|Facebook|Instagram|建議|來源[:：]|版$)/;
+function extractDesc(raw) {
+  const lines = String(raw).split(/\r?\n/).map(cleanLine).filter(Boolean);
+  for (const ln of lines) {
+    if (SKIP.test(ln)) continue;
+    const cjk = (ln.match(/[一-鿿]/g) || []).length;
+    if (cjk < 6) continue;                       // 需足夠中文，濾掉標籤／分隔行
+    // 於 8～上限字之間的最後一個標點處收尾；無標點則硬切。
+    const head = ln.slice(0, DESC_MAX + 4);
+    let cut = -1, re = /[，。！、；：]/g, m;
+    while ((m = re.exec(head))) { if (m.index >= 8 && m.index <= DESC_MAX) cut = m.index; }
+    let out = cut >= 0 ? head.slice(0, cut) : ln.slice(0, DESC_MAX);
+    if (ln.length > out.length) out += "…";
+    return out;
+  }
+  return "";
+}
 
 async function main() {
   if (!SA) keepExisting("未提供 GDRIVE_SERVICE_ACCOUNT");
@@ -60,24 +110,26 @@ async function main() {
     drive = google.drive({ version: "v3", auth });
   } catch (e) { keepExisting("服務帳戶金鑰無效：" + e.message); }
 
-  const listFolders = async (q) => {
+  const listChildren = async (q, fields) => {
     const res = await drive.files.list({
-      q: q + " and mimeType='application/vnd.google-apps.folder' and trashed=false",
-      fields: "files(id,name)", pageSize: 100,
+      q: q + " and trashed=false", fields: `files(${fields})`, pageSize: 200,
       supportsAllDrives: true, includeItemsFromAllDrives: true,
     });
     return res.data.files || [];
   };
   const childFolder = async (name, parentId) => {
     const esc = name.replace(/'/g, "\\'");
-    const list = await listFolders(`name='${esc}' and '${parentId}' in parents`);
-    return list[0] ? list[0].id : null;
+    const l = await listChildren(`name='${esc}' and '${parentId}' in parents and mimeType='application/vnd.google-apps.folder'`, "id,name");
+    return l[0] ? l[0].id : null;
+  };
+  const readText = async (fileId) => {
+    const res = await drive.files.get({ fileId, alt: "media", supportsAllDrives: true }, { responseType: "text" });
+    return typeof res.data === "string" ? res.data : String(res.data || "");
   };
 
-  // 由分享給服務帳戶的根資料夾往下解析路徑。
   let rootId;
   try {
-    const roots = await listFolders("name='AllenI3Aurora'");
+    const roots = await listChildren("name='AllenI3Aurora' and mimeType='application/vnd.google-apps.folder'", "id,name");
     if (!roots.length) keepExisting("找不到（或未分享）AllenI3Aurora 資料夾給服務帳戶");
     rootId = roots[0].id;
   } catch (e) { keepExisting("Drive 讀取失敗：" + e.message); }
@@ -89,22 +141,39 @@ async function main() {
     try {
       let parent = rootId;
       for (const seg of src.path) { parent = parent && (await childFolder(seg, parent)); }
-      if (!parent) continue; // 該來源路徑不存在
+      if (!parent) continue;
 
       // 優先今日；否則取最近一個 YYYYMMDD 日期資料夾。
       let dateId = await childFolder(today, parent);
       let dateYmd = today;
       if (!dateId) {
-        const dates = (await listFolders(`'${parent}' in parents`))
-          .filter((f) => /^\d{8}$/.test(f.name))
-          .sort((a, b) => (a.name < b.name ? 1 : -1));
+        const dates = (await listChildren(`'${parent}' in parents and mimeType='application/vnd.google-apps.folder'`, "id,name"))
+          .filter((f) => /^\d{8}$/.test(f.name)).sort((a, b) => (a.name < b.name ? 1 : -1));
         if (!dates.length) continue;
         dateId = dates[0].id; dateYmd = dates[0].name;
       }
+
+      const files = await listChildren(`'${dateId}' in parents`, "id,name,mimeType,webViewLink");
+
+      // 連結：代表檔；找不到就連到當日資料夾。
+      let link = "";
+      for (const pat of src.linkPatterns) { const f = files.find((x) => pat.test(x.name)); if (f) { link = f.webViewLink || ""; break; } }
+      if (!link) {
+        try { link = (await drive.files.get({ fileId: dateId, fields: "webViewLink", supportsAllDrives: true })).data.webViewLink || ""; } catch { /* 忽略 */ }
+      }
+
+      // 簡要內容：自文字檔擷取，失敗用預設。
+      let desc = src.descFallback;
+      try {
+        let tf = null;
+        for (const pat of src.textPatterns) { tf = files.find((x) => pat.test(x.name)); if (tf) break; }
+        if (tf) { const ex = extractDesc(await readText(tf.id)); if (ex) desc = ex; }
+      } catch (e) { console.error(`來源 ${src.key} 擷取簡要失敗：`, e.message); }
+
       const meta = `${ymdDisplay(dateYmd)} · ${src.note}${dateYmd === today ? "" : "（最新）"}`;
-      items.push({ tag: src.tag, tone: src.tone, title: src.title, meta, icon: src.icon });
+      items.push({ tag: src.tag, tone: src.tone, title: src.title, desc, meta, icon: src.icon, link });
     } catch (e) {
-      console.error(`來源 ${src.key} 讀取失敗：`, e.message); // 單一來源失敗不影響其他
+      console.error(`來源 ${src.key} 讀取失敗：`, e.message);
     }
   }
 
