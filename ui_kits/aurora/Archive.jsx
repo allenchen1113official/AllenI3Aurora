@@ -5,8 +5,9 @@
 
   function IssueCard({ it }) {
     const I = window.Icons;
+    const openIssue = () => { location.href = location.pathname + "?issue=" + encodeURIComponent(it.no); };
     return (
-      <Card interactive padding="0" style={{ overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <Card interactive padding="0" onClick={openIssue} style={{ overflow: "hidden", display: "flex", flexDirection: "column", cursor: "pointer" }}>
         <div style={{ position: "relative", height: 150 }}>
           <img src={it.cover} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,7,15,.55), transparent 60%)" }} />
