@@ -296,8 +296,10 @@
             const live = isTaiexStat(s) ? taiex : null;
             // 運動：若 Garmin 資料已載入，覆蓋標籤、數值、走勢與連結（不受 Firestore 舊值影響）。
             const ex = isExerciseStat(s) ? exercise : null;
-            // 財富自由指數：以 data/wealth.json 覆蓋（含標題、單位），蓋掉 Firestore 舊值。
-            const wov = isWealthStat(s) ? wealth : null;
+            // 財富自由指數：Firestore 已由後台計算機更新（label 已是「財富自由指數」）時以其為準；
+            // 尚未更新（仍為舊「本月結餘」）時，才以同源 data/wealth.json 覆蓋修正顯示。
+            const firestoreFresh = /財富自由/.test(s.label || "");
+            const wov = isWealthStat(s) && !firestoreFresh ? wealth : null;
             const label = ex ? EXERCISE_LABEL : (wov && wov.label != null ? wov.label : s.label);
             const link = ex ? EXERCISE_LINK : s.link;
             const unit = ex && ex.unit != null ? ex.unit : (wov && wov.unit != null ? wov.unit : s.unit);

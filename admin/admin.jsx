@@ -58,6 +58,12 @@ const SECTIONS = [
   ] },
 ];
 
+/* 財富自由指數：後台計算與更新設定 */
+const WEALTH_LABEL = "財富自由指數";
+const WEALTH_NAV = "__wealth";
+// 於 aurora_stats 中辨識財富自由指數文件（同時相容舊字樣，供首次更新沿用同一筆）。
+const isWealthDoc = (r) => /財富自由|本月結餘|每月結餘/.test((r && r.label) || "");
+
 /* 預設種子資料（供空 collection 一鍵初始化） */
 const SEED = {
   stats: [
@@ -295,10 +301,140 @@ function SectionEditor({ sec }) {
   );
 }
 
+/* ---------- 財富自由指數：計算與更新 ----------
+   公式：財富自由指數 = 每月被動收入 ÷ 每月總支出 × 100%（≥100% 即達財富自由）。
+   計算結果寫入 aurora_stats 中的財富自由指數文件（value/unit/delta/走勢），
+   並保存原始輸入（passiveIncome / expense）以便下次沿用。首頁即讀此值顯示。 */
+function WealthPanel() {
+  const [loading, setLoading] = useState(true);
+  const [docRow, setDocRow] = useState(null);
+  const [passive, setPassive] = useState("");
+  const [expense, setExpense] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+
+  const load = useCallback(async () => {
+    setLoading(true); setErr(""); setMsg("");
+    try {
+      const snap = await db.collection("aurora_stats").get();
+      const docs = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+      const row = docs.find(isWealthDoc) || null;
+      setDocRow(row);
+      if (row) {
+        if (row.passiveIncome != null) setPassive(String(row.passiveIncome));
+        if (row.expense != null) setExpense(String(row.expense));
+      }
+    } catch (ex) { setErr("讀取失敗：" + errText(ex)); }
+    setLoading(false);
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const p = Number(passive), e = Number(expense);
+  const valid = passive !== "" && expense !== "" && isFinite(p) && isFinite(e) && p >= 0 && e > 0;
+  const index = valid ? Math.round((p / e) * 100) : null;
+  const free = index != null && index >= 100;
+
+  const save = async () => {
+    if (!valid) { setMsg("請輸入有效的每月被動收入，以及大於 0 的每月支出。"); return; }
+    setBusy(true); setMsg(""); setErr("");
+    try {
+      const prevData = Array.isArray(docRow && docRow.data)
+        ? docRow.data.filter((n) => isFinite(Number(n))).map(Number) : [];
+      const alreadyWealth = /財富自由/.test((docRow && docRow.label) || "");
+      const prevIndex = alreadyWealth && isFinite(Number(docRow.value))
+        ? Number(docRow.value)
+        : (prevData.length ? prevData[prevData.length - 1] : null);
+      const data = [...prevData, index].slice(-8);
+      let delta = "";
+      if (prevIndex != null && isFinite(prevIndex)) {
+        const d = index - prevIndex;
+        delta = (d >= 0 ? "+" : "-") + Math.abs(d).toFixed(1) + "%"; // 較上次的百分點變化
+      }
+      const payload = {
+        label: WEALTH_LABEL, value: String(index), unit: "%", delta,
+        tone: "intelligence", mode: "semantic", data,
+        passiveIncome: p, expense: e, updatedAt: new Date().toISOString(),
+      };
+      if (docRow && docRow.id) {
+        await db.collection("aurora_stats").doc(docRow.id).update(payload);
+      } else {
+        const snap = await db.collection("aurora_stats").get();
+        const maxSort = snap.docs.reduce((m, d) => Math.max(m, Number((d.data() || {}).sort) || 0), 0);
+        await db.collection("aurora_stats").add(Object.assign({ sort: maxSort + 1, link: "" }, payload));
+      }
+      setMsg("已更新！前往網站重新整理即可看到最新財富自由指數。");
+      await load();
+    } catch (ex) { setErr("儲存失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+
+  const box = { background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 18, marginBottom: 14 };
+
+  return (
+    <div>
+      <div style={{ marginBottom: 16 }}>
+        <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>財富自由指數</h2>
+        <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>aurora_stats · 計算並更新首頁指數卡</div>
+      </div>
+      {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+      {loading ? (
+        <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>
+      ) : (
+        <>
+          <div style={box}>
+            <p style={{ color: "var(--text-2)", fontSize: 13, lineHeight: 1.7, margin: "0 0 14px" }}>
+              公式：<b style={{ color: "var(--text-1)" }}>財富自由指數 = 每月被動收入 ÷ 每月總支出 × 100%</b>。
+              當被動收入足以覆蓋支出（指數 ≥ 100%）即達成財富自由。
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+              <div>
+                <label className="ad-lbl">每月被動收入（TWD）</label>
+                <input className="ad-in" type="number" step="any" min="0" inputMode="decimal"
+                  value={passive} onChange={(ev) => setPassive(ev.target.value)} placeholder="例如 34000" />
+              </div>
+              <div>
+                <label className="ad-lbl">每月總支出（TWD）</label>
+                <input className="ad-in" type="number" step="any" min="0" inputMode="decimal"
+                  value={expense} onChange={(ev) => setExpense(ev.target.value)} placeholder="例如 50000" />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ ...box, display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
+            <span style={{ color: "var(--text-3)", fontSize: 13 }}>計算結果</span>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 40, lineHeight: 1,
+              color: free ? "var(--illumination)" : "var(--intelligence)" }}>
+              {index == null ? "—" : index}<span style={{ fontSize: 18, marginLeft: 2 }}>%</span>
+            </span>
+            {index != null && (
+              <span style={{ color: free ? "var(--illumination)" : "var(--text-3)", fontSize: 13 }}>
+                {free ? "已達財富自由 🎉" : `距財富自由還差 ${100 - index} 個百分點`}
+              </span>
+            )}
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <button className="ad-btn primary" onClick={save} disabled={busy || !valid}>{busy ? "更新中…" : "計算並更新首頁"}</button>
+            <button className="ad-btn ghost" onClick={load} disabled={busy}>重新載入</button>
+            {msg && <span style={{ color: "var(--illumination)", fontSize: 12.5 }}>{msg}</span>}
+          </div>
+
+          <div style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 16, lineHeight: 1.7 }}>
+            目前首頁值：{docRow ? `${docRow.label ?? WEALTH_LABEL} · ${docRow.value ?? "—"}${docRow.unit || ""}` : "尚未建立（將於首次更新時建立）"}。
+            每次更新會把新指數加入走勢，並依上次值計算漲跌。
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 /* ---------- 主控台 ---------- */
 function Console({ user }) {
   const [active, setActive] = useState(SECTIONS[0].id);
   const sec = SECTIONS.find((s) => s.id === active);
+  const NAV = [...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
       <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
@@ -314,7 +450,7 @@ function Console({ user }) {
       </header>
       <div style={{ ...wrap, display: "flex", gap: 22, padding: "22px 20px", alignItems: "flex-start" }}>
         <nav style={{ width: 168, flex: "none", display: "flex", flexDirection: "column", gap: 4, position: "sticky", top: 78 }}>
-          {SECTIONS.map((s) => {
+          {NAV.map((s) => {
             const on = s.id === active;
             return (
               <button key={s.id} onClick={() => setActive(s.id)}
@@ -326,7 +462,7 @@ function Console({ user }) {
           })}
         </nav>
         <main style={{ flex: 1, minWidth: 0 }}>
-          <SectionEditor key={sec.id} sec={sec} />
+          {active === WEALTH_NAV ? <WealthPanel /> : <SectionEditor key={sec.id} sec={sec} />}
         </main>
       </div>
     </div>
