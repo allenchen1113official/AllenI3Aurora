@@ -163,6 +163,44 @@
 
   const isTaiexStat = (s) => /TAIEX/i.test(s.label || "") || /TWII/i.test(s.link || "");
 
+  /* ── 財富自由指數 ─────────────────────────────────────────────────────
+     比照 TAIEX 的更新處理：以同源的 data/wealth.json 為資料來源，前端讀取後
+     覆蓋此卡片（含標題、數值、單位、漲跌、走勢），確保首頁永遠反映最新值，
+     不受 Firestore（aurora_stats）既有舊值（如「本月結餘」）影響。
+     TAIEX 有證交所公開 API 可由 GitHub Actions 定時抓取；財富自由指數無外部
+     來源，故值由 repo 內 data/wealth.json 維護（修改並 commit 即更新首頁）。 */
+  const WEALTH_JSON_URL = "/AllenI3Aurora/data/wealth.json";
+  // 同時比對新舊標題，即使 Firestore 仍是「本月結餘／每月結餘」也會被正確覆蓋。
+  const isWealthStat = (s) => /財富自由|本月結餘|每月結餘/.test(s.label || "");
+
+  /* 讀取同源 data/wealth.json（隨 repo 更新、必定可用）。 */
+  async function fetchWealthBaseline() {
+    try {
+      const res = await fetch(WEALTH_JSON_URL, { cache: "no-store" });
+      if (!res.ok) return null;
+      const j = await res.json();
+      if (!j || j.value == null) return null;
+      return {
+        label: j.label != null ? String(j.label) : undefined,
+        value: String(j.value),
+        unit: j.unit != null ? String(j.unit) : undefined,
+        delta: j.delta != null ? String(j.delta) : undefined,
+        data: Array.isArray(j.data) ? j.data : undefined,
+      };
+    } catch { return null; }
+  }
+
+  /* 掛載時抓一次；如需更新，改 data/wealth.json 並 commit，重新整理首頁即生效。 */
+  function useWealthLive() {
+    const [wealth, setWealth] = React.useState(null);
+    React.useEffect(() => {
+      let alive = true;
+      fetchWealthBaseline().then((w) => { if (alive && w) setWealth(w); });
+      return () => { alive = false; };
+    }, []);
+    return wealth;
+  }
+
   /* 以官方 iframe 嵌入我的 Google 行事曆（AGENDA 模式、台北時區）。 */
   function CalendarPanel() {
     const I = window.Icons;
@@ -183,6 +221,7 @@
   function Dashboard() {
     const K = window.KIT, I = window.Icons;
     const taiex = useTaiexLive();
+    const wealth = useWealthLive();
     return (
       <div className="kit-page" style={{ padding: "var(--space-8)", display: "flex", flexDirection: "column", gap: "var(--space-8)" }}>
         {/* Greeting / hero strip */}
@@ -206,9 +245,14 @@
             const col = { insight: "var(--insight)", intelligence: "var(--intelligence)", illumination: "var(--illumination)" }[s.tone];
             // 加權指數 TAIEX：若即時資料已載入，覆蓋內建值（收盤指數、漲跌%、走勢）。
             const live = isTaiexStat(s) ? taiex : null;
-            const value = live ? live.value : s.value;
-            const delta = live ? live.delta : s.delta;
-            const data = live && live.data && live.data.length ? live.data : s.data;
+            // 財富自由指數：以 data/wealth.json 覆蓋（含標題、單位），蓋掉 Firestore 舊值。
+            const wov = isWealthStat(s) ? wealth : null;
+            const label = wov && wov.label != null ? wov.label : s.label;
+            const unit = wov && wov.unit != null ? wov.unit : s.unit;
+            const value = live ? live.value : (wov ? wov.value : s.value);
+            const delta = live ? live.delta : (wov && wov.delta != null ? wov.delta : s.delta);
+            const data = live && live.data && live.data.length ? live.data
+              : (wov && wov.data && wov.data.length ? wov.data : s.data);
             const title = isTaiexStat(s)
               ? (live
                   ? (live.live
@@ -217,7 +261,7 @@
                   : "查看線上即時報價（Yahoo 股市）")
               : (s.link ? "查看線上即時報價（Yahoo 股市）" : undefined);
             return (
-              <StatCard key={i} label={s.label} value={value} unit={s.unit} delta={delta} deltaMode={s.mode} tone={s.tone}
+              <StatCard key={i} label={label} value={value} unit={unit} delta={delta} deltaMode={s.mode} tone={s.tone}
                 icon={s.link ? <I.ext size={16} /> : <I.chart size={18} />}
                 onClick={s.link ? () => window.open(s.link, "_blank", "noopener,noreferrer") : undefined}
                 style={s.link ? { cursor: "pointer" } : undefined}
