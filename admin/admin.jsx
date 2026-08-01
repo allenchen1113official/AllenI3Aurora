@@ -67,7 +67,7 @@ const isWealthDoc = (r) => /財富自由|本月結餘|每月結餘/.test((r && r
 /* 預設種子資料（供空 collection 一鍵初始化） */
 const SEED = {
   stats: [
-    { sort: 1, label: "加權指數 TAIEX", value: "23,588", unit: "pt", delta: "+0.75%", tone: "insight", mode: "finance", data: [6.2, 6.6, 6.3, 7, 6.8, 7.2, 7.1, 7.5, 7.8], link: "https://tw.stock.yahoo.com/quote/%5ETWII" },
+    { sort: 1, label: "加權指數 TAIEX", value: "43,119.75", unit: "pt", delta: "+7.98% · +3,186.45", tone: "insight", mode: "finance", data: [44232.87, 44825.78, 44850.81, 43654.84, 43634.19, 41603.36, 40039.18, 39933.3, 43119.75], link: "https://tw.stock.yahoo.com/quote/%5ETWII" },
     { sort: 2, label: "財富自由指數", value: "68", unit: "%", delta: "+8.0%", tone: "intelligence", mode: "semantic", data: [4, 4.2, 4.1, 4.5, 4.4, 4.8, 5, 5.2], link: "" },
     { sort: 3, label: "運動", value: "26.5", unit: "hr", delta: "+12%", tone: "illumination", mode: "semantic", data: [3, 3.5, 3.2, 4, 3.8, 4.4, 4.6, 5], link: "https://connect.garmin.com/app/profile/50e697d9-3333-4ec3-a1e1-eebf531414c3" },
     { sort: 4, label: "待讀清單", value: "12", unit: "篇", delta: "-3", tone: "insight", mode: "semantic", data: [8, 7, 9, 6, 5, 6, 5, 4], link: "" },
@@ -251,9 +251,11 @@ function SectionEditor({ sec }) {
   const [rows, setRows] = useState(null);
   const [err, setErr] = useState("");
   const [seeding, setSeeding] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [note, setNote] = useState("");
 
   const load = useCallback(async () => {
-    setErr("");
+    setErr(""); setNote("");
     try {
       const snap = await db.collection(sec.table).orderBy("sort").get();
       setRows(snap.docs.map((d) => Object.assign({ id: d.id }, d.data())));
@@ -277,6 +279,29 @@ function SectionEditor({ sec }) {
     setSeeding(false);
   };
 
+  /* 從前台同源的 data/taiex.json（GitHub Actions 定時更新）將 TAIEX 即時值
+     同步寫入 aurora_stats，讓後台資料與首頁一致。找不到 TAIEX 列則新增一筆。 */
+  const syncTaiex = async () => {
+    setSyncing(true); setErr(""); setNote("");
+    try {
+      const res = await fetch("/AllenI3Aurora/data/taiex.json", { cache: "no-store" });
+      if (!res.ok) throw new Error("讀取 data/taiex.json 失敗（HTTP " + res.status + "）");
+      const j = await res.json();
+      if (!j || j.value == null) throw new Error("data/taiex.json 內容無效");
+      const patch = { value: String(j.value), delta: String(j.delta || ""), data: Array.isArray(j.data) ? j.data : [] };
+      const target = (rows || []).find((r) => !r.__new && (/TAIEX/i.test(r.label || "") || /TWII/i.test(r.link || "")));
+      if (target) {
+        await db.collection(sec.table).doc(target.id).update(patch);
+      } else {
+        const maxSort = (rows || []).reduce((m, r) => Math.max(m, Number(r.sort) || 0), 0);
+        await db.collection(sec.table).add({ sort: maxSort + 1, label: "加權指數 TAIEX", unit: "pt", tone: "insight", mode: "finance", link: "https://tw.stock.yahoo.com/quote/%5ETWII", ...patch });
+      }
+      await load();
+      setNote(`已同步 TAIEX：${patch.value}（${patch.delta}${j.asOf ? "，" + j.asOf : ""}）`);
+    } catch (ex) { setErr("TAIEX 同步失敗：" + errText(ex)); }
+    setSyncing(false);
+  };
+
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
@@ -284,9 +309,17 @@ function SectionEditor({ sec }) {
           <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>{sec.label}</h2>
           <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{sec.table} · {rows ? rows.length : "…"} 筆</div>
         </div>
-        <button className="ad-btn primary" onClick={addRow}>＋ 新增一筆</button>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {sec.id === "stats" && (
+            <button className="ad-btn ghost" onClick={syncTaiex} disabled={syncing} title="從證交所即時資料（data/taiex.json）同步加權指數到後台">
+              {syncing ? "同步中…" : "↻ 同步 TAIEX 即時值"}
+            </button>
+          )}
+          <button className="ad-btn primary" onClick={addRow}>＋ 新增一筆</button>
+        </div>
       </div>
       {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+      {note && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{note}</div>}
       {rows == null ? (
         <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>
       ) : rows.length === 0 ? (
