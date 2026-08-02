@@ -296,16 +296,18 @@
   }
 
   /* ── 一鍵分享（Facebook / Instagram / Threads）────────────────────────────
-     針對每則今日關注動態提供社群分享。Facebook 與 Threads 走官方網頁分享意圖
-     （sharer / intent），可預填連結與文案；Instagram 無網頁預填介面，故先將
-     文案複製到剪貼簿再開啟 Instagram，使用者貼上即可。行動裝置若支援系統原生
-     分享（navigator.share），Instagram 會優先叫出系統分享選單。 */
+     針對每則今日關注動態提供社群分享，皆會帶入「摘要文字＋來源連結」。
+     · Threads：官方 intent/post 可預填文案與連結。
+     · Facebook：sharer.php 已不支援預填貼文文字（quote 參數失效），故改為
+       先把摘要與連結複製到剪貼簿、再開啟分享視窗，於貼文貼上即可。
+     · Instagram：無網頁預填介面，同樣複製摘要與連結後開啟 Instagram；行動裝置
+       若支援系統原生分享（navigator.share），優先叫出系統分享選單。 */
   const SITE_URL = "https://allenchen1113official.github.io/AllenI3Aurora/";
   const SHARE_HASHTAG = "#艾倫報報 #AllenI3Aurora";
 
   const shareUrlFor = (f) => (f && f.link) ? f.link : SITE_URL;
 
-  // 組合分享文案：標籤、標題、摘要、來源、連結與品牌標記。
+  // 組合分享摘要文案：標籤、標題、摘要、來源、連結與品牌標記。
   function buildShareText(f) {
     const lines = [];
     if (f.tag) lines.push(`【${f.tag}】`);
@@ -313,9 +315,9 @@
     if (f.desc) lines.push(f.desc);
     if (f.meta) lines.push(f.meta);
     lines.push("");
-    lines.push(shareUrlFor(f));
+    lines.push(`🔗 ${shareUrlFor(f)}`);
     lines.push(SHARE_HASHTAG);
-    return lines.filter((l) => l !== undefined).join("\n");
+    return lines.join("\n");
   }
 
   // 置中彈窗開啟分享頁；被瀏覽器阻擋時退回一般新分頁。
@@ -347,10 +349,17 @@
     } catch { return false; }
   }
 
-  function shareFacebook(f) {
+  function shareFacebook(f, notify) {
+    const text = buildShareText(f);
     const u = encodeURIComponent(shareUrlFor(f));
-    const quote = encodeURIComponent(buildShareText(f));
-    openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${u}&quote=${quote}`);
+    // 先於使用者手勢中同步開啟分享視窗（避免被彈窗攔截），再複製摘要與連結。
+    // sharer.php 只能附上連結、無法預填貼文文字，故由剪貼簿補上摘要文字。
+    openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${u}`);
+    copyText(text).then((ok) => {
+      if (notify) notify(ok
+        ? "已複製摘要與連結，於 Facebook 貼文貼上即可完成分享 📋"
+        : "請手動複製摘要與連結，貼到 Facebook 分享 📋");
+    });
   }
 
   function shareThreads(f) {
@@ -361,7 +370,7 @@
 
   async function shareInstagram(f, notify) {
     const text = buildShareText(f);
-    // 行動裝置優先叫出系統原生分享（可直接選 Instagram）。
+    // 行動裝置優先叫出系統原生分享（可直接選 Instagram，帶入摘要與連結）。
     if (navigator.share) {
       try {
         await navigator.share({ title: f.title || "艾倫報報", text, url: shareUrlFor(f) });
@@ -371,11 +380,13 @@
         /* 不支援或失敗 → 退回複製流程 */
       }
     }
-    const copied = await copyText(text);
-    notify(copied
-      ? "已複製文案到剪貼簿，Instagram 開啟後貼上即可分享 📋"
-      : "請手動複製此則文案，貼到 Instagram 分享 📋");
+    // 同步開啟 Instagram（保留手勢），再複製摘要與連結供貼上。
     openShareWindow("https://www.instagram.com/");
+    copyText(text).then((ok) => {
+      notify(ok
+        ? "已複製摘要與連結，Instagram 貼文貼上即可完成分享 📋"
+        : "請手動複製摘要與連結，貼到 Instagram 分享 📋");
+    });
   }
 
   // 底部浮動提示（Instagram 複製流程用）。
@@ -397,7 +408,7 @@
     const I = window.Icons;
     const act = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };
     const items = [
-      { icon: <I.facebook size={16} />, label: "分享到 Facebook", onClick: () => shareFacebook(f), color: "#1877F2" },
+      { icon: <I.facebook size={16} />, label: "分享到 Facebook", onClick: () => shareFacebook(f, notify), color: "#1877F2" },
       { icon: <I.instagram size={16} />, label: "分享到 Instagram", onClick: () => shareInstagram(f, notify), color: "#E1306C" },
       { icon: <I.threads size={16} />, label: "分享到 Threads", onClick: () => shareThreads(f), color: "var(--text-1)" },
     ];
