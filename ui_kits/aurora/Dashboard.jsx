@@ -295,6 +295,127 @@
     return focus;
   }
 
+  /* ── 一鍵分享（Facebook / Instagram / Threads）────────────────────────────
+     針對每則今日關注動態提供社群分享。Facebook 與 Threads 走官方網頁分享意圖
+     （sharer / intent），可預填連結與文案；Instagram 無網頁預填介面，故先將
+     文案複製到剪貼簿再開啟 Instagram，使用者貼上即可。行動裝置若支援系統原生
+     分享（navigator.share），Instagram 會優先叫出系統分享選單。 */
+  const SITE_URL = "https://allenchen1113official.github.io/AllenI3Aurora/";
+  const SHARE_HASHTAG = "#艾倫報報 #AllenI3Aurora";
+
+  const shareUrlFor = (f) => (f && f.link) ? f.link : SITE_URL;
+
+  // 組合分享文案：標籤、標題、摘要、來源、連結與品牌標記。
+  function buildShareText(f) {
+    const lines = [];
+    if (f.tag) lines.push(`【${f.tag}】`);
+    if (f.title) lines.push(f.title);
+    if (f.desc) lines.push(f.desc);
+    if (f.meta) lines.push(f.meta);
+    lines.push("");
+    lines.push(shareUrlFor(f));
+    lines.push(SHARE_HASHTAG);
+    return lines.filter((l) => l !== undefined).join("\n");
+  }
+
+  // 置中彈窗開啟分享頁；被瀏覽器阻擋時退回一般新分頁。
+  function openShareWindow(url) {
+    const win = window.open(url, "_blank", "noopener,noreferrer,width=640,height=720");
+    if (!win) window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  // 盡力將文案複製到剪貼簿（優先 Clipboard API，退回 execCommand）。
+  async function copyText(text) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch { /* 退回舊式複製 */ }
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.top = "-9999px";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch { return false; }
+  }
+
+  function shareFacebook(f) {
+    const u = encodeURIComponent(shareUrlFor(f));
+    const quote = encodeURIComponent(buildShareText(f));
+    openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${u}&quote=${quote}`);
+  }
+
+  function shareThreads(f) {
+    const text = encodeURIComponent(buildShareText(f));
+    const url = encodeURIComponent(shareUrlFor(f));
+    openShareWindow(`https://www.threads.net/intent/post?text=${text}&url=${url}`);
+  }
+
+  async function shareInstagram(f, notify) {
+    const text = buildShareText(f);
+    // 行動裝置優先叫出系統原生分享（可直接選 Instagram）。
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: f.title || "艾倫報報", text, url: shareUrlFor(f) });
+        return;
+      } catch (e) {
+        if (e && e.name === "AbortError") return; // 使用者取消
+        /* 不支援或失敗 → 退回複製流程 */
+      }
+    }
+    const copied = await copyText(text);
+    notify(copied
+      ? "已複製文案到剪貼簿，Instagram 開啟後貼上即可分享 📋"
+      : "請手動複製此則文案，貼到 Instagram 分享 📋");
+    openShareWindow("https://www.instagram.com/");
+  }
+
+  // 底部浮動提示（Instagram 複製流程用）。
+  function Toast({ msg }) {
+    return (
+      <div role="status" aria-live="polite" style={{
+        position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)",
+        zIndex: 500, background: "var(--night-700)", color: "var(--text-1)",
+        border: "1px solid var(--border)", borderRadius: "var(--radius-md)",
+        padding: "12px 18px", fontSize: 14, lineHeight: 1.4, boxShadow: "var(--shadow-lg)",
+        maxWidth: "min(90vw, 440px)", textAlign: "center",
+      }}>{msg}</div>
+    );
+  }
+
+  // 每則動態的分享列：Facebook / Instagram / Threads。
+  // 阻止事件冒泡，避免觸發整張卡片外層連結的跳轉。
+  function ShareRow({ f, notify }) {
+    const I = window.Icons;
+    const act = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };
+    const items = [
+      { icon: <I.facebook size={16} />, label: "分享到 Facebook", onClick: () => shareFacebook(f), color: "#1877F2" },
+      { icon: <I.instagram size={16} />, label: "分享到 Instagram", onClick: () => shareInstagram(f, notify), color: "#E1306C" },
+      { icon: <I.threads size={16} />, label: "分享到 Threads", onClick: () => shareThreads(f), color: "var(--text-1)" },
+    ];
+    return (
+      <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 10 }}
+        onClick={(e) => e.stopPropagation()}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, color: "var(--text-3)", fontSize: 12, marginRight: 2 }}>
+          <I.share size={13} />一鍵分享
+        </span>
+        {items.map((it, k) => (
+          <IconButton key={k} size="sm" label={it.label} onClick={act(it.onClick)} style={{ color: it.color }}>
+            {it.icon}
+          </IconButton>
+        ))}
+      </div>
+    );
+  }
+
   /* 以官方 iframe 嵌入我的 Google 行事曆（AGENDA 模式、台北時區）。 */
   function CalendarPanel() {
     const I = window.Icons;
@@ -320,6 +441,15 @@
     const focus = useFocusLive();
     const focusList = focus || K.focus;                 // 實際顯示的今日關注動態
     const podcastCount = (K.podcasts || []).length;     // 實際 Podcast 則數
+    // 分享提示（Instagram 複製流程）——顯示後 3.2 秒自動消失。
+    const [toast, setToast] = React.useState("");
+    const toastTimer = React.useRef(null);
+    const notify = React.useCallback((msg) => {
+      setToast(msg);
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => setToast(""), 3200);
+    }, []);
+    React.useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
     return (
       <div className="kit-page" style={{ padding: "var(--space-8)", display: "flex", flexDirection: "column", gap: "var(--space-8)" }}>
         {/* Greeting / hero strip */}
@@ -398,6 +528,7 @@
                         <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: "var(--text-lg)", lineHeight: 1.3 }}>{f.title}</div>
                         {f.desc ? <div style={{ color: "var(--text-2)", fontSize: 13.5, marginTop: 4, lineHeight: 1.4 }}>{f.desc}</div> : null}
                         <div style={{ color: "var(--text-3)", fontSize: 13, marginTop: 4 }}>{f.meta}</div>
+                        <ShareRow f={f} notify={notify} />
                       </div>
                       {f.link
                         ? <IconButton size="sm" label="開啟內容"><I.ext size={16} /></IconButton>
@@ -486,6 +617,8 @@
 
         {/* Google 行事曆（前端登入、私人，事件僅存在瀏覽器） */}
         <CalendarPanel />
+
+        {toast ? <Toast msg={toast} /> : null}
       </div>
     );
   }
