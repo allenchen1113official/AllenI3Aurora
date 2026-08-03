@@ -71,8 +71,10 @@ const SOURCES = [
     key: "newsletter", path: ["newsletter", "day"], tag: "日報", tone: "illumination", icon: "paper",
     title: "艾倫極光日報", note: "每日速報", descFallback: "每日科技旅行攝影音樂動態",
     // 連結直接連 Google Drive 最近一日 newsletter/day/YYYYMMDD 的代表文章：
-    // 優先 HTML，其次 PDF，再退回 markdown；皆無則連到當日資料夾。
-    linkPatterns: [/\.html?$/i, /\.pdf$/i, /日報.*\.md$/i, /\.md$/i],
+    // 優先「艾倫極光日報_YYYYMMDD.pdf」品牌成品，其次任一 PDF，再退回品牌 HTML／markdown；
+    // 皆無則連到當日資料夾。註：日期資料夾內另有 email_draft.html／pdf_source.html
+    // 等內部草稿檔，故不採一般 .html 樣式，避免連到草稿而非成品。
+    linkPatterns: [/艾倫極光日報.*\.pdf$/i, /日報.*\.pdf$/i, /\.pdf$/i, /艾倫極光日報.*\.html?$/i, /日報.*\.html?$/i, /\.md$/i],
     textPatterns: [/\.md$/i],
   },
 ];
