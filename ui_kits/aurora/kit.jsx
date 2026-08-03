@@ -44,6 +44,40 @@ const Icons = {
 };
 window.Icons = Icons;
 
+/* ---------- 2026 年前的部落格日報（歷期彙整用） ----------
+   同源 data/day-archive.json（伺服器端由部落格 content/posts 彙整）。
+   於「歷期彙整」／深連結閱讀時按需載入，併入 window.KIT.issues（依 no 去重），
+   以現有版面呈現；未進入相關畫面則不載入，避免拖慢儀表板。 */
+window.__dayArchive = null;
+window.__dayArchivePromise = null;
+window.loadDayArchive = function () {
+  if (window.__dayArchive) return Promise.resolve(window.__dayArchive);
+  if (window.__dayArchivePromise) return window.__dayArchivePromise;
+  window.__dayArchivePromise = fetch("/AllenI3Aurora/data/day-archive.json")
+    .then((r) => (r.ok ? r.json() : []))
+    .then((arr) => {
+      const posts = Array.isArray(arr) ? arr : [];
+      const list = (window.KIT.issues = window.KIT.issues || []);
+      const seen = new Set(list.map((i) => String(i.no)));
+      for (const p of posts) { if (!seen.has(String(p.no))) { list.push(p); seen.add(String(p.no)); } }
+      window.__dayArchive = posts;
+      return posts;
+    })
+    .catch(() => (window.__dayArchive = []));
+  return window.__dayArchivePromise;
+};
+window.useDayArchive = function (enabled) {
+  const on = enabled !== false;
+  const [ready, setReady] = React.useState(!!window.__dayArchive);
+  React.useEffect(() => {
+    if (!on) return;
+    let alive = true;
+    window.loadDayArchive().then(() => { if (alive) setReady(true); });
+    return () => { alive = false; };
+  }, [on]);
+  return ready;
+};
+
 /* ---------- Mock data ---------- */
 window.KIT = {
   brand: { zh: "艾倫報報", en: "Allen I³ Aurora", tagline: "洞察世界．累積智慧．點亮未來。", owner: "Allen" },
