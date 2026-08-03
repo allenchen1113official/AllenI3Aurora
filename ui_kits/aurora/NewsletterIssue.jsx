@@ -118,7 +118,10 @@
       if (chunks.join(" ").length >= SUMMARY_TARGET) break;
     }
     let body = chunks.join(" ").trim() || String(issue.title || "").trim();
-    if (body.length < SUMMARY_TARGET - 20) body += `。${BRAND_TAGLINE}，完整內容看這裡👇`;
+    if (body.length < SUMMARY_TARGET - 20) {
+      const sep = /[。！？!?.…、，,；;：:]$/.test(body) ? "" : "。"; // 已有結尾標點則不重複
+      body += `${sep}${BRAND_TAGLINE}，完整內容看這裡👇`;
+    }
     return clampSummary(body);
   }
   // 主題標籤：資料提供者優先，否則以文章類別（日報／週報／月報）補上品牌標籤。
