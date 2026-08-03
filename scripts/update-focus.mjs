@@ -26,7 +26,8 @@ const OUT = "data/focus.json";
 const SA = process.env.GDRIVE_SERVICE_ACCOUNT;
 const DESC_MAX = 18; // 約 10 餘字上限
 const SUMMARY_MAX = 125; // 社群分享文字摘要上限（約 125 字元）
-// 本站前台網址：艾倫極光日報改連此處的電子報頁面（HTML，可依日期深連結）。
+// 本站前台網址：熱力圖等來源會連此處的站內頁面（HTML）。
+// 艾倫極光日報則直接連 Google Drive 最近一日的日報文章（見 SOURCES.newsletter）。
 const SITE_URL = "https://allenchen1113official.github.io/AllenI3Aurora/";
 
 function keepExisting(reason) {
@@ -65,8 +66,8 @@ const SOURCES = [
   {
     key: "newsletter", path: ["newsletter", "day"], tag: "日報", tone: "illumination", icon: "paper",
     title: "艾倫極光日報", note: "每日速報", descFallback: "每日科技旅行攝影音樂動態",
-    // 連結改連本站前台電子報頁面（HTML），故 linkPatterns 僅供退回使用；優先 HTML 再 PDF。
-    site: true,
+    // 連結直接連 Google Drive 最近一日 newsletter/day/YYYYMMDD 的代表文章：
+    // 優先 HTML，其次 PDF，再退回 markdown；皆無則連到當日資料夾。
     linkPatterns: [/\.html?$/i, /\.pdf$/i, /日報.*\.md$/i, /\.md$/i],
     textPatterns: [/\.md$/i],
   },
@@ -184,8 +185,8 @@ async function main() {
 
       const files = await listChildren(`'${dateId}' in parents`, "id,name,mimeType,webViewLink");
 
-      // 連結：newsletter 改連本站前台電子報頁面（HTML，依日期深連結）；
-      // 其餘來源連 Drive 代表檔，找不到就連到當日資料夾。
+      // 連結：熱力圖等 site 來源連本站前台頁面；其餘（含艾倫極光日報）
+      // 連 Drive 最近一日資料夾的代表檔，找不到就連到當日資料夾本身。
       let link = "";
       if (src.site && src.sitePath) {
         link = `${SITE_URL}${src.sitePath}`;
