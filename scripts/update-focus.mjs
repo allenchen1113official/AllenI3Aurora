@@ -25,6 +25,9 @@ import { dirname } from "node:path";
 const OUT = "data/focus.json";
 const SA = process.env.GDRIVE_SERVICE_ACCOUNT;
 const DESC_MAX = 18; // 約 10 餘字上限
+const SUMMARY_MAX = 125; // 社群分享文字摘要上限（約 125 字元）
+// 本站前台網址：艾倫極光日報改連此處的電子報頁面（HTML，可依日期深連結）。
+const SITE_URL = "https://allenchen1113official.github.io/AllenI3Aurora/";
 
 function keepExisting(reason) {
   console.error(reason + " → 維持現有 " + OUT + " 不變。");
@@ -57,7 +60,9 @@ const SOURCES = [
   {
     key: "newsletter", path: ["newsletter", "day"], tag: "日報", tone: "illumination", icon: "paper",
     title: "艾倫極光日報", note: "每日速報", descFallback: "每日科技旅行攝影音樂動態",
-    linkPatterns: [/\.pdf$/i, /日報.*\.md$/i, /\.md$/i],
+    // 連結改連本站前台電子報頁面（HTML），故 linkPatterns 僅供退回使用；優先 HTML 再 PDF。
+    site: true,
+    linkPatterns: [/\.html?$/i, /\.pdf$/i, /日報.*\.md$/i, /\.md$/i],
     textPatterns: [/\.md$/i],
   },
 ];
@@ -92,6 +97,25 @@ function extractDesc(raw) {
     return out;
   }
   return "";
+}
+
+/* 自來源文字內容擷取「約 125 字元」的社群分享摘要；找不到合適內容回傳空字串。
+   累積數行內文（跳過標題／宣告等非內文行）串成通順短文，於上限處收尾。 */
+function extractSummary(raw) {
+  const lines = String(raw).split(/\r?\n/).map(cleanLine).filter(Boolean);
+  const picked = [];
+  let total = 0;
+  for (const ln of lines) {
+    if (SKIP.test(ln)) continue;
+    if ((ln.match(/[一-鿿]/g) || []).length < 6) continue; // 需足夠中文，濾掉標籤／分隔行
+    picked.push(ln);
+    total += ln.length + 1;
+    if (total >= SUMMARY_MAX) break;
+  }
+  if (!picked.length) return "";
+  let out = picked.join("，");
+  if (out.length > SUMMARY_MAX) out = out.slice(0, SUMMARY_MAX - 1) + "…";
+  return out;
 }
 
 async function main() {
@@ -155,23 +179,33 @@ async function main() {
 
       const files = await listChildren(`'${dateId}' in parents`, "id,name,mimeType,webViewLink");
 
-      // 連結：代表檔；找不到就連到當日資料夾。
+      // 連結：newsletter 改連本站前台電子報頁面（HTML，依日期深連結）；
+      // 其餘來源連 Drive 代表檔，找不到就連到當日資料夾。
       let link = "";
-      for (const pat of src.linkPatterns) { const f = files.find((x) => pat.test(x.name)); if (f) { link = f.webViewLink || ""; break; } }
-      if (!link) {
-        try { link = (await drive.files.get({ fileId: dateId, fields: "webViewLink", supportsAllDrives: true })).data.webViewLink || ""; } catch { /* 忽略 */ }
+      if (src.site) {
+        link = `${SITE_URL}?issue=${dateYmd.slice(0, 4)}-${dateYmd.slice(4, 6)}-${dateYmd.slice(6, 8)}`;
+      } else {
+        for (const pat of src.linkPatterns) { const f = files.find((x) => pat.test(x.name)); if (f) { link = f.webViewLink || ""; break; } }
+        if (!link) {
+          try { link = (await drive.files.get({ fileId: dateId, fields: "webViewLink", supportsAllDrives: true })).data.webViewLink || ""; } catch { /* 忽略 */ }
+        }
       }
 
-      // 簡要內容：自文字檔擷取，失敗用預設。
+      // 簡要內容（desc，約 10 字）與社群摘要（summary，約 125 字元）：自文字檔擷取，失敗用預設。
       let desc = src.descFallback;
+      let summary = "";
       try {
         let tf = null;
         for (const pat of src.textPatterns) { tf = files.find((x) => pat.test(x.name)); if (tf) break; }
-        if (tf) { const ex = extractDesc(await readText(tf.id)); if (ex) desc = ex; }
+        if (tf) {
+          const raw = await readText(tf.id);
+          const ex = extractDesc(raw); if (ex) desc = ex;
+          summary = extractSummary(raw);
+        }
       } catch (e) { console.error(`來源 ${src.key} 擷取簡要失敗：`, e.message); }
 
       const meta = `${ymdDisplay(dateYmd)} · ${src.note}${dateYmd === today ? "" : "（最新）"}`;
-      items.push({ tag: src.tag, tone: src.tone, title: src.title, desc, meta, icon: src.icon, link });
+      items.push({ tag: src.tag, tone: src.tone, title: src.title, desc, summary, meta, icon: src.icon, link });
     } catch (e) {
       console.error(`來源 ${src.key} 讀取失敗：`, e.message);
     }

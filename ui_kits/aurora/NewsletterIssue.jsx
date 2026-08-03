@@ -157,8 +157,16 @@
     let want = null;
     try { want = new URLSearchParams(location.search).get("issue"); } catch (e) { want = null; }
     if (want != null && want !== "") {
-      const hit = list.find((i) => String(i.no) === String(want));
-      if (hit) return hit;
+      // 先以期號比對；找不到再以日期比對（容許 - / . 分隔），
+      // 讓「今日關注動態」可用日期深連結到當期的前台 HTML 頁面。
+      const byNo = list.find((i) => String(i.no) === String(want));
+      if (byNo) return byNo;
+      const norm = (s) => String(s == null ? "" : s).replace(/[.\-/]/g, "").trim();
+      const w = norm(want);
+      if (w) {
+        const byDate = list.find((i) => norm(i.date) === w);
+        if (byDate) return byDate;
+      }
     }
     const withBlocks = list.find((i) => Array.isArray(i.blocks) && i.blocks.length);
     if (withBlocks) return withBlocks;

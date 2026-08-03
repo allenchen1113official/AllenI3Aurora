@@ -272,6 +272,7 @@
         tone: FOCUS_TONES[f.tone] ? f.tone : "insight",
         title: String(f.title || ""),
         desc: f.desc != null ? String(f.desc) : "",
+        summary: f.summary != null ? String(f.summary) : "",
         meta: String(f.meta || ""),
         icon: (f.icon && window.Icons && window.Icons[f.icon]) ? f.icon : "sparkle",
         link: (typeof f.link === "string" && /^https?:\/\//.test(f.link)) ? f.link : "",
@@ -303,11 +304,21 @@
      · Instagram：無網頁預填介面，同樣複製摘要與連結後開啟 Instagram；行動裝置
        若支援系統原生分享（navigator.share），優先叫出系統分享選單。 */
   const SITE_URL = "https://allenchen1113official.github.io/AllenI3Aurora/";
-  const SHARE_HASHTAG = "#艾倫報報 #AllenI3Aurora";
+  // 基礎品牌標籤，另依動態類別（tag）補充主題標籤。
+  const SHARE_HASHTAG = "#艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來";
+  const TAG_HASHTAGS = {
+    "日報": "#艾倫極光日報 #每日速報 #科技新知",
+    "理財": "#台股 #理財 #市值熱力圖",
+    "選股": "#選股 #台股 #訊號雷達",
+  };
+  // 組出貼文用的完整主題標籤：類別標籤 ＋ 品牌標籤。
+  function hashtagsFor(f) {
+    return [(f && TAG_HASHTAGS[f.tag]) || "", SHARE_HASHTAG].filter(Boolean).join(" ");
+  }
 
   const shareUrlFor = (f) => (f && f.link) ? f.link : SITE_URL;
 
-  // 組合分享摘要文案：標籤、標題、摘要、來源、連結與品牌標記。
+  // 組合分享摘要文案：標籤、標題、摘要、來源、連結與品牌標記（Threads 用）。
   function buildShareText(f) {
     const lines = [];
     if (f.tag) lines.push(`【${f.tag}】`);
@@ -316,8 +327,31 @@
     if (f.meta) lines.push(f.meta);
     lines.push("");
     lines.push(`🔗 ${shareUrlFor(f)}`);
-    lines.push(SHARE_HASHTAG);
+    lines.push(hashtagsFor(f));
     return lines.join("\n");
+  }
+
+  /* Facebook／Instagram 一鍵分享用：約 125 字元的文字摘要。
+     優先採用資料提供的 summary；若無，則以標籤／標題／摘要／日期組出通順短文，
+     內容偏短時補品牌標語與導讀 CTA（不虛構事實），使長度趨近約 125 字元。 */
+  const SUMMARY_TARGET = 125;
+  const BRAND_TAGLINE = "洞察世界·累積智慧·點亮未來";
+  function clampSummary(s) {
+    const t = String(s || "").trim();
+    return t.length > SUMMARY_TARGET ? t.slice(0, SUMMARY_TARGET - 1).trim() + "…" : t;
+  }
+  function buildSocialSummary(f) {
+    if (f && typeof f.summary === "string" && f.summary.trim()) return clampSummary(f.summary);
+    const head = [f.tag ? `【${f.tag}】` : "", f.title || ""].filter(Boolean).join("");
+    const date = f.meta ? String(f.meta).split("·")[0].trim() : "";
+    let body = [head, f.desc || "", date].filter(Boolean).join("　");
+    if (body.length < SUMMARY_TARGET - 14) body += `。${BRAND_TAGLINE}，完整內容看這裡👇`;
+    return clampSummary(body);
+  }
+
+  // Facebook／Instagram 貼文文字：約 125 字元摘要 ＋ 來源連結 ＋ 主題標籤。
+  function buildSocialPost(f) {
+    return [buildSocialSummary(f), `🔗 ${shareUrlFor(f)}`, hashtagsFor(f)].join("\n\n");
   }
 
   // 置中彈窗開啟分享頁；被瀏覽器阻擋時退回一般新分頁。
@@ -350,7 +384,7 @@
   }
 
   function shareFacebook(f, notify) {
-    const text = buildShareText(f);
+    const text = buildSocialPost(f);
     const u = encodeURIComponent(shareUrlFor(f));
     // 先於使用者手勢中同步開啟分享視窗（避免被彈窗攔截），再複製摘要與連結。
     // sharer.php 只能附上連結、無法預填貼文文字，故由剪貼簿補上摘要文字。
@@ -369,7 +403,7 @@
   }
 
   async function shareInstagram(f, notify) {
-    const text = buildShareText(f);
+    const text = buildSocialPost(f);
     // 行動裝置優先叫出系統原生分享（可直接選 Instagram，帶入摘要與連結）。
     if (navigator.share) {
       try {
