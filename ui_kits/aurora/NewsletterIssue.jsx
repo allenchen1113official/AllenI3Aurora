@@ -72,33 +72,140 @@
     }
   }
 
-  /* ---------- 分享 ---------- */
+  /* ---------- 分享 ----------
+     一鍵分享／Facebook 分享皆帶入「約 250 字元摘要 ＋ 來源連結 ＋ 主題標籤」。
+     摘要優先採用資料提供的社群文案（issue.social.facebook）；若無，則由副標與
+     內文段落組出通順摘要，適用於所有文章（含 2026 年前無社群文案的部落格日報）。
+     Facebook 的 sharer.php 已不支援預填貼文文字，故先開分享視窗、再把完整貼文文字
+     複製到剪貼簿，於貼文貼上即可（與儀表板今日關注動態的分享行為一致）。 */
   function issueUrl(issue) {
     const base = location.origin + "/AllenI3Aurora/";
     return base + "?issue=" + encodeURIComponent(issue && issue.no != null ? issue.no : "");
   }
-  async function shareIssue(issue) {
+
+  const SUMMARY_TARGET = 250;
+  const BRAND_TAGLINE = "洞察世界·累積智慧·點亮未來";
+  const SHARE_HASHTAG = "#艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來";
+  const KIND_HASHTAGS = {
+    "日報": "#艾倫極光日報 #每日速報 #科技新知",
+    "週報": "#艾倫報報週報 #每週深度 #投資筆記",
+    "月報": "#艾倫報報月報 #每月沉澱 #成長軌跡",
+  };
+
+  // 約 250 字元上限，超出則截斷並補省略號。
+  function clampSummary(s) {
+    const t = String(s || "").replace(/\s+/g, " ").trim();
+    return t.length > SUMMARY_TARGET ? t.slice(0, SUMMARY_TARGET - 1).trim() + "…" : t;
+  }
+  // 由內文段落取出可讀文字（略過分隔線、附註與表格）。
+  function blockText(b) {
+    if (!b || !b.t) return "";
+    if (b.t === "lead" || b.t === "quote" || b.t === "h2") return b.text || "";
+    if (b.t === "callout") return [b.title, b.text].filter(Boolean).join("：");
+    return "";
+  }
+  // 組出約 250 字元摘要：社群文案優先 → 副標＋內文段落 → 標題；偏短時補品牌標語與導讀。
+  function issueSummary(issue) {
+    if (issue.social && typeof issue.social.facebook === "string" && issue.social.facebook.trim()) {
+      return clampSummary(issue.social.facebook);
+    }
+    const chunks = [];
+    if (issue.subtitle && String(issue.subtitle).trim()) chunks.push(String(issue.subtitle).trim());
+    const blocks = Array.isArray(issue.blocks) ? issue.blocks : [];
+    for (const b of blocks) {
+      const t = blockText(b);
+      if (t && t.trim()) chunks.push(t.trim());
+      if (chunks.join(" ").length >= SUMMARY_TARGET) break;
+    }
+    let body = chunks.join(" ").trim() || String(issue.title || "").trim();
+    if (body.length < SUMMARY_TARGET - 20) body += `。${BRAND_TAGLINE}，完整內容看這裡👇`;
+    return clampSummary(body);
+  }
+  // 主題標籤：資料提供者優先，否則以文章類別（日報／週報／月報）補上品牌標籤。
+  function hashtagsFor(issue) {
+    const explicit = issue.social && issue.social.hashtags && String(issue.social.hashtags).trim();
+    if (explicit) return explicit;
+    return [(issue && KIND_HASHTAGS[issue.kind]) || "", SHARE_HASHTAG].filter(Boolean).join(" ");
+  }
+  // Facebook／一鍵分享的完整貼文文字：摘要 ＋ 連結 ＋ 主題標籤。
+  function buildSocialPost(issue) {
+    return [issueSummary(issue), "🔗 " + issueUrl(issue), hashtagsFor(issue)].join("\n\n");
+  }
+
+  // 置中彈窗開啟分享頁；被瀏覽器阻擋時退回一般新分頁。
+  function openShareWindow(url) {
+    const win = window.open(url, "_blank", "noopener,noreferrer,width=640,height=720");
+    if (!win) window.open(url, "_blank", "noopener,noreferrer");
+  }
+  // 盡力將文案複製到剪貼簿（優先 Clipboard API，退回 execCommand）。
+  async function copyText(text) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (e) { /* 退回舊式複製 */ }
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.top = "-9999px";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch (e) { return false; }
+  }
+
+  async function shareIssue(issue, notify) {
     const url = issueUrl(issue);
     const title = "艾倫報報 · " + (issue.title || "");
-    const text = (issue.social && issue.social.facebook) || issue.subtitle || issue.title || "";
+    const text = buildSocialPost(issue);
     if (navigator.share) {
       try { await navigator.share({ title, text, url }); return; } catch (e) { if (e && e.name === "AbortError") return; }
     }
-    try {
-      await navigator.clipboard.writeText(url);
-      window.alert("已複製本期分享連結：\n" + url);
-    } catch (e) {
-      window.prompt("複製此連結分享：", url);
-    }
+    const ok = await copyText(text);
+    if (notify) notify(ok ? "已複製摘要與連結，貼上即可分享 📋" : "請手動複製分享文字 📋");
+    else window.prompt("複製此文字分享：", text);
   }
-  function shareFacebook(issue) {
-    const u = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(issueUrl(issue));
-    window.open(u, "_blank", "noopener,width=640,height=640");
+  function shareFacebook(issue, notify) {
+    const text = buildSocialPost(issue);
+    const u = encodeURIComponent(issueUrl(issue));
+    // 先於使用者手勢中同步開啟分享視窗（避免被彈窗攔截），再複製摘要與連結。
+    openShareWindow("https://www.facebook.com/sharer/sharer.php?u=" + u);
+    copyText(text).then((ok) => {
+      if (notify) notify(ok
+        ? "已複製摘要與連結，於 Facebook 貼文貼上即可完成分享 📋"
+        : "請手動複製摘要與連結，貼到 Facebook 分享 📋");
+    });
+  }
+
+  // 底部浮動提示（分享複製流程用）。
+  function Toast({ msg }) {
+    return (
+      <div role="status" aria-live="polite" style={{
+        position: "fixed", left: "50%", bottom: 28, transform: "translateX(-50%)",
+        zIndex: 500, background: "var(--night-700)", color: "var(--text-1)",
+        border: "1px solid var(--border)", borderRadius: "var(--radius-md)",
+        padding: "12px 18px", fontSize: 14, lineHeight: 1.4, boxShadow: "var(--shadow-lg)",
+        maxWidth: "min(90vw, 440px)", textAlign: "center",
+      }}>{msg}</div>
+    );
   }
 
   /* ---------- 資料驅動的單期報報 ---------- */
   function DataIssue({ issue }) {
     const I = window.Icons;
+    const [toast, setToast] = React.useState("");
+    const notify = (m) => setToast(m);
+    React.useEffect(() => {
+      if (!toast) return;
+      const t = setTimeout(() => setToast(""), 2800);
+      return () => clearTimeout(t);
+    }, [toast]);
     const blocks = Array.isArray(issue.blocks) ? issue.blocks : [];
     const cover = issue.cover || "../../assets/rabbit-reading.jpeg";
     const noText = issue.no != null && issue.no !== "" && /^\d+$/.test(String(issue.no)) ? ("第 " + issue.no + " 期") : "";
@@ -142,10 +249,11 @@
           <p style={{ color: "var(--text-3)", margin: "0 0 20px", maxWidth: 420, marginInline: "auto" }}>把它轉寄給一位你在乎的朋友，或回信告訴我你想看的主題。</p>
           <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <Button variant="primary" icon={<I.mail size={16} />} onClick={() => { location.href = "mailto:allenchen1113.official@gmail.com?subject=" + encodeURIComponent("回信給主編 · " + (issue.title || "")); }}>回信給主編</Button>
-            <Button variant="secondary" icon={<I.link size={16} />} onClick={() => shareIssue(issue)}>一鍵分享</Button>
-            <Button variant="outline" icon={<I.ext size={16} />} onClick={() => shareFacebook(issue)}>分享到 Facebook</Button>
+            <Button variant="secondary" icon={<I.link size={16} />} onClick={() => shareIssue(issue, notify)}>一鍵分享</Button>
+            <Button variant="outline" icon={<I.facebook size={16} />} onClick={() => shareFacebook(issue, notify)}>分享到 Facebook</Button>
           </div>
         </Card>
+        {toast ? <Toast msg={toast} /> : null}
       </div>
     );
   }
