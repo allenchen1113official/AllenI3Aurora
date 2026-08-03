@@ -48,8 +48,13 @@ const SOURCES = [
   {
     key: "heatmap", path: ["finance", "heatmap"], tag: "理財", tone: "insight", icon: "chart",
     title: "台股熱力圖 · 上市／上櫃", note: "市值熱力圖", descFallback: "台股上市櫃市值熱力圖",
+    // 連結改連本站前台熱力圖頁面（HTML 連結說明＋上市/上櫃熱力圖）；linkPatterns 僅供退回。
+    site: true, sitePath: "heatmap.html",
     linkPatterns: [/Heatmap.*Listed.*FB.*\.png$/i, /Heatmap.*\.png$/i],
     textPatterns: [/SocialPost.*Listed.*\.txt$/i, /SocialPost.*\.txt$/i],
+    // 前台頁面以 data/heatmap.json 取得「Drive 最新圖」；以下樣式挑出上市／上櫃 FB 圖檔。
+    imgListed: [/Heatmap.*Listed.*FB.*\.png$/i, /Heatmap.*(TWSE|上市).*FB.*\.png$/i, /Heatmap.*FB.*\.png$/i],
+    imgOtc: [/Heatmap.*(OTC|TPEx|上櫃).*FB.*\.png$/i],
   },
   {
     key: "stockradar", path: ["finance", "stockradar"], tag: "選股", tone: "intelligence", icon: "compass",
@@ -182,7 +187,9 @@ async function main() {
       // 連結：newsletter 改連本站前台電子報頁面（HTML，依日期深連結）；
       // 其餘來源連 Drive 代表檔，找不到就連到當日資料夾。
       let link = "";
-      if (src.site) {
+      if (src.site && src.sitePath) {
+        link = `${SITE_URL}${src.sitePath}`;
+      } else if (src.site) {
         link = `${SITE_URL}?issue=${dateYmd.slice(0, 4)}-${dateYmd.slice(4, 6)}-${dateYmd.slice(6, 8)}`;
       } else {
         for (const pat of src.linkPatterns) { const f = files.find((x) => pat.test(x.name)); if (f) { link = f.webViewLink || ""; break; } }
@@ -206,6 +213,31 @@ async function main() {
 
       const meta = `${ymdDisplay(dateYmd)} · ${src.note}${dateYmd === today ? "" : "（最新）"}`;
       items.push({ tag: src.tag, tone: src.tone, title: src.title, desc, summary, meta, icon: src.icon, link });
+
+      // 熱力圖：另更新 data/heatmap.json，讓前台頁面優先顯示「Drive 最新圖」。
+      // 全程 try/catch，任何失敗都不影響 focus.json 產出。
+      if (src.key === "heatmap") {
+        try {
+          const pick = (pats) => { for (const p of (pats || [])) { const f = files.find((x) => p.test(x.name)); if (f) return f; } return null; };
+          const driveThumb = (f) => (f && f.id) ? `https://drive.google.com/thumbnail?id=${f.id}&sz=w1600` : "";
+          const fListed = pick(src.imgListed);
+          const fOtc = pick(src.imgOtc);
+          const HM = "data/heatmap.json";
+          let cur = {};
+          try { cur = JSON.parse(readFileSync(HM, "utf8")); } catch { cur = {}; }
+          cur.date = ymdDisplay(dateYmd);
+          cur.dateLabel = `${ymdDisplay(dateYmd)}${dateYmd === today ? "" : "（最新）"}`;
+          cur.asOf = ymdDisplay(today);
+          if (summary) cur.summary = summary;
+          cur.listed = Object.assign({ title: "上市 · TWSE", subtitle: "市值前 100 大代表股", local: "assets/heatmap/twse-heatmap-fb.png" }, cur.listed || {});
+          cur.otc = Object.assign({ title: "上櫃 · TPEx", subtitle: "市值前 50 大代表股", local: "assets/heatmap/tpex-heatmap-fb.png" }, cur.otc || {});
+          if (fListed) cur.listed.drive = driveThumb(fListed);
+          if (fOtc) cur.otc.drive = driveThumb(fOtc);
+          cur.updatedAt = new Date().toISOString();
+          writeFileSync(HM, JSON.stringify(cur, null, 2) + "\n");
+          console.log("已更新 data/heatmap.json（Drive 最新熱力圖）");
+        } catch (e) { console.error("更新 data/heatmap.json 失敗（略過）：", e.message); }
+      }
     } catch (e) {
       console.error(`來源 ${src.key} 讀取失敗：`, e.message);
     }

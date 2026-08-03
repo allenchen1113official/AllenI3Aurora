@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台股熱力圖 · 上市／上櫃 — 艾倫報報</title>
+<meta name="description" content="台股上市（TWSE）／上櫃（TPEx）市值熱力圖：紅漲綠跌、方塊大小＝市值大小，一眼看懂當日資金流向與類股輪動。艾倫報報 Allen I³ Aurora。">
+<link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
+<link rel="stylesheet" href="/AllenI3Aurora/styles.css">
+<!-- 開放社群預覽（Facebook 分享時顯示圖與說明） -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="台股熱力圖 · 上市／上櫃 — 艾倫報報">
+<meta property="og:description" content="紅漲綠跌、方塊大小＝市值大小，一眼看懂當日台股資金流向與類股輪動。">
+<meta property="og:image" content="https://allenchen1113official.github.io/AllenI3Aurora/assets/heatmap/twse-heatmap-fb.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  html, body { height: auto; }
+  body { margin: 0; min-height: 100vh; color: var(--text-2); }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: var(--space-8, 28px) var(--gutter, 20px) var(--space-24, 96px); }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--aurora-gradient); display: grid; place-items: center; font-family: var(--font-display, system-ui); font-weight: 900; font-size: 15px; color: var(--text-on-accent); }
+  .brand .name { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 18px; color: var(--text-1); letter-spacing: .02em; }
+  .back { font-size: 14px; color: var(--text-3); text-decoration: none; border: 1px solid var(--border); border-radius: var(--radius-pill, 999px); padding: 7px 15px; transition: .18s; }
+  .back:hover { color: var(--text-1); border-color: var(--border-strong); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .badge { font-size: 12.5px; font-weight: 700; letter-spacing: .04em; padding: 5px 12px; border-radius: var(--radius-pill, 999px); border: 1px solid var(--border); color: var(--text-2); background: var(--night-800); }
+  .badge.tag { background: var(--insight-soft); color: var(--insight); border-color: transparent; }
+  h1 { font-family: var(--font-display, system-ui); font-weight: 900; font-size: clamp(1.9rem, 5vw, 2.8rem); line-height: 1.1; letter-spacing: -.02em; color: var(--text-1); margin: 0 0 14px; }
+  .dek { color: var(--text-2); font-size: 1.05rem; line-height: 1.7; margin: 0 0 22px; max-width: 68ch; }
+  .stats { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 26px; }
+  .stat { flex: 1; min-width: 190px; border: 1px solid var(--border); border-radius: var(--radius-lg, 18px); padding: 16px 18px; background: var(--night-800); }
+  .stat .lbl { font-size: 12.5px; color: var(--text-3); margin-bottom: 6px; }
+  .stat .val { font-family: var(--font-mono, ui-monospace); font-weight: 800; font-size: 1.5rem; color: var(--text-1); line-height: 1.1; }
+  .stat .chg { font-size: 13px; font-weight: 700; margin-top: 4px; }
+  .up { color: var(--finance-up); }
+  .down { color: var(--finance-down); }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; border: 1px solid var(--border); border-radius: var(--radius-lg, 18px); padding: 14px 18px; background: var(--night-850); margin: 0 0 30px; font-size: 13.5px; color: var(--text-2); }
+  .legend b { color: var(--text-1); }
+  .legend .chip { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+  .maps { display: grid; gap: 26px; }
+  .map { border: 1px solid var(--border); border-radius: var(--radius-xl, 24px); overflow: hidden; background: var(--night-800); box-shadow: var(--shadow-card); }
+  .map .hd { display: flex; align-items: baseline; gap: 10px; padding: 16px 20px 12px; flex-wrap: wrap; }
+  .map .hd .t { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 1.15rem; color: var(--text-1); }
+  .map .hd .s { font-size: 13px; color: var(--text-3); }
+  .map .img-box { position: relative; background: #0b0d12; }
+  .map img { display: block; width: 100%; height: auto; }
+  .map .cap { padding: 12px 20px 18px; font-size: 12.5px; color: var(--text-3); line-height: 1.5; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 30px 0 10px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; padding: 11px 18px; border-radius: var(--radius-pill, 999px); border: 1px solid var(--border-strong); background: var(--night-800); color: var(--text-1); cursor: pointer; transition: .18s; font-family: inherit; }
+  .btn:hover { border-color: var(--brand); box-shadow: var(--focus-ring); }
+  .btn.primary { background: var(--aurora-gradient); color: var(--text-on-accent); border-color: transparent; }
+  .btn.fb { background: #1877F2; color: #fff; border-color: transparent; }
+  .note { margin-top: 22px; font-size: 12.5px; color: var(--text-4); line-height: 1.6; border-top: 1px solid var(--border-subtle); padding-top: 16px; }
+  .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 500; background: var(--night-700); color: var(--text-1); border: 1px solid var(--border); border-radius: var(--radius-md, 14px); padding: 12px 18px; font-size: 14px; line-height: 1.4; box-shadow: var(--shadow-lg); max-width: min(90vw, 460px); text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .toast.show { opacity: 1; }
+  @media (max-width: 640px) { .wrap { padding-left: 16px; padding-right: 16px; } }
+</style>
+</head>
+<body class="aurora-bg">
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="/AllenI3Aurora/">
+      <span class="mark">I³</span><span class="name">艾倫報報</span>
+    </a>
+    <a class="back" href="/AllenI3Aurora/">← 回儀表板</a>
+  </div>
+
+  <div class="badges">
+    <span class="badge tag">理財 · FINANCE</span>
+    <span class="badge" id="b-date">市值熱力圖</span>
+    <span class="badge">紅漲綠跌</span>
+  </div>
+
+  <h1>台股熱力圖 · 上市／上櫃</h1>
+  <p class="dek" id="dek">紅漲綠跌，一眼看懂當日台股資金流向與類股輪動。方塊大小代表個股市值，兩層結構為「產業類股 → 個股」，快速掌握多空全貌。</p>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="legend">
+    <span class="chip"><span class="swatch" style="background:var(--finance-up)"></span><b>紅</b>＝上漲</span>
+    <span class="chip"><span class="swatch" style="background:var(--finance-down)"></span><b>綠</b>＝下跌</span>
+    <span class="chip">方塊大小 <b>＝ 市值大小</b>（經壓縮以利閱讀）</span>
+    <span class="chip">兩層 <b>＝ 類股 → 個股</b></span>
+  </div>
+
+  <div class="maps" id="maps"></div>
+
+  <div class="actions">
+    <button class="btn primary" id="share">🔗 一鍵分享</button>
+    <button class="btn fb" id="fb"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4.5"/><path d="M14.5 8H13a1.5 1.5 0 0 0-1.5 1.5V21"/><path d="M9.5 13h5"/></svg>分享到 Facebook</button>
+  </div>
+
+  <p class="note" id="note"></p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var SITE = "https://allenchen1113official.github.io/AllenI3Aurora/";
+  var PAGE = SITE + "heatmap.html";
+  // 內建預設（data/heatmap.json 取得後覆蓋），確保即使 JSON 讀取失敗仍可顯示。
+  var DEFAULTS = {
+    date: "", dateLabel: "市值熱力圖",
+    taiex: { name: "加權指數 TAIEX", index: "", change: "", changePct: "", up: true },
+    tpex: { name: "櫃買指數 TPEx", index: "", change: "", changePct: "", up: false },
+    summary: "台股上市／上櫃市值熱力圖：紅漲綠跌、方塊大小＝市值大小，一眼看懂當日資金流向與類股輪動。洞察世界·累積智慧·點亮未來，完整熱力圖看這裡👇",
+    hashtags: "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+    listed: { title: "上市 · TWSE", subtitle: "市值前 100 大代表股", drive: "", local: "assets/heatmap/twse-heatmap-fb.png" },
+    otc: { title: "上櫃 · TPEx", subtitle: "市值前 50 大代表股", drive: "", local: "assets/heatmap/tpex-heatmap-fb.png" },
+    note: ""
+  };
+
+  function esc(s) { return String(s == null ? "" : s); }
+  // 站內圖走「頁面相對路徑」(assets/…) —— 於 /AllenI3Aurora/heatmap.html 下會解析到
+  // /AllenI3Aurora/assets/…，在正式站、預覽站與自訂網域皆正確；Drive 圖則為絕對網址。
+
+  function renderStats(d) {
+    var box = document.getElementById("stats");
+    function card(o) {
+      if (!o || (!o.index && !o.change)) return "";
+      var cls = o.up ? "up" : "down";
+      var chg = [esc(o.change), esc(o.changePct)].filter(Boolean).join(" · ");
+      return '<div class="stat"><div class="lbl">' + esc(o.name) + '</div>' +
+             '<div class="val">' + esc(o.index || "—") + '</div>' +
+             (chg ? '<div class="chg ' + cls + '">' + chg + '</div>' : '') + '</div>';
+    }
+    box.innerHTML = card(d.taiex) + card(d.tpex);
+  }
+
+  function renderMaps(d) {
+    var maps = document.getElementById("maps");
+    function one(m) {
+      if (!m) return "";
+      var fallback = esc(m.local);            // 站內備援圖（頁面相對路徑）
+      var primary = esc(m.drive) || fallback; // 優先 Drive 最新圖，否則直接用備援
+      // 優先載入 Drive 最新圖；失敗（未公開／熱鏈被擋）自動退回站內附上的圖。
+      var onerr = "this.onerror=null;this.src='" + fallback + "';";
+      return '<div class="map"><div class="hd"><span class="t">' + esc(m.title) + '</span>' +
+             '<span class="s">' + esc(m.subtitle || "") + '</span></div>' +
+             '<div class="img-box"><img loading="lazy" alt="' + esc(m.title) + ' 台股熱力圖" src="' + primary + '" onerror="' + onerr + '"></div></div>';
+    }
+    maps.innerHTML = one(d.listed) + one(d.otc);
+  }
+
+  var toastTimer = null;
+  function notify(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2800);
+  }
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return legacyCopy(text); });
+    }
+    return Promise.resolve(legacyCopy(text));
+  }
+  function legacyCopy(text) {
+    try { var ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.top = "-9999px"; document.body.appendChild(ta); ta.focus(); ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok; } catch (e) { return false; }
+  }
+  function openShareWindow(url) { var w = window.open(url, "_blank", "noopener,noreferrer,width=640,height=720"); if (!w) window.open(url, "_blank", "noopener,noreferrer"); }
+
+  function socialPost(d) { return [d.summary, "🔗 " + PAGE, d.hashtags].join("\n\n"); }
+
+  function wireShare(d) {
+    var post = socialPost(d);
+    document.getElementById("share").addEventListener("click", function () {
+      if (navigator.share) {
+        navigator.share({ title: "台股熱力圖 · 上市／上櫃 — 艾倫報報", text: post, url: PAGE }).catch(function () {});
+        return;
+      }
+      copyText(post).then(function (ok) { notify(ok ? "已複製摘要與連結，貼上即可分享 📋" : "請手動複製分享文字 📋"); });
+    });
+    document.getElementById("fb").addEventListener("click", function () {
+      // 比照站內分享：優先系統原生分享（帶入完整貼文文字＋hashtag），
+      // 桌面退回時先複製完整貼文、再開啟 Facebook 分享視窗供貼上。
+      if (navigator.share) {
+        navigator.share({ title: "台股熱力圖 · 上市／上櫃 — 艾倫報報", text: post, url: PAGE }).catch(function () {});
+        return;
+      }
+      copyText(post).then(function (ok) {
+        openShareWindow("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(PAGE) + "&quote=" + encodeURIComponent(post));
+        notify(ok ? "已複製完整貼文（摘要＋hashtag），在 Facebook 貼上（Ctrl/⌘+V）即可發表 📋" : "請手動複製貼文內容，貼到 Facebook 發表 📋");
+      });
+    });
+  }
+
+  function apply(d) {
+    document.getElementById("b-date").textContent = (d.dateLabel || "市值熱力圖");
+    if (d.summary) document.getElementById("dek").textContent = d.summary.replace(/洞察世界[·].*$/, "").trim() || d.summary;
+    document.getElementById("note").textContent = d.note || "";
+    renderStats(d); renderMaps(d); wireShare(d);
+  }
+
+  // 先套用預設立即可見，再以 data/heatmap.json 覆蓋（勝出「Drive 最新／站內備援」）。
+  apply(DEFAULTS);
+  fetch("/AllenI3Aurora/data/heatmap.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) { if (j) { var d = Object.assign({}, DEFAULTS, j); apply(d); } })
+    .catch(function () {});
+})();
+</script>
+</body>
+</html>
