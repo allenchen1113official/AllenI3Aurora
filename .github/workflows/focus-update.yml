@@ -46,10 +46,10 @@ jobs:
         run: node scripts/update-issues.mjs
       - name: 有變動才提交
         run: |
-          if [[ -n "$(git status --porcelain data/focus.json data/newsletter-current.json data/heatmap.json)" ]]; then
+          if [[ -n "$(git status --porcelain data/focus.json data/newsletter-current.json data/heatmap.json data/stockradar.json)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data/focus.json data/newsletter-current.json data/heatmap.json
+            git add data/focus.json data/newsletter-current.json data/heatmap.json data/stockradar.json
             git commit -m "chore(newsletter): 自動更新今日關注動態與本期報報 [skip ci]"
             git pull --rebase --autostash origin main || true
             git push
