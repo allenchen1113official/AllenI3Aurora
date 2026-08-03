@@ -5,7 +5,7 @@
    若目前沒有任何結構化內容，退回內建的示範版型（LegacyIssue），確保網站照常運作。 */
 (function () {
   const NS = window.AllenAuroraDesignSystem_e6fd5f;
-  const { Card, Badge, Tag, Button, IconButton, Avatar, Divider, Callout, SectionHeader } = NS;
+  const { Card, Badge, Tag, Button, IconButton, Avatar, Divider, Callout, SectionHeader, Tabs } = NS;
 
   /* ---------- 共用排版小元件 ---------- */
   function Dek({ children }) {
@@ -173,6 +173,100 @@
     return list[0];
   }
 
+  /* ---------- 本期報報：日報／週報／月報切換總覽 ----------
+     由同源 data/newsletter-current.json（伺服器端自 Drive 三個資料夾彙整）驅動，
+     各節奏顯示當期摘要卡並連到完整 HTML 頁面；JSON 未就緒時退回 KIT.issues 最新一期。 */
+  const CADENCE_TABS = [
+    { id: "day", label: "日報" },
+    { id: "week", label: "週報" },
+    { id: "month", label: "月報" },
+  ];
+  const CADENCE_KIND = { day: "日報", week: "週報", month: "月報" };
+  const CADENCE_TONE = { day: "illumination", week: "insight", month: "intelligence" };
+  const CADENCE_COVER = {
+    day: "../../assets/rabbit-golden.jpeg",
+    week: "../../assets/rabbit-reading.jpeg",
+    month: "../../assets/rabbit-mountain.jpeg",
+  };
+  const CURRENT_URL = "/AllenI3Aurora/data/newsletter-current.json";
+
+  function useCurrentIssues() {
+    const [data, setData] = React.useState(null);
+    React.useEffect(() => {
+      let alive = true;
+      fetch(CURRENT_URL, { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => { if (alive && j) setData(j); })
+        .catch(() => {});
+      return () => { alive = false; };
+    }, []);
+    return data;
+  }
+
+  // 由 KIT.issues 取某節奏最新一期，作為 JSON 未就緒時的退回。
+  function latestOfKind(kind) {
+    const list = (window.KIT && window.KIT.issues) || [];
+    const num = (s) => Number(String(s == null ? "" : s).replace(/\D/g, "")) || 0;
+    return list.filter((i) => i.kind === kind).sort((a, b) => num(b.date) - num(a.date))[0] || null;
+  }
+
+  // 綜合 JSON 與 KIT.issues，組出某節奏的當期卡片資料。
+  function currentFor(cad, data) {
+    const d = data && data[cad];
+    const fb = latestOfKind(CADENCE_KIND[cad]);
+    const fbLink = fb && fb.no != null && fb.no !== "" ? (location.pathname + "?issue=" + encodeURIComponent(fb.no)) : "";
+    return {
+      kind: CADENCE_KIND[cad],
+      tone: (d && d.tone) || CADENCE_TONE[cad],
+      date: (d && d.date) || (fb && fb.date) || "",
+      title: (d && d.title) || (fb && fb.title) || "",
+      summary: (d && d.summary) || (fb && fb.subtitle) || "",
+      cover: (d && d.cover) || (fb && fb.cover) || CADENCE_COVER[cad],
+      link: (d && d.link) || fbLink || location.pathname,
+    };
+  }
+
+  function CadenceOverview() {
+    const I = window.Icons;
+    const data = useCurrentIssues();
+    const [cad, setCad] = React.useState("day");
+    const cur = currentFor(cad, data);
+    return (
+      <div style={{ maxWidth: 860, margin: "0 auto", padding: "var(--space-10) var(--gutter) var(--space-24)" }}>
+        <div style={{ textAlign: "center", marginBottom: "var(--space-8)" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
+            <span style={{ width: 34, height: 34, borderRadius: 10, background: "var(--aurora-gradient)", display: "grid", placeItems: "center", fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 15, color: "var(--text-on-accent)" }}>I³</span>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, letterSpacing: ".02em", fontSize: 18, color: "var(--text-1)" }}>艾倫報報</span>
+          </div>
+          <p style={{ color: "var(--text-3)", fontSize: "var(--text-md)", margin: "0 0 20px" }}>日報捕捉當下，週報收斂脈絡，月報沉澱成長。</p>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Tabs value={cad} onChange={setCad} items={CADENCE_TABS} />
+          </div>
+        </div>
+
+        <Card padding="0" style={{ overflow: "hidden" }}>
+          <div style={{ position: "relative", height: 260 }}>
+            <img src={cur.cover} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(5,7,15,.82), transparent 60%)" }} />
+            <div style={{ position: "absolute", top: 16, left: 16, display: "flex", gap: 8 }}>
+              <Badge tone={cur.tone} variant="solid">{cur.kind}</Badge>
+              {cur.date ? <Badge tone="neutral">{cur.date}</Badge> : null}
+            </div>
+          </div>
+          <div style={{ padding: "var(--space-8)" }}>
+            <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(1.5rem, 4vw, var(--text-3xl))", lineHeight: 1.14, letterSpacing: "var(--ls-tight)", color: "var(--text-1)", margin: "0 0 14px" }}>
+              {cur.title || "本期即將發佈"}
+            </h1>
+            {cur.summary ? <p style={{ color: "var(--text-2)", fontSize: "var(--text-md)", lineHeight: "var(--lh-relaxed)", margin: "0 0 22px", whiteSpace: "pre-wrap" }}>{cur.summary}</p> : null}
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <Button variant="primary" icon={<I.ext size={16} />} onClick={() => { if (cur.link) location.href = cur.link; }}>閱讀全文</Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   /* ---------- 內建示範版型（無任何結構化內容時的最終退回） ---------- */
   function LegacyIssue() {
     const I = window.Icons;
@@ -229,12 +323,20 @@
     );
   }
 
+  function hasIssueParam() {
+    try { const w = new URLSearchParams(location.search).get("issue"); return w != null && w !== ""; }
+    catch (e) { return false; }
+  }
   function NewsletterIssue() {
-    const issue = pickIssue();
-    if (issue && (issue.title || (Array.isArray(issue.blocks) && issue.blocks.length))) {
-      return <DataIssue issue={issue} />;
+    // 深連結指定某一期（?issue=）→ 完整閱讀版型；否則顯示日報／週報／月報切換總覽。
+    if (hasIssueParam()) {
+      const issue = pickIssue();
+      if (issue && (issue.title || (Array.isArray(issue.blocks) && issue.blocks.length))) {
+        return <DataIssue issue={issue} />;
+      }
+      return <LegacyIssue />;
     }
-    return <LegacyIssue />;
+    return <CadenceOverview />;
   }
   window.NewsletterIssue = NewsletterIssue;
 })();
