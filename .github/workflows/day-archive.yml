@@ -1,0 +1,52 @@
+name: 更新 2026 年前日報（部落格彙整）
+
+# 由部落格 allenchen1113official/allenchen1113official 的 content/posts 彙整
+# 「日期 < 2026-01-01」的文章為「日報」，輸出 data/day-archive.json（同源，
+# 供「歷期彙整」日報分頁瀏覽與站內閱讀）。文章更動不頻繁，每週更新一次即可。
+on:
+  schedule:
+    - cron: "0 20 * * 0"   # 每週一 04:00（台北）＝週日 20:00 UTC
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/day-archive.yml"
+      - "scripts/build-day-archive.mjs"
+  workflow_dispatch: {}
+
+concurrency:
+  group: day-archive
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 取出本專案
+        uses: actions/checkout@v4
+      - name: 取出部落格文章來源
+        uses: actions/checkout@v4
+        with:
+          repository: allenchen1113official/allenchen1113official
+          path: _posts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 彙整 2026 年前日報 → data/day-archive.json
+        env:
+          POSTS_DIR: _posts/content/posts
+        run: node scripts/build-day-archive.mjs
+      - name: 有變動才提交
+        run: |
+          if [[ -n "$(git status --porcelain data/day-archive.json)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/day-archive.json
+            git commit -m "chore(archive): 自動更新 2026 年前日報（部落格彙整）[skip ci]"
+            git pull --rebase --autostash origin main || true
+            git push
+          else
+            echo "2026 年前日報無變動，略過提交。"
+          fi

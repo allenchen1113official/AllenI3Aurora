@@ -101,7 +101,7 @@
     const I = window.Icons;
     const blocks = Array.isArray(issue.blocks) ? issue.blocks : [];
     const cover = issue.cover || "../../assets/rabbit-reading.jpeg";
-    const noText = issue.no != null && issue.no !== "" ? ("第 " + issue.no + " 期") : "";
+    const noText = issue.no != null && issue.no !== "" && /^\d+$/.test(String(issue.no)) ? ("第 " + issue.no + " 期") : "";
     return (
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "var(--space-10) var(--gutter) var(--space-24)" }}>
         {/* Masthead */}
@@ -327,13 +327,23 @@
     try { const w = new URLSearchParams(location.search).get("issue"); return w != null && w !== ""; }
     catch (e) { return false; }
   }
+  function IssueLoading() {
+    return (
+      <div style={{ maxWidth: 860, margin: "0 auto", padding: "var(--space-24) var(--gutter)", textAlign: "center", color: "var(--text-3)" }}>
+        載入中…
+      </div>
+    );
+  }
   function NewsletterIssue() {
     // 深連結指定某一期（?issue=）→ 完整閱讀版型；否則顯示日報／週報／月報切換總覽。
-    if (hasIssueParam()) {
+    const deep = hasIssueParam();
+    const ready = window.useDayArchive(deep); // 深連結時確保部落格日報已併入，供閱讀
+    if (deep) {
       const issue = pickIssue();
       if (issue && (issue.title || (Array.isArray(issue.blocks) && issue.blocks.length))) {
         return <DataIssue issue={issue} />;
       }
+      if (!ready) return <IssueLoading />; // 尚在載入部落格日報 → 稍候再解析
       return <LegacyIssue />;
     }
     return <CadenceOverview />;
