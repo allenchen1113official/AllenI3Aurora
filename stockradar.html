@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台股選股雷達 · TOP 10 訊號排行 — 艾倫報報</title>
+<meta name="description" content="台股選股雷達 TOP 10 訊號排行：逼近漲停、KD 黃金交叉、量能突破，技術面轉強名單一次看，用訊號選股不再靠猜。艾倫報報 Allen I³ Aurora。">
+<link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
+<link rel="stylesheet" href="/AllenI3Aurora/styles.css">
+<!-- 開放社群預覽（Facebook／Threads 分享時顯示圖與說明） -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="台股選股雷達 · TOP 10 訊號排行 — 艾倫報報">
+<meta property="og:description" content="逼近漲停、KD 黃金交叉、量能突破，技術面轉強名單一次看，用訊號選股不再靠猜。">
+<meta property="og:image" content="https://allenchen1113official.github.io/AllenI3Aurora/assets/stockradar/stockradar-fb.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  html, body { height: auto; }
+  body { margin: 0; min-height: 100vh; color: var(--text-2); }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: var(--space-8, 28px) var(--gutter, 20px) var(--space-24, 96px); }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--aurora-gradient); display: grid; place-items: center; font-family: var(--font-display, system-ui); font-weight: 900; font-size: 15px; color: var(--text-on-accent); }
+  .brand .name { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 18px; color: var(--text-1); letter-spacing: .02em; }
+  .back { font-size: 14px; color: var(--text-3); text-decoration: none; border: 1px solid var(--border); border-radius: var(--radius-pill, 999px); padding: 7px 15px; transition: .18s; }
+  .back:hover { color: var(--text-1); border-color: var(--border-strong); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .badge { font-size: 12.5px; font-weight: 700; letter-spacing: .04em; padding: 5px 12px; border-radius: var(--radius-pill, 999px); border: 1px solid var(--border); color: var(--text-2); background: var(--night-800); }
+  .badge.tag { background: var(--intelligence-soft); color: var(--intelligence); border-color: transparent; }
+  h1 { font-family: var(--font-display, system-ui); font-weight: 900; font-size: clamp(1.9rem, 5vw, 2.8rem); line-height: 1.1; letter-spacing: -.02em; color: var(--text-1); margin: 0 0 14px; }
+  h1 .accent { background: var(--aurora-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .dek { color: var(--text-2); font-size: 1.05rem; line-height: 1.7; margin: 0 0 22px; max-width: 68ch; }
+  .signals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 26px; }
+  .sig { border: 1px solid var(--border); border-radius: var(--radius-lg, 18px); padding: 15px 17px; background: var(--night-800); }
+  .sig .h { display: flex; align-items: center; gap: 9px; font-weight: 800; color: var(--text-1); font-size: 1.02rem; margin-bottom: 6px; }
+  .sig .sw { width: 13px; height: 13px; border-radius: 4px; flex: none; }
+  .sig .d { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+  .panel { border: 1px solid var(--border); border-radius: var(--radius-xl, 24px); overflow: hidden; background: var(--night-800); box-shadow: var(--shadow-card); margin: 0 0 26px; }
+  .panel .hd { display: flex; align-items: baseline; gap: 10px; padding: 16px 20px 12px; flex-wrap: wrap; border-bottom: 1px solid var(--border-subtle); }
+  .panel .hd .t { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 1.15rem; color: var(--text-1); }
+  .panel .hd .s { font-size: 13px; color: var(--text-3); }
+  table.rank { width: 100%; border-collapse: collapse; }
+  table.rank th, table.rank td { padding: 12px 16px; text-align: left; font-size: 14px; border-bottom: 1px solid var(--border-subtle); }
+  table.rank th { font-size: 12px; color: var(--text-3); font-weight: 700; letter-spacing: .04em; }
+  table.rank tr:last-child td { border-bottom: 0; }
+  table.rank td.n { font-family: var(--font-mono, ui-monospace); font-weight: 800; color: var(--illumination); width: 46px; }
+  table.rank td.nm { color: var(--text-1); font-weight: 700; }
+  table.rank td.nm small { display: block; color: var(--text-3); font-weight: 600; font-size: 12px; }
+  table.rank td.pct { font-family: var(--font-mono, ui-monospace); font-weight: 800; text-align: right; }
+  .up { color: var(--finance-up); }
+  .down { color: var(--finance-down); }
+  .tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .pill { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-2); white-space: nowrap; }
+  .pill.up { color: var(--finance-up); border-color: color-mix(in srgb, var(--finance-up) 40%, transparent); }
+  .pill.gold { color: var(--illumination); border-color: color-mix(in srgb, var(--illumination) 40%, transparent); }
+  .pill.vol { color: var(--insight); border-color: color-mix(in srgb, var(--insight) 40%, transparent); }
+  .img-box { position: relative; background: #0b0d12; }
+  .img-box img { display: block; width: 100%; height: auto; }
+  .cap { padding: 12px 20px 18px; font-size: 12.5px; color: var(--text-3); line-height: 1.5; }
+  .source-link { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 700; color: var(--intelligence); text-decoration: none; border: 1px solid color-mix(in srgb, var(--intelligence) 35%, transparent); border-radius: var(--radius-pill, 999px); padding: 8px 15px; margin: 0 0 26px; transition: .18s; }
+  .source-link:hover { background: var(--intelligence-soft); }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 30px 0 10px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; padding: 11px 18px; border-radius: var(--radius-pill, 999px); border: 1px solid var(--border-strong); background: var(--night-800); color: var(--text-1); cursor: pointer; transition: .18s; font-family: inherit; }
+  .btn:hover { border-color: var(--brand); box-shadow: var(--focus-ring); }
+  .btn.primary { background: var(--aurora-gradient); color: var(--text-on-accent); border-color: transparent; }
+  .btn.fb { background: #1877F2; color: #fff; border-color: transparent; }
+  .btn.ig { background: linear-gradient(45deg, #F58529, #DD2A7B 50%, #8134AF 85%); color: #fff; border-color: transparent; }
+  .btn.th { background: #000; color: #fff; border-color: #2a2a2a; }
+  .note { margin-top: 22px; font-size: 12.5px; color: var(--text-4); line-height: 1.6; border-top: 1px solid var(--border-subtle); padding-top: 16px; }
+  .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 500; background: var(--night-700); color: var(--text-1); border: 1px solid var(--border); border-radius: var(--radius-md, 14px); padding: 12px 18px; font-size: 14px; line-height: 1.4; box-shadow: var(--shadow-lg); max-width: min(90vw, 460px); text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .toast.show { opacity: 1; }
+  @media (max-width: 640px) { .wrap { padding-left: 16px; padding-right: 16px; } .signals { grid-template-columns: 1fr; } table.rank th.hide-sm, table.rank td.hide-sm { display: none; } }
+</style>
+</head>
+<body class="aurora-bg">
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="/AllenI3Aurora/">
+      <span class="mark">I³</span><span class="name">艾倫報報</span>
+    </a>
+    <a class="back" href="/AllenI3Aurora/">← 回儀表板</a>
+  </div>
+
+  <div class="badges">
+    <span class="badge tag">選股 · INTELLIGENCE</span>
+    <span class="badge" id="b-date">訊號雷達</span>
+    <span class="badge">TOP 10</span>
+  </div>
+
+  <h1>台股選股雷達 · <span class="accent">TOP 10 訊號排行</span></h1>
+  <p class="dek" id="dek">逼近漲停、KD 黃金交叉、量能突破——三大技術面訊號綜合排序，把當日轉強名單一次列出。用客觀訊號取代盤感，讓選股不再靠猜。</p>
+
+  <div class="signals" id="signals"></div>
+
+  <div class="panel" id="rankPanel" hidden>
+    <div class="hd"><span class="t">TOP 10 訊號排行</span><span class="s">依綜合訊號強度排序</span></div>
+    <div style="overflow-x:auto"><table class="rank" id="rankTable"></table></div>
+  </div>
+
+  <div class="panel" id="radarPanel">
+    <div class="hd"><span class="t" id="radar-t">TOP 10 訊號雷達</span><span class="s" id="radar-s">技術面轉強名單</span></div>
+    <div class="img-box"><img id="radar-img" loading="lazy" alt="台股選股雷達 TOP 10 訊號排行"></div>
+    <div class="cap" id="radar-cap">紅＝逼近漲停、金＝KD 黃金交叉、綠＝量能突破。方塊排序依綜合訊號強度，一眼掌握技術面轉強名單。</div>
+  </div>
+
+  <a class="source-link" id="source" href="#" target="_blank" rel="noopener noreferrer" hidden>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>
+    查看完整訊號雷達原始資料
+  </a>
+
+  <div class="actions">
+    <button class="btn primary" id="share">🔗 一鍵分享</button>
+    <button class="btn fb" id="fb"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>Facebook</button>
+    <button class="btn ig" id="ig"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram</button>
+    <button class="btn th" id="th"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 11.6c-.2-.1-.4-.2-.6-.3-.1-2.1-1.3-3.3-3.2-3.3-1.2 0-2.2.5-2.8 1.5l1.3.9c.4-.6.9-.7 1.5-.7.9 0 1.5.6 1.6 1.5-.4-.1-.9-.2-1.4-.2-1.8 0-3 1-2.9 2.6.1 1.4 1.3 2.2 2.7 2.1 1.4-.1 2.4-.9 2.7-2.4.5.3.8.8.9 1.4.1 1-.6 2.3-2.9 2.9-2 .5-3.9-.6-4.4-3-.2-.9-.2-2.3 0-3.2.6-2.4 2.4-3.5 4.4-3 .6.2 1.1.4 1.5.8"/></svg>Threads</button>
+  </div>
+
+  <p class="note" id="note"></p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var SITE = "https://allenchen1113official.github.io/AllenI3Aurora/";
+  var PAGE = SITE + "stockradar.html";
+  var TITLE = "台股選股雷達 · TOP 10 訊號排行 — 艾倫報報";
+
+  // 內建預設（data/stockradar.json 取得後覆蓋），確保 JSON 讀取失敗仍可顯示。
+  var DEFAULTS = {
+    date: "", dateLabel: "訊號雷達",
+    summary: "台股選股雷達 · TOP 10 訊號排行：逼近漲停、KD 黃金交叉、量能突破，技術面轉強名單一次看，用訊號選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
+    hashtags: "#台股 #選股 #選股雷達 #訊號雷達 #TOP10 #KD黃金交叉 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+    signals: [
+      { key: "up", label: "逼近漲停", desc: "當日漲幅逼近 10% 上限，買盤積極" },
+      { key: "gold", label: "KD 黃金交叉", desc: "K 線由下向上穿越 D 線，短線轉強" },
+      { key: "vol", label: "量能突破", desc: "成交量放大突破近期均量，資金進駐" }
+    ],
+    top10: [],
+    radar: { title: "TOP 10 訊號雷達", subtitle: "技術面轉強名單 · 依綜合訊號強度排序", drive: "", local: "assets/stockradar/stockradar-ig.png" },
+    source: "", note: ""
+  };
+
+  var SIG_COLOR = { up: "var(--finance-up)", gold: "var(--illumination)", vol: "var(--insight)" };
+  function esc(s) { return String(s == null ? "" : s); }
+  function escAttr(s) { return esc(s).replace(/"/g, "&quot;"); }
+
+  function renderSignals(d) {
+    var box = document.getElementById("signals");
+    box.innerHTML = (d.signals || []).map(function (s) {
+      var c = SIG_COLOR[s.key] || "var(--brand)";
+      return '<div class="sig"><div class="h"><span class="sw" style="background:' + c + '"></span>' + esc(s.label) + '</div>' +
+             '<div class="d">' + esc(s.desc) + '</div></div>';
+    }).join("");
+  }
+
+  function renderRank(d) {
+    var panel = document.getElementById("rankPanel");
+    var list = Array.isArray(d.top10) ? d.top10 : [];
+    if (!list.length) { panel.hidden = true; return; }
+    panel.hidden = false;
+    var rows = list.map(function (r, i) {
+      var up = (typeof r.up === "boolean") ? r.up : (String(r.changePct || "").indexOf("-") !== 0);
+      var chg = [esc(r.change), esc(r.changePct)].filter(Boolean).join(" ");
+      var tags = (r.signals || []).map(function (k) {
+        var lbl = { up: "逼近漲停", gold: "KD 交叉", vol: "量能突破" }[k] || k;
+        return '<span class="pill ' + esc(k) + '">' + esc(lbl) + '</span>';
+      }).join("");
+      return '<tr><td class="n">' + (i + 1) + '</td>' +
+             '<td class="nm">' + esc(r.name || "") + (r.code ? '<small>' + esc(r.code) + '</small>' : '') + '</td>' +
+             '<td class="hide-sm"><div class="tags">' + tags + '</div></td>' +
+             '<td class="pct ' + (up ? "up" : "down") + '">' + (chg || "—") + '</td></tr>';
+    }).join("");
+    document.getElementById("rankTable").innerHTML =
+      '<thead><tr><th>#</th><th>個股</th><th class="hide-sm">訊號</th><th style="text-align:right">漲跌幅</th></tr></thead><tbody>' + rows + '</tbody>';
+  }
+
+  function renderRadar(d) {
+    var m = d.radar || {};
+    document.getElementById("radar-t").textContent = esc(m.title || "TOP 10 訊號雷達");
+    document.getElementById("radar-s").textContent = esc(m.subtitle || "");
+    var fallback = esc(m.local || "assets/stockradar/stockradar-ig.png"); // 站內備援圖（頁面相對路徑）
+    var primary = esc(m.drive) || fallback;                               // 優先 Drive 最新圖
+    var img = document.getElementById("radar-img");
+    img.onerror = function () { img.onerror = null; img.src = fallback; };
+    img.src = primary;
+  }
+
+  function renderSource(d) {
+    var a = document.getElementById("source");
+    if (d.source) { a.href = d.source; a.hidden = false; } else { a.hidden = true; }
+  }
+
+  var toastTimer = null;
+  function notify(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2800);
+  }
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return legacyCopy(text); });
+    }
+    return Promise.resolve(legacyCopy(text));
+  }
+  function legacyCopy(text) {
+    try { var ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.top = "-9999px"; document.body.appendChild(ta); ta.focus(); ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok; } catch (e) { return false; }
+  }
+  function openShareWindow(url) { var w = window.open(url, "_blank", "noopener,noreferrer,width=640,height=720"); if (!w) window.open(url, "_blank", "noopener,noreferrer"); }
+
+  // 貼文文字：摘要 ＋ 來源連結 ＋ 主題標籤（Facebook／Instagram 用）。
+  function socialPost(d) { return [d.summary, "🔗 " + PAGE, d.hashtags].join("\n\n"); }
+  // Threads intent 需 text 與 url 分開帶入。
+  function threadsText(d) { return [d.summary, d.hashtags].join("\n\n"); }
+
+  function wireShare(d) {
+    var post = socialPost(d);
+
+    // 一鍵分享：優先系統原生分享（行動裝置可直接選 IG／FB／Threads，帶入摘要與連結），
+    // 桌面退回複製完整貼文供貼上。
+    function nativeOrCopy(okMsg) {
+      if (navigator.share) {
+        navigator.share({ title: TITLE, text: post, url: PAGE }).catch(function () {});
+        return true;
+      }
+      copyText(post).then(function (ok) { notify(ok ? okMsg : "請手動複製貼文內容分享 📋"); });
+      return false;
+    }
+
+    document.getElementById("share").addEventListener("click", function () {
+      nativeOrCopy("已複製摘要與連結，貼上即可分享 📋");
+    });
+
+    // Facebook：sharer.php 僅能附連結，無法預填貼文文字，故先複製完整貼文再開分享視窗。
+    document.getElementById("fb").addEventListener("click", function () {
+      if (navigator.share) { navigator.share({ title: TITLE, text: post, url: PAGE }).catch(function () {}); return; }
+      copyText(post).then(function (ok) {
+        openShareWindow("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(PAGE));
+        notify(ok ? "已複製完整貼文（摘要＋hashtag），在 Facebook 貼上（Ctrl/⌘+V）即可發表 📋" : "請手動複製貼文內容，貼到 Facebook 發表 📋");
+      });
+    });
+
+    // Instagram：無網頁預填介面；行動裝置優先系統原生分享，否則複製貼文後開啟 Instagram。
+    document.getElementById("ig").addEventListener("click", function () {
+      if (navigator.share) { navigator.share({ title: TITLE, text: post, url: PAGE }).catch(function () {}); return; }
+      copyText(post).then(function (ok) {
+        openShareWindow("https://www.instagram.com/");
+        notify(ok ? "已複製摘要與 hashtag，Instagram 貼文貼上即可完成分享 📋" : "請手動複製貼文內容，貼到 Instagram 分享 📋");
+      });
+    });
+
+    // Threads：官方 intent/post 可預填文案與連結。
+    document.getElementById("th").addEventListener("click", function () {
+      openShareWindow("https://www.threads.net/intent/post?text=" + encodeURIComponent(threadsText(d)) + "&url=" + encodeURIComponent(PAGE));
+    });
+  }
+
+  function apply(d) {
+    document.getElementById("b-date").textContent = (d.dateLabel || "訊號雷達");
+    if (d.summary) {
+      var lead = d.summary.replace(/^【[^】]*】/, "").replace(/洞察世界[·].*$/, "").trim();
+      if (lead) document.getElementById("dek").textContent = lead;
+    }
+    document.getElementById("note").textContent = d.note || "";
+    renderSignals(d); renderRank(d); renderRadar(d); renderSource(d); wireShare(d);
+  }
+
+  // 先套用預設立即可見，再以 data/stockradar.json 覆蓋（Drive 最新／站內備援）。
+  apply(DEFAULTS);
+  fetch("/AllenI3Aurora/data/stockradar.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) { if (j) { var d = Object.assign({}, DEFAULTS, j); apply(d); } })
+    .catch(function () {});
+})();
+</script>
+</body>
+</html>

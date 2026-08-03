@@ -1,7 +1,7 @@
 {
   "items": [
     { "tag": "理財", "tone": "insight", "title": "台股熱力圖 · 上市／上櫃", "desc": "史上最大漲點狂飆3186點", "summary": "【理財】台股熱力圖 · 上市／上櫃｜2026.07.31 加權指數狂飆3,186點、創史上最大單日漲點收43,119，台積電鎖漲停、電子權值全面點火；上市一片火紅，上櫃卻明顯落後。紅漲綠跌一眼看懂資金流向與類股輪動，方塊大小＝市值大小。洞察世界·累積智慧·點亮未來，完整熱力圖看這裡👇", "meta": "2026.07.31 · 市值熱力圖（最新）", "icon": "chart", "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html" },
-    { "tag": "選股", "tone": "intelligence", "title": "台股選股雷達", "desc": "多檔逼近漲停，KD黃金交叉", "summary": "【選股】台股選股雷達｜2026.07.31 多檔個股逼近漲停、KD 指標黃金交叉。TOP10 訊號排行一次看，技術面轉強名單與進場時機讓選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇", "meta": "2026.07.31 · 訊號雷達（最新）", "icon": "compass", "link": "https://drive.google.com/file/d/1nq9FS5eBl-t7Z6tprpi3kvmJicx7s55-/view" },
+    { "tag": "選股", "tone": "intelligence", "title": "台股選股雷達", "desc": "多檔逼近漲停，KD黃金交叉", "summary": "【選股】台股選股雷達｜2026.07.31 多檔個股逼近漲停、KD 指標黃金交叉。TOP10 訊號排行一次看，技術面轉強名單與進場時機讓選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇", "meta": "2026.07.31 · 訊號雷達（最新）", "icon": "compass", "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html" },
     { "tag": "日報", "tone": "illumination", "title": "艾倫極光日報", "desc": "蘋果智慧家庭中樞加速布局", "summary": "【日報】艾倫極光日報｜2026.08.01 蘋果智慧家庭中樞加速布局。科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇", "meta": "2026.08.01 · 每日速報", "icon": "paper", "link": "https://allenchen1113official.github.io/AllenI3Aurora/?issue=2026-08-01" }
   ],
   "asOf": "2026.08.01",
