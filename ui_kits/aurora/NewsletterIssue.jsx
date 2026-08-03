@@ -174,16 +174,25 @@
     if (notify) notify(ok ? "已複製摘要與連結，貼上即可分享 📋" : "請手動複製分享文字 📋");
     else window.prompt("複製此文字分享：", text);
   }
-  function shareFacebook(issue, notify) {
-    const text = buildSocialPost(issue);
-    const u = encodeURIComponent(issueUrl(issue));
-    // 先於使用者手勢中同步開啟分享視窗（避免被彈窗攔截），再複製摘要與連結。
-    openShareWindow("https://www.facebook.com/sharer/sharer.php?u=" + u);
-    copyText(text).then((ok) => {
-      if (notify) notify(ok
-        ? "已複製摘要與連結，於 Facebook 貼文貼上即可完成分享 📋"
-        : "請手動複製摘要與連結，貼到 Facebook 分享 📋");
-    });
+  async function shareFacebook(issue, notify) {
+    const url = issueUrl(issue);
+    const title = "艾倫報報 · " + (issue.title || "");
+    const text = buildSocialPost(issue); // 摘要 ＋ 連結 ＋ hashtag
+    // 比照「一鍵分享」：優先叫出系統原生分享，讓完整貼文文字（含 hashtag）帶入
+    // 使用者選擇的 App（行動裝置可直接選 Facebook 並帶入內容），而非只有連結。
+    if (navigator.share) {
+      try { await navigator.share({ title, text, url }); return; }
+      catch (e) { if (e && e.name === "AbortError") return; /* 不支援或失敗 → 退回網頁分享 */ }
+    }
+    // 桌面退回：Facebook sharer.php 已不支援預填貼文文字，故先把完整貼文（含 hashtag）
+    // 複製到剪貼簿，同步開啟分享視窗，於貼文貼上（Ctrl/⌘+V）即可帶入內容與標籤。
+    const ok = await copyText(text);
+    const u = encodeURIComponent(url);
+    const q = encodeURIComponent(text); // 部分情境仍會採用 quote 預填
+    openShareWindow("https://www.facebook.com/sharer/sharer.php?u=" + u + "&quote=" + q);
+    if (notify) notify(ok
+      ? "已複製完整貼文（摘要＋hashtag），在 Facebook 貼上（Ctrl/⌘+V）即可發表 📋"
+      : "請手動複製貼文內容，貼到 Facebook 發表 📋");
   }
 
   // 底部浮動提示（分享複製流程用）。
