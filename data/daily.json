@@ -1,0 +1,27 @@
+{
+  "date": "2026.08.01",
+  "dateLabel": "2026/08/01（六）",
+  "asOf": "2026.08.04",
+  "title": "艾倫極光日報",
+  "subtitle": "科技 · 旅行 · 攝影 · 音樂 每日精選速報",
+  "summary": "【日報】艾倫極光日報｜2026.08.01 蘋果智慧家庭中樞加速布局。科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "hashtags": "#艾倫極光日報 #日報 #科技 #旅行 #攝影 #音樂 #每日速報 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+  "topics": [
+    { "key": "tech", "label": "科技", "desc": "AI、產品與產業動態，掌握趨勢先機" },
+    { "key": "travel", "label": "旅行", "desc": "路線、景點與旅途靈感，收藏下一段旅程" },
+    { "key": "photo", "label": "攝影", "desc": "影像、器材與構圖啟發，記錄生活視角" },
+    { "key": "music", "label": "音樂", "desc": "新曲、專輯與現場精選，為一天配上聲音" }
+  ],
+  "highlights": [
+    "蘋果智慧家庭中樞加速布局，串連裝置與生活場景。",
+    "科技、旅行、攝影、音樂四大主題，每日精選一次掌握。"
+  ],
+  "cover": {
+    "title": "今日日報封面",
+    "drive": "",
+    "local": "assets/rabbit-reading.jpeg"
+  },
+  "source": "https://drive.google.com/file/d/1ziHmH8PwfsIwDTRcPQabtyyEhHI0wfS7/view",
+  "note": "每日日報彙整科技、旅行、攝影與音樂精選動態，用三分鐘掌握今天最值得知道的事。完整內容以 Google Drive 當日日報原文為準。",
+  "updatedAt": "2026-08-04T00:00:00Z"
+}
