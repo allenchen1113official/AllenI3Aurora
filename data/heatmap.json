@@ -3,21 +3,21 @@
   "dateLabel": "2026/08/03（一）",
   "asOf": "2026.08.04",
   "taiex": { "name": "加權指數 TAIEX", "index": "43,386.41", "change": "+266.66", "changePct": "+0.62%", "up": true },
-  "tpex": { "name": "櫃買指數 TPEx", "index": "", "change": "", "changePct": "", "up": false },
-  "summary": "【理財】台股熱力圖 · 上市／上櫃｜2026.08.03 加權指數收 43,386.41（+0.62%）。上市（TWSE）與上櫃（TPEx）市值熱力圖，紅漲綠跌一眼看懂資金流向與類股輪動，方塊大小＝市值大小。洞察世界·累積智慧·點亮未來，完整熱力圖看這裡👇",
-  "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+  "tpex": { "name": "櫃買指數 TPEx", "index": "362.89", "change": "+15.04", "changePct": "+4.32%", "up": true },
+  "summary": "【理財】台股熱力圖 · 上市／上櫃｜2026.08.03 加權指數收 43,386.41（+0.62%），櫃買指數暴漲 4.32% 收 362.89。記憶體與 IC 設計族群強攻、金融股走弱，上櫃全面噴出。紅漲綠跌一眼看懂資金流向與類股輪動，方塊大小＝市值大小。洞察世界·累積智慧·點亮未來，完整熱力圖看這裡👇",
+  "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
-    "drive": "https://drive.google.com/thumbnail?id=1dalPs_4YW6rnxNxokL1tFlyokcTgiwbt&sz=w1600",
+    "drive": "",
     "local": "assets/heatmap/twse-heatmap-fb.png"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
-    "drive": "https://drive.google.com/thumbnail?id=1ROlZ4V8LGx6Zb2WztGPKYVi7TdLecbaf&sz=w1600",
+    "drive": "",
     "local": "assets/heatmap/tpex-heatmap-fb.png"
   },
-  "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/03 收盤資料；上櫃指數當日未取得，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-08-04T00:00:00Z"
+  "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數與櫃買指數為 2026/08/03 收盤資料；個股漲跌幅以當日盤後查證之真實數字為主，未逐檔查證者以同類股平均值示意，資料僅供參考，不構成投資建議。",
+  "updatedAt": "2026-08-04T16:30:00Z"
 }
