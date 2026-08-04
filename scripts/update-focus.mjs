@@ -232,7 +232,35 @@ async function main() {
           const HM = "data/heatmap.json";
           let cur = {};
           try { cur = JSON.parse(readFileSync(HM, "utf8")); } catch { cur = {}; }
-          cur.date = ymdDisplay(dateYmd);
+
+          // 今日關注動態的熱力圖每更新到「新的一日」，前一日即移入 data/heatmap-archive.json
+          // （歷期彙整頁以 kind「熱力圖」呈現）。以 no 去重，任何失敗都不影響主流程。
+          const newDate = ymdDisplay(dateYmd);
+          if (cur.date && cur.date !== newDate) {
+            try {
+              const HA = "data/heatmap-archive.json";
+              let arch = [];
+              try { arch = JSON.parse(readFileSync(HA, "utf8")); } catch { arch = []; }
+              if (!Array.isArray(arch)) arch = [];
+              const prevNo = "heatmap-" + String(cur.date).replace(/\D/g, "");
+              if (!arch.some((x) => String(x.no) === prevNo)) {
+                const prevListed = (cur.listed && cur.listed.drive) || "";
+                const prevOtc = (cur.otc && cur.otc.drive) || "";
+                arch.unshift({
+                  no: prevNo, kind: "熱力圖", date: cur.date, tone: "insight",
+                  title: `台股熱力圖 · 上市／上櫃｜${cur.date}`,
+                  cover: prevListed || prevOtc,
+                  link: prevListed || prevOtc,
+                  listed: prevListed, otc: prevOtc,
+                  summary: cur.summary || "", items: 2,
+                });
+                writeFileSync(HA, JSON.stringify(arch, null, 2) + "\n");
+                console.log("已將前一日熱力圖移入 data/heatmap-archive.json：", prevNo);
+              }
+            } catch (e) { console.error("更新 data/heatmap-archive.json 失敗（略過）：", e.message); }
+          }
+
+          cur.date = newDate;
           cur.dateLabel = `${ymdDisplay(dateYmd)}${dateYmd === today ? "" : "（最新）"}`;
           cur.asOf = ymdDisplay(today);
           if (summary) cur.summary = summary;

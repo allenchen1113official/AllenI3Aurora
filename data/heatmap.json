@@ -1,23 +1,23 @@
 {
-  "date": "2026.07.31",
-  "dateLabel": "2026/07/31（五）",
-  "asOf": "2026.08.01",
-  "taiex": { "name": "加權指數 TAIEX", "index": "43,119.75", "change": "+3,186.45", "changePct": "+7.98%", "up": true },
-  "tpex": { "name": "櫃買指數 TPEx", "index": "348.25", "change": "約略持平偏弱", "changePct": "", "up": false },
-  "summary": "【理財】台股熱力圖 · 上市／上櫃｜2026.07.31 加權指數狂飆 3,186 點、創史上最大單日漲點收 43,119，台積電鎖漲停、電子權值全面點火。上市一片火紅，上櫃卻明顯落後——大型股與中小型股背離。紅漲綠跌一眼看懂資金流向與類股輪動，方塊大小＝市值大小。洞察世界·累積智慧·點亮未來，完整熱力圖看這裡👇",
+  "date": "2026.08.03",
+  "dateLabel": "2026/08/03（一）",
+  "asOf": "2026.08.04",
+  "taiex": { "name": "加權指數 TAIEX", "index": "43,386.41", "change": "+266.66", "changePct": "+0.62%", "up": true },
+  "tpex": { "name": "櫃買指數 TPEx", "index": "", "change": "", "changePct": "", "up": false },
+  "summary": "【理財】台股熱力圖 · 上市／上櫃｜2026.08.03 加權指數收 43,386.41（+0.62%）。上市（TWSE）與上櫃（TPEx）市值熱力圖，紅漲綠跌一眼看懂資金流向與類股輪動，方塊大小＝市值大小。洞察世界·累積智慧·點亮未來，完整熱力圖看這裡👇",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
-    "drive": "https://drive.google.com/thumbnail?id=17_-SXv-q2_nc0TutFCkeAmERFc2fpKEc&sz=w1600",
+    "drive": "https://drive.google.com/thumbnail?id=1dalPs_4YW6rnxNxokL1tFlyokcTgiwbt&sz=w1600",
     "local": "assets/heatmap/twse-heatmap-fb.png"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
-    "drive": "",
+    "drive": "https://drive.google.com/thumbnail?id=1ROlZ4V8LGx6Zb2WztGPKYVi7TdLecbaf&sz=w1600",
     "local": "assets/heatmap/tpex-heatmap-fb.png"
   },
-  "note": "上市漲跌為 2026/07/31 查證之類股平均與台積電、聯發科等漲停權值股；上櫃為版面示意估值（查證程度較上市低）。方塊大小約略反映市值比例（經壓縮處理以利閱讀），資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-08-01T06:00:00Z"
+  "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/03 收盤資料；上櫃指數當日未取得，資料僅供參考，不構成投資建議。",
+  "updatedAt": "2026-08-04T00:00:00Z"
 }
