@@ -36,6 +36,7 @@
   function Archive() {
     const K = window.KIT, I = window.Icons;
     window.useDayArchive(true); // 載入 2026 年前的部落格日報並併入 issues
+    window.useDailyArchive(true); // 載入歷期艾倫極光日報並併入 issues
     window.useHeatmapArchive(true); // 載入歷期熱力圖並併入 issues
     const [filter, setFilter] = React.useState("all");
     const map = { all: null, day: "日報", week: "週報", month: "月報", heatmap: "熱力圖" };

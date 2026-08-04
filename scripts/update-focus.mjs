@@ -333,7 +333,38 @@ async function main() {
           const DF = "data/daily.json";
           let cur = {};
           try { cur = JSON.parse(readFileSync(DF, "utf8")); } catch { cur = {}; }
-          cur.date = ymdDisplay(dateYmd);
+
+          // 今日關注動態的艾倫極光日報每更新到「新的一日」，前一日即移入
+          // data/daily-archive.json（歷期彙整頁以 kind「日報」呈現，卡片點擊開啟
+          // 該日日報原文）。以 no 去重，任何失敗都不影響主流程。
+          const newDate = ymdDisplay(dateYmd);
+          if (cur.date && cur.date !== newDate) {
+            try {
+              const DA = "data/daily-archive.json";
+              let arch = [];
+              try { arch = JSON.parse(readFileSync(DA, "utf8")); } catch { arch = []; }
+              if (!Array.isArray(arch)) arch = [];
+              const prevNo = "daily-" + String(cur.date).replace(/\D/g, "");
+              if (!arch.some((x) => String(x.no) === prevNo)) {
+                const prevSummary = cur.summary || "";
+                const prevHeadline = prevSummary.replace(/^【[^】]*】/, "").replace(/^\s*艾倫極光日報[｜|]\s*[\d.]+\s*/, "").replace(/。.*$/, "").trim();
+                arch.unshift({
+                  no: prevNo, kind: "日報", date: cur.date, tone: "illumination",
+                  title: `艾倫極光日報｜${cur.date}`,
+                  subtitle: prevHeadline,
+                  cover: (cur.cover && (cur.cover.drive || (SITE_URL + "assets/rabbit-reading.jpeg"))) || (SITE_URL + "assets/rabbit-reading.jpeg"),
+                  author: "Allen Chen 主編", readMinutes: 3, items: 4,
+                  summary: prevSummary,
+                  // 連結優先前一日的 Drive 原文（source），否則連該日站內日報頁。
+                  link: cur.source || (SITE_URL + "daily.html"),
+                });
+                writeFileSync(DA, JSON.stringify(arch, null, 2) + "\n");
+                console.log("已將前一日艾倫極光日報移入 data/daily-archive.json：", prevNo);
+              }
+            } catch (e) { console.error("更新 data/daily-archive.json 失敗（略過）：", e.message); }
+          }
+
+          cur.date = newDate;
           cur.dateLabel = `${ymdDisplay(dateYmd)}${dateYmd === today ? "" : "（最新）"}`;
           cur.asOf = ymdDisplay(today);
           cur.title = cur.title || "艾倫極光日報";
