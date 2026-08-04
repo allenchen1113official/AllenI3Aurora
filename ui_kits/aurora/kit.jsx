@@ -112,6 +112,40 @@ window.useHeatmapArchive = function (enabled) {
   return ready;
 };
 
+/* ---------- 歷期艾倫極光日報（歷期彙整用） ----------
+   同源 data/daily-archive.json（今日關注動態的艾倫極光日報每更新一日，前一日即
+   移入此彙整）。於「歷期彙整」按需載入，併入 window.KIT.issues（依 no 去重），
+   以 kind「日報」呈現；卡片點擊開啟該日日報原文（it.link），不走 ?issue=。 */
+window.__dailyArchive = null;
+window.__dailyArchivePromise = null;
+window.loadDailyArchive = function () {
+  if (window.__dailyArchive) return Promise.resolve(window.__dailyArchive);
+  if (window.__dailyArchivePromise) return window.__dailyArchivePromise;
+  window.__dailyArchivePromise = fetch("/AllenI3Aurora/data/daily-archive.json")
+    .then((r) => (r.ok ? r.json() : []))
+    .then((arr) => {
+      const days = Array.isArray(arr) ? arr : [];
+      const list = (window.KIT.issues = window.KIT.issues || []);
+      const seen = new Set(list.map((i) => String(i.no)));
+      for (const d of days) { if (!seen.has(String(d.no))) { list.push(d); seen.add(String(d.no)); } }
+      window.__dailyArchive = days;
+      return days;
+    })
+    .catch(() => (window.__dailyArchive = []));
+  return window.__dailyArchivePromise;
+};
+window.useDailyArchive = function (enabled) {
+  const on = enabled !== false;
+  const [ready, setReady] = React.useState(!!window.__dailyArchive);
+  React.useEffect(() => {
+    if (!on) return;
+    let alive = true;
+    window.loadDailyArchive().then(() => { if (alive) setReady(true); });
+    return () => { alive = false; };
+  }, [on]);
+  return ready;
+};
+
 /* ---------- Mock data ---------- */
 window.KIT = {
   brand: { zh: "艾倫報報", en: "Allen I³ Aurora", tagline: "洞察世界．累積智慧．點亮未來。", owner: "Allen" },
