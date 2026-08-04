@@ -78,6 +78,40 @@ window.useDayArchive = function (enabled) {
   return ready;
 };
 
+/* ---------- 歷期熱力圖（歷期彙整用） ----------
+   同源 data/heatmap-archive.json（今日關注動態的熱力圖每更新一日，前一日即
+   移入此彙整）。於「歷期彙整」按需載入，併入 window.KIT.issues（依 no 去重），
+   以 kind「熱力圖」呈現；卡片點擊開啟該日熱力圖圖片（it.link），不走 ?issue=。 */
+window.__heatmapArchive = null;
+window.__heatmapArchivePromise = null;
+window.loadHeatmapArchive = function () {
+  if (window.__heatmapArchive) return Promise.resolve(window.__heatmapArchive);
+  if (window.__heatmapArchivePromise) return window.__heatmapArchivePromise;
+  window.__heatmapArchivePromise = fetch("/AllenI3Aurora/data/heatmap-archive.json")
+    .then((r) => (r.ok ? r.json() : []))
+    .then((arr) => {
+      const maps = Array.isArray(arr) ? arr : [];
+      const list = (window.KIT.issues = window.KIT.issues || []);
+      const seen = new Set(list.map((i) => String(i.no)));
+      for (const m of maps) { if (!seen.has(String(m.no))) { list.push(m); seen.add(String(m.no)); } }
+      window.__heatmapArchive = maps;
+      return maps;
+    })
+    .catch(() => (window.__heatmapArchive = []));
+  return window.__heatmapArchivePromise;
+};
+window.useHeatmapArchive = function (enabled) {
+  const on = enabled !== false;
+  const [ready, setReady] = React.useState(!!window.__heatmapArchive);
+  React.useEffect(() => {
+    if (!on) return;
+    let alive = true;
+    window.loadHeatmapArchive().then(() => { if (alive) setReady(true); });
+    return () => { alive = false; };
+  }, [on]);
+  return ready;
+};
+
 /* ---------- Mock data ---------- */
 window.KIT = {
   brand: { zh: "艾倫報報", en: "Allen I³ Aurora", tagline: "洞察世界．累積智慧．點亮未來。", owner: "Allen" },

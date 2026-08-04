@@ -5,7 +5,12 @@
 
   function IssueCard({ it }) {
     const I = window.Icons;
-    const openIssue = () => { location.href = location.pathname + "?issue=" + encodeURIComponent(it.no); };
+    const isMap = it.kind === "熱力圖";
+    const openIssue = () => {
+      // 熱力圖等帶 link 的期別：直接開啟該日圖片；其餘走站內 ?issue= 深連結閱讀。
+      if (it.link) { window.open(it.link, "_blank", "noopener,noreferrer"); return; }
+      location.href = location.pathname + "?issue=" + encodeURIComponent(it.no);
+    };
     return (
       <Card interactive padding="0" onClick={openIssue} style={{ overflow: "hidden", display: "flex", flexDirection: "column", cursor: "pointer" }}>
         <div style={{ position: "relative", height: 150 }}>
@@ -20,8 +25,8 @@
           <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{it.date}</div>
           <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: "var(--text-lg)", lineHeight: 1.32, flex: 1 }}>{it.title}</div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 2 }}>
-            <span style={{ color: "var(--text-3)", fontSize: 12.5 }}>{it.items} 則彙整</span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, color: "var(--brand)", fontWeight: 700, fontSize: 13 }}>閱讀 <I.arrow size={15} /></span>
+            <span style={{ color: "var(--text-3)", fontSize: 12.5 }}>{isMap ? "上市／上櫃" : (it.items + " 則彙整")}</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, color: "var(--brand)", fontWeight: 700, fontSize: 13 }}>{isMap ? "檢視熱力圖" : "閱讀"} <I.arrow size={15} /></span>
           </div>
         </div>
       </Card>
@@ -31,8 +36,9 @@
   function Archive() {
     const K = window.KIT, I = window.Icons;
     window.useDayArchive(true); // 載入 2026 年前的部落格日報並併入 issues
+    window.useHeatmapArchive(true); // 載入歷期熱力圖並併入 issues
     const [filter, setFilter] = React.useState("all");
-    const map = { all: null, day: "日報", week: "週報", month: "月報" };
+    const map = { all: null, day: "日報", week: "週報", month: "月報", heatmap: "熱力圖" };
     const num = (s) => Number(String(s == null ? "" : s).replace(/\D/g, "")) || 0;
     const list = K.issues
       .filter((x) => !map[filter] || x.kind === map[filter])
@@ -46,7 +52,7 @@
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: "var(--space-6)", flexWrap: "wrap" }}>
           <Tabs value={filter} onChange={setFilter} items={[
-            { id: "all", label: "全部" }, { id: "day", label: "日報" }, { id: "week", label: "週報" }, { id: "month", label: "月報" },
+            { id: "all", label: "全部" }, { id: "day", label: "日報" }, { id: "week", label: "週報" }, { id: "month", label: "月報" }, { id: "heatmap", label: "熱力圖" },
           ]} />
           <div style={{ display: "flex", gap: 8 }}>
             <Tag selected>2026</Tag><Tag>2025</Tag><Tag>2024</Tag>
