@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>艾倫極光日報 · 每日精選速報 — 艾倫報報</title>
+<meta name="description" content="艾倫極光日報：科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來。艾倫報報 Allen I³ Aurora。">
+<link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
+<link rel="stylesheet" href="/AllenI3Aurora/styles.css">
+<!-- 開放社群預覽（Facebook／Threads 分享時顯示圖與說明） -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="艾倫極光日報 · 每日精選速報 — 艾倫報報">
+<meta property="og:description" content="科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。">
+<meta property="og:image" content="https://allenchen1113official.github.io/AllenI3Aurora/assets/rabbit-reading.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  html, body { height: auto; }
+  body { margin: 0; min-height: 100vh; color: var(--text-2); }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: var(--space-8, 28px) var(--gutter, 20px) var(--space-24, 96px); }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--aurora-gradient); display: grid; place-items: center; font-family: var(--font-display, system-ui); font-weight: 900; font-size: 15px; color: var(--text-on-accent); }
+  .brand .name { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 18px; color: var(--text-1); letter-spacing: .02em; }
+  .back { font-size: 14px; color: var(--text-3); text-decoration: none; border: 1px solid var(--border); border-radius: var(--radius-pill, 999px); padding: 7px 15px; transition: .18s; }
+  .back:hover { color: var(--text-1); border-color: var(--border-strong); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .badge { font-size: 12.5px; font-weight: 700; letter-spacing: .04em; padding: 5px 12px; border-radius: var(--radius-pill, 999px); border: 1px solid var(--border); color: var(--text-2); background: var(--night-800); }
+  .badge.tag { background: var(--illumination-soft); color: var(--illumination); border-color: transparent; }
+  h1 { font-family: var(--font-display, system-ui); font-weight: 900; font-size: clamp(1.9rem, 5vw, 2.8rem); line-height: 1.1; letter-spacing: -.02em; color: var(--text-1); margin: 0 0 14px; }
+  h1 .accent { background: var(--aurora-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .dek { color: var(--text-2); font-size: 1.05rem; line-height: 1.7; margin: 0 0 22px; max-width: 68ch; }
+  .topics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 0 0 26px; }
+  .topic { border: 1px solid var(--border); border-radius: var(--radius-lg, 18px); padding: 15px 17px; background: var(--night-800); }
+  .topic .h { display: flex; align-items: center; gap: 9px; font-weight: 800; color: var(--text-1); font-size: 1.02rem; margin-bottom: 6px; }
+  .topic .sw { width: 13px; height: 13px; border-radius: 4px; flex: none; }
+  .topic .d { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+  .panel { border: 1px solid var(--border); border-radius: var(--radius-xl, 24px); overflow: hidden; background: var(--night-800); box-shadow: var(--shadow-card); margin: 0 0 26px; }
+  .panel .hd { display: flex; align-items: baseline; gap: 10px; padding: 16px 20px 12px; flex-wrap: wrap; border-bottom: 1px solid var(--border-subtle); }
+  .panel .hd .t { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 1.15rem; color: var(--text-1); }
+  .panel .hd .s { font-size: 13px; color: var(--text-3); }
+  .img-box { position: relative; background: #0b0d12; }
+  .img-box img { display: block; width: 100%; height: auto; }
+  .cap { padding: 12px 20px 18px; font-size: 12.5px; color: var(--text-3); line-height: 1.5; }
+  .highlights { list-style: none; margin: 0 0 26px; padding: 0; display: grid; gap: 10px; }
+  .highlights li { position: relative; border: 1px solid var(--border); border-radius: var(--radius-lg, 18px); padding: 14px 18px 14px 40px; background: var(--night-800); color: var(--text-2); font-size: 14.5px; line-height: 1.6; }
+  .highlights li::before { content: ""; position: absolute; left: 17px; top: 20px; width: 8px; height: 8px; border-radius: 3px; background: var(--illumination); }
+  .hashtags { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 26px; }
+  .hashtags .ht { font-size: 12.5px; font-weight: 700; padding: 4px 11px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--illumination) 32%, transparent); color: var(--illumination); white-space: nowrap; }
+  .source-link { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 700; color: var(--illumination); text-decoration: none; border: 1px solid color-mix(in srgb, var(--illumination) 35%, transparent); border-radius: var(--radius-pill, 999px); padding: 8px 15px; margin: 0 0 26px; transition: .18s; }
+  .source-link:hover { background: var(--illumination-soft); }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 30px 0 10px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; padding: 11px 18px; border-radius: var(--radius-pill, 999px); border: 1px solid var(--border-strong); background: var(--night-800); color: var(--text-1); cursor: pointer; transition: .18s; font-family: inherit; }
+  .btn:hover { border-color: var(--brand); box-shadow: var(--focus-ring); }
+  .btn.primary { background: var(--aurora-gradient); color: var(--text-on-accent); border-color: transparent; }
+  .btn.fb { background: #1877F2; color: #fff; border-color: transparent; }
+  .btn.ig { background: linear-gradient(45deg, #F58529, #DD2A7B 50%, #8134AF 85%); color: #fff; border-color: transparent; }
+  .btn.th { background: #000; color: #fff; border-color: #2a2a2a; }
+  .note { margin-top: 22px; font-size: 12.5px; color: var(--text-4); line-height: 1.6; border-top: 1px solid var(--border-subtle); padding-top: 16px; }
+  .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 500; background: var(--night-700); color: var(--text-1); border: 1px solid var(--border); border-radius: var(--radius-md, 14px); padding: 12px 18px; font-size: 14px; line-height: 1.4; box-shadow: var(--shadow-lg); max-width: min(90vw, 460px); text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .toast.show { opacity: 1; }
+  @media (max-width: 720px) { .topics { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .wrap { padding-left: 16px; padding-right: 16px; } }
+</style>
+</head>
+<body class="aurora-bg">
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="/AllenI3Aurora/">
+      <span class="mark">I³</span><span class="name">艾倫報報</span>
+    </a>
+    <a class="back" href="/AllenI3Aurora/">← 回儀表板</a>
+  </div>
+
+  <div class="badges">
+    <span class="badge tag">日報 · ILLUMINATION</span>
+    <span class="badge" id="b-date">每日速報</span>
+    <span class="badge">三分鐘掌握</span>
+  </div>
+
+  <h1>艾倫極光<span class="accent">日報</span></h1>
+  <p class="dek" id="dek">科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界、累積智慧、點亮未來。</p>
+
+  <div class="topics" id="topics"></div>
+
+  <ul class="highlights" id="highlights" hidden></ul>
+
+  <div class="panel" id="coverPanel">
+    <div class="hd"><span class="t" id="cover-t">今日日報封面</span><span class="s" id="cover-s"></span></div>
+    <div class="img-box"><img id="cover-img" loading="lazy" alt="艾倫極光日報 每日精選速報"></div>
+    <div class="cap" id="cover-cap">科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。</div>
+  </div>
+
+  <div class="hashtags" id="hashtags"></div>
+
+  <a class="source-link" id="source" href="#" target="_blank" rel="noopener noreferrer" hidden>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>
+    查看完整日報原文
+  </a>
+
+  <div class="actions">
+    <button class="btn primary" id="share">🔗 一鍵分享</button>
+    <button class="btn fb" id="fb"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>Facebook</button>
+    <button class="btn ig" id="ig"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram</button>
+    <button class="btn th" id="th"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 11.6c-.2-.1-.4-.2-.6-.3-.1-2.1-1.3-3.3-3.2-3.3-1.2 0-2.2.5-2.8 1.5l1.3.9c.4-.6.9-.7 1.5-.7.9 0 1.5.6 1.6 1.5-.4-.1-.9-.2-1.4-.2-1.8 0-3 1-2.9 2.6.1 1.4 1.3 2.2 2.7 2.1 1.4-.1 2.4-.9 2.7-2.4.5.3.8.8.9 1.4.1 1-.6 2.3-2.9 2.9-2 .5-3.9-.6-4.4-3-.2-.9-.2-2.3 0-3.2.6-2.4 2.4-3.5 4.4-3 .6.2 1.1.4 1.5.8"/></svg>Threads</button>
+  </div>
+
+  <p class="note" id="note"></p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var SITE = "https://allenchen1113official.github.io/AllenI3Aurora/";
+  var PAGE = SITE + "daily.html";
+  var TITLE = "艾倫極光日報 · 每日精選速報 — 艾倫報報";
+
+  // 內建預設（data/daily.json 取得後覆蓋），確保 JSON 讀取失敗仍可顯示。
+  var DEFAULTS = {
+    date: "", dateLabel: "每日速報",
+    title: "艾倫極光日報",
+    subtitle: "科技 · 旅行 · 攝影 · 音樂 每日精選速報",
+    summary: "【日報】艾倫極光日報｜科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+    hashtags: "#艾倫極光日報 #日報 #科技 #旅行 #攝影 #音樂 #每日速報 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+    topics: [
+      { key: "tech", label: "科技", desc: "AI、產品與產業動態，掌握趨勢先機" },
+      { key: "travel", label: "旅行", desc: "路線、景點與旅途靈感，收藏下一段旅程" },
+      { key: "photo", label: "攝影", desc: "影像、器材與構圖啟發，記錄生活視角" },
+      { key: "music", label: "音樂", desc: "新曲、專輯與現場精選，為一天配上聲音" }
+    ],
+    highlights: [],
+    cover: { title: "今日日報封面", drive: "", local: "assets/rabbit-reading.jpeg" },
+    source: "", note: ""
+  };
+
+  var TOPIC_COLOR = { tech: "var(--intelligence)", travel: "var(--insight)", photo: "var(--illumination)", music: "var(--brand)" };
+  function esc(s) { return String(s == null ? "" : s); }
+
+  function renderTopics(d) {
+    var box = document.getElementById("topics");
+    box.innerHTML = (d.topics || []).map(function (t) {
+      var c = TOPIC_COLOR[t.key] || "var(--brand)";
+      return '<div class="topic"><div class="h"><span class="sw" style="background:' + c + '"></span>' + esc(t.label) + '</div>' +
+             '<div class="d">' + esc(t.desc) + '</div></div>';
+    }).join("");
+  }
+
+  function renderHighlights(d) {
+    var ul = document.getElementById("highlights");
+    var list = Array.isArray(d.highlights) ? d.highlights.filter(Boolean) : [];
+    if (!list.length) { ul.hidden = true; return; }
+    ul.hidden = false;
+    ul.innerHTML = list.map(function (h) { return "<li>" + esc(h) + "</li>"; }).join("");
+  }
+
+  function renderCover(d) {
+    var m = d.cover || {};
+    document.getElementById("cover-t").textContent = esc(m.title || "今日日報封面");
+    document.getElementById("cover-s").textContent = esc(d.subtitle || "");
+    var fallback = esc(m.local || "assets/rabbit-reading.jpeg"); // 站內備援圖（頁面相對路徑）
+    var primary = esc(m.drive) || fallback;                      // 優先 Drive 最新圖
+    var img = document.getElementById("cover-img");
+    img.onerror = function () { img.onerror = null; img.src = fallback; };
+    img.src = primary;
+  }
+
+  function renderHashtags(d) {
+    var box = document.getElementById("hashtags");
+    var tags = esc(d.hashtags).split(/\s+/).filter(Boolean);
+    box.innerHTML = tags.map(function (t) { return '<span class="ht">' + esc(t) + '</span>'; }).join("");
+  }
+
+  function renderSource(d) {
+    var a = document.getElementById("source");
+    if (d.source) { a.href = d.source; a.hidden = false; } else { a.hidden = true; }
+  }
+
+  var toastTimer = null;
+  function notify(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2800);
+  }
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return legacyCopy(text); });
+    }
+    return Promise.resolve(legacyCopy(text));
+  }
+  function legacyCopy(text) {
+    try { var ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.top = "-9999px"; document.body.appendChild(ta); ta.focus(); ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok; } catch (e) { return false; }
+  }
+  function openShareWindow(url) { var w = window.open(url, "_blank", "noopener,noreferrer,width=640,height=720"); if (!w) window.open(url, "_blank", "noopener,noreferrer"); }
+
+  // 貼文文字：摘要 ＋ 來源連結 ＋ 主題標籤（Facebook／Instagram 用）。
+  function socialPost(d) { return [d.summary, "🔗 " + PAGE, d.hashtags].join("\n\n"); }
+  // Threads intent 需 text 與 url 分開帶入。
+  function threadsText(d) { return [d.summary, d.hashtags].join("\n\n"); }
+
+  function wireShare(d) {
+    var post = socialPost(d);
+
+    // 一鍵分享：優先系統原生分享（行動裝置可直接選 IG／FB／Threads，帶入摘要與連結），
+    // 桌面退回複製完整貼文供貼上。
+    document.getElementById("share").addEventListener("click", function () {
+      if (navigator.share) { navigator.share({ title: TITLE, text: post, url: PAGE }).catch(function () {}); return; }
+      copyText(post).then(function (ok) { notify(ok ? "已複製摘要與連結，貼上即可分享 📋" : "請手動複製貼文內容分享 📋"); });
+    });
+
+    // Facebook：sharer.php 僅能附連結，無法預填貼文文字，故先複製完整貼文再開分享視窗。
+    document.getElementById("fb").addEventListener("click", function () {
+      if (navigator.share) { navigator.share({ title: TITLE, text: post, url: PAGE }).catch(function () {}); return; }
+      copyText(post).then(function (ok) {
+        openShareWindow("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(PAGE) + "&quote=" + encodeURIComponent(post));
+        notify(ok ? "已複製完整貼文（摘要＋hashtag），在 Facebook 貼上（Ctrl/⌘+V）即可發表 📋" : "請手動複製貼文內容，貼到 Facebook 發表 📋");
+      });
+    });
+
+    // Instagram：無網頁預填介面；行動裝置優先系統原生分享，否則複製貼文後開啟 Instagram。
+    document.getElementById("ig").addEventListener("click", function () {
+      if (navigator.share) { navigator.share({ title: TITLE, text: post, url: PAGE }).catch(function () {}); return; }
+      copyText(post).then(function (ok) {
+        openShareWindow("https://www.instagram.com/");
+        notify(ok ? "已複製摘要與 hashtag，Instagram 貼文貼上即可完成分享 📋" : "請手動複製貼文內容，貼到 Instagram 分享 📋");
+      });
+    });
+
+    // Threads：官方 intent/post 可預填文案與連結。
+    document.getElementById("th").addEventListener("click", function () {
+      openShareWindow("https://www.threads.net/intent/post?text=" + encodeURIComponent(threadsText(d)) + "&url=" + encodeURIComponent(PAGE));
+    });
+  }
+
+  function apply(d) {
+    document.getElementById("b-date").textContent = (d.dateLabel || "每日速報");
+    if (d.summary) {
+      var lead = d.summary.replace(/^【[^】]*】/, "").replace(/洞察世界[·].*$/, "").trim();
+      if (lead) document.getElementById("dek").textContent = lead;
+    }
+    document.getElementById("note").textContent = d.note || "";
+    renderTopics(d); renderHighlights(d); renderCover(d); renderHashtags(d); renderSource(d); wireShare(d);
+  }
+
+  // 先套用預設立即可見，再以 data/daily.json 覆蓋（Drive 最新／站內備援）。
+  apply(DEFAULTS);
+  fetch("/AllenI3Aurora/data/daily.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) { if (j) { var d = Object.assign({}, DEFAULTS, j); apply(d); } })
+    .catch(function () {});
+})();
+</script>
+</body>
+</html>

@@ -70,12 +70,16 @@ const SOURCES = [
   {
     key: "newsletter", path: ["newsletter", "day"], tag: "日報", tone: "illumination", icon: "paper",
     title: "艾倫極光日報", note: "每日速報", descFallback: "每日科技旅行攝影音樂動態",
-    // 連結直接連 Google Drive 最近一日 newsletter/day/YYYYMMDD 的代表文章：
-    // 優先「艾倫極光日報_YYYYMMDD.pdf」品牌成品，其次任一 PDF，再退回品牌 HTML／markdown；
-    // 皆無則連到當日資料夾。註：日期資料夾內另有 email_draft.html／pdf_source.html
-    // 等內部草稿檔，故不採一般 .html 樣式，避免連到草稿而非成品。
+    // 連結改連本站前台日報頁面（daily.html：顯示摘要內容與關鍵字 hashtag，附一鍵分享）。
+    // linkPatterns 供 data/daily.json 挑出 Drive 當日代表文章（source，可看完整原文）與退回。
+    site: true, sitePath: "daily.html",
+    // Drive 當日 newsletter/day/YYYYMMDD 的代表文章：優先「艾倫極光日報_YYYYMMDD.pdf」品牌成品，
+    // 其次任一 PDF，再退回品牌 HTML／markdown。註：日期資料夾內另有 email_draft.html／
+    // pdf_source.html 等內部草稿檔，故不採一般 .html 樣式，避免連到草稿而非成品。
     linkPatterns: [/艾倫極光日報.*\.pdf$/i, /日報.*\.pdf$/i, /\.pdf$/i, /艾倫極光日報.*\.html?$/i, /日報.*\.html?$/i, /\.md$/i],
     textPatterns: [/\.md$/i],
+    // 前台頁面以 data/daily.json 取得「Drive 最新封面圖」；以下樣式挑出代表封面圖檔。
+    imgCover: [/艾倫極光日報.*\.(png|jpe?g)$/i, /日報.*\.(png|jpe?g)$/i, /cover.*\.(png|jpe?g)$/i, /\.(png|jpe?g)$/i],
   },
 ];
 
@@ -128,6 +132,21 @@ function extractSummary(raw) {
   let out = picked.join("，");
   if (out.length > SUMMARY_MAX) out = out.slice(0, SUMMARY_MAX - 1) + "…";
   return out;
+}
+
+/* 自來源文字內容擷取數行「內文重點」，供日報頁面（daily.html）條列顯示。
+   逐行清理、跳過標題／宣告等非內文行，回傳前幾行足夠中文的內文。 */
+const HL_MAX = 60; // 單則重點字數上限
+function extractLines(raw, max = 4) {
+  const lines = String(raw).split(/\r?\n/).map(cleanLine).filter(Boolean);
+  const picked = [];
+  for (const ln of lines) {
+    if (SKIP.test(ln)) continue;
+    if ((ln.match(/[一-鿿]/g) || []).length < 6) continue; // 需足夠中文，濾掉標籤／分隔行
+    picked.push(ln.length > HL_MAX ? ln.slice(0, HL_MAX) + "…" : ln);
+    if (picked.length >= max) break;
+  }
+  return picked;
 }
 
 async function main() {
@@ -208,6 +227,7 @@ async function main() {
       // 簡要內容（desc，約 10 字）與社群摘要（summary，約 125 字元）：自文字檔擷取，失敗用預設。
       let desc = src.descFallback;
       let summary = "";
+      let summaryLines = [];
       try {
         let tf = null;
         for (const pat of src.textPatterns) { tf = files.find((x) => pat.test(x.name)); if (tf) break; }
@@ -215,6 +235,7 @@ async function main() {
           const raw = await readText(tf.id);
           const ex = extractDesc(raw); if (ex) desc = ex;
           summary = extractSummary(raw);
+          summaryLines = extractLines(raw, 4);
         }
       } catch (e) { console.error(`來源 ${src.key} 擷取簡要失敗：`, e.message); }
 
@@ -299,6 +320,39 @@ async function main() {
           writeFileSync(SR, JSON.stringify(cur, null, 2) + "\n");
           console.log("已更新 data/stockradar.json（Drive 最新選股雷達）");
         } catch (e) { console.error("更新 data/stockradar.json 失敗（略過）：", e.message); }
+      }
+
+      // 艾倫極光日報：另更新 data/daily.json，讓前台頁面（daily.html）顯示當日摘要、
+      // 關鍵字 hashtag、Drive 最新封面圖，並保留完整原文連結（source）。
+      // 全程 try/catch，任何失敗都不影響 focus.json 產出。
+      if (src.key === "newsletter") {
+        try {
+          const pick = (pats) => { for (const p of (pats || [])) { const f = files.find((x) => p.test(x.name)); if (f) return f; } return null; };
+          const driveThumb = (f) => (f && f.id) ? `https://drive.google.com/thumbnail?id=${f.id}&sz=w1600` : "";
+          const fCover = pick(src.imgCover);
+          const DF = "data/daily.json";
+          let cur = {};
+          try { cur = JSON.parse(readFileSync(DF, "utf8")); } catch { cur = {}; }
+          cur.date = ymdDisplay(dateYmd);
+          cur.dateLabel = `${ymdDisplay(dateYmd)}${dateYmd === today ? "" : "（最新）"}`;
+          cur.asOf = ymdDisplay(today);
+          cur.title = cur.title || "艾倫極光日報";
+          cur.subtitle = cur.subtitle || "科技 · 旅行 · 攝影 · 音樂 每日精選速報";
+          if (summary) cur.summary = summary;
+          cur.hashtags = cur.hashtags || "#艾倫極光日報 #日報 #科技 #旅行 #攝影 #音樂 #每日速報 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來";
+          // 內文重點（highlights）：自當日文字檔擷取數行內文，供頁面條列顯示。
+          if (summaryLines && summaryLines.length) cur.highlights = summaryLines.slice(0, 4);
+          cur.cover = Object.assign({ title: "今日日報封面", local: "assets/rabbit-reading.jpeg" }, cur.cover || {});
+          if (fCover) cur.cover.drive = driveThumb(fCover);
+          // 完整原文連結：優先代表文章（PDF／HTML／md）的 Drive 檢視連結，否則連當日資料夾。
+          let srcLink = "";
+          for (const pat of src.linkPatterns) { const f = files.find((x) => pat.test(x.name)); if (f) { srcLink = f.webViewLink || ""; break; } }
+          if (!srcLink) { try { srcLink = (await drive.files.get({ fileId: dateId, fields: "webViewLink", supportsAllDrives: true })).data.webViewLink || ""; } catch { /* 忽略 */ } }
+          if (srcLink) cur.source = srcLink;
+          cur.updatedAt = new Date().toISOString();
+          writeFileSync(DF, JSON.stringify(cur, null, 2) + "\n");
+          console.log("已更新 data/daily.json（Drive 最新艾倫極光日報）");
+        } catch (e) { console.error("更新 data/daily.json 失敗（略過）：", e.message); }
       }
     } catch (e) {
       console.error(`來源 ${src.key} 讀取失敗：`, e.message);
