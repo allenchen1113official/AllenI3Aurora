@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20260805",
+    "kind": "熱力圖",
+    "date": "2026.08.05",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.08.05",
+    "cover": "/AllenI3Aurora/assets/heatmap/archive/twse-20260805-fb.png",
+    "link": "/AllenI3Aurora/assets/heatmap/archive/twse-20260805-fb.png",
+    "listed": "/AllenI3Aurora/assets/heatmap/archive/twse-20260805-fb.png",
+    "otc": "/AllenI3Aurora/assets/heatmap/archive/tpex-20260805-fb.png",
+    "summary": "【理財】台股熱力圖 · 上市／上櫃｜2026.08.05 加權指數強彈 1,250.94 點、收 44,611.60（+2.88%），成交量逾 1.14 兆。美股費半暴漲逾 7% 帶動，半導體、載板、被動元件與記憶體全面點火，台積電 +3.66% 收復月線、五大權值股聯袂走強，上櫃同步噴出。紅漲綠跌一眼看懂資金流向與類股輪動，方塊大小＝市值大小。",
+    "items": 2
+  },
+  {
     "no": "heatmap-20260731",
     "kind": "熱力圖",
     "date": "2026.07.31",
