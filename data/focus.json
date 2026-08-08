@@ -1,9 +1,36 @@
 {
   "items": [
-    { "tag": "理財", "tone": "insight", "title": "台股熱力圖 · 上市／上櫃", "desc": "加權強彈1,250點站回44,600", "summary": "【理財】台股熱力圖 · 上市／上櫃｜2026.08.05 加權指數強彈 1,250.94 點、收 44,611.60（+2.88%）。半導體、載板、被動元件與記憶體全面點火，台積電 +3.66% 收復月線。上市（TWSE）與上櫃（TPEx）市值熱力圖，紅漲綠跌一眼看懂資金流向與類股輪動，方塊大小＝市值大小。洞察世界·累積智慧·點亮未來，完整熱力圖看這裡👇", "meta": "2026.08.05 · 市值熱力圖（最新）", "icon": "chart", "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html" },
-    { "tag": "選股", "tone": "intelligence", "title": "台股選股雷達", "desc": "多檔逼近漲停，KD黃金交叉", "summary": "【選股】台股選股雷達｜2026.07.31 多檔個股逼近漲停、KD 指標黃金交叉。TOP10 訊號排行一次看，技術面轉強名單與進場時機讓選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇", "meta": "2026.07.31 · 訊號雷達（最新）", "icon": "compass", "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html" },
-    { "tag": "日報", "tone": "illumination", "title": "艾倫極光日報", "desc": "每日科技旅行攝影音樂動態", "summary": "【日報】艾倫極光日報｜2026.08.04 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇", "meta": "2026.08.04 · 每日速報", "icon": "paper", "link": "https://allenchen1113official.github.io/AllenI3Aurora/daily.html" }
+    {
+      "tag": "理財",
+      "tone": "insight",
+      "title": "台股熱力圖 · 上市／上櫃",
+      "desc": "加權強彈1,250點站回44,600",
+      "summary": "【理財】台股熱力圖 · 上市／上櫃｜2026.08.05 加權指數強彈 1,250.94 點、收 44,611.60（+2.88%）。半導體、載板、被動元件與記憶體全面點火，台積電 +3.66% 收復月線。上市（TWSE）與上櫃（TPEx）市值熱力圖，紅漲綠跌一眼看懂資金流向與類股輪動，方塊大小＝市值大小。洞察世界·累積智慧·點亮未來，完整熱力圖看這裡👇",
+      "meta": "2026.08.05 · 市值熱力圖（最新）",
+      "icon": "chart",
+      "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
+    },
+    {
+      "tag": "選股",
+      "tone": "intelligence",
+      "title": "台股選股雷達",
+      "desc": "多檔逼近漲停，KD黃金交叉",
+      "summary": "【選股】台股選股雷達｜2026.07.31 多檔個股逼近漲停、KD 指標黃金交叉。TOP10 訊號排行一次看，技術面轉強名單與進場時機讓選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
+      "meta": "2026.07.31 · 訊號雷達（最新）",
+      "icon": "compass",
+      "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html"
+    },
+    {
+      "tag": "日報",
+      "tone": "illumination",
+      "title": "艾倫極光日報",
+      "desc": "每日科技旅行攝影音樂動態",
+      "summary": "【日報】艾倫極光日報｜2026.08.08 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+      "meta": "2026.08.08 · 每日速報",
+      "icon": "paper",
+      "link": "https://allenchen1113official.github.io/AllenI3Aurora/daily.html"
+    }
   ],
-  "asOf": "2026.08.04",
-  "updatedAt": "2026-08-04T06:00:00Z"
+  "asOf": "2026.08.08",
+  "updatedAt": "2026-08-08T12:04:28.841Z"
 }
