@@ -296,6 +296,51 @@
     return focus;
   }
 
+  /* 選股雷達「歷期彙整」：載入同源 data/stockradar-archive.json，於選股雷達卡
+     下方以可展開清單呈現（日期＋重點＋開啟該日雷達圖）。讀取失敗或無資料則不顯示。
+     資料由 GitHub Actions（focus-update.yml → update-focus.mjs）在選股雷達每更新
+     一日時，把前一日 unshift 進 stockradar-archive.json 累積而成。 */
+  const STOCKRADAR_ARCHIVE_URL = "/AllenI3Aurora/data/stockradar-archive.json";
+  function StockradarArchive() {
+    const I = window.Icons;
+    const [rows, setRows] = React.useState(null);
+    const [open, setOpen] = React.useState(false);
+    React.useEffect(() => {
+      let alive = true;
+      fetch(STOCKRADAR_ARCHIVE_URL, { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : []))
+        .then((a) => { if (alive) setRows(Array.isArray(a) ? a : []); })
+        .catch(() => { if (alive) setRows([]); });
+      return () => { alive = false; };
+    }, []);
+    if (!rows || !rows.length) return null;
+    const num = (s) => Number(String(s == null ? "" : s).replace(/\D/g, "")) || 0;
+    const list = rows.slice().sort((a, b) => num(b.date) - num(a.date));
+    return (
+      <div style={{ marginLeft: 60 }}>
+        <button type="button" onClick={() => setOpen((v) => !v)}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "var(--intelligence)", fontWeight: 700, fontSize: 12.5, padding: "4px 2px" }}
+          title="展開選股雷達歷期彙整">
+          <I.archive size={14} /> 歷期彙整（{list.length} 期）
+          <span style={{ transform: open ? "rotate(90deg)" : "none", transition: "transform .15s", display: "inline-flex" }}><I.arrow size={13} /></span>
+        </button>
+        {open ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 4, paddingLeft: 2 }}>
+            {list.map((r, i) => (
+              <a key={i} href={r.link || "#"} target="_blank" rel="noopener noreferrer"
+                style={{ display: "flex", alignItems: "baseline", gap: 10, textDecoration: "none", color: "inherit", padding: "6px 10px", borderRadius: 8, border: "1px solid var(--night-700)" }}
+                title="開啟該日選股雷達圖">
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)", fontSize: 12.5, flex: "none" }}>{r.date}</span>
+                <span style={{ color: "var(--text-2)", fontSize: 13, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.desc || r.title || ""}</span>
+                <span style={{ color: "var(--intelligence)", flex: "none", display: "inline-flex" }}><I.ext size={13} /></span>
+              </a>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
   /* ── 一鍵分享（Facebook / Instagram / Threads）────────────────────────────
      針對每則今日關注動態提供社群分享，皆會帶入「摘要文字＋來源連結」。
      · Threads：官方 intent/post 可預填文案與連結。
@@ -581,9 +626,13 @@
                     </div>
                   </Card>
                 );
-                return f.link
-                  ? <a key={i} href={f.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", display: "block" }} title="開啟內容">{card}</a>
-                  : <div key={i}>{card}</div>;
+                const node = f.link
+                  ? <a href={f.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit", display: "block" }} title="開啟內容">{card}</a>
+                  : <div>{card}</div>;
+                // 選股雷達卡下方附「歷期彙整」可展開清單（列出過往日期的雷達圖）。
+                return f.tag === "選股"
+                  ? <div key={i} style={{ display: "flex", flexDirection: "column", gap: 8 }}>{node}<StockradarArchive /></div>
+                  : <div key={i}>{node}</div>;
               })}
             </div>
 

@@ -10,6 +10,7 @@ name: 更新今日關注動態
 on:
   schedule:
     - cron: "0 */3 * * *"   # 每 3 小時更新一次（涵蓋早間日報與盤後熱力圖）
+    - cron: "0 13 * * *"    # 台北每日 21:00：選股雷達等來源當日彙整＋前一日移入歷期彙整
   push:
     branches: [main]
     paths:
@@ -46,10 +47,10 @@ jobs:
         run: node scripts/update-issues.mjs
       - name: 有變動才提交
         run: |
-          if [[ -n "$(git status --porcelain data/focus.json data/newsletter-current.json data/heatmap.json data/stockradar.json)" ]]; then
+          if [[ -n "$(git status --porcelain data/focus.json data/newsletter-current.json data/heatmap.json data/heatmap-archive.json data/stockradar.json data/stockradar-archive.json data/daily.json data/daily-archive.json)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data/focus.json data/newsletter-current.json data/heatmap.json data/stockradar.json
+            git add data/focus.json data/newsletter-current.json data/heatmap.json data/heatmap-archive.json data/stockradar.json data/stockradar-archive.json data/daily.json data/daily-archive.json
             git commit -m "chore(newsletter): 自動更新今日關注動態與本期報報 [skip ci]"
             git pull --rebase --autostash origin main || true
             git push

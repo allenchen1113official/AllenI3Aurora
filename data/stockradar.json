@@ -1,8 +1,9 @@
 {
-  "date": "2026.07.31",
-  "dateLabel": "2026/07/31（五）",
-  "asOf": "2026.08.01",
-  "summary": "【選股】台股選股雷達 · TOP 10 訊號排行｜2026.07.31 多檔個股逼近漲停、KD 指標黃金交叉、量能同步放大。技術面轉強名單一次看，進場時機讓選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
+  "date": "2026.08.07",
+  "dateLabel": "2026/08/07（五）",
+  "asOf": "2026.08.09",
+  "desc": "研華居首，四檔三訊號達標",
+  "summary": "【選股】台股選股雷達 · TOP 10 訊號排行｜2026.08.07 研華居首、多檔強勢表態，研華、融程電、宏全、華邦電同步達 3 項技術／基本面訊號。TOP10 技術面轉強名單一次看，進場時機讓選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
   "hashtags": "#台股 #選股 #選股雷達 #訊號雷達 #TOP10 #KD黃金交叉 #技術分析 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "signals": [
     { "key": "up", "label": "逼近漲停", "desc": "當日漲幅逼近 10% 上限，買盤積極" },
@@ -13,10 +14,10 @@
   "radar": {
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
-    "drive": "https://drive.google.com/thumbnail?id=1nq9FS5eBl-t7Z6tprpi3kvmJicx7s55-&sz=w1600",
+    "drive": "https://drive.google.com/thumbnail?id=1OTTjQ-0RAiaEKJ8sInXllYEyda-wTWAi&sz=w1600",
     "local": "assets/stockradar/stockradar-ig.png"
   },
-  "source": "https://drive.google.com/file/d/1nq9FS5eBl-t7Z6tprpi3kvmJicx7s55-/view",
+  "source": "https://drive.google.com/file/d/1OTTjQ-0RAiaEKJ8sInXllYEyda-wTWAi/view",
   "note": "TOP10 訊號排行依技術面（漲跌幅、KD 指標、量能）綜合訊號強度篩選排序，屬版面示意與教學用途，資料僅供參考，不構成投資建議；投資前請自行查證並評估風險。",
-  "updatedAt": "2026-08-01T06:00:00Z"
+  "updatedAt": "2026-08-09T13:00:00Z"
 }
