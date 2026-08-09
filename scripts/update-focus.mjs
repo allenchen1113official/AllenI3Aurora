@@ -305,9 +305,38 @@ async function main() {
           const SR = "data/stockradar.json";
           let cur = {};
           try { cur = JSON.parse(readFileSync(SR, "utf8")); } catch { cur = {}; }
+
+          // 今日關注動態的選股雷達每更新到「新的一日」，前一日即移入
+          // data/stockradar-archive.json（歷期彙整以 kind「選股」呈現，卡片點擊
+          // 開啟該日雷達圖）。以 no 去重，任何失敗都不影響主流程。
+          const newDate = ymdDisplay(dateYmd);
+          if (cur.date && cur.date !== newDate) {
+            try {
+              const SA2 = "data/stockradar-archive.json";
+              let arch = [];
+              try { arch = JSON.parse(readFileSync(SA2, "utf8")); } catch { arch = []; }
+              if (!Array.isArray(arch)) arch = [];
+              const prevNo = "stockradar-" + String(cur.date).replace(/\D/g, "");
+              if (!arch.some((x) => String(x.no) === prevNo)) {
+                const prevCover = (cur.radar && cur.radar.drive) || "";
+                arch.unshift({
+                  no: prevNo, kind: "選股", date: cur.date, tone: "intelligence",
+                  title: `台股選股雷達 · TOP 10 訊號排行｜${cur.date}`,
+                  desc: cur.desc || "",
+                  cover: prevCover,
+                  link: prevCover || cur.source || "",
+                  summary: cur.summary || "", items: 10,
+                });
+                writeFileSync(SA2, JSON.stringify(arch, null, 2) + "\n");
+                console.log("已將前一日選股雷達移入 data/stockradar-archive.json：", prevNo);
+              }
+            } catch (e) { console.error("更新 data/stockradar-archive.json 失敗（略過）：", e.message); }
+          }
+
           cur.date = ymdDisplay(dateYmd);
           cur.dateLabel = `${ymdDisplay(dateYmd)}${dateYmd === today ? "" : "（最新）"}`;
           cur.asOf = ymdDisplay(today);
+          if (desc) cur.desc = desc;
           if (summary) cur.summary = summary;
           cur.radar = Object.assign({ title: "TOP 10 訊號雷達", subtitle: "技術面轉強名單 · 依綜合訊號強度排序", local: "assets/stockradar/stockradar-ig.png" }, cur.radar || {});
           if (fRadar) cur.radar.drive = driveThumb(fRadar);
