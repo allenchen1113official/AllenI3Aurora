@@ -77,7 +77,10 @@ const SOURCES = [
     // 其次任一 PDF，再退回品牌 HTML／markdown。註：日期資料夾內另有 email_draft.html／
     // pdf_source.html 等內部草稿檔，故不採一般 .html 樣式，避免連到草稿而非成品。
     linkPatterns: [/艾倫極光日報.*\.pdf$/i, /日報.*\.pdf$/i, /\.pdf$/i, /艾倫極光日報.*\.html?$/i, /日報.*\.html?$/i, /\.md$/i],
-    textPatterns: [/\.md$/i],
+    // 摘要／內文重點自當日文字檔擷取：日報成品為 PDF（無法以文字讀取），故比照
+    // 熱力圖／選股雷達，優先讀社群貼文文字檔（SocialPost／caption／日報 .txt），
+    // 再退回任一 .txt 或 .md；找不到才用通用速報摘要。
+    textPatterns: [/SocialPost.*\.txt$/i, /caption.*\.txt$/i, /艾倫極光日報.*\.txt$/i, /日報.*\.txt$/i, /\.txt$/i, /\.md$/i],
     // 前台頁面以 data/daily.json 取得「Drive 最新封面圖」；以下樣式挑出代表封面圖檔。
     imgCover: [/艾倫極光日報.*\.(png|jpe?g)$/i, /日報.*\.(png|jpe?g)$/i, /cover.*\.(png|jpe?g)$/i, /\.(png|jpe?g)$/i],
   },
