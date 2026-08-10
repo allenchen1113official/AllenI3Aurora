@@ -63,6 +63,9 @@ const SOURCES = [
     // 連結改連本站前台選股雷達頁面（HTML 說明 TOP10 分析＋一鍵分享）；linkPatterns 供 stockradar.json 挑圖與退回。
     site: true, sitePath: "stockradar.html",
     linkPatterns: [/StockRadar_IG_\d{4}-\d{2}-\d{2}\.png$/i, /StockRadar.*\d{4}-\d{2}-\d{2}\.png$/i, /StockRadar.*\.png$/i],
+    // stockradar.json 的 source（前台「查看完整訊號雷達原始資料」連結）優先指向當日
+    // 完整 HTML 報表 StockRadar_TOP_YYYY-MM-DD.html，其次任一 StockRadar_TOP*.html。
+    sourcePatterns: [/StockRadar_TOP_\d{4}-\d{2}-\d{2}\.html?$/i, /StockRadar_TOP.*\.html?$/i],
     textPatterns: [/caption.*\.txt$/i, /\.txt$/i],
     // 前台頁面以 data/stockradar.json 取得「Drive 最新雷達圖」；以下樣式挑出代表圖檔（優先 IG 版）。
     imgRadar: [/StockRadar_IG_\d{4}-\d{2}-\d{2}\.png$/i, /StockRadar.*IG.*\.png$/i, /StockRadar.*\d{4}-\d{2}-\d{2}\.png$/i, /StockRadar.*\.png$/i],
@@ -343,9 +346,11 @@ async function main() {
           if (summary) cur.summary = summary;
           cur.radar = Object.assign({ title: "TOP 10 訊號雷達", subtitle: "技術面轉強名單 · 依綜合訊號強度排序", local: "assets/stockradar/stockradar-ig.png" }, cur.radar || {});
           if (fRadar) cur.radar.drive = driveThumb(fRadar);
-          // 原始資料連結：優先代表圖檔的 Drive 檢視連結，否則連當日資料夾。
+          // 原始資料連結（source）：優先當日完整 HTML 報表（StockRadar_TOP_YYYY-MM-DD.html），
+          // 其次代表圖檔的 Drive 檢視連結，最後退回當日資料夾。
           let srcLink = "";
-          for (const pat of src.linkPatterns) { const f = files.find((x) => pat.test(x.name)); if (f) { srcLink = f.webViewLink || ""; break; } }
+          for (const pat of (src.sourcePatterns || [])) { const f = files.find((x) => pat.test(x.name)); if (f) { srcLink = f.webViewLink || ""; break; } }
+          if (!srcLink) { for (const pat of src.linkPatterns) { const f = files.find((x) => pat.test(x.name)); if (f) { srcLink = f.webViewLink || ""; break; } } }
           if (!srcLink) { try { srcLink = (await drive.files.get({ fileId: dateId, fields: "webViewLink", supportsAllDrives: true })).data.webViewLink || ""; } catch { /* 忽略 */ } }
           if (srcLink) cur.source = srcLink;
           cur.updatedAt = new Date().toISOString();
