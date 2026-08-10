@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>台股選股雷達 · TOP 10 訊號排行 — 艾倫報報</title>
-<meta name="description" content="台股選股雷達 TOP 10 訊號排行：逼近漲停、KD 黃金交叉、量能突破，技術面轉強名單一次看，用訊號選股不再靠猜。艾倫報報 Allen I³ Aurora。">
+<meta name="description" content="台股選股雷達 TOP 10 訊號排行：KD 黃金交叉、均線多頭、營益率／營收年增／EPS 年增，技術面與基本面轉強名單一次看，用訊號選股不再靠猜。艾倫報報 Allen I³ Aurora。">
 <link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
 <link rel="stylesheet" href="/AllenI3Aurora/styles.css">
 <!-- 開放社群預覽（Facebook／Threads 分享時顯示圖與說明） -->
 <meta property="og:type" content="article">
 <meta property="og:title" content="台股選股雷達 · TOP 10 訊號排行 — 艾倫報報">
-<meta property="og:description" content="逼近漲停、KD 黃金交叉、量能突破，技術面轉強名單一次看，用訊號選股不再靠猜。">
+<meta property="og:description" content="KD 黃金交叉、均線多頭、營益率／營收年增／EPS 年增，技術面與基本面轉強名單一次看，用訊號選股不再靠猜。">
 <meta property="og:image" content="https://allenchen1113official.github.io/AllenI3Aurora/assets/stockradar/stockradar-fb.png">
 <meta name="twitter:card" content="summary_large_image">
 <style>
@@ -51,9 +51,11 @@
   .down { color: var(--finance-down); }
   .tags { display: flex; gap: 5px; flex-wrap: wrap; }
   .pill { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-2); white-space: nowrap; }
-  .pill.up { color: var(--finance-up); border-color: color-mix(in srgb, var(--finance-up) 40%, transparent); }
-  .pill.gold { color: var(--illumination); border-color: color-mix(in srgb, var(--illumination) 40%, transparent); }
-  .pill.vol { color: var(--insight); border-color: color-mix(in srgb, var(--insight) 40%, transparent); }
+  .pill.gc { color: var(--illumination); border-color: color-mix(in srgb, var(--illumination) 40%, transparent); }
+  .pill.ma { color: var(--insight); border-color: color-mix(in srgb, var(--insight) 40%, transparent); }
+  .pill.om { color: var(--intelligence); border-color: color-mix(in srgb, var(--intelligence) 40%, transparent); }
+  .pill.rev { color: var(--brand); border-color: color-mix(in srgb, var(--brand) 40%, transparent); }
+  .pill.eps { color: var(--finance-up); border-color: color-mix(in srgb, var(--finance-up) 40%, transparent); }
   .img-box { position: relative; background: #0b0d12; }
   .img-box img { display: block; width: 100%; height: auto; }
   .cap { padding: 12px 20px 18px; font-size: 12.5px; color: var(--text-3); line-height: 1.5; }
@@ -88,7 +90,7 @@
   </div>
 
   <h1>台股選股雷達 · <span class="accent">TOP 10 訊號排行</span></h1>
-  <p class="dek" id="dek">逼近漲停、KD 黃金交叉、量能突破——三大技術面訊號綜合排序，把當日轉強名單一次列出。用客觀訊號取代盤感，讓選股不再靠猜。</p>
+  <p class="dek" id="dek">KD 黃金交叉、均線多頭、營益率／營收年增／EPS 年增——五項技術面與基本面訊號綜合排序，把當日轉強名單一次列出。用客觀訊號取代盤感，讓選股不再靠猜。</p>
 
   <div class="signals" id="signals"></div>
 
@@ -100,7 +102,7 @@
   <div class="panel" id="radarPanel">
     <div class="hd"><span class="t" id="radar-t">TOP 10 訊號雷達</span><span class="s" id="radar-s">技術面轉強名單</span></div>
     <div class="img-box"><img id="radar-img" loading="lazy" alt="台股選股雷達 TOP 10 訊號排行"></div>
-    <div class="cap" id="radar-cap">紅＝逼近漲停、金＝KD 黃金交叉、綠＝量能突破。方塊排序依綜合訊號強度，一眼掌握技術面轉強名單。</div>
+    <div class="cap" id="radar-cap">圖卡以金色標籤標示每檔達標之技術／基本面訊號（KD黃金交叉、均線多頭、營益率＞10%、營收年增＞20%、EPS年增＞10%），紅漲綠跌，一眼掌握 TOP 10 轉強名單。</div>
   </div>
 
   <a class="source-link" id="source" href="#" target="_blank" rel="noopener noreferrer" hidden>
@@ -128,19 +130,21 @@
   // 內建預設（data/stockradar.json 取得後覆蓋），確保 JSON 讀取失敗仍可顯示。
   var DEFAULTS = {
     date: "", dateLabel: "訊號雷達",
-    summary: "台股選股雷達 · TOP 10 訊號排行：逼近漲停、KD 黃金交叉、量能突破，技術面轉強名單一次看，用訊號選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
+    summary: "台股選股雷達 · TOP 10 訊號排行：KD 黃金交叉、均線多頭、營益率／營收年增／EPS 年增，技術面與基本面轉強名單一次看，用訊號選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
     hashtags: "#台股 #選股 #選股雷達 #訊號雷達 #TOP10 #KD黃金交叉 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
     signals: [
-      { key: "up", label: "逼近漲停", desc: "當日漲幅逼近 10% 上限，買盤積極" },
-      { key: "gold", label: "KD 黃金交叉", desc: "K 線由下向上穿越 D 線，短線轉強" },
-      { key: "vol", label: "量能突破", desc: "成交量放大突破近期均量，資金進駐" }
+      { key: "gc", label: "KD黃金交叉", desc: "日 K 前一交易日 K≦D、當日 K＞D 翻轉向上" },
+      { key: "ma", label: "均線多頭", desc: "月線＞季線＞半年線＞年線，且四條均線皆向上" },
+      { key: "om", label: "營益率＞10%", desc: "近 4 季逾 3 季單季營業利益率高於 10%" },
+      { key: "rev", label: "營收年增＞20%", desc: "近 4 季逾 3 季單季營收年增率高於 20%" },
+      { key: "eps", label: "EPS年增＞10%", desc: "近 4 季逾 3 季單季稅後 EPS 年增率高於 10%" }
     ],
     top10: [],
     radar: { title: "TOP 10 訊號雷達", subtitle: "技術面轉強名單 · 依綜合訊號強度排序", drive: "", local: "assets/stockradar/stockradar-ig.png" },
     source: "", note: ""
   };
 
-  var SIG_COLOR = { up: "var(--finance-up)", gold: "var(--illumination)", vol: "var(--insight)" };
+  var SIG_COLOR = { gc: "var(--illumination)", ma: "var(--insight)", om: "var(--intelligence)", rev: "var(--brand)", eps: "var(--finance-up)" };
   function esc(s) { return String(s == null ? "" : s); }
   function escAttr(s) { return esc(s).replace(/"/g, "&quot;"); }
 
@@ -162,7 +166,7 @@
       var up = (typeof r.up === "boolean") ? r.up : (String(r.changePct || "").indexOf("-") !== 0);
       var chg = [esc(r.change), esc(r.changePct)].filter(Boolean).join(" ");
       var tags = (r.signals || []).map(function (k) {
-        var lbl = { up: "逼近漲停", gold: "KD 交叉", vol: "量能突破" }[k] || k;
+        var lbl = { gc: "KD黃金交叉", ma: "均線多頭", om: "營益率>10%", rev: "營收年增>20%", eps: "EPS年增>10%" }[k] || k;
         return '<span class="pill ' + esc(k) + '">' + esc(lbl) + '</span>';
       }).join("");
       return '<tr><td class="n">' + (i + 1) + '</td>' +
@@ -178,11 +182,11 @@
     var m = d.radar || {};
     document.getElementById("radar-t").textContent = esc(m.title || "TOP 10 訊號雷達");
     document.getElementById("radar-s").textContent = esc(m.subtitle || "");
-    var fallback = esc(m.local || "assets/stockradar/stockradar-ig.png"); // 站內備援圖（頁面相對路徑）
-    var primary = esc(m.drive) || fallback;                               // 優先 Drive 最新圖
+    var local = esc(m.local || "assets/stockradar/stockradar-ig.png"); // 站內直接嵌入的 Top 10 圖卡（頁面相對路徑）
+    var drive = esc(m.drive);                                          // Drive 備援（站內圖若缺失時遞補）
     var img = document.getElementById("radar-img");
-    img.onerror = function () { img.onerror = null; img.src = fallback; };
-    img.src = primary;
+    if (drive) { img.onerror = function () { img.onerror = null; img.src = drive; }; }
+    img.src = local;                                                   // 直接嵌入站內圖卡，避免 Drive 熱連結不穩
   }
 
   function renderSource(d) {
