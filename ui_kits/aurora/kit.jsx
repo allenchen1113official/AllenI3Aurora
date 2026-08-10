@@ -174,9 +174,9 @@ window.KIT = {
     { title: "台股籌碼面實戰：三大法人解讀", src: "PDF", pct: 12 },
   ],
   podcasts: [
-    { title: "股癌 Gooaye — EP.整理盤心法", meta: "1h 12m · 昨天", tone: "insight" },
-    { title: "曼報 Manny's Newsletter Radio", meta: "38m · 2 天前", tone: "intelligence" },
-    { title: "Lex Fridman — Memory & Agents", meta: "2h 04m · 本週", tone: "illumination" },
+    { title: "股癌 Gooaye — EP.整理盤心法", meta: "1h 12m · 昨天", tone: "insight", url: "https://open.firstory.me/user/stocks" },
+    { title: "曼報 Manny's Newsletter Radio", meta: "38m · 2 天前", tone: "intelligence", url: "https://open.spotify.com/show/0jMy3OygUQts67tHIYcufS" },
+    { title: "Lex Fridman — Memory & Agents", meta: "2h 04m · 本週", tone: "illumination", url: "https://lexfridman.com/podcast/" },
   ],
   links: [
     { label: "Showmethemoney 看盤", icon: "chart" },
