@@ -664,18 +664,26 @@
             <div>
               <SectionHeader kicker="INTELLIGENCE · 智慧" title="常聽 Podcast" style={{ marginBottom: "var(--space-4)" }} />
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {K.podcasts.map((p, i) => (
-                  <Card key={i} interactive padding="14px 16px">
+                {K.podcasts.map((p, i) => {
+                  const hasUrl = !!(p.url && String(p.url).trim());
+                  const inner = (
                     <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
                       <span style={{ width: 40, height: 40, flex: "none", borderRadius: 12, background: `var(--${p.tone}-soft)`, color: `var(--${p.tone})`, display: "grid", placeItems: "center" }}><I.headphones size={20} /></span>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.title}</div>
                         <div style={{ color: "var(--text-3)", fontSize: 12 }}>{p.meta}</div>
                       </div>
-                      <IconButton size="sm" variant="ghost" label="播放"><I.play size={16} /></IconButton>
+                      <IconButton size="sm" variant="ghost" label={hasUrl ? "前往收聽" : "播放"}>{hasUrl ? <I.ext size={16} /> : <I.play size={16} />}</IconButton>
                     </div>
-                  </Card>
-                ))}
+                  );
+                  return (
+                    <Card key={i} interactive padding="14px 16px">
+                      {hasUrl ? (
+                        <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", color: "inherit", textDecoration: "none" }}>{inner}</a>
+                      ) : inner}
+                    </Card>
+                  );
+                })}
               </div>
             </div>
 

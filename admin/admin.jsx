@@ -44,6 +44,7 @@ const SECTIONS = [
   ] },
   { id: "podcasts", table: "aurora_podcasts", label: "Podcast", fields: [
     { k: "sort", t: "number" }, { k: "title", t: "text" }, { k: "meta", t: "text" }, { k: "tone", t: "tone" },
+    { k: "url", t: "text" },
   ] },
   { id: "links", table: "aurora_links", label: "快速連結", fields: [
     { k: "sort", t: "number" }, { k: "label", t: "text" }, { k: "icon", t: "text" },
@@ -84,9 +85,9 @@ const SEED = {
     { sort: 3, title: "台股籌碼面實戰：三大法人解讀", src: "PDF", pct: 12 },
   ],
   podcasts: [
-    { sort: 1, title: "股癌 Gooaye — EP.整理盤心法", meta: "1h 12m · 昨天", tone: "insight" },
-    { sort: 2, title: "曼報 Manny's Newsletter Radio", meta: "38m · 2 天前", tone: "intelligence" },
-    { sort: 3, title: "Lex Fridman — Memory & Agents", meta: "2h 04m · 本週", tone: "illumination" },
+    { sort: 1, title: "股癌 Gooaye — EP.整理盤心法", meta: "1h 12m · 昨天", tone: "insight", url: "https://open.firstory.me/user/stocks" },
+    { sort: 2, title: "曼報 Manny's Newsletter Radio", meta: "38m · 2 天前", tone: "intelligence", url: "https://open.spotify.com/show/0jMy3OygUQts67tHIYcufS" },
+    { sort: 3, title: "Lex Fridman — Memory & Agents", meta: "2h 04m · 本週", tone: "illumination", url: "https://lexfridman.com/podcast/" },
   ],
   links: [
     { sort: 1, label: "Showmethemoney 看盤", icon: "chart" },
