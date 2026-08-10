@@ -17,6 +17,8 @@
   html, body { height: auto; }
   body { margin: 0; min-height: 100vh; color: var(--text-2); }
   a { color: inherit; }
+  /* hidden 屬性需勝過 .topics/.chips/.sections 等的 display 設定，確保切換版面時能真正隱藏。 */
+  [hidden] { display: none !important; }
   .wrap { max-width: 1040px; margin: 0 auto; padding: var(--space-8, 28px) var(--gutter, 20px) var(--space-24, 96px); }
   .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
   .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
@@ -45,6 +47,29 @@
   .highlights { list-style: none; margin: 0 0 26px; padding: 0; display: grid; gap: 10px; }
   .highlights li { position: relative; border: 1px solid var(--border); border-radius: var(--radius-lg, 18px); padding: 14px 18px 14px 40px; background: var(--night-800); color: var(--text-2); font-size: 14.5px; line-height: 1.6; }
   .highlights li::before { content: ""; position: absolute; left: 17px; top: 20px; width: 8px; height: 8px; border-radius: 3px; background: var(--illumination); }
+  /* 一頁式：分類快速導覽 chips */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 22px; }
+  .chips a { font-size: 13px; font-weight: 700; letter-spacing: .02em; padding: 6px 13px; border-radius: var(--radius-pill, 999px); border: 1px solid var(--border); color: var(--text-2); background: var(--night-800); text-decoration: none; transition: .18s; }
+  .chips a:hover { color: var(--text-1); border-color: var(--border-strong); }
+  /* 一頁式：主題區塊（標題＋條列＋來源） */
+  .sections { display: grid; gap: 18px; margin: 0 0 26px; }
+  .section { border: 1px solid var(--border); border-radius: var(--radius-xl, 24px); background: var(--night-800); box-shadow: var(--shadow-card); overflow: hidden; scroll-margin-top: 16px; }
+  .section > .sh { display: flex; align-items: center; gap: 10px; padding: 15px 20px; border-bottom: 1px solid var(--border-subtle); }
+  .section > .sh .dot { width: 11px; height: 11px; border-radius: 4px; flex: none; }
+  .section > .sh .tag { font-size: 12px; font-weight: 800; letter-spacing: .06em; padding: 3px 9px; border-radius: var(--radius-pill, 999px); background: var(--night-700); color: var(--text-3); border: 1px solid var(--border); }
+  .section > .sh .t { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 1.12rem; color: var(--text-1); }
+  .section ul { list-style: none; margin: 0; padding: 8px 20px 16px; display: grid; gap: 4px; }
+  .section li { position: relative; padding: 12px 0 12px 20px; border-bottom: 1px solid var(--border-subtle); }
+  .section li:last-child { border-bottom: 0; }
+  .section li::before { content: ""; position: absolute; left: 2px; top: 19px; width: 7px; height: 7px; border-radius: 3px; background: var(--illumination); }
+  .section li .x { color: var(--text-2); font-size: 14.5px; line-height: 1.66; }
+  .section li .src { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 12.5px; font-weight: 700; color: var(--intelligence); text-decoration: none; }
+  .section li .src:hover { text-decoration: underline; }
+  .section li .src svg { opacity: .8; }
+  /* 一頁式：今日重點 callout */
+  .focus { border: 1px solid color-mix(in srgb, var(--illumination) 34%, transparent); border-radius: var(--radius-xl, 24px); background: var(--illumination-soft); padding: 18px 22px; margin: 0 0 26px; }
+  .focus .fh { display: flex; align-items: center; gap: 8px; font-family: var(--font-display, system-ui); font-weight: 900; font-size: 1.05rem; color: var(--illumination); margin-bottom: 8px; }
+  .focus p { margin: 0; color: var(--text-2); font-size: 14.5px; line-height: 1.72; }
   .hashtags { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 26px; }
   .hashtags .ht { font-size: 12.5px; font-weight: 700; padding: 4px 11px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--illumination) 32%, transparent); color: var(--illumination); white-space: nowrap; }
   .source-link { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 700; color: var(--illumination); text-decoration: none; border: 1px solid color-mix(in srgb, var(--illumination) 35%, transparent); border-radius: var(--radius-pill, 999px); padding: 8px 15px; margin: 0 0 26px; transition: .18s; }
@@ -80,6 +105,15 @@
 
   <h1>艾倫極光<span class="accent">日報</span></h1>
   <p class="dek" id="dek">科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界、累積智慧、點亮未來。</p>
+
+  <nav class="chips" id="chips" hidden></nav>
+
+  <div class="sections" id="sections" hidden></div>
+
+  <div class="focus" id="focus" hidden>
+    <div class="fh">✦ 今日重點</div>
+    <p id="focus-text"></p>
+  </div>
 
   <div class="topics" id="topics"></div>
 
@@ -134,7 +168,51 @@
   };
 
   var TOPIC_COLOR = { tech: "var(--intelligence)", travel: "var(--insight)", photo: "var(--illumination)", music: "var(--brand)" };
+  var TONE_COLOR = { insight: "var(--insight)", intelligence: "var(--intelligence)", illumination: "var(--illumination)" };
   function esc(s) { return String(s == null ? "" : s); }
+  function escAttr(s) { return esc(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;"); }
+  function slug(i) { return "sec-" + (i + 1); }
+  var LINK_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>';
+
+  // 一頁式：分類快速導覽（點擊跳到對應主題區塊）。
+  function renderChips(d) {
+    var nav = document.getElementById("chips");
+    var secs = Array.isArray(d.sections) ? d.sections : [];
+    if (!secs.length) { nav.hidden = true; nav.innerHTML = ""; return; }
+    nav.hidden = false;
+    nav.innerHTML = secs.map(function (s, i) {
+      return '<a href="#' + slug(i) + '">' + esc(s.tag || s.title) + '</a>';
+    }).join("");
+  }
+
+  // 一頁式：主題區塊（標題＋條列內容，每則附原始來源連結）。
+  function renderSections(d) {
+    var box = document.getElementById("sections");
+    var secs = Array.isArray(d.sections) ? d.sections : [];
+    if (!secs.length) { box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    box.innerHTML = secs.map(function (s, i) {
+      var c = TONE_COLOR[s.tone] || "var(--brand)";
+      var items = (s.items || []).map(function (it) {
+        var src = it.source
+          ? '<a class="src" href="' + escAttr(it.source) + '" target="_blank" rel="noopener noreferrer">' + LINK_SVG + esc(it.sourceName || "來源") + '</a>'
+          : "";
+        return '<li><div class="x">' + esc(it.text) + '</div>' + src + '</li>';
+      }).join("");
+      return '<section class="section" id="' + slug(i) + '">' +
+        '<div class="sh"><span class="dot" style="background:' + c + '"></span>' +
+        '<span class="tag">' + esc(s.tag || "") + '</span>' +
+        '<span class="t">' + esc(s.title || "") + '</span></div>' +
+        '<ul>' + items + '</ul></section>';
+    }).join("");
+  }
+
+  // 一頁式：今日重點 callout。
+  function renderFocus(d) {
+    var box = document.getElementById("focus");
+    if (d.focusNote) { document.getElementById("focus-text").textContent = d.focusNote; box.hidden = false; }
+    else { box.hidden = true; }
+  }
 
   function renderTopics(d) {
     var box = document.getElementById("topics");
@@ -239,7 +317,18 @@
       if (lead) document.getElementById("dek").textContent = lead;
     }
     document.getElementById("note").textContent = d.note || "";
-    renderTopics(d); renderHighlights(d); renderCover(d); renderHashtags(d); renderSource(d); wireShare(d);
+    var hasSections = Array.isArray(d.sections) && d.sections.length;
+    // 一頁式（有 sections）：顯示分類導覽＋主題區塊＋今日重點，隱藏通用的主題卡與速報重點；
+    // 無 sections 時退回通用版面（主題卡＋highlights）。
+    renderChips(d); renderSections(d); renderFocus(d);
+    if (hasSections) {
+      document.getElementById("topics").hidden = true;
+      document.getElementById("highlights").hidden = true;
+    } else {
+      document.getElementById("topics").hidden = false;
+      renderTopics(d); renderHighlights(d);
+    }
+    renderCover(d); renderHashtags(d); renderSource(d); wireShare(d);
   }
 
   // 先套用預設立即可見，再以 data/daily.json 覆蓋（Drive 最新／站內備援）。
