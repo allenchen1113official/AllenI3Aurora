@@ -2,15 +2,28 @@
   "date": "2026.08.07",
   "dateLabel": "2026/08/07（五）",
   "asOf": "2026.08.09",
-  "desc": "研華居首，四檔三訊號達標",
-  "summary": "【選股】台股選股雷達 · TOP 10 訊號排行｜2026.08.07 研華居首、多檔強勢表態，研華、融程電、宏全、華邦電同步達 3 項技術／基本面訊號。TOP10 技術面轉強名單一次看，進場時機讓選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
-  "hashtags": "#台股 #選股 #選股雷達 #訊號雷達 #TOP10 #KD黃金交叉 #技術分析 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+  "desc": "研華居首，四檔達 3 項訊號",
+  "summary": "【選股】台股選股雷達 · TOP 10 訊號排行｜2026.08.07 研華居首，研華、融程電、宏全、華邦電同步達 3 項技術／基本面訊號。均線多頭、營益率、營收年增、EPS 年增，TOP10 技術面轉強名單一次看。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
+  "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
-    { "key": "up", "label": "逼近漲停", "desc": "當日漲幅逼近 10% 上限，買盤積極" },
-    { "key": "gold", "label": "KD 黃金交叉", "desc": "K 線由下向上穿越 D 線，短線轉強" },
-    { "key": "vol", "label": "量能突破", "desc": "成交量放大突破近期均量，資金進駐" }
+    { "key": "gc", "label": "KD黃金交叉", "desc": "日 K 前一交易日 K≦D、當日 K＞D 翻轉向上" },
+    { "key": "ma", "label": "均線多頭", "desc": "月線＞季線＞半年線＞年線，且四條均線皆向上" },
+    { "key": "om", "label": "營益率＞10%", "desc": "近 4 季逾 3 季單季營業利益率高於 10%" },
+    { "key": "rev", "label": "營收年增＞20%", "desc": "近 4 季逾 3 季單季營收年增率高於 20%" },
+    { "key": "eps", "label": "EPS年增＞10%", "desc": "近 4 季逾 3 季單季稅後 EPS 年增率高於 10%" }
   ],
-  "top10": [],
+  "top10": [
+    { "code": "2395", "name": "研華",    "changePct": "+1.93%", "up": true,  "signals": ["ma", "om", "eps"] },
+    { "code": "3416", "name": "融程電",  "changePct": "+2.41%", "up": true,  "signals": ["om", "rev", "eps"] },
+    { "code": "1303", "name": "南亞",    "changePct": "+5.32%", "up": true,  "signals": ["ma", "eps"] },
+    { "code": "3653", "name": "健策",    "changePct": "-1.57%", "up": false, "signals": ["om", "eps"] },
+    { "code": "6589", "name": "台康生技", "changePct": "+0.42%", "up": true,  "signals": [] },
+    { "code": "9939", "name": "宏全",    "changePct": "+1.40%", "up": true,  "signals": ["ma", "om"] },
+    { "code": "2027", "name": "大成鋼",  "changePct": "+1.08%", "up": true,  "signals": ["om", "eps"] },
+    { "code": "2301", "name": "光寶科",  "changePct": "-2.18%", "up": false, "signals": ["om", "eps"] },
+    { "code": "2344", "name": "華邦電",  "changePct": "-4.39%", "up": false, "signals": ["om", "rev", "eps"] },
+    { "code": "3034", "name": "聯詠",    "changePct": "-0.18%", "up": false, "signals": ["om"] }
+  ],
   "radar": {
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
@@ -18,6 +31,6 @@
     "local": "assets/stockradar/stockradar-ig.png"
   },
   "source": "https://drive.google.com/file/d/1OTTjQ-0RAiaEKJ8sInXllYEyda-wTWAi/view",
-  "note": "TOP10 訊號排行依技術面（漲跌幅、KD 指標、量能）綜合訊號強度篩選排序，屬版面示意與教學用途，資料僅供參考，不構成投資建議；投資前請自行查證並評估風險。",
-  "updatedAt": "2026-08-09T13:00:00Z"
+  "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.07（補產出，非執行當日）。",
+  "updatedAt": "2026-08-10T02:15:00Z"
 }
