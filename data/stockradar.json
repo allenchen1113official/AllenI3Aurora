@@ -1,9 +1,9 @@
 {
-  "date": "2026.08.07",
-  "dateLabel": "2026/08/07（五）",
-  "asOf": "2026.08.09",
-  "desc": "研華居首，四檔達 3 項訊號",
-  "summary": "【選股】台股選股雷達 · TOP 10 訊號排行｜2026.08.07 研華居首，研華、融程電、宏全、華邦電同步達 3 項技術／基本面訊號。均線多頭、營益率、營收年增、EPS 年增，TOP10 技術面轉強名單一次看。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
+  "date": "2026.08.13",
+  "dateLabel": "2026/08/13（四）",
+  "asOf": "2026.08.13",
+  "desc": "川湖、台光電基本面全達標",
+  "summary": "【選股】台股選股雷達 · TOP 10 訊號排行｜2026.08.13 川湖、台光電營益率／營收年增／EPS 近 4 季三項全數達標最全面；力積電攻上漲停、長興大漲逾 9%。TOP10 技術面轉強名單一次看，進場時機讓選股不再靠猜。洞察世界·累積智慧·點亮未來，完整訊號雷達看這裡👇",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     { "key": "gc", "label": "KD黃金交叉", "desc": "日 K 前一交易日 K≦D、當日 K＞D 翻轉向上" },
@@ -13,24 +13,24 @@
     { "key": "eps", "label": "EPS年增＞10%", "desc": "近 4 季逾 3 季單季稅後 EPS 年增率高於 10%" }
   ],
   "top10": [
-    { "code": "2395", "name": "研華",    "changePct": "+1.93%", "up": true,  "signals": ["ma", "om", "eps"] },
-    { "code": "3416", "name": "融程電",  "changePct": "+2.41%", "up": true,  "signals": ["om", "rev", "eps"] },
-    { "code": "1303", "name": "南亞",    "changePct": "+5.32%", "up": true,  "signals": ["ma", "eps"] },
-    { "code": "3653", "name": "健策",    "changePct": "-1.57%", "up": false, "signals": ["om", "eps"] },
-    { "code": "6589", "name": "台康生技", "changePct": "+0.42%", "up": true,  "signals": [] },
-    { "code": "9939", "name": "宏全",    "changePct": "+1.40%", "up": true,  "signals": ["ma", "om"] },
-    { "code": "2027", "name": "大成鋼",  "changePct": "+1.08%", "up": true,  "signals": ["om", "eps"] },
-    { "code": "2301", "name": "光寶科",  "changePct": "-2.18%", "up": false, "signals": ["om", "eps"] },
-    { "code": "2344", "name": "華邦電",  "changePct": "-4.39%", "up": false, "signals": ["om", "rev", "eps"] },
-    { "code": "3034", "name": "聯詠",    "changePct": "-0.18%", "up": false, "signals": ["om"] }
+    { "code": "1563", "name": "巧新",        "changePct": "+5.15%",  "up": true,  "signals": [] },
+    { "code": "2059", "name": "川湖",        "changePct": "-2.19%",  "up": false, "signals": ["ma", "om", "rev", "eps"] },
+    { "code": "2395", "name": "研華",        "changePct": "+3.78%",  "up": true,  "signals": ["ma", "om", "eps"] },
+    { "code": "2347", "name": "聯強",        "changePct": "+0.66%",  "up": true,  "signals": ["ma", "eps"] },
+    { "code": "6213", "name": "聯茂",        "changePct": "+2.65%",  "up": true,  "signals": ["ma", "eps"] },
+    { "code": "1717", "name": "長興",        "changePct": "+9.32%",  "up": true,  "signals": ["eps"] },
+    { "code": "3152", "name": "璟德",        "changePct": "+2.67%",  "up": true,  "signals": ["om"] },
+    { "code": "4912", "name": "聯德控股-KY", "changePct": "+6.17%",  "up": true,  "signals": [] },
+    { "code": "6770", "name": "力積電",      "changePct": "+10.00%", "up": true,  "signals": [] },
+    { "code": "2383", "name": "台光電",      "changePct": "+3.52%",  "up": true,  "signals": ["om", "rev", "eps"] }
   ],
   "radar": {
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
-    "drive": "https://drive.google.com/thumbnail?id=1OTTjQ-0RAiaEKJ8sInXllYEyda-wTWAi&sz=w1600",
+    "drive": "https://drive.google.com/thumbnail?id=1JX58pcO9OPZSiN6wFLoHzl_RrEm1fudh&sz=w1600",
     "local": "assets/stockradar/stockradar-ig.png"
   },
-  "source": "https://drive.google.com/drive/folders/14ePBlCZYStTIYI1tbfu1cVypi5yxxwZg",
-  "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.07（補產出，非執行當日）。",
-  "updatedAt": "2026-08-10T02:15:00Z"
+  "source": "https://drive.google.com/file/d/1L4yL_N1yBvD7niS0ReF9wfgqxyJXsdEf/view",
+  "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.13（TOP10 排行與技術指標採最近可得交易日 2026.08.12 收盤資料）。",
+  "updatedAt": "2026-08-13T13:00:00Z"
 }
