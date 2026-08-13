@@ -155,6 +155,45 @@ function extractLines(raw, max = 4) {
   return picked;
 }
 
+/* 自選股雷達當日完整 HTML 報表（StockRadar_TOP_YYYY-MM-DD.html）解析 TOP10 明細，
+   供 data/stockradar.json 前台頁面條列顯示個股與五項訊號。解析失敗回傳空陣列。
+   欄位順序（每列 <td>）：日期,排名,代碼,名稱,產業,股價,漲跌幅,K,D,K>50,K>D,
+   KD黃金交叉,大戶連買,散戶連買,均線多頭,營益率>10%,營收年增>20%,EPS年增>10%,短評。 */
+function parseStockradarTop10(html) {
+  const stripTags = (s) => String(s)
+    .replace(/<[^>]*>/g, "")
+    .replace(/&gt;/g, ">").replace(/&lt;/g, "<").replace(/&amp;/g, "&").replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ").trim();
+  const yes = (s) => String(s).trim().charAt(0) === "是";
+  const rows = [];
+  const trRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  let m;
+  while ((m = trRe.exec(html))) {
+    const cells = [];
+    const cellRe = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+    let c;
+    while ((c = cellRe.exec(m[1]))) cells.push(stripTags(c[1]));
+    if (cells.length < 18) continue;                    // 表頭（<th>）或不完整列
+    const codeMatch = String(cells[2]).match(/(\d{4,6})/);
+    if (!codeMatch) continue;
+    let name = cells[3];
+    const paren = name.match(/[（(]([^）)]+)[）)]\s*$/);  // 取括號內簡稱（如「研華」）
+    if (paren) name = paren[1];
+    const pv = String(cells[6]).match(/([-+]?\d+(?:\.\d+)?)\s*%/);
+    const neg = /▼/.test(cells[6]) || (pv && pv[1].startsWith("-"));
+    const changePct = pv ? (neg ? "-" : "+") + pv[1].replace(/^[-+]/, "") + "%" : "";
+    const signals = [];
+    if (yes(cells[11])) signals.push("gc");
+    if (yes(cells[14])) signals.push("ma");
+    if (yes(cells[15])) signals.push("om");
+    if (yes(cells[16])) signals.push("rev");
+    if (yes(cells[17])) signals.push("eps");
+    rows.push({ code: codeMatch[1], name, changePct, up: !neg, signals });
+    if (rows.length >= 10) break;
+  }
+  return rows;
+}
+
 async function main() {
   if (!SA) keepExisting("未提供 GDRIVE_SERVICE_ACCOUNT");
 
@@ -353,6 +392,18 @@ async function main() {
           if (!srcLink) { for (const pat of src.linkPatterns) { const f = files.find((x) => pat.test(x.name)); if (f) { srcLink = f.webViewLink || ""; break; } } }
           if (!srcLink) { try { srcLink = (await drive.files.get({ fileId: dateId, fields: "webViewLink", supportsAllDrives: true })).data.webViewLink || ""; } catch { /* 忽略 */ } }
           if (srcLink) cur.source = srcLink;
+
+          // TOP10 明細：讀取當日完整 HTML 報表（StockRadar_TOP_YYYY-MM-DD.html）解析
+          // 出 10 檔個股與五項訊號，更新 cur.top10（供前台條列顯示）。解析失敗維持原值。
+          try {
+            let htmlFile = null;
+            for (const pat of (src.sourcePatterns || [])) { htmlFile = files.find((x) => pat.test(x.name)); if (htmlFile) break; }
+            if (htmlFile) {
+              const rows = parseStockradarTop10(await readText(htmlFile.id));
+              if (rows.length >= 5) cur.top10 = rows;
+            }
+          } catch (e) { console.error("解析選股雷達 TOP10 失敗（略過）：", e.message); }
+
           cur.updatedAt = new Date().toISOString();
           writeFileSync(SR, JSON.stringify(cur, null, 2) + "\n");
           console.log("已更新 data/stockradar.json（Drive 最新選股雷達）");
