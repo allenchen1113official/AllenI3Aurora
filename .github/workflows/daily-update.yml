@@ -1,0 +1,53 @@
+name: 更新艾倫極光日報（每日 08:00）
+
+# 每日台北 08:00 讀取 Google Drive 當日「艾倫極光日報_YYYYMMDD_無樣式版」文件，
+# 解析成七大主題的一頁式內容寫入 data/daily.json（daily.html 顯示摘要與關鍵字
+# hashtag），並將前一日移入 data/daily-archive.json（歷期彙整），同步 focus.json
+# 的日報卡片。需在 Repo Settings → Secrets 設定 GDRIVE_SERVICE_ACCOUNT，並把
+# Drive 的「AllenI3Aurora」資料夾以「檢視者」分享給該服務帳戶 email
+# （見 docs/GDRIVE_SETUP_SOP.md）。未設定或讀取失敗時維持現有檔案不變（不會失敗）。
+# 註：GitHub 排程以 UTC 計；台北 = UTC+8，故 08:00 = 00:00 UTC。
+on:
+  schedule:
+    - cron: "0 0 * * *"    # 台北每日 08:00 換日：更新當日日報＋前一日移入歷期彙整
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/daily-update.yml"
+      - "scripts/update-daily.mjs"
+  workflow_dispatch: {}
+
+# 避免與 focus-update 等排程同時寫入造成 push 衝突。
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 安裝相依套件
+        run: npm install --no-save googleapis
+      - name: 讀取 Drive 當日日報並更新 data/daily.json
+        env:
+          GDRIVE_SERVICE_ACCOUNT: ${{ secrets.GDRIVE_SERVICE_ACCOUNT }}
+        run: node scripts/update-daily.mjs
+      - name: 有變動才提交
+        run: |
+          if [[ -n "$(git status --porcelain data/daily.json data/daily-archive.json data/focus.json)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/daily.json data/daily-archive.json data/focus.json
+            git commit -m "chore(daily): 自動更新艾倫極光日報一頁式內容 [skip ci]"
+            git pull --rebase --autostash origin main || true
+            git push
+          else
+            echo "艾倫極光日報無變動，略過提交。"
+          fi
