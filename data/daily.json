@@ -1,31 +1,55 @@
 {
-  "date": "2026.08.10",
-  "dateLabel": "2026/08/10（一）",
-  "asOf": "2026.08.10",
+  "date": "2026.08.14",
+  "dateLabel": "2026/08/14（五）",
+  "asOf": "2026.08.14",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.08.10 AI 全面滲透智慧家庭與精準農業：Amazon Alexa+ 與 Google Gemini for Home 同週登場，語音助理邁入對話式 AI 新時代；農業以感測器與無人機驅動精準灌溉。ATP 球星傷退潮凸顯運動負荷管理。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
-  "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #IoT #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "AI 正全面滲透智慧家庭與精準農業兩大領域：Amazon Alexa+ 與 Google Gemini for Home 同週登場，宣告語音助理進入「對話式 AI」新時代；農業端則持續以感測器與無人機驅動精準灌溉、早期病蟲害偵測，提升資源效率。體育場上，ATP 球星傷退潮凸顯運動負荷管理的重要性，也呼應近期網球肘照護話題的討論熱度。",
+  "summary": "【日報】艾倫極光日報｜2026.08.14 本週呈現「生態系持續強化、監管風險升溫」並存的態勢：智慧家庭陣營（Home Assistant、Google Home、三星）密集更新強化整合體驗，但無人機領域面臨DJI遭FCC禁售疑慮及農噴違規重罰的雙重逆風。冰島日全食帶動旅遊人潮，也考驗當地住宿與交通承載力；… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+  "focusNote": "本週呈現「生態系持續強化、監管風險升溫」並存的態勢：智慧家庭陣營（Home Assistant、Google Home、三星）密集更新強化整合體驗，但無人機領域面臨DJI遭FCC禁售疑慮及農噴違規重罰的雙重逆風。冰島日全食帶動旅遊人潮，也考驗當地住宿與交通承載力；網球賽場則因辛納、艾卡拉茲傷退辛辛那提大師賽，為美網戰局投下變數，提醒運動愛好者留意賽前熱身與傷病管理。",
   "sections": [
     {
       "tag": "農業",
       "tone": "insight",
       "title": "智慧農業",
       "items": [
-        { "text": "精準農業與智慧農業技術國際研討會（ICPASFT-26）8/10–11 在美國華盛頓特區登場，逾 500 位產學專家齊聚交流最新技術。", "sourceName": "Research Fora", "source": "https://www.researchfora.net/event/index.php?id=100559670" },
-        { "text": "農業空拍數據分析與無人機市場快速成長，預估 2027 年全球規模上看 60 億美元，精準施藥與病蟲害早期偵測成主流應用。", "sourceName": "Farmonaut", "source": "https://farmonaut.com/news/current-news-smart-agriculture-technology-advancements-2026" },
-        { "text": "精準灌溉技術可望節省 35% 用水量，GPS、感測器與 AI 整合讓農業資源效率較以往提升約 40%。", "sourceName": "Farmonaut", "source": "https://farmonaut.com/precision-farming/precision-agriculture-2026-7-smart-farming-wins" }
+        {
+          "text": "AI農業機器人精準除草噴藥，減少化學品用量最高達95%：瑞士新創Ecorobotix與丹麥FarmDroid以AI視覺與太陽能自主機器人取代傳統拖拉機噴藥。",
+          "sourceName": "KVIA",
+          "source": "https://kvia.com/stacker-ai/2026/08/07/farm-bots-bringing-ai-into-the-fields/"
+        },
+        {
+          "text": "美國垂直農業先驅80 Acres Farms宣布關閉八座農場：因無法募得資金，垂直農業指標企業結束營運，凸顯產業獲利困境。",
+          "sourceName": "WOSU Public Media",
+          "source": "https://www.wosu.org/2026-08-03/80-acres-farms-vertical-farming-pioneer-shut-down"
+        },
+        {
+          "text": "2026總統盃黑客松聚焦智慧農業：農業部主辦黑客松鼓勵團隊以AI強化產銷調節、災害預警與農業韌性。",
+          "sourceName": "自由時報電子報",
+          "source": "https://news.ltn.com.tw/news/life/breakingnews/5524056"
+        }
       ]
     },
     {
       "tag": "家庭",
       "tone": "intelligence",
-      "title": "智慧家庭 · IoT",
+      "title": "智慧家庭 / IoT",
       "items": [
-        { "text": "Amazon 推出全新世代語音助理 Alexa+，具備對話式理解與情境記憶能力，同步更新 Echo 系列裝置與 Ring 攝影機 AI 尋寵功能。", "sourceName": "TechBuzz", "source": "https://www.techbuzz.ai/articles/amazon-and-google-launch-ai-powered-smart-home-devices" },
-        { "text": "Google 宣布將 Gemini AI 導入智慧家庭生態系「Gemini for Home」，取代舊有 Google Assistant，強化跨裝置語意理解與情境操作。", "sourceName": "TechBuzz", "source": "https://www.techbuzz.ai/articles/amazon-and-google-launch-ai-powered-smart-home-devices" },
-        { "text": "Matter 1.6 規格正式發布，新增 NFC 快速配對與 Joint Fabric 跨生態共享機制，解決 Apple Home、Google Home、Alexa 同時控制同一裝置的協調衝突。", "sourceName": "MacRumors", "source": "https://www.macrumors.com/2026/06/17/matter-1-6-specification/" }
+        {
+          "text": "Home Assistant 2026.8版本發布：新版移除連接埠設定門檻、簡化雲端設定流程，並新增16項裝置整合支援。",
+          "sourceName": "Home Assistant 官方部落格",
+          "source": "https://www.home-assistant.io/blog/2026/08/05/release-20268/"
+        },
+        {
+          "text": "Google Home八月更新：Gemini for Home新增互動說故事功能，並擴大支援Eufy、Tapo、Wyze等第三方攝影機品牌。",
+          "sourceName": "Android Authority",
+          "source": "https://www.androidauthority.com/google-home-update-august-5-2026-3695072/"
+        },
+        {
+          "text": "三星SmartThings App傳將大改版：新增藥丸型五分頁導覽列、動態桌布與智慧使用建議卡片功能。",
+          "sourceName": "SammyFans",
+          "source": "https://www.sammyfans.com/2026/08/04/samsung-smartthings-set-for-a-big-redesign-first-look-revealed/"
+        }
       ]
     },
     {
@@ -33,39 +57,87 @@
       "tone": "illumination",
       "title": "無人機系統",
       "items": [
-        { "text": "FAA 的 Part 108 超視距飛行（BVLOS）法規進入定案審查階段，將以效能導向規範取代現行豁免制度，預計最快 2026 年春季公布。", "sourceName": "Airdata UAV", "source": "https://airdata.com/blog/2026/part-108" },
-        { "text": "美國 NDAA 法案禁令生效，聯邦資助專案全面禁用中國製無人機（含 DJI、Autel），台灣供應鏈迎來接單窗口期。", "sourceName": "享美企業", "source": "https://shangmei.com.tw/blog/%E7%84%A1%E4%BA%BA%E6%A9%9F%E7%94%A2%E6%A5%AD%E5%85%A8%E7%90%83%E7%88%86%E7%99%BC2026%E5%B9%B4%E5%B8%82%E5%A0%B4%E8%A6%8F%E6%A8%A15%E5%A4%A7%E6%87%89%E7%94%A8%E8%B6%A8%E5%8B%A2%E8%88%87%E5%8F%B0%E7%81%A3%E8%B2%BF%E6%98%93%E5%95%86%E7%9A%84%E9%BB%83%E9%87%91%E5%88%87%E5%85%A5%E9%BB%9E.html" },
-        { "text": "無人機交通管理（UTM）邁入第四階段，NASA 與 FAA 由政府主導測試轉為交由民間 USS（無人機服務供應商）負責跨州空域協調。", "sourceName": "MLT Aikins", "source": "https://www.mltaikins.com/insights/international-drone-regulations-key-updates-on-bvlos-utm-and-use-cases/" }
+        {
+          "text": "FCC恐全面禁售已核准的DJI無人機：美國FCC考慮撤銷已核准DJI Mini 5 Pro等機型的銷售許可，衝擊消費及商用無人機市場。",
+          "sourceName": "DroneDJ",
+          "source": "https://dronedj.com/2026/08/11/fcc-drone-ban-dji-mini/"
+        },
+        {
+          "text": "FlybyOps推出企業級平台助攻BVLOS自主營運：芬蘭新創發表管理平台，協助企業合規擴展超視距與自主飛行任務。",
+          "sourceName": "DRONELIFE",
+          "source": "https://dronelife.com/2026/08/11/flybyops-bvlos-operations-platform/"
+        },
+        {
+          "text": "FAA對Gorge Drones開罰逾28萬美元：指控業者未經核准即進行商業農業噴灑飛行任務。",
+          "sourceName": "DRONELIFE",
+          "source": "https://dronelife.com/2026/08/07/aa-fine-gorge-drones-agricultural-drone-violations/"
+        }
       ]
     },
     {
-      "tag": "冰島",
+      "tag": "旅行",
       "tone": "insight",
       "title": "冰島旅行",
       "items": [
-        { "text": "冰島夏季自駕旺季正盛，長日照與溫和氣候讓環島公路（Route 1）成熱門選擇，沿途可賞魯冰花海與北極海鸚。", "sourceName": "Mimi 韓の旅遊指南", "source": "https://mimigo.tw/iceland-travel/" },
-        { "text": "2026 冰島住宿攻略建議依景點分區入住 Vik、Hofn、Akureyri 等城鎮，雷克雅維克生活機能最完善、適合作為據點。", "sourceName": "Mimi 韓の旅遊指南", "source": "https://mimigo.tw/iceland-hotels/" },
-        { "text": "在地美食推薦：阿克雷里 Kaffi Ilmur ehf 平價家常自助餐，以及雷克雅維克以外最受推薦的 Brynja 冰淇淋。", "sourceName": "Mark Hazyl 冰島攻略", "source": "https://gowithmarkhazyl.com/iceland-ultimate-travel-guide/" }
+        {
+          "text": "冰島日全食吸引破紀錄郵輪船隊湧入：因8/12日全食盛事，破紀錄數量郵輪船隊駛向冰島，帶動當地旅遊人潮與周邊行程需求。",
+          "sourceName": "Iceland Review",
+          "source": "https://www.icelandreview.com/travel/record-cruise-fleet-iceland-eclipse/"
+        },
+        {
+          "text": "雷克雅維克飯店房價因日全食飆破千美元：日全食前夕市區飯店房價飆升至每晚逾1000美元，住宿一房難求，自駕旅客宜提早訂房。",
+          "sourceName": "Iceland Review",
+          "source": "https://www.icelandreview.com/tourism/reykjavik-hotel-rates-eclipse-2026/"
+        },
+        {
+          "text": "日全食後回顧：冰島「未發生的」世紀大塞車：外界原憂心日全食造成自駕壅塞，事後檢視實際交通狀況遠比預期順暢。",
+          "sourceName": "Iceland Review",
+          "source": "https://www.icelandreview.com/in-focus/iceland-eclipse-traffic-jam-that-never-happened/"
+        }
       ]
     },
     {
       "tag": "攝影",
-      "tone": "illumination",
+      "tone": "intelligence",
       "title": "攝影",
       "items": [
-        { "text": "Insta360 X6 將於 8/12 正式發表，搭載雙 1 吋感光元件與 AI 晶片，支援 8K/50fps 全景錄影及可達 140 分鐘的長效電池。", "sourceName": "Imaging Resource", "source": "https://www.imaging-resource.com/news/insta360-confirms-x6-launch-for-august-12-with-first-official-teaser/" },
-        { "text": "Nikon 於 8 月初釋出 D6、D780 經典機身韌體更新，修正搭配舊鏡頭或連拍時偶發曝光不足的問題。", "sourceName": "DPReview", "source": "https://www.dpreview.com/news/nikon-is-updating-the-d6-and-d780s-firmware-six-years-after-launch/" },
-        { "text": "Sony 發表輕巧親民的 FE 100-400mm F5.6-8 OSS 超遠攝變焦鏡頭，重僅 654 克、售價 849.99 美元，主打生態與運動攝影入門選擇。", "sourceName": "DPReview", "source": "https://www.dpreview.com/news/sonys-fe-100-400mm-f5-6-8-0-oss-is-affordable-but-fairly-slow/" }
+        {
+          "text": "DJI 發布第二支 Osmo 360 II 預告片：釋出全景運動相機實拍畫面，8月7日開放預約但完整規格未公開。",
+          "sourceName": "PetaPixel",
+          "source": "https://petapixel.com/2026/08/07/dji-teases-osmo-360-ii-with-footage-from-the-new-camera/"
+        },
+        {
+          "text": "Insta360正式發表旗艦新機X6：搭載雙1/1.1吋感光元件與8核心晶片，支援8K30fps，售價699美元起。",
+          "sourceName": "PetaPixel",
+          "source": "https://petapixel.com/2026/08/12/insta360-wants-its-flagship-x6-to-be-way-more-than-a-360-degree-camera/"
+        },
+        {
+          "text": "Sony專業攝影機FX5出貨延期：因訂單暴增與熊本地震影響感光元件廠產能，出貨延至9月中旬。",
+          "sourceName": "PetaPixel",
+          "source": "https://petapixel.com/2026/08/13/the-sony-fx5-is-delayed/"
+        }
       ]
     },
     {
-      "tag": "薩克斯風",
-      "tone": "intelligence",
+      "tag": "樂器",
+      "tone": "illumination",
       "title": "薩克斯風",
       "items": [
-        { "text": "里斯本 Jazz em Agosto 爵士音樂節（7/31–8/9）落幕，多場薩克斯風重奏演出獲樂迷熱烈迴響。", "sourceName": "Avant Music News", "source": "https://avantmusicnews.com/2026/04/30/jazz-em-agosto-2026-lineup-announced/" },
-        { "text": "美國 Montclair Jazz Festival 將於 8/15 登場，索尼·羅林斯薩克斯風重奏團（Sonny Rollins Saxophone Ensemble）確定參演。", "sourceName": "Montclair Jazz Festival", "source": "https://www.montclairjazzfestival.org/" },
-        { "text": "安道爾薩克斯風大賽（Andorra SaxFest）最新一屆冠軍由蘇黎世好手 Juan David Toro Martin 奪得，賽事近期仍為薩克斯圈熱門話題。", "sourceName": "WFIMC", "source": "https://www.wfimc.org/news-media/thrilling-finals-andorra-saxfest" }
+        {
+          "text": "米特薩克斯風重奏團挑戰聖桑《管風琴》交響曲：台灣米特薩克斯風重奏團8/10攜手管風琴與打擊樂，於國家音樂廳60人陣容演出。",
+          "sourceName": "自由藝文網",
+          "source": "https://art.ltn.com.tw/article/breakingnews/5479409"
+        },
+        {
+          "text": "義大利法納諾薩克斯風週國際大賽落幕：第11屆法納諾薩克斯風週高階組決賽，五位決賽者角逐冠軍與演出機會。",
+          "sourceName": "Reggio 2000",
+          "source": "https://www.reggio2000.it/2026/07/28/al-via-lundicesima-edizione-della-fanano-saxophone-week/"
+        },
+        {
+          "text": "英國名家寇特尼‧潘恩開場布雷肯爵士音樂節：知名薩克斯風手8/6率四重奏開場演出，展現跨曲風即興實力。",
+          "sourceName": "The Jazz Mann",
+          "source": "https://www.thejazzmann.com/reviews/review/courtney-pine-quartet-theatr-brycheiniog-brecon-06-08-2026-part-of-brecon-jazz-festival"
+        }
       ]
     },
     {
@@ -73,30 +145,58 @@
       "tone": "insight",
       "title": "網球",
       "items": [
-        { "text": "ATP 蒙特婁大師賽（National Bank Open）8/2–13 進行中，Joao Fonseca、Ben Shelton 等新生代好手晉級第四輪。", "sourceName": "ATP Tour", "source": "https://www.atptour.com/en/news/montreal-2026-results" },
-        { "text": "世界球王 Jannik Sinner 因右膝傷勢宣布退出辛辛那提公開賽，直言「還沒準備好」，美網前景添變數。", "sourceName": "ATP Tour", "source": "https://www.atptour.com/en/news/sinner-cincinnati-2026-withdrawal" },
-        { "text": "Carlos Alcaraz、Emma Raducanu 等多位好手同步因傷退出辛辛那提站，網球傷害預防與訓練負荷管理再受關注。", "sourceName": "Sunday Guardian Live", "source": "https://sundayguardianlive.com/sports/cincinnati-open-2026-withdrawals-carlos-alcaraz-pulls-out-with-wrist-injury-emma-raducanu-alexander-bublik-also-out-check-full-list-of-absentees-253986/" }
+        {
+          "text": "辛納、艾卡拉茲雙雙傷退辛辛那提大師賽：世界前二球星因傷缺席1000大師賽，為美網備戰增添變數。",
+          "sourceName": "Sky Sports",
+          "source": "https://www.skysports.com/tennis/news/12040/13571440/jannik-sinner-withdraws-from-cincinnati-open-as-knee-injury-raises-us-open-fitness-concerns"
+        },
+        {
+          "text": "拉杜卡努應力性骨折缺席2026美網：英國好手右小腿應力性骨折，確定無緣美網，傷病問題持續困擾其賽季。",
+          "sourceName": "Sky Sports",
+          "source": "https://www.skysports.com/tennis/news/12040/13569501/emma-raducanu-former-champion-to-miss-2026-us-open-with-stress-fracture-in-right-leg-as-injury-woes-continue"
+        },
+        {
+          "text": "辛辛那提公開賽公布籤表：辛納與艾卡拉茲缺陣，茲維列夫、喬科維奇、梅德韋傑夫成為本屆奪冠大熱門。",
+          "sourceName": "Tennis365",
+          "source": "https://www.tennis365.com/tennis-news/atp-cincinnati-open-draw-2026-novak-djokovic-alexander-zverev-rafael-jodar"
+        }
       ]
     }
   ],
   "topics": [
-    { "key": "tech", "label": "科技", "desc": "AI、產品與產業動態，掌握趨勢先機" },
-    { "key": "travel", "label": "旅行", "desc": "路線、景點與旅途靈感，收藏下一段旅程" },
-    { "key": "photo", "label": "攝影", "desc": "影像、器材與構圖啟發，記錄生活視角" },
-    { "key": "music", "label": "音樂", "desc": "新曲、專輯與現場精選，為一天配上聲音" }
+    {
+      "key": "tech",
+      "label": "科技",
+      "desc": "AI、產品與產業動態，掌握趨勢先機"
+    },
+    {
+      "key": "travel",
+      "label": "旅行",
+      "desc": "路線、景點與旅途靈感，收藏下一段旅程"
+    },
+    {
+      "key": "photo",
+      "label": "攝影",
+      "desc": "影像、器材與構圖啟發，記錄生活視角"
+    },
+    {
+      "key": "music",
+      "label": "音樂",
+      "desc": "新曲、專輯與現場精選，為一天配上聲音"
+    }
   ],
   "highlights": [
-    "Amazon Alexa+ 與 Google Gemini for Home 同週登場，語音助理邁入對話式 AI。",
-    "精準灌溉可省 35% 用水，農業資源效率提升約 40%。",
-    "Insta360 X6 將於 8/12 發表，雙 1 吋感光元件、8K 全景。",
-    "ATP 辛辛那提站傷退潮：Sinner、Alcaraz、Raducanu 相繼退賽。"
+    "AI農業機器人精準除草噴藥，減少化學品用量最高達95%",
+    "Home Assistant 2026.8版本發布",
+    "FCC恐全面禁售已核准的DJI無人機",
+    "冰島日全食吸引破紀錄郵輪船隊湧入"
   ],
   "cover": {
     "title": "今日日報封面",
     "drive": "",
     "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/11Q-iMq_xUP_lk48sQHruV306I-f2Ue_PsxavEXZiHVQ/edit",
+  "source": "https://docs.google.com/document/d/1nJfVRdTy0Q9xx6y_mpWhFYRuK00OgpLyLz_E-nrlEcA/edit",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-08-10T08:00:00Z"
+  "updatedAt": "2026-08-14T08:00:00Z"
 }
