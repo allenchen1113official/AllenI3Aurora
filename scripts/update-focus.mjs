@@ -156,15 +156,28 @@ function extractLines(raw, max = 4) {
 }
 
 /* 自選股雷達當日完整 HTML 報表（StockRadar_TOP_YYYY-MM-DD.html）解析 TOP10 明細，
-   供 data/stockradar.json 前台頁面條列顯示個股與五項訊號。解析失敗回傳空陣列。
-   欄位順序（每列 <td>）：日期,排名,代碼,名稱,產業,股價,漲跌幅,K,D,K>50,K>D,
-   KD黃金交叉,大戶連買,散戶連買,均線多頭,營益率>10%,營收年增>20%,EPS年增>10%,短評。 */
+   供 data/stockradar.json 前台頁面條列顯示個股與五項訊號（gc/ma/om/rev/eps）。
+   報表版型會隨產出批次不同而變動，故同時支援兩種版型並自動判別，解析不出足夠
+   列數時回傳空陣列（呼叫端會保留原有 top10 不覆蓋）：
+   (A) 分欄版：每列約 18+ 個 <td>，五項訊號各自獨立成欄（儲存格內容以「是／否」開頭）。
+   (B) 標籤版：每列約 10~12 個 <td>，KD／均線／營益率等訊號以「標籤：是／否」形式
+       集中於少數儲存格（如「營益率>10%：4/4 是」「黃金交叉：否」）。 */
 function parseStockradarTop10(html) {
   const stripTags = (s) => String(s)
-    .replace(/<[^>]*>/g, "")
+    .replace(/<[^>]*>/g, " ")
     .replace(/&gt;/g, ">").replace(/&lt;/g, "<").replace(/&amp;/g, "&").replace(/&nbsp;/g, " ")
     .replace(/\s+/g, " ").trim();
-  const yes = (s) => String(s).trim().charAt(0) === "是";
+  const startsYes = (s) => String(s).trim().charAt(0) === "是";
+  const shortName = (cell) => {
+    const paren = String(cell).match(/[（(]([^）)]{1,12})[）)]\s*$/) || String(cell).match(/[（(]([^）)]{1,12})[）)]/);
+    if (paren) return paren[1];
+    return String(cell).replace(/(股份有限公司|股份|有限公司|控股).*$/, "").trim();
+  };
+  const changeOf = (cell) => {
+    const pv = String(cell).match(/([-+]?\d+(?:\.\d+)?)\s*%/);
+    const neg = /▼/.test(cell) || (pv && pv[1].startsWith("-"));
+    return { changePct: pv ? (neg ? "-" : "+") + pv[1].replace(/^[-+]/, "") + "%" : "", up: !neg };
+  };
   const rows = [];
   const trRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
   let m;
@@ -173,22 +186,37 @@ function parseStockradarTop10(html) {
     const cellRe = /<td[^>]*>([\s\S]*?)<\/td>/gi;
     let c;
     while ((c = cellRe.exec(m[1]))) cells.push(stripTags(c[1]));
-    if (cells.length < 18) continue;                    // 表頭（<th>）或不完整列
-    const codeMatch = String(cells[2]).match(/(\d{4,6})/);
+    if (cells.length < 6) continue;                     // 表頭（<th>）或不完整列
+    // 代碼：含 TPE/TWSE 等前綴或純數字代碼的儲存格。
+    const codeCell = cells.find((x) => /(?:TPE|TWSE|TWO|TPO|OTC)[：:]?\s*\d{4,6}/.test(x)) || cells[2] || cells[1] || "";
+    const codeMatch = String(codeCell).match(/(\d{4,6})/);
     if (!codeMatch) continue;
-    let name = cells[3];
-    const paren = name.match(/[（(]([^）)]+)[）)]\s*$/);  // 取括號內簡稱（如「研華」）
-    if (paren) name = paren[1];
-    const pv = String(cells[6]).match(/([-+]?\d+(?:\.\d+)?)\s*%/);
-    const neg = /▼/.test(cells[6]) || (pv && pv[1].startsWith("-"));
-    const changePct = pv ? (neg ? "-" : "+") + pv[1].replace(/^[-+]/, "") + "%" : "";
-    const signals = [];
-    if (yes(cells[11])) signals.push("gc");
-    if (yes(cells[14])) signals.push("ma");
-    if (yes(cells[15])) signals.push("om");
-    if (yes(cells[16])) signals.push("rev");
-    if (yes(cells[17])) signals.push("eps");
-    rows.push({ code: codeMatch[1], name, changePct, up: !neg, signals });
+    let name, changePct, up, signals = [];
+    if (cells.length >= 18) {
+      // 版型 A：分欄。欄序＝日期,排名,代碼,名稱,產業,股價,漲跌幅,K,D,K>50,K>D,
+      //          KD黃金交叉,大戶,散戶,均線多頭,營益率,營收年增,EPS年增,短評。
+      name = shortName(cells[3]);
+      ({ changePct, up } = changeOf(cells[6]));
+      if (startsYes(cells[11])) signals.push("gc");
+      if (startsYes(cells[14])) signals.push("ma");
+      if (startsYes(cells[15])) signals.push("om");
+      if (startsYes(cells[16])) signals.push("rev");
+      if (startsYes(cells[17])) signals.push("eps");
+    } else {
+      // 版型 B：標籤。以內容辨識各欄位與訊號。
+      const nameCell = cells.find((x) => /[（(][^）)]{1,12}[）)]/.test(x) && /[一-鿿]/.test(x) && !/[：:]/.test(x)) || cells[2] || "";
+      name = shortName(nameCell);
+      const pctCell = cells.find((x) => /[▲▼]/.test(x)) || cells.find((x) => /[-+]?\d+(?:\.\d+)?\s*%[）)]/.test(x)) || "";
+      ({ changePct, up } = changeOf(pctCell));
+      const rowText = cells.join(" ");
+      if (/黃金交叉[：:]\s*是/.test(rowText)) signals.push("gc");
+      const maCell = cells.find((x) => /(半年|四線|多頭)/.test(x) && /^(是|否)/.test(x.trim()));
+      if (maCell && startsYes(maCell)) signals.push("ma");
+      const om = rowText.match(/營益率[^是否]{0,16}(是|否)/); if (om && om[1] === "是") signals.push("om");
+      const rev = rowText.match(/營收年增[^是否]{0,16}(是|否)/); if (rev && rev[1] === "是") signals.push("rev");
+      const eps = rowText.match(/EPS年增[^是否]{0,16}(是|否)/); if (eps && eps[1] === "是") signals.push("eps");
+    }
+    rows.push({ code: codeMatch[1], name, changePct, up: !!up, signals });
     if (rows.length >= 10) break;
   }
   return rows;
