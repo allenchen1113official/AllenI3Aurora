@@ -179,12 +179,12 @@ window.KIT = {
     { title: "Lex Fridman — Memory & Agents", meta: "2h 04m · 本週", tone: "illumination", url: "https://lexfridman.com/podcast/" },
   ],
   links: [
-    { label: "Showmethemoney 看盤", icon: "chart" },
-    { label: "TradingView", icon: "chart" },
-    { label: "Notion 研究庫", icon: "book" },
-    { label: "GitHub", icon: "link" },
-    { label: "Medium 草稿", icon: "paper" },
-    { label: "Google Scholar", icon: "compass" },
+    { label: "Showmethemoney 看盤", url: "https://showmethemoney.tw/", desc: "台股即時看盤儀表板", icon: "chart" },
+    { label: "TradingView", url: "https://www.tradingview.com/", desc: "全球市場圖表與技術分析", icon: "chart" },
+    { label: "Notion 研究庫", url: "https://www.notion.so/", desc: "筆記與研究資料整理", icon: "book" },
+    { label: "GitHub", url: "https://github.com/", desc: "程式碼與專案管理", icon: "link" },
+    { label: "Medium 草稿", url: "https://medium.com/", desc: "文章寫作與發布平台", icon: "paper" },
+    { label: "Google Scholar", url: "https://scholar.google.com/", desc: "學術論文檢索", icon: "compass" },
   ],
   issues: [
     { no: 26, kind: "週報", date: "2026.06.29", tone: "insight", title: "AI 代理的記憶戰爭，與台股的靜默輪動", items: 8, cover: "../../assets/rabbit-reading.jpeg",
@@ -304,8 +304,8 @@ function Topbar({ title, sub, onMenu, onNav }) {
         hits.push({ kind: "年輪", label: a.title, sub: `${a.year} · ${a.body.slice(0, 28)}…`, navId: "timeline" });
     });
     links.forEach(lk => {
-      if (lk.label.toLowerCase().includes(ql))
-        hits.push({ kind: "連結", label: lk.label, sub: "快速連結", navId: "dashboard" });
+      if (lk.label.toLowerCase().includes(ql) || (lk.desc && lk.desc.toLowerCase().includes(ql)))
+        hits.push({ kind: "連結", label: lk.label, sub: lk.desc || "常用網站", navId: "dashboard" });
     });
 
     return hits.slice(0, 8);

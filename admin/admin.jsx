@@ -46,8 +46,9 @@ const SECTIONS = [
     { k: "sort", t: "number" }, { k: "title", t: "text" }, { k: "meta", t: "text" }, { k: "tone", t: "tone" },
     { k: "url", t: "text" },
   ] },
-  { id: "links", table: "aurora_links", label: "快速連結", fields: [
-    { k: "sort", t: "number" }, { k: "label", t: "text" }, { k: "icon", t: "text" },
+  { id: "links", table: "aurora_links", label: "常用網站", fields: [
+    { k: "sort", t: "number" }, { k: "label", t: "text" }, { k: "url", t: "text" },
+    { k: "desc", t: "textarea" }, { k: "icon", t: "text" },
   ] },
   { id: "issues", table: "aurora_issues", label: "歷期報報", fields: [
     { k: "sort", t: "number" }, { k: "no", t: "text" }, { k: "kind", t: "text" }, { k: "date", t: "text" },
@@ -90,12 +91,12 @@ const SEED = {
     { sort: 3, title: "Lex Fridman — Memory & Agents", meta: "2h 04m · 本週", tone: "illumination", url: "https://lexfridman.com/podcast/" },
   ],
   links: [
-    { sort: 1, label: "Showmethemoney 看盤", icon: "chart" },
-    { sort: 2, label: "TradingView", icon: "chart" },
-    { sort: 3, label: "Notion 研究庫", icon: "book" },
-    { sort: 4, label: "GitHub", icon: "link" },
-    { sort: 5, label: "Medium 草稿", icon: "paper" },
-    { sort: 6, label: "Google Scholar", icon: "compass" },
+    { sort: 1, label: "Showmethemoney 看盤", url: "https://showmethemoney.tw/", desc: "台股即時看盤儀表板", icon: "chart" },
+    { sort: 2, label: "TradingView", url: "https://www.tradingview.com/", desc: "全球市場圖表與技術分析", icon: "chart" },
+    { sort: 3, label: "Notion 研究庫", url: "https://www.notion.so/", desc: "筆記與研究資料整理", icon: "book" },
+    { sort: 4, label: "GitHub", url: "https://github.com/", desc: "程式碼與專案管理", icon: "link" },
+    { sort: 5, label: "Medium 草稿", url: "https://medium.com/", desc: "文章寫作與發布平台", icon: "paper" },
+    { sort: 6, label: "Google Scholar", url: "https://scholar.google.com/", desc: "學術論文檢索", icon: "compass" },
   ],
   issues: [
     { sort: 1, no: "26", kind: "週報", date: "2026.06.29", tone: "insight", title: "AI 代理的記憶戰爭，與台股的靜默輪動", items: 8, cover: "../../assets/rabbit-reading.jpeg" },
