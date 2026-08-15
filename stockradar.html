@@ -182,11 +182,13 @@
     var m = d.radar || {};
     document.getElementById("radar-t").textContent = esc(m.title || "TOP 10 訊號雷達");
     document.getElementById("radar-s").textContent = esc(m.subtitle || "");
-    var local = esc(m.local || "assets/stockradar/stockradar-ig.png"); // 站內直接嵌入的 Top 10 圖卡（頁面相對路徑）
-    var drive = esc(m.drive);                                          // Drive 備援（站內圖若缺失時遞補）
+    var local = esc(m.local || "assets/stockradar/stockradar-ig.png"); // 站內備援圖卡（頁面相對路徑，可能非當日）
+    var drive = esc(m.drive);                                          // data 管線每日排程更新的「當日最新」圖卡
     var img = document.getElementById("radar-img");
-    if (drive) { img.onerror = function () { img.onerror = null; img.src = drive; }; }
-    img.src = local;                                                   // 直接嵌入站內圖卡，避免 Drive 熱連結不穩
+    // 優先顯示每日排程更新的 Drive 最新圖卡，確保圖卡與 TOP10 排行同為當日資料；
+    // 載入失敗（Drive 偶發不穩）才退回站內備援圖，避免無圖。
+    if (drive) { img.onerror = function () { img.onerror = null; img.src = local; }; img.src = drive; }
+    else { img.src = local; }
   }
 
   function renderSource(d) {
