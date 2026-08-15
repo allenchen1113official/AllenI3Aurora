@@ -199,6 +199,9 @@ function RowCard({ sec, row, onChanged }) {
     try {
       if (row.__new) await db.collection(sec.table).add(payload);
       else await db.collection(sec.table).doc(row.id).update(payload);
+      // 先解除 busy 再重新載入：更新既有列時 key（row.id）不變、元件不會重掛，
+      // 若不解除會讓「儲存／刪除」按鈕持續停在停用（處理中…）狀態。
+      setBusy(false);
       onChanged();
     } catch (ex) { setMsg("儲存失敗：" + errText(ex)); setBusy(false); }
   };
