@@ -689,14 +689,28 @@
 
             <div>
               <SectionHeader kicker="常用網站" title="快速前往" style={{ marginBottom: "var(--space-4)" }} />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                {K.links.map((l, i) => { const I2 = I[l.icon]; return (
-                  <a key={i} href="#" onClick={(e)=>e.preventDefault()} style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, padding: "12px 13px", background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", color: "var(--text-2)", fontSize: 13.5, fontWeight: 600 }}>
-                    <span style={{ color: "var(--brand)", display: "flex" }}><I2 size={17} /></span>
-                    <span style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l.label}</span>
-                    <I.ext size={13} style={{ color: "var(--text-4)" }} />
-                  </a>
-                ); })}
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {K.links.map((l, i) => {
+                  const I2 = I[l.icon] || I.link;
+                  const hasUrl = !!(l.url && String(l.url).trim());
+                  const inner = (
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <span style={{ width: 40, height: 40, flex: "none", borderRadius: 12, background: "var(--brand-soft)", color: "var(--brand)", display: "grid", placeItems: "center" }}><I2 size={19} /></span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l.label}</div>
+                        {l.desc ? <div style={{ color: "var(--text-3)", fontSize: 12.5, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{l.desc}</div> : null}
+                      </div>
+                      <IconButton size="sm" variant="ghost" label={hasUrl ? "前往" : "連結"}>{hasUrl ? <I.ext size={16} /> : <I.link size={16} />}</IconButton>
+                    </div>
+                  );
+                  return (
+                    <Card key={i} interactive padding="12px 14px">
+                      {hasUrl ? (
+                        <a href={l.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", color: "inherit", textDecoration: "none" }} title={l.desc || l.label}>{inner}</a>
+                      ) : inner}
+                    </Card>
+                  );
+                })}
               </div>
             </div>
 
