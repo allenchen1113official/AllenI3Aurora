@@ -1,7 +1,7 @@
 {
   "date": "2026.08.14",
-  "dateLabel": "2026/08/14（五）",
-  "asOf": "2026.08.14",
+  "dateLabel": "2026.08.14（最新）",
+  "asOf": "2026.08.15",
   "taiex": {
     "name": "加權指數 TAIEX",
     "index": "45,811.01",
@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "【理財】台股熱力圖 · 上市／上櫃｜2026.08.14 加權指數盤中一度攻上 46,402 點，尾盤台積電遭調節翻黑，收 45,811.01（-210.47 點、-0.46%），三大法人合計買超 508.86 億元、外資仍偏多。台光電受惠 AI 伺服器題材強勢大漲 8.35% 領軍，技嘉、光寶科、研華同步走高；權值王台積電收 2,395 元（-1.64%）為指數翻黑主因。上櫃走弱，櫃買指數收 400.95（-1.27%），權值股群聯利多出盡、開高走低重挫 8.77% 領跌，穩懋、環球晶同步收黑。紅漲綠跌一眼看懂資金流向與類股輪動，方塊大小＝市值大小。洞察世界·累積智慧·點亮未來，完整熱力圖看這裡👇",
+  "summary": "台股今日開高走低，加權指數終場收在45811點，下跌210點（-0.46%），盤中一度大漲逾380點後遭高檔賣壓摜壓，46K關卡得而復失。三大法人合計買超508.86億元，外資態度仍偏多。，焦點個股：台光電受惠AI伺服器題材強勢漲停式表現，收8.3…",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
-    "drive": "",
-    "local": "assets/heatmap/twse-heatmap-fb.png"
+    "local": "assets/heatmap/twse-heatmap-fb.png",
+    "drive": "https://drive.google.com/thumbnail?id=174Lhx6snijoHKbHhsc4n3PYpyoX4bSRs&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
-    "drive": "",
-    "local": "assets/heatmap/tpex-heatmap-fb.png"
+    "local": "assets/heatmap/tpex-heatmap-fb.png",
+    "drive": "https://drive.google.com/thumbnail?id=14kM4KEj1-hnfcZwASOEfmbzgu1xu6oGx&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-08-15T11:02:39.834Z"
+  "updatedAt": "2026-08-15T12:42:28.515Z"
 }

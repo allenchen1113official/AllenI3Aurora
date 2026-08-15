@@ -3,28 +3,10 @@
     "kind": "日報",
     "tone": "illumination",
     "note": "每日速報",
-    "date": "2026.08.01",
+    "date": "2026.08.14",
     "title": "艾倫極光日報",
-    "summary": "【日報】艾倫極光日報｜2026.08.01 蘋果智慧家庭中樞加速布局。科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
-    "link": "https://allenchen1113official.github.io/AllenI3Aurora/?issue=2026-08-01"
+    "summary": "",
+    "link": "https://allenchen1113official.github.io/AllenI3Aurora/?issue=2026-08-14"
   },
-  "week": {
-    "kind": "週報",
-    "tone": "insight",
-    "note": "每週深度",
-    "date": "2026.06.29",
-    "title": "AI 代理的記憶戰爭，與台股的靜默輪動",
-    "summary": "【週報】艾倫報報 · 第26期｜2026.06.29 這週聊兩件看似無關、實則同源的事：LLM 如何「記住」，以及資金如何在噪音中悄悄換手。工具會被複製，記憶不會。洞察世界·累積智慧·點亮未來，完整週報看這裡👇",
-    "link": "https://allenchen1113official.github.io/AllenI3Aurora/?issue=26"
-  },
-  "month": {
-    "kind": "月報",
-    "tone": "intelligence",
-    "note": "每月沉澱",
-    "date": "2026.06.01",
-    "title": "六月總結：三個決定，一次轉身",
-    "summary": "【月報】艾倫報報 · 六月號｜2026.06.01 把整個月的觀察收斂成三個關鍵決定與一次轉身。回看走過的路，沉澱成長的軌跡與下一步的方向。洞察世界·累積智慧·點亮未來，完整月報看這裡👇",
-    "link": "https://allenchen1113official.github.io/AllenI3Aurora/?issue=06"
-  },
-  "updatedAt": "2026-08-01T06:00:00Z"
+  "updatedAt": "2026-08-15T12:42:35.553Z"
 }
