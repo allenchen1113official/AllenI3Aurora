@@ -401,6 +401,14 @@ async function main() {
           let cur = {};
           try { cur = JSON.parse(readFileSync(SR, "utf8")); } catch { cur = {}; }
 
+          // 圖表一致性防呆：TOP10 表格（source／top10）與雷達圖卡（radar.drive）必須
+          // 同源於「同一個當日資料夾」。若該資料夾缺代表圖卡（IG 圖，fRadar 為空），
+          // 表示這批報表沒有對應圖卡，若仍更新表格會與（沿用舊值的）圖卡指向不同版本
+          // 而不一致——故整則略過更新，保留原本一致的內容。
+          if (!fRadar) {
+            console.error("選股雷達：當日資料夾缺代表圖卡（IG 圖），為維持 TOP10 表格與雷達圖卡一致，本次略過更新。");
+          } else {
+
           // 今日關注動態的選股雷達每更新到「新的一日」，前一日即移入
           // data/stockradar-archive.json（歷期彙整以 kind「選股」呈現，卡片點擊
           // 開啟該日雷達圖）。以 no 去重，任何失敗都不影響主流程。
@@ -462,6 +470,7 @@ async function main() {
           cur.updatedAt = new Date().toISOString();
           writeFileSync(SR, JSON.stringify(cur, null, 2) + "\n");
           console.log("已更新 data/stockradar.json（Drive 最新選股雷達）");
+          } // end if (fRadar)
         } catch (e) { console.error("更新 data/stockradar.json 失敗（略過）：", e.message); }
       }
 
