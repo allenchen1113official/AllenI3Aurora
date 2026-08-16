@@ -443,29 +443,31 @@ async function main() {
           if (summary) cur.summary = summary;
           cur.radar = Object.assign({ title: "TOP 10 訊號雷達", subtitle: "技術面轉強名單 · 依綜合訊號強度排序", local: "assets/stockradar/stockradar-ig.png" }, cur.radar || {});
           if (fRadar) cur.radar.drive = driveThumb(fRadar);
-          // 原始資料連結（source）：優先當日完整 HTML 報表（StockRadar_TOP_YYYY-MM-DD.html），
-          // 其次代表圖檔的 Drive 檢視連結，最後退回當日資料夾。
+          // 原始資料連結（source）與 TOP10 明細：當日資料夾可能同時存在多份
+          // StockRadar_TOP_*.html（例如「完整版」與「資料不足補產出版」），若選錯會與
+          // 雷達圖卡（由完整版產生）不一致。故收集所有候選報表、逐一解析，挑「訊號最
+          // 完整」（各檔訊號數總和最高）那份作為 source 與 top10 來源，使表格與圖卡一致。
           let srcLink = "";
-          for (const pat of (src.sourcePatterns || [])) { const f = files.find((x) => pat.test(x.name)); if (f) { srcLink = f.webViewLink || ""; break; } }
+          try {
+            const cands = [];
+            for (const pat of (src.sourcePatterns || [])) {
+              for (const f of files.filter((x) => pat.test(x.name))) { if (!cands.some((c) => c.id === f.id)) cands.push(f); }
+            }
+            let best = null, bestScore = -1;
+            for (const f of cands) {
+              let rows = [];
+              try { rows = parseStockradarTop10(await readText(f.id)); } catch { rows = []; }
+              if (rows.length < 8) continue;
+              const score = rows.reduce((a, r) => a + ((r.signals || []).length), 0);
+              if (score > bestScore) { bestScore = score; best = { f, rows }; }
+            }
+            if (best) { srcLink = best.f.webViewLink || ""; cur.top10 = best.rows; console.log(`選股雷達 TOP10：採用訊號最完整報表 ${best.f.name}（訊號總數 ${bestScore}）`); }
+            else console.error("選股雷達 TOP10：無可解析報表（皆 <8 列），保留原 top10 不覆蓋。");
+          } catch (e) { console.error("選股雷達 TOP10（多候選挑選）失敗（略過）：", e.message); }
+          // source 退回：無完整報表候選時，用代表圖檔連結或當日資料夾。
           if (!srcLink) { for (const pat of src.linkPatterns) { const f = files.find((x) => pat.test(x.name)); if (f) { srcLink = f.webViewLink || ""; break; } } }
           if (!srcLink) { try { srcLink = (await drive.files.get({ fileId: dateId, fields: "webViewLink", supportsAllDrives: true })).data.webViewLink || ""; } catch { /* 忽略 */ } }
           if (srcLink) cur.source = srcLink;
-
-          // TOP10 明細：讀取當日完整 HTML 報表（StockRadar_TOP_YYYY-MM-DD.html）解析
-          // 出 10 檔個股與五項訊號，更新 cur.top10（供前台條列顯示）。解析失敗維持原值。
-          try {
-            let htmlFile = null;
-            for (const pat of (src.sourcePatterns || [])) { htmlFile = files.find((x) => pat.test(x.name)); if (htmlFile) break; }
-            if (htmlFile) {
-              const rows = parseStockradarTop10(await readText(htmlFile.id));
-              // 可信度防呆：需解析出足夠列數，且至少一檔有基本面訊號（om/rev/eps）——
-              // 若基本面欄位完全沒解析到（常見於報表換版），視為低可信度，保留原 top10
-              // 不覆蓋，避免把「訊號幾乎全空」的錯誤結果推上線。
-              const anySignal = rows.some((r) => (r.signals || []).length > 0);
-              if (rows.length >= 8 && anySignal) cur.top10 = rows;
-              else console.error(`選股雷達 TOP10 解析可信度不足（rows=${rows.length}, anySignal=${anySignal}），保留原 top10 不覆蓋。`);
-            }
-          } catch (e) { console.error("解析選股雷達 TOP10 失敗（略過）：", e.message); }
 
           cur.updatedAt = new Date().toISOString();
           writeFileSync(SR, JSON.stringify(cur, null, 2) + "\n");
