@@ -103,7 +103,7 @@ function cleanLine(s) {
 /* 自來源文字內容擷取「約 10 字」的簡要內容；找不到合適內容回傳空字串。
    策略：跳過標題／分隔／宣告等非內文行（含中文字數不足者），取首個內文行，
    於 8～上限字之間的標點處收尾，形成通順短句。 */
-const SKIP = /(社群分享文案|建議搭配圖片|盤後速報|每日科技|資料日期說明|今日重點|三項訊號|風險提醒|艾倫極光日報|艾倫報報|ALLEN|排行總覽|Facebook|Instagram|建議|來源[:：]|版$)/;
+const SKIP = /(社群分享文案|建議搭配圖片|盤後速報|每日科技|資料日期說明|資料說明|目標日期|補產出|發布日|休市|本篇|提示|重點摘要|今日重點|三項訊號|風險提醒|艾倫極光日報|艾倫報報|ALLEN|排行總覽|Facebook|Instagram|建議|來源[:：]|版$)/;
 function extractDesc(raw) {
   const lines = String(raw).split(/\r?\n/).map(cleanLine).filter(Boolean);
   for (const ln of lines) {
@@ -209,12 +209,25 @@ function parseStockradarTop10(html) {
       const pctCell = cells.find((x) => /[▲▼]/.test(x)) || cells.find((x) => /[-+]?\d+(?:\.\d+)?\s*%[）)]/.test(x)) || "";
       ({ changePct, up } = changeOf(pctCell));
       const rowText = cells.join(" ");
-      if (/黃金交叉[：:]\s*是/.test(rowText)) signals.push("gc");
-      const maCell = cells.find((x) => /(半年|四線|多頭)/.test(x) && /^(是|否)/.test(x.trim()));
-      if (maCell && startsYes(maCell)) signals.push("ma");
-      const om = rowText.match(/營益率[^是否]{0,16}(是|否)/); if (om && om[1] === "是") signals.push("om");
-      const rev = rowText.match(/營收年增[^是否]{0,16}(是|否)/); if (rev && rev[1] === "是") signals.push("rev");
-      const eps = rowText.match(/EPS年增[^是否]{0,16}(是|否)/); if (eps && eps[1] === "是") signals.push("eps");
+      // 各基本面訊號「達標」判定：於標籤後一小段內，優先看最靠近的「是／否」，
+      // 其次看「x/4」達標季數（≥3 視為達標）。可容忍不同版型的呈現方式。
+      const met = (label) => {
+        const seg = (rowText.match(new RegExp(label + "[^\\n]{0,26}")) || [""])[0];
+        const tail = seg.replace(new RegExp("^.*?" + label), "");
+        const yn = tail.match(/(是|否)/);
+        if (yn) return yn[1] === "是";
+        const cnt = tail.match(/([0-4])\s*\/\s*4/);
+        return cnt ? Number(cnt[1]) >= 3 : false;
+      };
+      // KD黃金交叉：標籤後為「是」才算（明確排除「否」）。
+      const gseg = (rowText.match(/黃金交叉[^\n]{0,8}/) || [""])[0];
+      if (/是/.test(gseg) && !/否/.test(gseg)) signals.push("gc");
+      // 均線多頭：優先「含均線關鍵字且以是表述」的儲存格，其次用標籤達標判定。
+      const maCell = cells.find((x) => /(半年線|半年|四線|多頭排列|均線)/.test(x));
+      if ((maCell && (startsYes(maCell) || /多頭[^否]{0,8}是/.test(maCell) || /是[^否]{0,8}(月|季|均)/.test(maCell))) || met("均線多頭") || met("均線")) signals.push("ma");
+      if (met("營益率")) signals.push("om");
+      if (met("營收年增")) signals.push("rev");
+      if (met("EPS年增") || met("EPS")) signals.push("eps");
     }
     rows.push({ code: codeMatch[1], name, changePct, up: !!up, signals });
     if (rows.length >= 10) break;
@@ -428,7 +441,12 @@ async function main() {
             for (const pat of (src.sourcePatterns || [])) { htmlFile = files.find((x) => pat.test(x.name)); if (htmlFile) break; }
             if (htmlFile) {
               const rows = parseStockradarTop10(await readText(htmlFile.id));
-              if (rows.length >= 5) cur.top10 = rows;
+              // 可信度防呆：需解析出足夠列數，且至少一檔有基本面訊號（om/rev/eps）——
+              // 若基本面欄位完全沒解析到（常見於報表換版），視為低可信度，保留原 top10
+              // 不覆蓋，避免把「訊號幾乎全空」的錯誤結果推上線。
+              const hasFund = rows.some((r) => (r.signals || []).some((s) => s === "om" || s === "rev" || s === "eps"));
+              if (rows.length >= 8 && hasFund) cur.top10 = rows;
+              else console.error(`選股雷達 TOP10 解析可信度不足（rows=${rows.length}, hasFund=${hasFund}），保留原 top10 不覆蓋。`);
             }
           } catch (e) { console.error("解析選股雷達 TOP10 失敗（略過）：", e.message); }
 
