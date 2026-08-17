@@ -1,12 +1,12 @@
 {
-  "date": "2026.08.15",
-  "dateLabel": "2026/08/15（六）",
-  "asOf": "2026.08.15",
+  "date": "2026.08.17",
+  "dateLabel": "2026/08/17（一）",
+  "asOf": "2026.08.17",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.08.15 今天的科技動態聚焦於「智慧化＋在地韌性」：智慧家庭生態系（Matter、Home Assistant、Alexa+）持續朝跨平台互通邁進，無人機領域則同時出現醫療救援亮點（瑞典AED急救案例）與法規緊縮訊號（FCC擬限制外國製機型），值得長期關注其對供應鏈與應用場景的影響。… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
-  "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "今天的科技動態聚焦於「智慧化＋在地韌性」：智慧家庭生態系（Matter、Home Assistant、Alexa+）持續朝跨平台互通邁進，無人機領域則同時出現醫療救援亮點（瑞典AED急救案例）與法規緊縮訊號（FCC擬限制外國製機型），值得長期關注其對供應鏈與應用場景的影響。網球賽季正式邁入美網前哨戰階段，Alcaraz傷癒復出成為焦點；而智慧農業與冰島旅遊消息則提醒我們，科技與自然環境的平衡仍是持續進行式。---",
+  "summary": "【日報】艾倫極光日報｜2026.08.17 本週科技與生活動態呈現「自主化＋生態整合」雙主軸：農業與軍事領域的無人機應用持續深化（印度農噴無人機規模化、美國鬆綁無人機出口管制），智慧家庭感測器則走向跨平台相容（Apple Home／Alexa／Google三方支援）。運動休閒方面，ATP賽場爆冷不斷、球員傷病數據引發賽制改革呼聲，… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+  "focusNote": "本週科技與生活動態呈現「自主化＋生態整合」雙主軸：農業與軍事領域的無人機應用持續深化（印度農噴無人機規模化、美國鬆綁無人機出口管制），智慧家庭感測器則走向跨平台相容（Apple Home／Alexa／Google三方支援）。運動休閒方面，ATP賽場爆冷不斷、球員傷病數據引發賽制改革呼聲，值得持續關注職業運動員的健康管理議題；冰島與攝影領域則有豐富的行程與器材資訊可供規劃參考。",
   "sections": [
     {
       "tag": "農業",
@@ -14,41 +14,36 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "農業部宣布嚴查無照操作農噴無人機，違法遭查獲之代耕業者將被停止農噴無人機補助資格5年，要求合法操作者須持證並依規定填報施藥紀錄，以遏止黑飛造成的鄰田污染問題。",
-          "sourceName": "聯合新聞網",
-          "source": "https://udn.com/news/story/7266/8423288"
+          "text": "台灣農業部與泰國農業部舉行線上會議，台灣分享全國農田坵塊圖、農業街景影像系統及AI影像判釋整合衛星、無人機資料的成果，泰國規劃9月赴台深化智慧監測與數位治理合作。",
+          "sourceName": "中央社 CNA",
+          "source": "https://www.cna.com.tw/news/ahel/202608110353.aspx"
         },
         {
-          "text": "總部位於辛辛那提的垂直農業指標企業 80 Acres Farms，因基礎設施與能源成本壓力、募資困難，宣布結束營運，凸顯智慧垂直農業產業面臨的經濟挑戰。",
-          "sourceName": "WVXU",
-          "source": "https://www.wvxu.org/local-news/2026-08-03/80-acres-farms-vertical-farming-pioneer-shut-down"
+          "text": "印度農業無人機服務走向App共享租賃模式，全國約3.85萬架註冊無人機投入農噴作業，效率為人工數十倍且省水九成，政府「Namo Drone Didi」計畫持續向婦女自助團體推廣。",
+          "sourceName": "Business Standard",
+          "source": "https://www.business-standard.com/technology/tech-news/drones-take-the-field-in-indian-agriculture-as-services-expand-for-farmers-126081600670_1.html"
         },
         {
-          "text": "最新專題報導剖析垂直農業如何透過更精密的環控與自動化系統，在能源與成本壓力下尋求更可持續的商業模式。",
-          "sourceName": "Science & Technology News",
-          "source": "https://science-technology.news-articles.net/content/2026/08/12/the-high-tech-mechanics-of-vertical-farming.html"
+          "text": "印度政府整合FASAL衛星產量預測系統、Kisan Drone部署、涵蓋73種作物436種害蟲的AI病蟲害辨識系統及多語農民聊天機器人，打造服務小農與婦女農民的智慧農業科技網絡。",
+          "sourceName": "Organiser",
+          "source": "https://organiser.org/2026/08/16/375418/bharat/data-drone-and-ai-how-technology-is-transforming-indian-agriculture/"
         }
       ]
     },
     {
-      "tag": "居家",
+      "tag": "家庭",
       "tone": "intelligence",
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "Home Assistant 最新測試版原生支援 Matter 門鈴按壓事件，可直接觸發自動化情境，同時簡化安裝設定並移除傳統連接埠限制，降低新手上手門檻。",
-          "sourceName": "Matter Alpha",
-          "source": "https://www.matteralpha.com/news/home-assistant-2026-8-beta-adds-matter-doorbell-events-and-simpler-setup"
+          "text": "新增車庫傾斜感測器與戶外接觸感測器，同時支援 Apple Home、Amazon Alexa、Google Assistant 三大生態系，強化跨平台相容性。",
+          "sourceName": "The Ambient",
+          "source": "https://www.the-ambient.com/news/abode-launches-new-apple-home-sensors-for-garages-and-gates/"
         },
         {
-          "text": "隨著 Matter 與 Thread 技術逐步成熟，2026年被視為 Apple Home、Google Home、Amazon Alexa 等生態系互通性真正統一的關鍵一年。",
-          "sourceName": "Beyond Tomorrow",
-          "source": "https://beyondtmrw.org/article/matter-13-and-thread-smart-home-interoperability-in-2026"
-        },
-        {
-          "text": "Amazon 為 Alexa+ 推出新的開發者工具與體驗建構方式，讓智慧家庭裝置能整合更自然的 AI 對話與情境自動化能力。",
-          "sourceName": "Amazon Developer Blog",
-          "source": "https://developer.amazon.com/alexaplus/blogs/2026/07/alexa-plus-new-ways-to-build-experiences"
+          "text": "小米將旗下智慧家庭品牌 Mijia 帶入印度，加碼布局智慧家電生態系，欲擴大在當地智能設備與家庭自動化市場的版圖。",
+          "sourceName": "Indian Television",
+          "source": "https://indiantelevision.com/mam/xiaomi-launches-mijia-in-india-eyes-bigger-smart-home-appliance-push/"
         }
       ]
     },
@@ -58,78 +53,73 @@
       "title": "無人機系統",
       "items": [
         {
-          "text": "瑞典一起案例中，自主飛行無人機在15秒內將心臟去顫器送達現場，速度超越救護車，成功協助搶救一名心臟驟停病患，展現無人機在緊急醫療的應用潛力。",
-          "sourceName": "DroneXL",
-          "source": "https://dronexl.co/2026/08/14/darpa-lift-challenge-everdrone-aed-save-fcc-drone-ban/"
+          "text": "美國BIS依總統行政命令放寬無人機出口管制，將國安管制續航門檻從30分鐘提高至3小時，取消部分低續航無人機軟體限制，以提升美國無人機產業全球競爭力。",
+          "sourceName": "Federal Register",
+          "source": "https://www.federalregister.gov/documents/2026/08/14/2026-16628/streamlining-export-controls-for-drone-exports"
         },
         {
-          "text": "美國聯邦通訊委員會（FCC）提案擬限制包括DJI在內、已核准銷售的外國製無人機，公眾意見徵詢期至9月2日截止，牽動全球無人機供應鏈與法規走向。",
-          "sourceName": "DroneXL",
-          "source": "https://dronexl.co/2026/08/14/darpa-lift-challenge-everdrone-aed-save-fcc-drone-ban/"
+          "text": "無人機新創FlybyOps發布企業級營運平台，整合飛行審批、人員能力追蹤、機隊管理與法規合規紀錄，協助企業從少量操作擴展至數千架次的超視距（BVLOS）自主飛行任務。",
+          "sourceName": "UAS Weekly",
+          "source": "https://uasweekly.com/2026/08/11/flybyops-unveils-enterprise-platform-to-scale-bvlos-and-autonomous-drone-operations/"
         },
         {
-          "text": "美國FAA Part 108超視距飛行（BVLOS）規則已於2026年7月正式生效，Zipline、Wing等業者加速擴大無人機送遞服務的商業布局。",
-          "sourceName": "The Robotics Media",
-          "source": "https://theroboticsmedia.com/article/faa-part-108-drone-delivery-rule-zipline-wing-launch-july-2026"
+          "text": "近期軍事演習展示武裝無人機打擊高速無人水面艇的能力，凸顯無人系統在海空域管理與交通調度上的複雜度持續升高，UTM相關規範備受關注。",
+          "sourceName": "USNI News",
+          "source": "https://news.usni.org/2026/08/10/chinese-army-drones-target-unmanned-surface-vessels-in-exercises"
         }
       ]
     },
     {
-      "tag": "旅行",
+      "tag": "冰島",
       "tone": "insight",
       "title": "冰島旅行",
       "items": [
         {
-          "text": "專家評估雷克雅內斯半島岩漿累積情況顯示未來數週至數月內恐有噴發可能，但目前航班、旅遊行程與主要道路皆正常運作，對旅客暫無實質影響。",
-          "sourceName": "Adventures.is",
-          "source": "https://adventures.is/information/volcano-eruption-reykjanes-peninsula-iceland/"
+          "text": "Visit Iceland 官方公布2026年重點旅遊亮點，包括年度日全食天文奇觀、多個新開幕地熱溫泉水療設施，以及東冰島塞濟斯菲厄澤峽灣上方的全新觀景點 Baugur Bjólfs，適合自駕行程規劃參考。",
+          "sourceName": "Visit Iceland",
+          "source": "https://www.visiticeland.com/article/whats-new-in-iceland-2026/"
         },
         {
-          "text": "報導指出冰島以壯麗地景與獨特探險體驗，持續與瑞士、土耳其、愛爾蘭等國並列2026年美國旅客最愛造訪的旅遊目的地。",
-          "sourceName": "Travel And Tour World",
-          "source": "https://www.travelandtourworld.com/news/article/iceland-joins-switzerland-turkey-ireland-denmark-greenland-colombia-and-italy-as-the-must-visit-destinations-for-us-travelers-in-2026-offering-stunning-landscapes-and-unique-adventures/"
+          "text": "The Reykjavík Grapevine 發布年度美食評選，涵蓋26個餐飲類別，Dill與ÓX為米其林一星餐廳，並新增「最佳約會餐廳」等類別，是規劃冰島美食行程的實用參考。",
+          "sourceName": "The Reykjavík Grapevine",
+          "source": "https://grapevine.is/best-of-reykjavik/2026/01/20/best-of-reykjavik-2026/"
         },
         {
-          "text": "在地觀點文章分享旅客與冰島當地人相處之道，強調尊重自然環境與在地文化，是深度體驗冰島、建立友善互動的關鍵。",
+          "text": "Guide to Iceland整理27個鮮為人知的私密景點，包括可走到瀑布後方的Kvernufoss、歷史悠久的Seljavallalaug天然溫泉池，以及需4x4車輛才能抵達的高地熔岩地與峽灣祕境。",
           "sourceName": "Guide to Iceland",
-          "source": "https://cn.guidetoiceland.is/connect-with-locals/6640/how-to-be-a-popular-tourist-when-travelling-in-iceland"
+          "source": "https://guidetoiceland.is/best-of-iceland/20-hidden-gems-in-iceland"
         }
       ]
     },
     {
-      "tag": "影像",
+      "tag": "攝影",
       "tone": "intelligence",
       "title": "攝影",
       "items": [
         {
-          "text": "名導克里斯多福・諾蘭將 Pentax 6×7 中片幅相機改裝為新片拍攝觀景器；同時 Ricoh 宣布停產 Pentax WG-90 防水相機，後繼機款預計年底推出。",
-          "sourceName": "Photo Rumors",
-          "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
+          "text": "Sony FX5攝影機原訂8月中旬出貨，因訂單量遠超預期、熊本地震重創Sony主要感光元件工廠，加上品質控制疑慮尚待釐清，出貨時間延至9月中旬左右。",
+          "sourceName": "PetaPixel",
+          "source": "https://petapixel.com/2026/08/13/the-sony-fx5-is-delayed/"
         },
         {
-          "text": "Leica 近期釋出旗下相機的韌體更新，並同步推出新款 M11 專用相機包，以及擴大維修工具的取得管道，方便玩家自行保養器材。",
-          "sourceName": "Photo Rumors",
-          "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
+          "text": "Eastman Kodak公司持續從柯達愛樂手中收回底片產品直接分銷權，並推出大幅面靜物底片與100英尺散卷（涵蓋Ektapan、Ektacolor、Tri-X等系列），反映底片攝影復興帶動公司營收成長。",
+          "sourceName": "PetaPixel",
+          "source": "https://petapixel.com/2026/08/14/eastman-kodak-goes-big-and-shows-film-some-more-love/"
         },
         {
-          "text": "Sony、Nikon、Canon 等主要相機廠牌的新機傳聞在2026年持續發酵，攝影愛好者密切關注下半年可能發表的新機規格與定價。",
-          "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/news/camera-rumors"
+          "text": "2026歐洲攝影獎吸引全球逾40國、超過3000件投稿，加拿大攝影師Michelle Valberg以座頭鯨與海鷗互動作品奪得職業組年度攝影師，德國攝影師Thea Mihu以越南鹽田勞動紀實拿下業餘組首獎。",
+          "sourceName": "PetaPixel",
+          "source": "https://petapixel.com/2026/08/16/2026-european-photography-awards-winners-offer-many-ways-of-seeing-the-world/"
         }
       ]
     },
     {
-      "tag": "樂器",
+      "tag": "薩克斯風",
       "tone": "illumination",
       "title": "薩克斯風",
       "items": [
         {
-          "text": "薩克斯風發明人故鄉比利時Dinant所舉辦的「阿道夫．薩克斯國際薩克斯風大賽」，是全球薩克斯風演奏家指標賽事之一，官方近期公布最新一屆比賽規則與參賽資訊。",
-          "sourceName": "Association Internationale Adolphe Sax",
-          "source": "https://sax.dinant.be/EN/competition/rules"
-        },
-        {
-          "text": "北美薩克斯風聯盟（NASA）公布2026年度大專院校組獨奏與爵士比賽的徵件簡章與參賽規範，提供全美薩克斯風學子切磋交流的舞台。",
+          "text": "近7天內無重大薩克斯風產業新聞或賽事快訊；提醒可留意北美薩克斯風聯盟（NASA）等機構官網公布之年度賽事與教學資源，作為練習曲目與樂理精進參考。",
           "sourceName": "North American Saxophone Alliance",
           "source": "https://saxophonealliance.org/news-events/competitions/"
         }
@@ -141,19 +131,19 @@
       "title": "網球",
       "items": [
         {
-          "text": "Ben Shelton在2026蒙特婁（加拿大）公開賽決賽以6-3、7-6(4)擊敗Brandon Nakashima，成功衛冕冠軍。",
+          "text": "頂尖種子茲維列夫擊敗諾里晉級，三號種子喬科維奇則爆冷不敵蒂蘭特，賽事於8月16日進行至第二輪，戰況備受矚目。",
           "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/news/montreal-2026-results"
+          "source": "https://www.atptour.com/en/news/cincinnati-2026-results"
         },
         {
-          "text": "2026辛辛那提公開賽於8月13日至23日在Lindner Family Tennis Centre舉行，Zverev、Djokovic、Medvedev、Auger-Aliassime等好手齊聚爭奪940萬美元獎金池，被視為美網最重要的前哨戰之一。",
-          "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/news/cincinnati-2026-atp-masters-1000-history-draw-schedule"
+          "text": "英國名將拉杜卡努在草地賽季中右小腿出現應力性骨折，繼溫網後也將缺席美網，本季能否復出仍是未知數。",
+          "sourceName": "Sky Sports",
+          "source": "https://www.skysports.com/tennis/news/12040/13569501/emma-raducanu-former-champion-to-miss-2026-us-open-with-stress-fracture-in-right-leg-as-injury-woes-continue"
         },
         {
-          "text": "Carlos Alcaraz今年4月因右手腕肌腱鞘炎缺賽四個月，分析指出其傷勢屬「乾淨」型態、無結構性損傷，復出路徑與Nadal、Djokovic過往成功復出案例相近，惟賽感仍待磨合。",
-          "sourceName": "Last Word On Sports",
-          "source": "https://lastwordonsports.com/tennis/2026/08/15/what-to-expect-alcaraz-wrist-injury/"
+          "text": "職業網球球員協會（PTPA）分析逾三萬場職業賽事，指出2026年第一季手臂傷勢較去年同期激增112%，矛頭指向大師賽延長至12天賽制，呼籲改回七天賽制以減輕球員負擔。",
+          "sourceName": "Tennis Uptodate",
+          "source": "https://tennisuptodate.com/tennis-news/the-data-is-clear-the-season-is-too-long-ptpa-releases-data-showcasing-concerning-injury-pattern-in-2026"
         }
       ]
     }
@@ -181,17 +171,17 @@
     }
   ],
   "highlights": [
-    "農業部宣布嚴查無照操作農噴無人機，違法遭查獲之代耕業者將被停止農噴無人機補助資格5年，要求合法操作者須持證並依規定填報施",
-    "Home Assistant 最新測試版原生支援 Matter 門鈴按壓事件，可直接觸發自動化情境，同時簡化安裝設定並移",
-    "瑞典一起案例中，自主飛行無人機在15秒內將心臟去顫器送達現場，速度超越救護車，成功協助搶救一名心臟驟停病患，展現無人機在",
-    "專家評估雷克雅內斯半島岩漿累積情況顯示未來數週至數月內恐有噴發可能，但目前航班、旅遊行程與主要道路皆正常運作，對旅客暫無"
+    "台灣農業部與泰國農業部舉行線上會議，台灣分享全國農田坵塊圖、農業街景影像系統及AI影像判釋整合衛星、無人機資料的成果，泰",
+    "新增車庫傾斜感測器與戶外接觸感測器，同時支援 Apple Home、Amazon Alexa、Google Assist",
+    "美國BIS依總統行政命令放寬無人機出口管制，將國安管制續航門檻從30分鐘提高至3小時，取消部分低續航無人機軟體限制，以提",
+    "Visit Iceland 官方公布2026年重點旅遊亮點，包括年度日全食天文奇觀、多個新開幕地熱溫泉水療設施，以及東冰"
   ],
   "cover": {
     "title": "今日日報封面",
     "drive": "",
     "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/1WFFnL1YGDNBx4wG49G43mgxfeXrNjU_OhsbFwA1LodA/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/115x8McreEUjWOhg8zi1ciAzY65kKk82w7lRh0hZQ-us/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-08-16T00:47:44.318Z"
+  "updatedAt": "2026-08-17T00:45:18.473Z"
 }
