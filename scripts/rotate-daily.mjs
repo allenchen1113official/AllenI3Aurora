@@ -104,8 +104,19 @@ const targetLabel = payload.dateLabel || dateLabelFor(targetDisp);
 /* ---------- 1) 讀取目前 data/daily.json ---------- */
 const cur = readJson(DF, {});
 
-if (cur.date === targetDisp) {
-  console.log(`目前 data/daily.json 已是 ${targetDisp}，僅刷新 asOf/updatedAt，不重複歸檔。`);
+// 目標日已是今天且沒有帶入任何內容覆寫 → 完全不動作（避免每日排程覆蓋掉
+// focus-update.mjs 由 Drive 帶進來的當日較豐富摘要）。
+const hasOverride =
+  payload.summary ||
+  payload.subtitle ||
+  (Array.isArray(payload.highlights) && payload.highlights.length) ||
+  payload.source ||
+  payload.coverDrive ||
+  payload.note ||
+  payload.hashtags;
+if (cur.date === targetDisp && !hasOverride) {
+  console.log(`data/daily.json 已是 ${targetDisp} 且無內容覆寫 → 不變更、直接結束。`);
+  process.exit(0);
 }
 
 /* ---------- 2) 前一日 → data/daily-archive.json（僅在確實換日時） ---------- */
