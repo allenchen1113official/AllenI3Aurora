@@ -169,9 +169,11 @@ function parseStockradarTop10(html) {
     .replace(/\s+/g, " ").trim();
   const startsYes = (s) => String(s).trim().charAt(0) === "是";
   const shortName = (cell) => {
-    const paren = String(cell).match(/[（(]([^）)]{1,12})[）)]\s*$/) || String(cell).match(/[（(]([^）)]{1,12})[）)]/);
+    // 先去除市場別標記（上市／上櫃／上市櫃／興櫃），避免併入股名（如「聯茂 上市」）。
+    const s = String(cell).replace(/[\s（(]*(上市櫃|上市|上櫃|興櫃)[\s）)]*/g, " ").trim();
+    const paren = s.match(/[（(]([^）)]{1,12})[）)]\s*$/) || s.match(/[（(]([^）)]{1,12})[）)]/);
     if (paren) return paren[1];
-    return String(cell).replace(/(股份有限公司|股份|有限公司|控股).*$/, "").trim();
+    return s.replace(/(股份有限公司|股份|有限公司|控股).*$/, "").trim();
   };
   const changeOf = (cell) => {
     const pv = String(cell).match(/([-+]?\d+(?:\.\d+)?)\s*%/);
