@@ -1,0 +1,55 @@
+name: 艾倫極光日報每日換日
+
+# 純 cron 排程：每天上午 08:00（台北）把「今日關注動態」的艾倫極光日報換到當日
+# 最新日期，並把前一日移入前台「歷期彙整」。完全由 GitHub Actions 執行、不依賴
+# 任何 Claude session；以預設 GITHUB_TOKEN（contents: write）直接推送 main。
+#
+# 換日邏輯見 scripts/rotate-daily.mjs：
+#   - data/daily.json 的 date 已是今天且無內容覆寫 → 不動作（不覆蓋 focus-update
+#     由 Drive 帶入的當日較豐富摘要）。
+#   - 否則把前一日 unshift 進 data/daily-archive.json（依 no 去重）、覆寫
+#     data/daily.json 為今天、並同步 data/focus.json「日報」卡片的 meta／summary。
+#
+# 註：GitHub 排程以 UTC 計；台北 = UTC+8。台北 08:00 = UTC 00:00。
+#     GitHub 排程為 best-effort，尖峰時可能延遲數分鐘觸發，屬正常現象。
+on:
+  schedule:
+    - cron: "0 0 * * *"   # 台北每日 08:00（UTC 00:00）
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/daily-rollover.yml"
+      - "scripts/rotate-daily.mjs"
+  workflow_dispatch: {}
+
+# 避免與其他排程重疊 push 造成衝突。
+concurrency:
+  group: daily-rollover
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  rollover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 換日到今天（台北）並歸檔前一日
+        run: node scripts/rotate-daily.mjs
+      - name: 有變動才提交並推送 main
+        run: |
+          if [[ -n "$(git status --porcelain data/daily.json data/daily-archive.json data/focus.json)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/daily.json data/daily-archive.json data/focus.json
+            DATE="$(node -e "process.stdout.write(require('./data/daily.json').date)")"
+            git commit -m "feat(daily): 艾倫極光日報更新至 ${DATE}，前一日移入歷期彙整 [skip ci]"
+            git pull --rebase --autostash origin main || true
+            git push
+          else
+            echo "日報日期已是今天且無變動，略過提交。"
+          fi
