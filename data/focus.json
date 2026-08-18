@@ -6,7 +6,7 @@
       "title": "台股熱力圖 · 上市／上櫃",
       "desc": "台股上市櫃市值熱力圖",
       "summary": "",
-      "meta": "2026.08.17 · 市值熱力圖（最新）",
+      "meta": "2026.08.18 · 市值熱力圖（最新）",
       "icon": "chart",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
     },
@@ -14,9 +14,9 @@
       "tag": "選股",
       "tone": "intelligence",
       "title": "台股選股雷達",
-      "desc": "・榜上 10 檔有 9 檔收紅…",
-      "summary": "・榜上 10 檔有 9 檔收紅，其中川湖攻上漲停，萬潤大漲逾 8%，CCL（銅箔基板）族群聯茂、騰輝電子、台光電同步入榜，題材集中度高。，・多數個股 K 值已站上 80 的高檔區，短線續強但過熱風險同步升高，追高需留意回檔。，・具「均線多頭排列」訊…",
-      "meta": "2026.08.17 · 訊號雷達（最新）",
+      "desc": "故取最近一個已完成交易的交易日 20…",
+      "summary": "故取最近一個已完成交易的交易日 2026-08-18 之資料製作，非執行當日行情。，・上漲 5 檔、下跌 4 檔、平盤 1 檔，強弱互見，指數型態偏高檔震盪。，・漲幅最大：2059 川湖 14,370 元（+4.51%），KD 於 90 以上高檔黏…",
+      "meta": "2026.08.18 · 訊號雷達（最新）",
       "icon": "compass",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html"
     },
@@ -31,6 +31,6 @@
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/daily.html"
     }
   ],
-  "asOf": "2026.08.18",
-  "updatedAt": "2026-08-18T15:57:28.090Z"
+  "asOf": "2026.08.19",
+  "updatedAt": "2026-08-18T17:17:33.896Z"
 }
