@@ -1,9 +1,9 @@
 {
-  "date": "2026.08.18",
-  "dateLabel": "2026.08.18（最新）",
-  "asOf": "2026.08.19",
-  "desc": "故取最近一個已完成交易的交易日 20…",
-  "summary": "故取最近一個已完成交易的交易日 2026-08-18 之資料製作，非執行當日行情。，・上漲 5 檔、下跌 4 檔、平盤 1 檔，強弱互見，指數型態偏高檔震盪。，・漲幅最大：2059 川湖 14,370 元（+4.51%），KD 於 90 以上高檔黏…",
+  "date": "2026.08.19",
+  "dateLabel": "2026.08.19（最新）",
+  "asOf": "2026.08.20",
+  "desc": "2026-08-19（星期三）· 收…",
+  "summary": "2026-08-19（星期三）· 收盤數據，本日重點觀察，・全場唯一「KD 黃金交叉」出現在榜首 2395 研華，且同時具備均線多頭、營益率與 EPS 三項達標，是今日訊號最完整的一檔。，・2059 川湖 為唯一「五項訊號中拿下四項」的個股（均線多…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,107 +34,104 @@
   ],
   "top10": [
     {
-      "code": "2486",
-      "name": "一詮精密工業",
-      "changePct": "-1.26%",
-      "up": false,
-      "signals": []
-    },
-    {
-      "code": "6213",
-      "name": "聯茂",
-      "changePct": "+0.63%",
+      "code": "2395",
+      "name": "研華",
+      "changePct": "+2.21%",
       "up": true,
       "signals": [
         "gc",
         "ma",
+        "om",
+        "eps"
+      ]
+    },
+    {
+      "code": "6213",
+      "name": "聯茂",
+      "changePct": "-0.82%",
+      "up": false,
+      "signals": [
+        "ma",
+        "eps"
+      ]
+    },
+    {
+      "code": "6672",
+      "name": "騰輝電-KY",
+      "changePct": "-1.39%",
+      "up": false,
+      "signals": [
+        "om",
         "eps"
       ]
     },
     {
       "code": "2059",
       "name": "川湖",
-      "changePct": "+4.51%",
-      "up": true,
-      "signals": [
-        "gc",
-        "ma",
-        "om",
-        "rev",
-        "eps"
-      ]
-    },
-    {
-      "code": "2395",
-      "name": "研華",
-      "changePct": "-1.32%",
+      "changePct": "-1.91%",
       "up": false,
       "signals": [
         "ma",
         "om",
+        "rev",
         "eps"
       ]
     },
     {
       "code": "2609",
       "name": "陽明",
-      "changePct": "+2.74%",
+      "changePct": "+4.98%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "3090",
+      "name": "日電貿",
+      "changePct": "+9.91%",
       "up": true,
       "signals": [
-        "gc"
+        "om",
+        "rev",
+        "eps"
       ]
     },
     {
-      "code": "6672",
-      "name": "騰輝電子-KY",
-      "changePct": "+1.77%",
+      "code": "2486",
+      "name": "一詮",
+      "changePct": "+0.00%",
       "up": true,
       "signals": [
-        "gc",
+        "eps"
+      ]
+    },
+    {
+      "code": "2637",
+      "name": "慧洋-KY",
+      "changePct": "+3.49%",
+      "up": true,
+      "signals": [
+        "ma",
+        "om"
+      ]
+    },
+    {
+      "code": "2301",
+      "name": "光寶科",
+      "changePct": "+0.00%",
+      "up": true,
+      "signals": [
         "ma",
         "om",
         "eps"
       ]
     },
     {
-      "code": "7788",
-      "name": "松川",
-      "changePct": "-2.14%",
-      "up": false,
-      "signals": [
-        "gc"
-      ]
-    },
-    {
-      "code": "6187",
-      "name": "萬潤",
-      "changePct": "+9.80%",
+      "code": "2382",
+      "name": "廣達",
+      "changePct": "+1.22%",
       "up": true,
       "signals": [
-        "gc",
-        "om"
-      ]
-    },
-    {
-      "code": "2520",
-      "name": "冠德",
-      "changePct": "+0.00%",
-      "up": true,
-      "signals": [
-        "gc",
-        "om"
-      ]
-    },
-    {
-      "code": "2383",
-      "name": "台光電",
-      "changePct": "+3.00%",
-      "up": true,
-      "signals": [
-        "gc",
-        "om",
-        "rev",
-        "eps"
+        "rev"
       ]
     }
   ],
@@ -142,9 +139,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=19V3SQNkKZXj3KiJz84xqngU8S74cHbsI&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1WegUSiewbyQI7QPWToCuKKTP2c7Enrxs&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1lwQ9QzRE44hcnBZrY4uXg0DBe4mVs63Y/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1zg7UHi29kWteq3b1HksIKDv-d4kp1z8V/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-08-19T15:34:47.811Z"
+  "updatedAt": "2026-08-19T18:39:22.527Z"
 }

@@ -1,5 +1,17 @@
 [
   {
+    "no": "stockradar-20260818",
+    "kind": "選股",
+    "date": "2026.08.18",
+    "tone": "intelligence",
+    "title": "台股選股雷達 · TOP 10 訊號排行｜2026.08.18",
+    "desc": "故取最近一個已完成交易的交易日 20…",
+    "cover": "https://drive.google.com/thumbnail?id=19V3SQNkKZXj3KiJz84xqngU8S74cHbsI&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=19V3SQNkKZXj3KiJz84xqngU8S74cHbsI&sz=w1600",
+    "summary": "故取最近一個已完成交易的交易日 2026-08-18 之資料製作，非執行當日行情。，・上漲 5 檔、下跌 4 檔、平盤 1 檔，強弱互見，指數型態偏高檔震盪。，・漲幅最大：2059 川湖 14,370 元（+4.51%），KD 於 90 以上高檔黏…",
+    "items": 10
+  },
+  {
     "no": "stockradar-20260814",
     "kind": "選股",
     "date": "2026.08.14",
