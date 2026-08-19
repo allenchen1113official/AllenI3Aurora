@@ -6,7 +6,7 @@
       "title": "台股熱力圖 · 上市／上櫃",
       "desc": "台股上市櫃市值熱力圖",
       "summary": "",
-      "meta": "2026.08.18 · 市值熱力圖（最新）",
+      "meta": "2026.08.19 · 市值熱力圖",
       "icon": "chart",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
     },
@@ -32,5 +32,5 @@
     }
   ],
   "asOf": "2026.08.19",
-  "updatedAt": "2026-08-19T09:36:59.469Z"
+  "updatedAt": "2026-08-19T12:53:14.277Z"
 }
