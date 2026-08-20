@@ -6,7 +6,7 @@
       "title": "台股熱力圖 · 上市／上櫃",
       "desc": "加權指數收 44,933.74 點…",
       "summary": "加權指數收 44,933.74 點，上漲 214.39 點（+0.48%），在連二黑後止穩翻紅。，盤面呈現明顯的「權值撐盤、資金分流」格局：台積電（2330）收 2,375 元、漲 1.06% 獨力扛起指數，但聯發科（2454）重挫 3.77%、瑞…",
-      "meta": "2026.08.20 · 市值熱力圖",
+      "meta": "2026.08.20 · 市值熱力圖（最新）",
       "icon": "chart",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
     },
@@ -16,7 +16,7 @@
       "title": "台股選股雷達",
       "desc": "1. 6213 聯茂 510.00（…",
       "summary": "1. 6213 聯茂 510.00（▲5.37%） 均線多頭、EPS年增10%，2. 6672 騰輝電子-KY 287.50（▲1.23%） 營益率10%、EPS年增10%，3. 2486 一詮 251.00（▲6.81%） KD黃金交叉、EPS年…",
-      "meta": "2026.08.20 · 訊號雷達",
+      "meta": "2026.08.20 · 訊號雷達（最新）",
       "icon": "compass",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html"
     },
@@ -31,6 +31,6 @@
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/daily.html"
     }
   ],
-  "asOf": "2026.08.20",
-  "updatedAt": "2026-08-20T15:59:18.387Z"
+  "asOf": "2026.08.21",
+  "updatedAt": "2026-08-20T18:43:10.666Z"
 }
