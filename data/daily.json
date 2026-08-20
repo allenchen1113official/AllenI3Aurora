@@ -1,12 +1,12 @@
 {
-  "date": "2026.08.19",
-  "dateLabel": "2026/08/19（三）",
-  "asOf": "2026.08.19",
+  "date": "2026.08.20",
+  "dateLabel": "2026/08/20（四）",
+  "asOf": "2026.08.20",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.08.19 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.08.20 今日最值得關注的趨勢，是無人機與智慧家庭基礎建設同步邁向「法規與生態成熟期」：FAA核准美國首套UTM無人機交通管理系統，讓商用無人機朝「依規則運作」邁進，而Matter／Thread生態系雖持續擴大，跨平台相容性仍是普遍痛點。網壇則在辛辛那提站爆出年度級冷門，非種子好手逆轉救下三個賽末點，… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "本週科技與生活動態呈現「自主化＋生態整合」雙主軸：農業與軍事領域的無人機應用持續深化（印度農噴無人機規模化、美國鬆綁無人機出口管制），智慧家庭感測器則走向跨平台相容（Apple Home／Alexa／Google三方支援）。運動休閒方面，ATP賽場爆冷不斷、球員傷病數據引發賽制改革呼聲，值得持續關注職業運動員的健康管理議題；冰島與攝影領域則有豐富的行程與器材資訊可供規劃參考。",
+  "focusNote": "今日最值得關注的趨勢，是無人機與智慧家庭基礎建設同步邁向「法規與生態成熟期」：FAA核准美國首套UTM無人機交通管理系統，讓商用無人機朝「依規則運作」邁進，而Matter／Thread生態系雖持續擴大，跨平台相容性仍是普遍痛點。網壇則在辛辛那提站爆出年度級冷門，非種子好手逆轉救下三個賽末點，值得球迷持續關注賽況發展。",
   "sections": [
     {
       "tag": "農業",
@@ -14,19 +14,19 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "台灣農業部與泰國農業部舉行線上會議，台灣分享全國農田坵塊圖、農業街景影像系統及AI影像判釋整合衛星、無人機資料的成果，泰國規劃9月赴台深化智慧監測與數位治理合作。",
-          "sourceName": "中央社 CNA",
-          "source": "https://www.cna.com.tw/news/ahel/202608110353.aspx"
+          "text": "AI驅動的智慧噴藥系統透過雜草辨識與動態噴頭調整，最高可減少85%除草劑用量，同時降低環境藥物飄散風險。",
+          "sourceName": "Farmonaut",
+          "source": "https://farmonaut.com/news/current-news-smart-agriculture-technology-advancements-2026"
         },
         {
-          "text": "印度農業無人機服務走向App共享租賃模式，全國約3.85萬架註冊無人機投入農噴作業，效率為人工數十倍且省水九成，政府「Namo Drone Didi」計畫持續向婦女自助團體推廣。",
-          "sourceName": "Business Standard",
-          "source": "https://www.business-standard.com/technology/tech-news/drones-take-the-field-in-indian-agriculture-as-services-expand-for-farmers-126081600670_1.html"
+          "text": "GNSS/RTK自駕曳引機已達公分級精準度，搭配無線土壤感測器即時監控濕度、鹽度與養分，智慧灌溉系統可省水約70%。",
+          "sourceName": "Farmonaut",
+          "source": "https://farmonaut.com/news/current-news-smart-agriculture-technology-advancements-2026"
         },
         {
-          "text": "印度政府整合FASAL衛星產量預測系統、Kisan Drone部署、涵蓋73種作物436種害蟲的AI病蟲害辨識系統及多語農民聊天機器人，打造服務小農與婦女農民的智慧農業科技網絡。",
-          "sourceName": "Organiser",
-          "source": "https://organiser.org/2026/08/16/375418/bharat/data-drone-and-ai-how-technology-is-transforming-indian-agriculture/"
+          "text": "高解析無人機影像與衛星NDVI指標結合，用於作物健康評估與蟲害偵測，預估2026年全球農業感測器將產生450萬TB資料量。",
+          "sourceName": "Farmonaut",
+          "source": "https://farmonaut.com/news/current-news-smart-agriculture-technology-advancements-2026"
         }
       ]
     },
@@ -36,36 +36,31 @@
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "新增車庫傾斜感測器與戶外接觸感測器，同時支援 Apple Home、Amazon Alexa、Google Assistant 三大生態系，強化跨平台相容性。",
-          "sourceName": "The Ambient",
-          "source": "https://www.the-ambient.com/news/abode-launches-new-apple-home-sensors-for-garages-and-gates/"
+          "text": "新版拿掉網址「:8123」連接埠設定、移除介面中約43處「進階／專家」用語改用功能說明，Home Assistant Cloud介面也全面改版，新手更容易上手。",
+          "sourceName": "Home Assistant官方部落格",
+          "source": "https://www.home-assistant.io/blog/2026/08/05/release-20268/"
         },
         {
-          "text": "小米將旗下智慧家庭品牌 Mijia 帶入印度，加碼布局智慧家電生態系，欲擴大在當地智能設備與家庭自動化市場的版圖。",
-          "sourceName": "Indian Television",
-          "source": "https://indiantelevision.com/mam/xiaomi-launches-mijia-in-india-eyes-bigger-smart-home-appliance-push/"
+          "text": "Matter認證產品已突破750款，IKEA、Bosch、三星等大廠加入；但Google Home仍缺基本開關支援，各平台導入版本不一。2026/1/1起僅認證Thread 1.4邊界路由器。",
+          "sourceName": "matter-smarthome.de",
+          "source": "https://matter-smarthome.de/en/development/the-matter-standard-in-2026-a-status-review/"
         }
       ]
     },
     {
-      "tag": "空拍",
+      "tag": "無人機",
       "tone": "illumination",
       "title": "無人機系統",
       "items": [
         {
-          "text": "美國BIS依總統行政命令放寬無人機出口管制，將國安管制續航門檻從30分鐘提高至3小時，取消部分低續航無人機軟體限制，以提升美國無人機產業全球競爭力。",
-          "sourceName": "Federal Register",
-          "source": "https://www.federalregister.gov/documents/2026/08/14/2026-16628/streamlining-export-controls-for-drone-exports"
+          "text": "由Virginia Tech MAAP開發的美國首套UAS交通管理（UTM）系統獲FAA核准，讓合作無人機可數位共享飛行計畫、自動避碰，產業朝「依規則運作」邁進，逐步取代逐案BVLOS申請。",
+          "sourceName": "Airsight",
+          "source": "https://www.airsight.com/blog/faa-approves-utm-system"
         },
         {
-          "text": "無人機新創FlybyOps發布企業級營運平台，整合飛行審批、人員能力追蹤、機隊管理與法規合規紀錄，協助企業從少量操作擴展至數千架次的超視距（BVLOS）自主飛行任務。",
-          "sourceName": "UAS Weekly",
-          "source": "https://uasweekly.com/2026/08/11/flybyops-unveils-enterprise-platform-to-scale-bvlos-and-autonomous-drone-operations/"
-        },
-        {
-          "text": "近期軍事演習展示武裝無人機打擊高速無人水面艇的能力，凸顯無人系統在海空域管理與交通調度上的複雜度持續升高，UTM相關規範備受關注。",
-          "sourceName": "USNI News",
-          "source": "https://news.usni.org/2026/08/10/chinese-army-drones-target-unmanned-surface-vessels-in-exercises"
+          "text": "會議預覽聚焦FCC「受管制清單」對無人機硬體採購的衝擊、NDAA合規要求、FAA新興科技處BVLOS審查機制，以及歐盟EASA最新規範比較。",
+          "sourceName": "Commercial UAV News",
+          "source": "https://www.commercialuavnews.com/commercial-uav-expo-2026-regulatory-sessions-preview"
         }
       ]
     },
@@ -75,19 +70,14 @@
       "title": "冰島旅行",
       "items": [
         {
-          "text": "Visit Iceland 官方公布2026年重點旅遊亮點，包括年度日全食天文奇觀、多個新開幕地熱溫泉水療設施，以及東冰島塞濟斯菲厄澤峽灣上方的全新觀景點 Baugur Bjólfs，適合自駕行程規劃參考。",
-          "sourceName": "Visit Iceland",
-          "source": "https://www.visiticeland.com/article/whats-new-in-iceland-2026/"
+          "text": "旅遊達人建議4～5月雪融季節前往，機票租車最便宜；租車需準備國際駕照與可扣PIN碼的信用卡，山路多變建議選四輪傳動SUV。",
+          "sourceName": "Mimi韓の旅遊指南",
+          "source": "https://mimigo.tw/iceland-travel/"
         },
         {
-          "text": "The Reykjavík Grapevine 發布年度美食評選，涵蓋26個餐飲類別，Dill與ÓX為米其林一星餐廳，並新增「最佳約會餐廳」等類別，是規劃冰島美食行程的實用參考。",
-          "sourceName": "The Reykjavík Grapevine",
-          "source": "https://grapevine.is/best-of-reykjavik/2026/01/20/best-of-reykjavik-2026/"
-        },
-        {
-          "text": "Guide to Iceland整理27個鮮為人知的私密景點，包括可走到瀑布後方的Kvernufoss、歷史悠久的Seljavallalaug天然溫泉池，以及需4x4車輛才能抵達的高地熔岩地與峽灣祕境。",
-          "sourceName": "Guide to Iceland",
-          "source": "https://guidetoiceland.is/best-of-iceland/20-hidden-gems-in-iceland"
+          "text": "行程安排原則是每日車程不超過5小時再找住宿；訂房時建議篩選評論數400則以上、評分8.5以上的旅館，12天行程每人預算約9萬元台幣。",
+          "sourceName": "Mimi韓の旅遊指南",
+          "source": "https://mimigo.tw/iceland-travel/"
         }
       ]
     },
@@ -97,19 +87,19 @@
       "title": "攝影",
       "items": [
         {
-          "text": "Sony FX5攝影機原訂8月中旬出貨，因訂單量遠超預期、熊本地震重創Sony主要感光元件工廠，加上品質控制疑慮尚待釐清，出貨時間延至9月中旬左右。",
-          "sourceName": "PetaPixel",
-          "source": "https://petapixel.com/2026/08/13/the-sony-fx5-is-delayed/"
+          "text": "Sigma揭露125-700mm F6.3-9與150-600mm F5-6.3兩款超望遠變焦鏡頭設計，鎖定生態、賽事攝影玩家；同期徠卡也釋出D-Lux 8、SL2、SL2-S、Q3的韌體更新。",
+          "sourceName": "Photo Rumors",
+          "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
         },
         {
-          "text": "Eastman Kodak公司持續從柯達愛樂手中收回底片產品直接分銷權，並推出大幅面靜物底片與100英尺散卷（涵蓋Ektapan、Ektacolor、Tri-X等系列），反映底片攝影復興帶動公司營收成長。",
-          "sourceName": "PetaPixel",
-          "source": "https://petapixel.com/2026/08/14/eastman-kodak-goes-big-and-shows-film-some-more-love/"
+          "text": "克里斯多福・諾蘭將經典Pentax 6×7中片幅相機改裝成新片《The Odyssey》的導演觀景窗，展現老相機的創意新用途，也帶動中片幅相機話題熱度。",
+          "sourceName": "Photo Rumors",
+          "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
         },
         {
-          "text": "2026歐洲攝影獎吸引全球逾40國、超過3000件投稿，加拿大攝影師Michelle Valberg以座頭鯨與海鷗互動作品奪得職業組年度攝影師，德國攝影師Thea Mihu以越南鹽田勞動紀實拿下業餘組首獎。",
-          "sourceName": "PetaPixel",
-          "source": "https://petapixel.com/2026/08/16/2026-european-photography-awards-winners-offer-many-ways-of-seeing-the-world/"
+          "text": "Ricoh正式停產Pentax WG-90防水耐震相機，官方表示新機款將於年底發表，值得戶外攝影愛好者留意後續消息。",
+          "sourceName": "Photo Rumors",
+          "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
         }
       ]
     },
@@ -119,7 +109,12 @@
       "title": "薩克斯風",
       "items": [
         {
-          "text": "近7天內無重大薩克斯風產業新聞或賽事快訊；提醒可留意北美薩克斯風聯盟（NASA）等機構官網公布之年度賽事與教學資源，作為練習曲目與樂理精進參考。",
+          "text": "2026 Andorra Saxophone Competition暨Sax Fest在安道拉城舉行，結合專業競賽、大師班、青少年組比賽及與國家管弦樂團合作演出；25歲的Juan David Toro Martin（蘇黎世）奪得首獎。",
+          "sourceName": "WFIMC",
+          "source": "https://www.wfimc.org/news-media/saxophone-summit-pyrenees"
+        },
+        {
+          "text": "會議於3月12至15日在美國Ohio State University舉行，內容涵蓋大學組獨奏賽、四重奏賽及爵士組比賽等多項競賽單元，是北美薩克斯風學界年度盛事。",
           "sourceName": "North American Saxophone Alliance",
           "source": "https://saxophonealliance.org/news-events/competitions/"
         }
@@ -131,19 +126,14 @@
       "title": "網球",
       "items": [
         {
-          "text": "頂尖種子茲維列夫擊敗諾里晉級，三號種子喬科維奇則爆冷不敵蒂蘭特，賽事於8月16日進行至第二輪，戰況備受矚目。",
+          "text": "8月18日賽事中，非種子的Brandon Nakashima（世界排名27）在救下三個賽末點後，以6-7(3) 7-6(4) 6-1逆轉擊敗第4種子梅德韋傑夫，成為當日最大焦點戰。",
           "sourceName": "ATP Tour",
           "source": "https://www.atptour.com/en/news/cincinnati-2026-results"
         },
         {
-          "text": "英國名將拉杜卡努在草地賽季中右小腿出現應力性骨折，繼溫網後也將缺席美網，本季能否復出仍是未知數。",
-          "sourceName": "Sky Sports",
-          "source": "https://www.skysports.com/tennis/news/12040/13569501/emma-raducanu-former-champion-to-miss-2026-us-open-with-stress-fracture-in-right-leg-as-injury-woes-continue"
-        },
-        {
-          "text": "職業網球球員協會（PTPA）分析逾三萬場職業賽事，指出2026年第一季手臂傷勢較去年同期激增112%，矛頭指向大師賽延長至12天賽制，呼籲改回七天賽制以減輕球員負擔。",
-          "sourceName": "Tennis Uptodate",
-          "source": "https://tennisuptodate.com/tennis-news/the-data-is-clear-the-season-is-too-long-ptpa-releases-data-showcasing-concerning-injury-pattern-in-2026"
+          "text": "2號種子Auger-Aliassime直落二淘汰Cerundolo晉級；6號種子Fritz、17號種子Tiafoe也順利過關，賽事於8月13日至23日在辛辛那提Lindner Family Tennis Center進行中。",
+          "sourceName": "ATP Tour",
+          "source": "https://www.atptour.com/en/news/cincinnati-2026-results"
         }
       ]
     }
@@ -171,17 +161,17 @@
     }
   ],
   "highlights": [
-    "台灣農業部與泰國農業部舉行線上會議，台灣分享全國農田坵塊圖、農業街景影像系統及AI影像判釋整合衛星、無人機資料的成果，泰",
-    "新增車庫傾斜感測器與戶外接觸感測器，同時支援 Apple Home、Amazon Alexa、Google Assist",
-    "美國BIS依總統行政命令放寬無人機出口管制，將國安管制續航門檻從30分鐘提高至3小時，取消部分低續航無人機軟體限制，以提",
-    "Visit Iceland 官方公布2026年重點旅遊亮點，包括年度日全食天文奇觀、多個新開幕地熱溫泉水療設施，以及東冰"
+    "AI驅動的智慧噴藥系統透過雜草辨識與動態噴頭調整，最高可減少85%除草劑用量，同時降低環境藥物飄散風險。",
+    "新版拿掉網址「:8123」連接埠設定、移除介面中約43處「進階／專家」用語改用功能說明，Home Assistant C",
+    "由Virginia Tech MAAP開發的美國首套UAS交通管理（UTM）系統獲FAA核准，讓合作無人機可數位共享飛行",
+    "旅遊達人建議4～5月雪融季節前往，機票租車最便宜；租車需準備國際駕照與可扣PIN碼的信用卡，山路多變建議選四輪傳動SUV"
   ],
   "cover": {
     "title": "今日日報封面",
-    "local": "assets/rabbit-reading.jpeg",
-    "drive": ""
+    "drive": "",
+    "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/115x8McreEUjWOhg8zi1ciAzY65kKk82w7lRh0hZQ-us/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/1wa7hh4H2uTIDXkpVhio3AYcbiOgWYU3yNHdHlk_e27g/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-08-18T17:20:02.973Z"
+  "updatedAt": "2026-08-20T00:44:10.240Z"
 }
