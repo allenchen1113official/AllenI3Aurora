@@ -1,7 +1,7 @@
 {
   "date": "2026.08.21",
-  "dateLabel": "2026.08.21",
-  "asOf": "2026.08.21",
+  "dateLabel": "2026.08.21（最新）",
+  "asOf": "2026.08.22",
   "taiex": {
     "name": "加權指數 TAIEX",
     "index": "45,811.01",
@@ -22,14 +22,14 @@
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1Lk1DzCOCGMPtw4nnZzc_DSYvPPgNU7gn&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=12pff6rKo2LLxoPxVS7C9BbjlotGSDtdO&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=19fVi_Fp3pTxjWRV6M7RDq-VD9zeE8IWD&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1OI4GfmZ3BmBTfDHhVsTwun8Ummqhv74A&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-08-21T15:36:34.156Z"
+  "updatedAt": "2026-08-21T16:03:46.192Z"
 }
