@@ -1,12 +1,12 @@
 {
-  "date": "2026.08.20",
-  "dateLabel": "2026/08/20（四）",
-  "asOf": "2026.08.20",
+  "date": "2026.08.21",
+  "dateLabel": "2026/08/21（五）",
+  "asOf": "2026.08.21",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.08.20 今日最值得關注的趨勢，是無人機與智慧家庭基礎建設同步邁向「法規與生態成熟期」：FAA核准美國首套UTM無人機交通管理系統，讓商用無人機朝「依規則運作」邁進，而Matter／Thread生態系雖持續擴大，跨平台相容性仍是普遍痛點。網壇則在辛辛那提站爆出年度級冷門，非種子好手逆轉救下三個賽末點，… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
-  "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "今日最值得關注的趨勢，是無人機與智慧家庭基礎建設同步邁向「法規與生態成熟期」：FAA核准美國首套UTM無人機交通管理系統，讓商用無人機朝「依規則運作」邁進，而Matter／Thread生態系雖持續擴大，跨平台相容性仍是普遍痛點。網壇則在辛辛那提站爆出年度級冷門，非種子好手逆轉救下三個賽末點，值得球迷持續關注賽況發展。",
+  "summary": "【日報】艾倫極光日報｜2026.08.21 無人機商用化正加速成形：美國放寬出口管制、Amazon Prime Air 擴大至近 500 座城市，顯示低空經濟法規與市場同步鬆綁。智慧家庭陣營則是蘋果與三星同步搶進，AI 原生介面成為下一波家庭生態系的競爭焦點；而網球夏季北美硬地賽季正打得火熱，Shelton 狀態火燙、辛辛那提站好手雲集，… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機系統 #旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+  "focusNote": "無人機商用化正加速成形：美國放寬出口管制、Amazon Prime Air 擴大至近 500 座城市，顯示低空經濟法規與市場同步鬆綁。智慧家庭陣營則是蘋果與三星同步搶進，AI 原生介面成為下一波家庭生態系的競爭焦點；而網球夏季北美硬地賽季正打得火熱，Shelton 狀態火燙、辛辛那提站好手雲集，值得持續關注。",
   "sections": [
     {
       "tag": "農業",
@@ -14,70 +14,80 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "AI驅動的智慧噴藥系統透過雜草辨識與動態噴頭調整，最高可減少85%除草劑用量，同時降低環境藥物飄散風險。",
-          "sourceName": "Farmonaut",
-          "source": "https://farmonaut.com/news/current-news-smart-agriculture-technology-advancements-2026"
+          "text": "農機經銷商技術專家在威斯康辛州田間示範 AutoPath 系統如何提升施藥效率與定位準度，減少重疊噴灑。",
+          "sourceName": "Precision Farming Dealer",
+          "source": "https://www.precisionfarmingdealer.com/articles/7239-precision-farming-dealers-best-of-the-web-august-19-2026"
         },
         {
-          "text": "GNSS/RTK自駕曳引機已達公分級精準度，搭配無線土壤感測器即時監控濕度、鹽度與養分，智慧灌溉系統可省水約70%。",
-          "sourceName": "Farmonaut",
-          "source": "https://farmonaut.com/news/current-news-smart-agriculture-technology-advancements-2026"
+          "text": "共同創辦人展示以電腦視覺即時辨識並精準處理雜草的機器，每秒可同時追蹤上千個田間物件。",
+          "sourceName": "Precision Farming Dealer",
+          "source": "https://www.precisionfarmingdealer.com/articles/7239-precision-farming-dealers-best-of-the-web-august-19-2026"
         },
         {
-          "text": "高解析無人機影像與衛星NDVI指標結合，用於作物健康評估與蟲害偵測，預估2026年全球農業感測器將產生450萬TB資料量。",
-          "sourceName": "Farmonaut",
-          "source": "https://farmonaut.com/news/current-news-smart-agriculture-technology-advancements-2026"
+          "text": "阿肯色州田間日展示如何運用歷史衛星資料辨識作物變異，專家強調「不需要無人機也能開始使用空拍影像」。",
+          "sourceName": "Precision Farming Dealer",
+          "source": "https://www.precisionfarmingdealer.com/articles/7239-precision-farming-dealers-best-of-the-web-august-19-2026"
         }
       ]
     },
     {
-      "tag": "家庭",
+      "tag": "家居",
       "tone": "intelligence",
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "新版拿掉網址「:8123」連接埠設定、移除介面中約43處「進階／專家」用語改用功能說明，Home Assistant Cloud介面也全面改版，新手更容易上手。",
-          "sourceName": "Home Assistant官方部落格",
-          "source": "https://www.home-assistant.io/blog/2026/08/05/release-20268/"
+          "text": "彭博社報導蘋果傳將於今秋推出 HomePad、HomePod mini 2、保全攝影機等多款新品，隨 iOS 27 新版 Siri AI 到位而重啟智慧家庭布局。",
+          "sourceName": "9to5Mac",
+          "source": "https://9to5mac.com/2026/07/30/apple-is-about-to-launch-home-product-overhaul-ive-wanted-for-years/"
         },
         {
-          "text": "Matter認證產品已突破750款，IKEA、Bosch、三星等大廠加入；但Google Home仍缺基本開關支援，各平台導入版本不一。2026/1/1起僅認證Thread 1.4邊界路由器。",
-          "sourceName": "matter-smarthome.de",
+          "text": "三星釋出全新藥丸型導覽列、時段動態桌布與「SmartThings Now」智慧建議卡片，預計於 One UI 9.0 穩定版後陸續推出。",
+          "sourceName": "Sammy Fans",
+          "source": "https://www.sammyfans.com/2026/08/04/samsung-smartthings-set-for-a-big-redesign-first-look-revealed/"
+        },
+        {
+          "text": "目前已有超過 750 款產品支援 Matter，Thread 1.4 統一憑證分享機制，但各平台導入進度仍不一致，Google Home 對部分裝置支援仍落後。",
+          "sourceName": "Matter Smart Home",
           "source": "https://matter-smarthome.de/en/development/the-matter-standard-in-2026-a-status-review/"
         }
       ]
     },
     {
-      "tag": "無人機",
+      "tag": "航空",
       "tone": "illumination",
       "title": "無人機系統",
       "items": [
         {
-          "text": "由Virginia Tech MAAP開發的美國首套UAS交通管理（UTM）系統獲FAA核准，讓合作無人機可數位共享飛行計畫、自動避碰，產業朝「依規則運作」邁進，逐步取代逐案BVLOS申請。",
-          "sourceName": "Airsight",
-          "source": "https://www.airsight.com/blog/faa-approves-utm-system"
+          "text": "美國商務部工業安全局新規 8/13 生效，將續航 30 分鐘以上無人機的國安管制門檻大幅拉高至 3 小時，回應「解放美國無人機優勢」行政命令。",
+          "sourceName": "Federal Register",
+          "source": "https://www.govinfo.gov/content/pkg/FR-2026-08-14/pdf/2026-16628.pdf"
         },
         {
-          "text": "會議預覽聚焦FCC「受管制清單」對無人機硬體採購的衝擊、NDAA合規要求、FAA新興科技處BVLOS審查機制，以及歐盟EASA最新規範比較。",
-          "sourceName": "Commercial UAV News",
-          "source": "https://www.commercialuavnews.com/commercial-uav-expo-2026-regulatory-sessions-preview"
+          "text": "Prime Air 副總裁 David Carbon 宣布年底前擴大至近 500 個美國城鎮（約現規模 6 倍），今年已完成數十萬件無人機配送，採用 FAA Part 135 認證與偵測迴避系統。",
+          "sourceName": "TechCrunch",
+          "source": "https://techcrunch.com/2026/08/19/amazons-prime-air-is-taking-off-in-nearly-500-u-s-cities/"
+        },
+        {
+          "text": "歐盟政策鬆綁農業無人機噴藥限制，惟義大利執行細則仍延宕，反映歐洲農業無人機法規逐步鬆動的趨勢。",
+          "sourceName": "DroneXL",
+          "source": "https://dronexl.co/2026/04/30/dji-agricultural-drones-600000-eu-aerial-spray-italy-decree/"
         }
       ]
     },
     {
-      "tag": "冰島",
+      "tag": "旅行",
       "tone": "insight",
       "title": "冰島旅行",
       "items": [
         {
-          "text": "旅遊達人建議4～5月雪融季節前往，機票租車最便宜；租車需準備國際駕照與可扣PIN碼的信用卡，山路多變建議選四輪傳動SUV。",
-          "sourceName": "Mimi韓の旅遊指南",
-          "source": "https://mimigo.tw/iceland-travel/"
+          "text": "北冰島阿庫瑞里迎來首間國際連鎖精品飯店，共 86 間客房，可安排極光與鯨魚觀賞行程，為 Hilton 在冰島鄉間布局的重要一步。",
+          "sourceName": "One Mile at a Time",
+          "source": "https://onemileatatime.com/news/hilton-hotel-northern-iceland/"
         },
         {
-          "text": "行程安排原則是每日車程不超過5小時再找住宿；訂房時建議篩選評論數400則以上、評分8.5以上的旅館，12天行程每人預算約9萬元台幣。",
-          "sourceName": "Mimi韓の旅遊指南",
-          "source": "https://mimigo.tw/iceland-travel/"
+          "text": "本輪太陽活動高峰落在 2024 年底至 2026 年 3 月間，極光強度仍處高檔尾聲；辛格韋德利國家公園因地勢平坦、光害低、距雷克雅維克僅約 40 公里，成追光與自駕旅人的私房景點。",
+          "sourceName": "Bella儂儂",
+          "source": "https://www.bella.tw/articles/travel&foodies/55230/observe-aurora-locations"
         }
       ]
     },
@@ -87,34 +97,34 @@
       "title": "攝影",
       "items": [
         {
-          "text": "Sigma揭露125-700mm F6.3-9與150-600mm F5-6.3兩款超望遠變焦鏡頭設計，鎖定生態、賽事攝影玩家；同期徠卡也釋出D-Lux 8、SL2、SL2-S、Q3的韌體更新。",
+          "text": "YouTuber Casey Cavanaugh（GXAce）與曾參與《蝙蝠俠》的創意總監 Ash Thorp 合作，開發 65:24 全景比例的訂製相機，計畫年底前發起集資。",
+          "sourceName": "DPReview",
+          "source": "https://www.dpreview.com/news/gx-ace-gx-p1-fixed-camera-teaser-behind-the-scenes-announcement/"
+        },
+        {
+          "text": "Sigma 揭曉 125-700mm F6.3-9 與 150-600mm F5-6.3 兩款超望遠變焦鏡，望遠攝影玩家選擇再添新兵。",
           "sourceName": "Photo Rumors",
           "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
         },
         {
-          "text": "克里斯多福・諾蘭將經典Pentax 6×7中片幅相機改裝成新片《The Odyssey》的導演觀景窗，展現老相機的創意新用途，也帶動中片幅相機話題熱度。",
-          "sourceName": "Photo Rumors",
-          "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
-        },
-        {
-          "text": "Ricoh正式停產Pentax WG-90防水耐震相機，官方表示新機款將於年底發表，值得戶外攝影愛好者留意後續消息。",
+          "text": "Leica 為 D-Lux 8、SL2、SL2-S、Q3 等機型釋出韌體更新，M11 專用 Slim Skin 保護殼也同步推出改良版本。",
           "sourceName": "Photo Rumors",
           "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
         }
       ]
     },
     {
-      "tag": "薩克斯風",
+      "tag": "音樂",
       "tone": "illumination",
       "title": "薩克斯風",
       "items": [
         {
-          "text": "2026 Andorra Saxophone Competition暨Sax Fest在安道拉城舉行，結合專業競賽、大師班、青少年組比賽及與國家管弦樂團合作演出；25歲的Juan David Toro Martin（蘇黎世）奪得首獎。",
-          "sourceName": "WFIMC",
-          "source": "https://www.wfimc.org/news-media/saxophone-summit-pyrenees"
+          "text": "知名薩克斯風手 Marion Meadows 與電風琴手 Vel Lewis 合作推出 Smooth Jazz 單曲，自 5 月發行以來已連續 9 週穩居排行榜。",
+          "sourceName": "All About Jazz",
+          "source": "https://www.allaboutjazz.com/news/vel-lewis-announces-new-smooth-jazz-single-smoovee-featuring-marion-meadows/"
         },
         {
-          "text": "會議於3月12至15日在美國Ohio State University舉行，內容涵蓋大學組獨奏賽、四重奏賽及爵士組比賽等多項競賽單元，是北美薩克斯風學界年度盛事。",
+          "text": "協會公布 2026 年度大學組獨奏賽、四重奏賽及爵士組比賽詳細簡章，全美薩克斯風學子可報名角逐獎項。",
           "sourceName": "North American Saxophone Alliance",
           "source": "https://saxophonealliance.org/news-events/competitions/"
         }
@@ -126,14 +136,19 @@
       "title": "網球",
       "items": [
         {
-          "text": "8月18日賽事中，非種子的Brandon Nakashima（世界排名27）在救下三個賽末點後，以6-7(3) 7-6(4) 6-1逆轉擊敗第4種子梅德韋傑夫，成為當日最大焦點戰。",
+          "text": "美國好手 Ben Shelton 以 6-3、7-6(4) 擊敗 Brandon Nakashima，成功完成加拿大公開賽（蒙特婁站）衛冕。",
           "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/news/cincinnati-2026-results"
+          "source": "https://www.atptour.com/en/news/montreal-2026-results"
         },
         {
-          "text": "2號種子Auger-Aliassime直落二淘汰Cerundolo晉級；6號種子Fritz、17號種子Tiafoe也順利過關，賽事於8月13日至23日在辛辛那提Lindner Family Tennis Center進行中。",
+          "text": "Djokovic、Zverev、Medvedev 等好手同場競逐，衛冕冠軍 Alcaraz 回歸，本屆總獎金逾 941 萬美元，冠軍可獲 1000 積分。",
           "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/news/cincinnati-2026-results"
+          "source": "https://www.atptour.com/en/news/cincinnati-2026-atp-masters-1000-history-draw-schedule"
+        },
+        {
+          "text": "物理治療專家彙整前臂伸展、離心訓練等動作，協助業餘球友降低網球肘（外側肱骨上髁炎）發生風險，強化擊球穩定度。",
+          "sourceName": "Shape and Strength",
+          "source": "https://shapeandstrength.com/preventing-tennis-elbow/"
         }
       ]
     }
@@ -161,17 +176,17 @@
     }
   ],
   "highlights": [
-    "AI驅動的智慧噴藥系統透過雜草辨識與動態噴頭調整，最高可減少85%除草劑用量，同時降低環境藥物飄散風險。",
-    "新版拿掉網址「:8123」連接埠設定、移除介面中約43處「進階／專家」用語改用功能說明，Home Assistant C",
-    "由Virginia Tech MAAP開發的美國首套UAS交通管理（UTM）系統獲FAA核准，讓合作無人機可數位共享飛行",
-    "旅遊達人建議4～5月雪融季節前往，機票租車最便宜；租車需準備國際駕照與可扣PIN碼的信用卡，山路多變建議選四輪傳動SUV"
+    "農機經銷商技術專家在威斯康辛州田間示範 AutoPath 系統如何提升施藥效率與定位準度，減少重疊噴灑。",
+    "彭博社報導蘋果傳將於今秋推出 HomePad、HomePod mini 2、保全攝影機等多款新品，隨 iOS 27 新版",
+    "美國商務部工業安全局新規 8/13 生效，將續航 30 分鐘以上無人機的國安管制門檻大幅拉高至 3 小時，回應「解放美國",
+    "北冰島阿庫瑞里迎來首間國際連鎖精品飯店，共 86 間客房，可安排極光與鯨魚觀賞行程，為 Hilton 在冰島鄉間布局的重"
   ],
   "cover": {
     "title": "今日日報封面",
     "drive": "",
     "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/1wa7hh4H2uTIDXkpVhio3AYcbiOgWYU3yNHdHlk_e27g/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/15TMRdlA9vKEpNqHsPxb-7uUBBuZNV_OLS8cTSI9B1qM/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-08-20T00:44:10.240Z"
+  "updatedAt": "2026-08-21T00:49:14.067Z"
 }
