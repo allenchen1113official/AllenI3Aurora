@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "加權指數收 44,933.74 點，上漲 214.39 點（+0.48%），在連二黑後止穩翻紅。，盤面呈現明顯的「權值撐盤、資金分流」格局：台積電（2330）收 2,375 元、漲 1.06% 獨力扛起指數，但聯發科（2454）重挫 3.77%、瑞…",
+  "summary": "加權指數收在 45,224.29 點，上漲 290.55 點（+0.65%），指數紅、但個股冷熱極端分明。，資金明顯從電子往「傳產＋金融」搬家：航運、塑化、金控整片翻紅，台積電 +1.47%、聯發科 +2.43% 撐住權值基本盤。，反觀 PCB／載…",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=12pff6rKo2LLxoPxVS7C9BbjlotGSDtdO&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1Ji26ZhCcTXjHu_zkY7Hze5jERxoqeUsM&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1OI4GfmZ3BmBTfDHhVsTwun8Ummqhv74A&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1aCrwNdB4ELsROyXV0FMKvz_dHHPP9MDS&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-08-21T16:03:46.192Z"
+  "updatedAt": "2026-08-21T18:40:20.470Z"
 }

@@ -4,8 +4,8 @@
       "tag": "理財",
       "tone": "insight",
       "title": "台股熱力圖 · 上市／上櫃",
-      "desc": "台股上市櫃市值熱力圖",
-      "summary": "",
+      "desc": "加權指數收在 45,224.29 點…",
+      "summary": "加權指數收在 45,224.29 點，上漲 290.55 點（+0.65%），指數紅、但個股冷熱極端分明。，資金明顯從電子往「傳產＋金融」搬家：航運、塑化、金控整片翻紅，台積電 +1.47%、聯發科 +2.43% 撐住權值基本盤。，反觀 PCB／載…",
       "meta": "2026.08.21 · 市值熱力圖（最新）",
       "icon": "chart",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
@@ -14,8 +14,8 @@
       "tag": "選股",
       "tone": "intelligence",
       "title": "台股選股雷達",
-      "desc": "StockRadar 台股每日 TO…",
-      "summary": "StockRadar 台股每日 TOP 10 排行 2026-08-21（星期五），今日排行名單取自 StockList 最新一列（2026/8/20），，股價與技術指標則全數採用 2026-08-21 當日 TWSE 盤後資料。，上漲 5 檔 下…",
+      "desc": "今日排行前十名中，9 檔收紅…",
+      "summary": "今日排行前十名中，9 檔收紅、1 檔收黑。，漲幅最亮眼的是 2609 陽明（+6.14%）與 3260 威剛（+5.36%），其中威剛更是今天名單裡「唯一」出現 KD 黃金交叉的個股 K 值從前一日的 35.86 一舉拉升到 57.24 越過 D …",
       "meta": "2026.08.21 · 訊號雷達（最新）",
       "icon": "compass",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html"
@@ -32,5 +32,5 @@
     }
   ],
   "asOf": "2026.08.22",
-  "updatedAt": "2026-08-21T16:03:49.272Z"
+  "updatedAt": "2026-08-21T18:40:25.072Z"
 }

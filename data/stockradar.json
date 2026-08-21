@@ -1,9 +1,9 @@
 {
-  "date": "2026.08.20",
-  "dateLabel": "2026.08.20（最新）",
-  "asOf": "2026.08.21",
-  "desc": "1. 6213 聯茂 510.00（…",
-  "summary": "1. 6213 聯茂 510.00（▲5.37%） 均線多頭、EPS年增10%，2. 6672 騰輝電子-KY 287.50（▲1.23%） 營益率10%、EPS年增10%，3. 2486 一詮 251.00（▲6.81%） KD黃金交叉、EPS年…",
+  "date": "2026.08.21",
+  "dateLabel": "2026.08.21（最新）",
+  "asOf": "2026.08.22",
+  "desc": "今日排行前十名中，9 檔收紅…",
+  "summary": "今日排行前十名中，9 檔收紅、1 檔收黑。，漲幅最亮眼的是 2609 陽明（+6.14%）與 3260 威剛（+5.36%），其中威剛更是今天名單裡「唯一」出現 KD 黃金交叉的個股 K 值從前一日的 35.86 一舉拉升到 57.24 越過 D …",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -36,100 +36,98 @@
     {
       "code": "6213",
       "name": "聯茂",
-      "changePct": "+10%",
+      "changePct": "+0.59%",
       "up": true,
       "signals": [
         "ma",
         "eps"
-      ]
-    },
-    {
-      "code": "6672",
-      "name": "騰輝電子-KY",
-      "changePct": "+10%",
-      "up": true,
-      "signals": [
-        "om",
-        "eps"
-      ]
-    },
-    {
-      "code": "2486",
-      "name": "一詮",
-      "changePct": "+10%",
-      "up": true,
-      "signals": [
-        "gc",
-        "eps"
-      ]
-    },
-    {
-      "code": "2059",
-      "name": "川湖",
-      "changePct": "+10%",
-      "up": true,
-      "signals": [
-        "ma",
-        "om",
-        "rev",
-        "eps"
-      ]
-    },
-    {
-      "code": "2395",
-      "name": "研華",
-      "changePct": "+10%",
-      "up": true,
-      "signals": [
-        "ma",
-        "om",
-        "eps"
-      ]
-    },
-    {
-      "code": "2609",
-      "name": "陽明",
-      "changePct": "+10%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "1563",
-      "name": "巧新",
-      "changePct": "+10%",
-      "up": true,
-      "signals": [
-        "gc"
       ]
     },
     {
       "code": "2344",
       "name": "華邦電",
-      "changePct": "+10%",
+      "changePct": "+2.55%",
       "up": true,
       "signals": [
         "om",
         "rev",
+        "eps"
+      ]
+    },
+    {
+      "code": "3260",
+      "name": "威剛",
+      "changePct": "+5.36%",
+      "up": true,
+      "signals": [
+        "gc",
+        "om",
+        "rev",
+        "eps"
+      ]
+    },
+    {
+      "code": "6505",
+      "name": "台塑化",
+      "changePct": "+3.84%",
+      "up": true,
+      "signals": [
         "eps"
       ]
     },
     {
       "code": "2520",
       "name": "冠德",
-      "changePct": "+10%",
+      "changePct": "+0.68%",
       "up": true,
       "signals": [
         "om"
       ]
     },
     {
-      "code": "2603",
-      "name": "長榮",
-      "changePct": "+10%",
+      "code": "2609",
+      "name": "陽明",
+      "changePct": "+6.14%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "3034",
+      "name": "聯詠",
+      "changePct": "+0.57%",
       "up": true,
       "signals": [
         "ma",
         "om"
+      ]
+    },
+    {
+      "code": "3653",
+      "name": "健策",
+      "changePct": "-3.66%",
+      "up": false,
+      "signals": [
+        "om",
+        "eps"
+      ]
+    },
+    {
+      "code": "4766",
+      "name": "南寶",
+      "changePct": "+1.44%",
+      "up": true,
+      "signals": [
+        "om"
+      ]
+    },
+    {
+      "code": "1303",
+      "name": "南亞",
+      "changePct": "+3.23%",
+      "up": true,
+      "signals": [
+        "ma",
+        "eps"
       ]
     }
   ],
@@ -137,9 +135,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1a3o6m0FtnCEQ9CgJcsnqqgCTC99ERIXw&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1AnAPggPUamOu3Dp0P8VhkQnRIgxQjaV9&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1DbBpp8duyaUvqysvrDDk4GCGbdLzSuT9/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1Ex72V2WYLIDxzLToZUew_v6oG5dS-Iis/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-08-21T12:53:47.682Z"
+  "updatedAt": "2026-08-21T18:40:23.672Z"
 }
