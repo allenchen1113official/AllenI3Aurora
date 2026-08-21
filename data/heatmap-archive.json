@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20260820",
+    "kind": "熱力圖",
+    "date": "2026.08.20",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.08.20",
+    "cover": "https://drive.google.com/thumbnail?id=1Lk1DzCOCGMPtw4nnZzc_DSYvPPgNU7gn&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1Lk1DzCOCGMPtw4nnZzc_DSYvPPgNU7gn&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1Lk1DzCOCGMPtw4nnZzc_DSYvPPgNU7gn&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=19fVi_Fp3pTxjWRV6M7RDq-VD9zeE8IWD&sz=w1600",
+    "summary": "加權指數收 44,933.74 點，上漲 214.39 點（+0.48%），在連二黑後止穩翻紅。，盤面呈現明顯的「權值撐盤、資金分流」格局：台積電（2330）收 2,375 元、漲 1.06% 獨力扛起指數，但聯發科（2454）重挫 3.77%、瑞…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20260819",
     "kind": "熱力圖",
     "date": "2026.08.19",
