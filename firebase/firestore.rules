@@ -26,5 +26,31 @@ service cloud.firestore {
     match /aurora_links/{doc}    { allow read: if true; allow write: if isOwner(); }
     match /aurora_issues/{doc}   { allow read: if true; allow write: if isOwner(); }
     match /aurora_annuli/{doc}   { allow read: if true; allow write: if isOwner(); }
+
+    // 電子報訂閱者：任何人可「建立」訂閱（嚴格欄位驗證），
+    // 讀取／修改／刪除僅限管理者 —— email 名單不可被外部讀走。
+    // doc id 即 email 小寫，同一 email 重複訂閱會因 update 被拒而擋下。
+    match /aurora_subscribers/{email} {
+      function subValid() {
+        let d = request.resource.data;
+        return d.keys().hasOnly(['email', 'cadence', 'status', 'consent', 'source', 'createdAt', 'updatedAt'])
+          && d.keys().hasAll(['email', 'cadence', 'status', 'consent', 'source', 'createdAt', 'updatedAt'])
+          && d.email is string && d.email == email && d.email.lower() == d.email
+          && d.email.size() >= 6 && d.email.size() <= 254
+          && d.email.matches('[^@\\s]+@[^@\\s]+\\.[^@\\s]+')
+          && d.cadence is map
+          && d.cadence.keys().hasOnly(['day', 'week', 'month'])
+          && d.cadence.keys().hasAll(['day', 'week', 'month'])
+          && d.cadence.day is bool && d.cadence.week is bool && d.cadence.month is bool
+          && (d.cadence.day || d.cadence.week || d.cadence.month)
+          && d.status == 'active'
+          && d.consent == true
+          && d.source == 'web'
+          && d.createdAt is string && d.createdAt.size() <= 40
+          && d.updatedAt is string && d.updatedAt.size() <= 40;
+      }
+      allow create: if isOwner() || subValid();
+      allow read, update, delete: if isOwner();
+    }
   }
 }

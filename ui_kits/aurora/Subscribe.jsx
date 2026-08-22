@@ -22,10 +22,50 @@
     );
   }
 
+  /* 訂閱寫入 Firestore（aurora_subscribers，doc id = email 小寫）。
+     規則僅允許「建立」：同一 email 重複訂閱會變成 update 而被拒，
+     以 permission-denied 辨識「已訂閱過」。未設定 Firebase 時走預覽模式。 */
+  const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  async function submitSubscription(email, cadence) {
+    const db = window.AURORA && window.AURORA.db;
+    if (!db) return { ok: true, demo: true };
+    const key = email.trim().toLowerCase();
+    const now = new Date().toISOString();
+    try {
+      await db.collection("aurora_subscribers").doc(key).set({
+        email: key, cadence: { day: !!cadence.day, week: !!cadence.week, month: !!cadence.month },
+        status: "active", consent: true, source: "web", createdAt: now, updatedAt: now,
+      });
+      return { ok: true };
+    } catch (e) {
+      if (e && e.code === "permission-denied") {
+        return { ok: false, msg: "這個 Email 已經訂閱過了！如需調整閱讀節奏或退訂，請直接回信給主編。" };
+      }
+      return { ok: false, msg: "訂閱暫時失敗，請稍後再試。若持續發生，歡迎直接來信告訴我。" };
+    }
+  }
+
   function Subscribe() {
     const I = window.Icons;
     const [state, setState] = React.useState({ day: false, week: true, month: true });
     const [done, setDone] = React.useState(false);
+    const [email, setEmail] = React.useState("");
+    const [consent, setConsent] = React.useState(true);
+    const [busy, setBusy] = React.useState(false);
+    const [err, setErr] = React.useState("");
+    const [demo, setDemo] = React.useState(false);
+
+    const subscribe = async () => {
+      const v = email.trim();
+      if (!EMAIL_RE.test(v)) { setErr("請輸入有效的 Email 地址。"); return; }
+      if (!state.day && !state.week && !state.month) { setErr("請至少選擇一種閱讀節奏（日報／週報／月報）。"); return; }
+      if (!consent) { setErr("請勾選同意接收電子報，才能完成訂閱。"); return; }
+      setBusy(true); setErr("");
+      const r = await submitSubscription(v, state);
+      setBusy(false);
+      if (r.ok) { setDemo(!!r.demo); setDone(true); setEmail(""); }
+      else setErr(r.msg);
+    };
     return (
       <div style={{ minHeight: "100%" }}>
         {/* Hero */}
@@ -68,7 +108,7 @@
               <div style={{ textAlign: "center", padding: "var(--space-6) 0" }}>
                 <div style={{ width: 64, height: 64, margin: "0 auto 16px", borderRadius: 99, background: "var(--insight-soft)", color: "var(--insight)", display: "grid", placeItems: "center" }}><I.check size={34} /></div>
                 <div style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "var(--text-2xl)", color: "var(--text-1)" }}>訂閱成功 🎉</div>
-                <p style={{ color: "var(--text-3)", marginTop: 8 }}>確認信已寄出，記得到信箱點擊啟用連結。</p>
+                <p style={{ color: "var(--text-3)", marginTop: 8 }}>{demo ? "（預覽模式：尚未連接資料庫，實際上線後將寫入訂閱名單。）" : "已加入訂閱名單，選定的節奏將依排程送達你的信箱。"}</p>
                 <div style={{ marginTop: 18 }}><Button variant="secondary" onClick={() => setDone(false)}>返回</Button></div>
               </div>
             ) : (
@@ -76,11 +116,15 @@
                 <div style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "var(--text-xl)", color: "var(--text-1)", marginBottom: 6 }}>最後一步，留個 Email</div>
                 <p style={{ color: "var(--text-3)", fontSize: 14, margin: "0 0 20px" }}>選定的節奏會依排程送達你的信箱。我們絕不寄送垃圾信。</p>
                 <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
-                  <Input label="你的 Email" icon={<I.mail size={17} />} placeholder="you@example.com" style={{ flex: 1, minWidth: 240 }} />
-                  <Button size="lg" iconRight={<I.arrow size={18} />} onClick={() => setDone(true)}>開始訂閱</Button>
+                  <Input label="你的 Email" icon={<I.mail size={17} />} placeholder="you@example.com" type="email"
+                    value={email} onChange={(e) => { setEmail(e.target.value); setErr(""); }}
+                    onKeyDown={(e) => { if (e.key === "Enter" && !busy) subscribe(); }}
+                    style={{ flex: 1, minWidth: 240 }} />
+                  <Button size="lg" iconRight={<I.arrow size={18} />} disabled={busy} onClick={subscribe}>{busy ? "送出中…" : "開始訂閱"}</Button>
                 </div>
+                {err ? <div style={{ color: "var(--danger)", fontSize: 13, marginTop: 12, lineHeight: 1.6 }}>{err}</div> : null}
                 <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", gap: 10 }}>
-                  <Switch defaultChecked size="sm" />
+                  <Switch checked={consent} onChange={(v) => { setConsent(v); setErr(""); }} size="sm" />
                   <span style={{ color: "var(--text-3)", fontSize: 13 }}>我同意接收艾倫報報電子報，並可隨時一鍵退訂。</span>
                 </div>
               </div>
