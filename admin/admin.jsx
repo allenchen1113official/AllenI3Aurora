@@ -1545,6 +1545,21 @@ function PodcastPanel() {
 
       {tab === "preview" && (
         <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
+            <button className="ad-btn ghost" onClick={() => {
+              const data = { show: sel.show, title: sel.title, date: sel.date, duration: sel.duration, tone: sel.tone, summary: sel.summary,
+                cornell: { rows: (sel.cornell.rows || []).map((r) => ({ cue: r.cue || "", note: r.note || "" })), summary: sel.cornell.summary || "" } };
+              const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+              const a = document.createElement("a");
+              a.href = URL.createObjectURL(blob);
+              a.download = (sel.title || "episode").replace(/[\\/:*?"<>|]/g, "-") + ".json";
+              a.click();
+              setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+            }}>⬇ 匯出本集 JSON（社群圖卡用）</button>
+            <span style={{ color: "var(--text-4)", fontSize: 11.5 }}>
+              本機執行 <code>python scripts/podcast/render_social_card.py --episode 本集.json</code> 產出 FB（1200×630）／IG（1080×1080）圖卡。
+            </span>
+          </div>
           <div style={{ color: "var(--text-4)", fontSize: 12, marginBottom: 14 }}>
             一頁康乃爾重點筆記圖卡（與前台顯示版型一致）。發布後若為最新一集，前台首頁「本集重點摘要」即顯示摘要與此圖卡。
           </div>
