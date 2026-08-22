@@ -18,6 +18,19 @@
     annuli: "aurora_annuli",
   };
 
+  /* 電子報發布狀態過濾：草稿不顯示；排程者到時間才顯示。
+     無 pubStatus 欄位的舊文件視為已發布（向下相容）。 */
+  function issueVisible(it, now) {
+    var st = it && it.pubStatus;
+    if (!st || st === "published") return true;
+    if (st === "scheduled") {
+      var t = Date.parse(it.publishAt || "");
+      return isFinite(t) && t <= (now || Date.now());
+    }
+    return false; // draft 或未知狀態
+  }
+  window.AURORA.issueVisible = issueVisible;
+
   var cfg = window.FIREBASE_CONFIG;
   var ok = cfg && cfg.apiKey && cfg.projectId && window.firebase && window.firebase.firestore;
 
@@ -38,6 +51,7 @@
       await Promise.all(Object.keys(COLLECTIONS).map(async function (key) {
         var snap = await db.collection(COLLECTIONS[key]).orderBy("sort").get();
         var arr = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+        if (key === "issues") arr = arr.filter(function (it) { return issueVisible(it); });
         if (arr.length) out[key] = arr;
       }));
       window.AURORA.data = out;
