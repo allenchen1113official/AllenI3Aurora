@@ -26,6 +26,8 @@ service cloud.firestore {
     match /aurora_links/{doc}    { allow read: if true; allow write: if isOwner(); }
     match /aurora_issues/{doc}   { allow read: if true; allow write: if isOwner(); }
     match /aurora_annuli/{doc}   { allow read: if true; allow write: if isOwner(); }
+    // Podcast 各集節目（逐字稿／摘要／康乃爾筆記；前台僅顯示已發布者）
+    match /aurora_podcast_episodes/{doc} { allow read: if true; allow write: if isOwner(); }
 
     // 電子報訂閱者：任何人可「建立」訂閱（嚴格欄位驗證），
     // 讀取／修改／刪除僅限管理者 —— email 名單不可被外部讀走。

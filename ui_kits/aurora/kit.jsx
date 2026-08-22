@@ -178,6 +178,23 @@ window.KIT = {
     { title: "曼報 Manny's Newsletter Radio", meta: "38m · 2 天前", tone: "intelligence", url: "https://open.spotify.com/show/0jMy3OygUQts67tHIYcufS" },
     { title: "Lex Fridman — Memory & Agents", meta: "2h 04m · 本週", tone: "illumination", url: "https://lexfridman.com/podcast/" },
   ],
+  /* Podcast 各集節目（後台 aurora_podcast_episodes 覆蓋；status: draft|published，
+     前台只顯示已發布。逐字稿由本機 Whisper 產出（scripts/podcast/transcribe.py），
+     摘要與康乃爾筆記於後台編修，前台顯示最新一集摘要與一頁康乃爾筆記圖卡。 */
+  podcastEpisodes: [
+    { sort: 1, show: "股癌 Gooaye", title: "EP.整理盤心法", date: "2026.08.21", duration: "58m",
+      tone: "insight", url: "https://open.firstory.me/user/stocks", status: "published",
+      summary: "本集聚焦整理盤的操作心法：指數區間震盪時，重點不是預測方向，而是控制部位與等待訊號。主持人以近期台股量縮盤整為例，提醒投資人此階段最忌重倉猜底摸頭；應把資金分批、留足現金，等趨勢表態再加碼。後段談到 AI 供應鏈的籌碼輪動，認為修正是健康換手而非趨勢反轉。",
+      cornell: {
+        rows: [
+          { cue: "整理盤定義", note: "指數量縮、區間震盪，多空皆難有趨勢行情；勝率低、盈虧比差，操作應降頻。" },
+          { cue: "部位控制", note: "資金分批進出、保留現金水位；不重倉猜底摸頭，等突破或帶量表態再加碼。" },
+          { cue: "AI 供應鏈", note: "近期修正屬籌碼換手、非基本面轉壞；留意法人回補與月營收確認趨勢。" },
+          { cue: "心態提醒", note: "無聊的盤做無聊的事：檢視持股邏輯、更新觀察清單，勝過頻繁交易。" },
+        ],
+        summary: "整理盤的核心是「等」：控制部位、留住現金、降低交易頻率，把力氣花在檢視邏輯與觀察清單上，待趨勢表態再出手。",
+      } },
+  ],
   links: [
     { label: "Showmethemoney 看盤", url: "https://showmethemoney.tw/", desc: "台股即時看盤儀表板", icon: "chart" },
     { label: "TradingView", url: "https://www.tradingview.com/", desc: "全球市場圖表與技術分析", icon: "chart" },

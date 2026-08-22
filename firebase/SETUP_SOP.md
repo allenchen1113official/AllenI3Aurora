@@ -22,7 +22,7 @@
 | --- | --- |
 | `firebase-config.js` | 前後台共用的 Web SDK 設定（**皆為公開值，可安全進版控**） |
 | `firebase/firestore.rules` | Firestore 安全規則：公開讀、管理者寫 |
-| `aurora-data.js` | 前台資料層，讀取 7 個 `aurora_*` collection 覆蓋 `window.KIT` |
+| `aurora-data.js` | 前台資料層，讀取 8 個 `aurora_*` collection 覆蓋 `window.KIT`（含 `aurora_podcast_episodes`） |
 | `admin/admin.jsx` | 後台管理，Email/密碼登入 + 各區塊 CRUD + 一鍵種子初始化 |
 
 ---

@@ -13,6 +13,7 @@
     focus: "aurora_focus",
     reading: "aurora_reading",
     podcasts: "aurora_podcasts",
+    podcastEpisodes: "aurora_podcast_episodes",
     links: "aurora_links",
     issues: "aurora_issues",
     annuli: "aurora_annuli",
@@ -30,6 +31,13 @@
     return false; // draft 或未知狀態
   }
   window.AURORA.issueVisible = issueVisible;
+
+  /* Podcast 各集：草稿不對前台顯示；無 status 欄位的舊文件視為已發布。 */
+  function episodeVisible(it) {
+    var st = it && it.status;
+    return !st || st === "published";
+  }
+  window.AURORA.episodeVisible = episodeVisible;
 
   var cfg = window.FIREBASE_CONFIG;
   var ok = cfg && cfg.apiKey && cfg.projectId && window.firebase && window.firebase.firestore;
@@ -52,6 +60,7 @@
         var snap = await db.collection(COLLECTIONS[key]).orderBy("sort").get();
         var arr = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
         if (key === "issues") arr = arr.filter(function (it) { return issueVisible(it); });
+        if (key === "podcastEpisodes") arr = arr.filter(function (it) { return episodeVisible(it); });
         if (arr.length) out[key] = arr;
       }));
       window.AURORA.data = out;
