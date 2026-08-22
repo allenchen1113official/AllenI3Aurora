@@ -4,9 +4,9 @@
   "asOf": "2026.08.21",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.08.21 無人機商用化正加速成形：美國放寬出口管制、Amazon Prime Air 擴大至近 500 座城市，顯示低空經濟法規與市場同步鬆綁。智慧家庭陣營則是蘋果與三星同步搶進，AI 原生介面成為下一波家庭生態系的競爭焦點；而網球夏季北美硬地賽季正打得火熱，Shelton 狀態火燙、辛辛那提站好手雲集，… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
-  "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機系統 #旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "無人機商用化正加速成形：美國放寬出口管制、Amazon Prime Air 擴大至近 500 座城市，顯示低空經濟法規與市場同步鬆綁。智慧家庭陣營則是蘋果與三星同步搶進，AI 原生介面成為下一波家庭生態系的競爭焦點；而網球夏季北美硬地賽季正打得火熱，Shelton 狀態火燙、辛辛那提站好手雲集，值得持續關注。",
+  "summary": "【日報】艾倫極光日報｜2026.08.21 本週科技焦點集中在智慧家庭生態圈的三強較勁——蘋果、Google、Amazon 幾乎同週釋出重大更新，語音助理與居家 AI 成為新戰場；無人機產業則受惠於美國出口管制鬆綁，外送與 BVLOS 自主飛行等商業應用加速落地。網球迷別錯過 8/23 開打的美網，… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
+  "focusNote": "本週科技焦點集中在智慧家庭生態圈的三強較勁——蘋果、Google、Amazon 幾乎同週釋出重大更新，語音助理與居家 AI 成為新戰場；無人機產業則受惠於美國出口管制鬆綁，外送與 BVLOS 自主飛行等商業應用加速落地。網球迷別錯過 8/23 開打的美網，剛拿下 Cincinnati 冠軍的 Alcaraz 狀態火燙，值得鎖定！",
   "sections": [
     {
       "tag": "農業",
@@ -14,17 +14,17 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "農機經銷商技術專家在威斯康辛州田間示範 AutoPath 系統如何提升施藥效率與定位準度，減少重疊噴灑。",
+          "text": "全新展區讓農民與農業科技新創面對面交流，聚焦 AI、自主化與改裝技術等田間解方。",
           "sourceName": "Precision Farming Dealer",
           "source": "https://www.precisionfarmingdealer.com/articles/7239-precision-farming-dealers-best-of-the-web-august-19-2026"
         },
         {
-          "text": "共同創辦人展示以電腦視覺即時辨識並精準處理雜草的機器，每秒可同時追蹤上千個田間物件。",
+          "text": "共同創辦人 Curtis Garner 指出，系統每秒可追蹤上千個物件並即時做出精準噴灑決策，大幅減少化學藥劑用量。",
           "sourceName": "Precision Farming Dealer",
           "source": "https://www.precisionfarmingdealer.com/articles/7239-precision-farming-dealers-best-of-the-web-august-19-2026"
         },
         {
-          "text": "阿肯色州田間日展示如何運用歷史衛星資料辨識作物變異，專家強調「不需要無人機也能開始使用空拍影像」。",
+          "text": "研究者 Ana Morales-Ona Smith 表示，搭配土壤檢測，免費歷史衛星影像可協助農民辨識作物變異的一致模式，優化施肥策略。",
           "sourceName": "Precision Farming Dealer",
           "source": "https://www.precisionfarmingdealer.com/articles/7239-precision-farming-dealers-best-of-the-web-august-19-2026"
         }
@@ -36,58 +36,63 @@
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "彭博社報導蘋果傳將於今秋推出 HomePad、HomePod mini 2、保全攝影機等多款新品，隨 iOS 27 新版 Siri AI 到位而重啟智慧家庭布局。",
-          "sourceName": "9to5Mac",
-          "source": "https://9to5mac.com/2026/07/30/apple-is-about-to-launch-home-product-overhaul-ive-wanted-for-years/"
+          "text": "傳蘋果規劃 7 吋螢幕智慧顯示中樞「HomePad」（搭載 homeOS）、新款 HomePod mini、智慧監控攝影機與門鈴，最快 2026 年秋季起陸續亮相。",
+          "sourceName": "TechNews 科技新報",
+          "source": "https://technews.tw/2026/08/17/apple-smart-home/"
         },
         {
-          "text": "三星釋出全新藥丸型導覽列、時段動態桌布與「SmartThings Now」智慧建議卡片，預計於 One UI 9.0 穩定版後陸續推出。",
-          "sourceName": "Sammy Fans",
-          "source": "https://www.sammyfans.com/2026/08/04/samsung-smartthings-set-for-a-big-redesign-first-look-revealed/"
+          "text": "Gemini for Home 升級歌曲／歌手辨識精準度，新增指定色溫語音調光、統一溫度顯示單位，並修正 iOS 溫度顯示與鏡頭串流問題。",
+          "sourceName": "Droid Life",
+          "source": "https://www.droid-life.com/2026/08/20/google-home-gets-big-voice-update-with-several-improvements/"
         },
         {
-          "text": "目前已有超過 750 款產品支援 Matter，Thread 1.4 統一憑證分享機制，但各平台導入進度仍不一致，Google Home 對部分裝置支援仍落後。",
-          "sourceName": "Matter Smart Home",
-          "source": "https://matter-smarthome.de/en/development/the-matter-standard-in-2026-a-status-review/"
+          "text": "Amazon 取消非 Prime 會員每月 19.99 美元訂閱門檻，讓對話式 AI 助理 Alexa+ 免費登上所有相容 Fire TV 與部分第三方智慧電視。",
+          "sourceName": "TechCrunch",
+          "source": "https://techcrunch.com/2026/08/19/amazon-makes-its-ai-powered-alexa-free-on-fire-tv-no-prime-required/"
         }
       ]
     },
     {
-      "tag": "航空",
+      "tag": "空拍",
       "tone": "illumination",
       "title": "無人機系統",
       "items": [
         {
-          "text": "美國商務部工業安全局新規 8/13 生效，將續航 30 分鐘以上無人機的國安管制門檻大幅拉高至 3 小時，回應「解放美國無人機優勢」行政命令。",
+          "text": "聯邦公報公告將國安管制續航門檻由 30 分鐘拉高至 3 小時，並取消風阻係數作為管制參數，旨在強化美國無人機產業全球競爭力。",
           "sourceName": "Federal Register",
-          "source": "https://www.govinfo.gov/content/pkg/FR-2026-08-14/pdf/2026-16628.pdf"
+          "source": "https://www.federalregister.gov/documents/2026/08/14/2026-16628/streamlining-export-controls-for-drone-exports"
         },
         {
-          "text": "Prime Air 副總裁 David Carbon 宣布年底前擴大至近 500 個美國城鎮（約現規模 6 倍），今年已完成數十萬件無人機配送，採用 FAA Part 135 認證與偵測迴避系統。",
-          "sourceName": "TechCrunch",
-          "source": "https://techcrunch.com/2026/08/19/amazons-prime-air-is-taking-off-in-nearly-500-u-s-cities/"
+          "text": "新平台協助企業規模化超視距（BVLOS）與自主無人機作業，簡化法規申請與飛行管理流程，加速商用無人機落地。",
+          "sourceName": "DroneLife",
+          "source": "https://dronelife.com/2026/08/11/flybyops-bvlos-operations-platform/"
         },
         {
-          "text": "歐盟政策鬆綁農業無人機噴藥限制，惟義大利執行細則仍延宕，反映歐洲農業無人機法規逐步鬆動的趨勢。",
-          "sourceName": "DroneXL",
-          "source": "https://dronexl.co/2026/04/30/dji-agricultural-drones-600000-eu-aerial-spray-italy-decree/"
+          "text": "較目前 11 個據點成長約 6 倍，芝加哥、亞特蘭大等都會區即將開通，5 磅以下包裹最快 30 分鐘送達。",
+          "sourceName": "Fox Business",
+          "source": "https://www.foxbusiness.com/fox-news-tech/amazon-prime-air-drone-delivery-expansion"
         }
       ]
     },
     {
-      "tag": "旅行",
+      "tag": "冰島",
       "tone": "insight",
       "title": "冰島旅行",
       "items": [
         {
-          "text": "北冰島阿庫瑞里迎來首間國際連鎖精品飯店，共 86 間客房，可安排極光與鯨魚觀賞行程，為 Hilton 在冰島鄉間布局的重要一步。",
-          "sourceName": "One Mile at a Time",
-          "source": "https://onemileatatime.com/news/hilton-hotel-northern-iceland/"
+          "text": "2026 年起新增此直飛航線，讓自駕旅客規劃行程多一種入境選擇，冬季賞極光交通更便利。",
+          "sourceName": "Travel And Tour World",
+          "source": "https://www.travelandtourworld.com/news/article/cn2pw0ig4qp1/"
         },
         {
-          "text": "本輪太陽活動高峰落在 2024 年底至 2026 年 3 月間，極光強度仍處高檔尾聲；辛格韋德利國家公園因地勢平坦、光害低、距雷克雅維克僅約 40 公里，成追光與自駕旅人的私房景點。",
-          "sourceName": "Bella儂儂",
-          "source": "https://www.bella.tw/articles/travel&foodies/55230/observe-aurora-locations"
+          "text": "歐洲觀光趨勢轉向暗空、極光與日蝕觀測體驗，冰島憑藉低光害環境成為熱門目的地，也是自駕深度旅遊的絕佳題材。",
+          "sourceName": "Travel And Tour World",
+          "source": "https://www.travelandtourworld.com/news/article/9sgqdqe9wliw/"
+        },
+        {
+          "text": "凱夫拉維克機場客流回升，北歐城市推動永續觀光合作，海外遊客消費創新高，當地旅遊業維持穩健動能。",
+          "sourceName": "Travel And Tour World",
+          "source": "https://www.travelandtourworld.com/news/article/m61q6wruykoa/"
         }
       ]
     },
@@ -97,36 +102,31 @@
       "title": "攝影",
       "items": [
         {
-          "text": "YouTuber Casey Cavanaugh（GXAce）與曾參與《蝙蝠俠》的創意總監 Ash Thorp 合作，開發 65:24 全景比例的訂製相機，計畫年底前發起集資。",
+          "text": "支援 Sony E 與 Nikon Z 接環，機身顏色可自訂，主打極簡設計與親民價格的入門人像鏡新選擇。",
           "sourceName": "DPReview",
-          "source": "https://www.dpreview.com/news/gx-ace-gx-p1-fixed-camera-teaser-behind-the-scenes-announcement/"
+          "source": "https://www.dpreview.com/news/ttartisan-af-85mm-f1p8-neo-lens-announcement/"
         },
         {
-          "text": "Sigma 揭曉 125-700mm F6.3-9 與 150-600mm F5-6.3 兩款超望遠變焦鏡，望遠攝影玩家選擇再添新兵。",
-          "sourceName": "Photo Rumors",
-          "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
+          "text": "新增 D-Log 慢動作錄製、雲端自動上傳，並優化追蹤對焦表現，掌上型攝影機再進化。",
+          "sourceName": "DPReview",
+          "source": "https://www.dpreview.com/news/dji-osmo-pocket-4-4p-firmware-update-adds-d-log-slow-motion-cloud-uploads/"
         },
         {
-          "text": "Leica 為 D-Lux 8、SL2、SL2-S、Q3 等機型釋出韌體更新，M11 專用 Slim Skin 保護殼也同步推出改良版本。",
-          "sourceName": "Photo Rumors",
-          "source": "https://photorumors.com/2026/08/11/what-else-is-new-930/"
+          "text": "iOS 版新增桌機等級降噪、色彩平衡與修復工具，行動修圖工作流程更加專業化。",
+          "sourceName": "DPReview",
+          "source": "https://www.dpreview.com/news/capture-one-mobile-4-0-announcement/"
         }
       ]
     },
     {
-      "tag": "音樂",
+      "tag": "薩克斯風",
       "tone": "illumination",
       "title": "薩克斯風",
       "items": [
         {
-          "text": "知名薩克斯風手 Marion Meadows 與電風琴手 Vel Lewis 合作推出 Smooth Jazz 單曲，自 5 月發行以來已連續 9 週穩居排行榜。",
-          "sourceName": "All About Jazz",
-          "source": "https://www.allaboutjazz.com/news/vel-lewis-announces-new-smooth-jazz-single-smoovee-featuring-marion-meadows/"
-        },
-        {
-          "text": "協會公布 2026 年度大學組獨奏賽、四重奏賽及爵士組比賽詳細簡章，全美薩克斯風學子可報名角逐獎項。",
-          "sourceName": "North American Saxophone Alliance",
-          "source": "https://saxophonealliance.org/news-events/competitions/"
+          "text": "《浴火重生 We Dream》巡演 8/14 於國家音樂廳登場，她曾為 Stevie Wonder、Alicia Keys 等巨星伴奏演出，專輯《Phoenix》入圍三項葛萊美獎，本場為兩廳院夏日爵士系列壓軸之一。",
+          "sourceName": "OPENTIX / EventGo",
+          "source": "https://eventgo.tw/event/000c9c00-c9b7-4dd5-a1eb-7a1c945a50c0"
         }
       ]
     },
@@ -136,19 +136,14 @@
       "title": "網球",
       "items": [
         {
-          "text": "美國好手 Ben Shelton 以 6-3、7-6(4) 擊敗 Brandon Nakashima，成功完成加拿大公開賽（蒙特婁站）衛冕。",
+          "text": "8/18 決賽 Jannik Sinner 因傷退賽，Carlos Alcaraz 以 5-0 直接奪冠；資格賽選手 Terence Atmane 爆冷闖入四強，成為本屆最大驚喜。",
           "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/news/montreal-2026-results"
+          "source": "https://www.atptour.com/en/scores/current/cincinnati/422/results"
         },
         {
-          "text": "Djokovic、Zverev、Medvedev 等好手同場競逐，衛冕冠軍 Alcaraz 回歸，本屆總獎金逾 941 萬美元，冠軍可獲 1000 積分。",
-          "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/news/cincinnati-2026-atp-masters-1000-history-draw-schedule"
-        },
-        {
-          "text": "物理治療專家彙整前臂伸展、離心訓練等動作，協助業餘球友降低網球肘（外側肱骨上髁炎）發生風險，強化擊球穩定度。",
-          "sourceName": "Shape and Strength",
-          "source": "https://shapeandstrength.com/preventing-tennis-elbow/"
+          "text": "賽事長達 22 天，粉絲週（8/23–29）免費入場，男女單打各 128 籤主賽事 8/30 開打，9/13 決出男單冠軍，全民開放日創歷史新高。",
+          "sourceName": "Tennis Majors",
+          "source": "https://www.tennismajors.com/us-open-news/us-open-2026-dates-schedule-full-calendar-858738.html"
         }
       ]
     }
@@ -176,17 +171,17 @@
     }
   ],
   "highlights": [
-    "農機經銷商技術專家在威斯康辛州田間示範 AutoPath 系統如何提升施藥效率與定位準度，減少重疊噴灑。",
-    "彭博社報導蘋果傳將於今秋推出 HomePad、HomePod mini 2、保全攝影機等多款新品，隨 iOS 27 新版",
-    "美國商務部工業安全局新規 8/13 生效，將續航 30 分鐘以上無人機的國安管制門檻大幅拉高至 3 小時，回應「解放美國",
-    "北冰島阿庫瑞里迎來首間國際連鎖精品飯店，共 86 間客房，可安排極光與鯨魚觀賞行程，為 Hilton 在冰島鄉間布局的重"
+    "全新展區讓農民與農業科技新創面對面交流，聚焦 AI、自主化與改裝技術等田間解方。",
+    "傳蘋果規劃 7 吋螢幕智慧顯示中樞「HomePad」（搭載 homeOS）、新款 HomePod mini、智慧監控攝影",
+    "聯邦公報公告將國安管制續航門檻由 30 分鐘拉高至 3 小時，並取消風阻係數作為管制參數，旨在強化美國無人機產業全球競爭",
+    "2026 年起新增此直飛航線，讓自駕旅客規劃行程多一種入境選擇，冬季賞極光交通更便利。"
   ],
   "cover": {
     "title": "今日日報封面",
     "drive": "",
     "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/15TMRdlA9vKEpNqHsPxb-7uUBBuZNV_OLS8cTSI9B1qM/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/1huDCYNy1_qjl99cvpy15-d3PG49YtBT8BLEQJJuqRoQ/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-08-21T00:49:14.067Z"
+  "updatedAt": "2026-08-22T00:44:20.506Z"
 }
