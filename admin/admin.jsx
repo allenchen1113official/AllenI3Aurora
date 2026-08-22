@@ -1237,11 +1237,331 @@ function SubscribersPanel() {
   );
 }
 
+/* =====================================================================
+   Podcast 節目管理 — aurora_podcast_episodes（各集：逐字稿／摘要／康乃爾筆記）
+   工作流程：本機以 OpenAI Whisper 轉錄音檔為繁中逐字稿
+   （scripts/podcast/transcribe.py，見 docs/PODCAST_WHISPER_SOP.md）→
+   將逐字稿貼入本面板 → 編修繁中摘要與一頁康乃爾重點筆記 → 發布。
+   前台儀表板顯示「最新一集」的繁中摘要與康乃爾筆記圖卡。
+   ===================================================================== */
+const PC_NAV = "__podcast";
+const PC_COLL = "aurora_podcast_episodes";
+
+const PC_STATUS_META = {
+  draft:     { label: "草稿",   color: "var(--text-3)",  bg: "var(--night-700)" },
+  published: { label: "已發布", color: "var(--success)", bg: "var(--insight-soft)" },
+};
+const pcStatusOf = (r) => ((r && r.status) === "draft" ? "draft" : "published");
+function PcBadge({ status }) {
+  const m = PC_STATUS_META[status] || PC_STATUS_META.published;
+  return (
+    <span style={{ padding: "2px 9px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800,
+      background: m.bg, color: m.color, border: "1px solid var(--border)" }}>{m.label}</span>
+  );
+}
+
+function pcBlank(maxSort) {
+  return { __new: true, sort: (maxSort || 0) + 1, show: "", title: "", date: "", duration: "",
+    url: "", tone: "insight", status: "draft", transcript: "", summary: "",
+    cornell: { rows: [], summary: "" } };
+}
+
+/* 康乃爾筆記圖卡預覽（與前台 Dashboard.jsx 的 CornellCard 同版型） */
+function PcCornellPreview({ ep }) {
+  const c = ep.cornell || {};
+  const rows = (Array.isArray(c.rows) ? c.rows : []).filter((r) => r && (r.cue || r.note));
+  const summary = c.summary || ep.summary || "";
+  const tone = ep.tone || "insight";
+  return (
+    <div style={{ maxWidth: 640, margin: "0 auto", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", overflow: "hidden", background: "var(--night-800)" }}>
+      <div style={{ padding: "14px 18px", background: "linear-gradient(135deg, var(--intelligence-soft), transparent)", borderBottom: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 12, color: "var(--intelligence)", letterSpacing: ".1em" }}>CORNELL NOTES · 康乃爾筆記</span>
+          <span style={{ flex: 1 }} />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-3)" }}>艾倫報報 · Allen I³ Aurora</span>
+        </div>
+        <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: 14.5, marginTop: 6 }}>{ep.show}{ep.show && ep.title ? " — " : ""}{ep.title || "（未命名集數）"}</div>
+        <div style={{ color: "var(--text-3)", fontSize: 11.5, marginTop: 2, fontFamily: "var(--font-mono)" }}>{[ep.date, ep.duration].filter(Boolean).join(" · ")}</div>
+      </div>
+      {rows.length ? (
+        <div>
+          <div style={{ display: "grid", gridTemplateColumns: "0.9fr 1.8fr", padding: "8px 18px", borderBottom: "1px solid var(--border)", fontSize: 11, letterSpacing: ".08em", fontWeight: 700, color: "var(--text-3)" }}>
+            <span>線索 CUES</span><span>筆記 NOTES</span>
+          </div>
+          {rows.map((r, i) => (
+            <div key={i} style={{ display: "grid", gridTemplateColumns: "0.9fr 1.8fr", gap: 10, padding: "10px 18px", borderBottom: i < rows.length - 1 ? "1px solid var(--border)" : "none", alignItems: "start" }}>
+              <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 13, color: `var(--${tone})`, lineHeight: 1.45 }}>{r.cue}</span>
+              <span style={{ color: "var(--text-2)", fontSize: 13, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{r.note}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ padding: "18px", color: "var(--text-4)", fontSize: 12.5 }}>尚無筆記列。到「摘要與康乃爾筆記」分頁加入線索與筆記。</div>
+      )}
+      {summary ? (
+        <div style={{ padding: "12px 18px", borderTop: "1px solid var(--border)", background: "var(--night-850)" }}>
+          <div style={{ fontSize: 11, letterSpacing: ".08em", fontWeight: 700, color: "var(--text-3)", marginBottom: 6 }}>總結 SUMMARY</div>
+          <div style={{ color: "var(--text-1)", fontSize: 13, lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{summary}</div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function PodcastPanel() {
+  const [list, setList] = useState(null);
+  const [sel, setSel] = useState(null);      // 目前編輯的 draft
+  const [tab, setTab] = useState("info");    // info | notes | preview
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [toast, setToast] = useState("");
+  const [showFilter, setShowFilter] = useState("全部");
+
+  const load = useCallback(async () => {
+    setErr("");
+    try {
+      const snap = await db.collection(PC_COLL).orderBy("sort").get();
+      setList(snap.docs.map((d) => Object.assign({ id: d.id }, d.data())));
+    } catch (ex) { setErr("讀取失敗：" + errText(ex)); setList([]); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const maxSort = (list || []).reduce((m, r) => Math.max(m, Number(r.sort) || 0), 0);
+  const shows = ["全部", ...Array.from(new Set((list || []).map((r) => r.show).filter(Boolean)))];
+
+  const openEp = (r) => {
+    setSel({
+      id: r.id, sort: r.sort ?? 0, show: r.show || "", title: r.title || "", date: r.date || "",
+      duration: r.duration || "", url: r.url || "", tone: r.tone || "insight", status: pcStatusOf(r),
+      transcript: r.transcript || "", summary: r.summary || "",
+      cornell: {
+        rows: Array.isArray(r.cornell && r.cornell.rows) ? JSON.parse(JSON.stringify(r.cornell.rows)) : [],
+        summary: (r.cornell && r.cornell.summary) || "",
+      },
+    });
+    setTab("info");
+  };
+  const setF = (k, v) => setSel((s) => ({ ...s, [k]: v }));
+  const setCornell = (k, v) => setSel((s) => ({ ...s, cornell: { ...s.cornell, [k]: v } }));
+  const setRow = (i, k, v) => setSel((s) => { const rows = [...s.cornell.rows]; rows[i] = { ...rows[i], [k]: v }; return { ...s, cornell: { ...s.cornell, rows } }; });
+  const addRow = () => setCornell("rows", [...(sel.cornell.rows || []), { cue: "", note: "" }]);
+  const moveRow = (i, d) => setSel((s) => { const rows = [...s.cornell.rows]; const j = i + d; if (j < 0 || j >= rows.length) return s; const t = rows[i]; rows[i] = rows[j]; rows[j] = t; return { ...s, cornell: { ...s.cornell, rows } }; });
+  const delRow = (i) => setCornell("rows", sel.cornell.rows.filter((_, x) => x !== i));
+
+  /* 儲存；extra 供發布動作覆寫狀態欄位 */
+  const save = async (extra, doneMsg) => {
+    if (!sel) return false;
+    setBusy(true); setErr("");
+    const st = { status: sel.status || "draft", ...(extra || {}) };
+    const payload = {
+      sort: Number(sel.sort) || 0, show: sel.show, title: sel.title, date: sel.date,
+      duration: sel.duration, url: sel.url, tone: sel.tone,
+      transcript: sel.transcript, summary: sel.summary,
+      cornell: {
+        rows: (sel.cornell.rows || []).map((r) => ({ cue: r.cue || "", note: r.note || "" })),
+        summary: sel.cornell.summary || "",
+      },
+      ...st,
+      updatedAt: new Date().toISOString(),
+    };
+    try {
+      if (sel.__new) { const ref = await db.collection(PC_COLL).add(payload); setSel((s) => ({ ...s, __new: false, id: ref.id, ...st })); }
+      else { await db.collection(PC_COLL).doc(sel.id).update(payload); setSel((s) => ({ ...s, ...st })); }
+      await load();
+      setToast(doneMsg || "已儲存 ✓"); setTimeout(() => setToast(""), 3200);
+      setBusy(false); return true;
+    } catch (ex) { setErr("儲存失敗：" + errText(ex)); setBusy(false); return false; }
+  };
+
+  const publishNow = async () => {
+    if (!window.confirm("確認發布「" + (sel.title || sel.show || "本集") + "」？發布後若為最新一集，前台首頁將顯示其摘要與筆記圖卡。")) return;
+    await save({ status: "published", publishedAt: new Date().toISOString() }, "已發布 ✓ 前台重新整理即可看到最新一集");
+  };
+  const revertDraft = async () => {
+    if (!window.confirm("將本集退回草稿？前台將不再顯示本集。")) return;
+    await save({ status: "draft" }, "已退回草稿");
+  };
+  const removeEp = async () => {
+    if (!sel || sel.__new) { setSel(null); return; }
+    if (!window.confirm("確定刪除「" + (sel.title || sel.show) + "」整集（含逐字稿與筆記）？")) return;
+    setBusy(true);
+    try { await db.collection(PC_COLL).doc(sel.id).delete(); setSel(null); await load(); }
+    catch (ex) { setErr("刪除失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+
+  const box = { background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 16, marginBottom: 14 };
+  const tabBtn = (id, label) => (
+    <button className={"ad-btn" + (tab === id ? " primary" : " ghost")} onClick={() => setTab(id)} style={{ padding: "8px 14px" }}>{label}</button>
+  );
+
+  /* --- 列表視圖 --- */
+  if (!sel) {
+    return (
+      <div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+          <div>
+            <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>Podcast 節目</h2>
+            <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{PC_COLL} · {list ? list.length : "…"} 集 · 逐字稿／摘要／康乃爾筆記</div>
+          </div>
+          <button className="ad-btn primary" onClick={() => { setSel(pcBlank(maxSort)); setTab("info"); }}>＋ 新增一集</button>
+        </div>
+        {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+        <div style={{ color: "var(--text-4)", fontSize: 12, lineHeight: 1.7, marginBottom: 12 }}>
+          流程：本機執行 <code>python scripts/podcast/transcribe.py 音檔.mp3</code>（OpenAI Whisper 本機轉錄，見 <code>docs/PODCAST_WHISPER_SOP.md</code>）
+          → 貼上逐字稿 → 編修繁中摘要與康乃爾筆記 → 發布。前台首頁顯示最新一集的摘要與一頁筆記圖卡。
+        </div>
+        {shows.length > 1 && (
+          <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
+            {shows.map((s) => (
+              <button key={s} className="ad-btn ghost" onClick={() => setShowFilter(s)}
+                style={{ padding: "6px 12px", fontSize: 12.5,
+                  borderColor: showFilter === s ? "var(--border-aurora)" : "var(--border)",
+                  background: showFilter === s ? "var(--brand-soft)" : "transparent",
+                  color: showFilter === s ? "var(--text-1)" : "var(--text-4)" }}>
+                {s}{s !== "全部" ? `（${(list || []).filter((r) => r.show === s).length}）` : ""}
+              </button>
+            ))}
+          </div>
+        )}
+        {list == null ? <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>
+          : list.length === 0 ? <div style={{ color: "var(--text-3)", padding: 20 }}>尚無節目，點右上角「新增一集」開始。</div>
+          : (
+            <div style={{ display: "grid", gap: 10 }}>
+              {list.filter((r) => showFilter === "全部" || r.show === showFilter).map((r) => {
+                const nRows = Array.isArray(r.cornell && r.cornell.rows) ? r.cornell.rows.length : 0;
+                return (
+                  <button key={r.id} onClick={() => openEp(r)} style={{ textAlign: "left", cursor: "pointer", background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 16 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                      <span style={{ padding: "2px 9px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800, background: "var(--night-700)", color: "var(--text-2)" }}>{r.show || "—"}</span>
+                      <PcBadge status={pcStatusOf(r)} />
+                      <span style={{ color: "var(--text-3)", fontSize: 12, fontFamily: "var(--font-mono)" }}>{[r.date, r.duration].filter(Boolean).join(" · ") || "—"}</span>
+                      {r.transcript ? <span style={{ color: "var(--success)", fontSize: 11.5 }}>● 逐字稿（{String(r.transcript).length} 字）</span> : <span style={{ color: "var(--text-4)", fontSize: 11.5 }}>○ 無逐字稿</span>}
+                      {r.summary ? <span style={{ color: "var(--intelligence)", fontSize: 11.5 }}>◆ 已備摘要</span> : null}
+                      {nRows ? <span style={{ color: "var(--illumination)", fontSize: 11.5 }}>▣ 康乃爾筆記（{nRows} 列）</span> : null}
+                    </div>
+                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: 16 }}>{r.title || "（未命名集數）"}</div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+      </div>
+    );
+  }
+
+  /* --- 編輯視圖 --- */
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button className="ad-btn ghost" onClick={() => setSel(null)}>← 返回列表</button>
+          <div>
+            <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 20, margin: 0 }}>{sel.__new ? "新增一集" : "編輯本集"}</h2>
+            <div style={{ color: "var(--text-3)", fontSize: 12, fontFamily: "var(--font-mono)" }}>{sel.show || "—"} · {sel.title || "未命名"}</div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+          <PcBadge status={sel.status || "draft"} />
+          <button className="ad-btn primary" onClick={() => save()} disabled={busy}>{busy ? "儲存中…" : "儲存"}</button>
+          {sel.status !== "published"
+            ? <button className="ad-btn primary" onClick={publishNow} disabled={busy}>✓ 發布</button>
+            : <button className="ad-btn ghost" onClick={revertDraft} disabled={busy}>退回草稿</button>}
+          <button className="ad-btn danger" onClick={removeEp} disabled={busy}>{sel.__new ? "取消" : "刪除整集"}</button>
+        </div>
+      </div>
+      {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+      {toast && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{toast}</div>}
+
+      <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+        {tabBtn("info", "基本資料與逐字稿")}
+        {tabBtn("notes", "摘要與康乃爾筆記")}
+        {tabBtn("preview", "預覽筆記圖卡")}
+      </div>
+
+      {tab === "info" && (
+        <div>
+          <div style={box}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
+              <div><label className="ad-lbl">節目 show</label>
+                <input className="ad-in" list="pc-shows" value={sel.show} onChange={(e) => setF("show", e.target.value)} placeholder="例：股癌 Gooaye" />
+                <datalist id="pc-shows">{shows.filter((s) => s !== "全部").map((s) => <option key={s} value={s} />)}</datalist></div>
+              <div><label className="ad-lbl">日期 date</label><input className="ad-in" value={sel.date} onChange={(e) => setF("date", e.target.value)} placeholder="2026.08.22" /></div>
+              <div><label className="ad-lbl">長度 duration</label><input className="ad-in" value={sel.duration} onChange={(e) => setF("duration", e.target.value)} placeholder="58m / 1h 12m" /></div>
+              <div><label className="ad-lbl">色調 tone</label>
+                <select className="ad-in" value={sel.tone} onChange={(e) => setF("tone", e.target.value)}>{TONE_OPTS.map((o) => <option key={o} value={o}>{o}</option>)}</select></div>
+              <div><label className="ad-lbl">排序 sort</label><input className="ad-in" type="number" value={sel.sort} onChange={(e) => setF("sort", e.target.value)} /></div>
+            </div>
+            <div style={{ marginTop: 12 }}><label className="ad-lbl">集數標題 title</label><input className="ad-in" value={sel.title} onChange={(e) => setF("title", e.target.value)} placeholder="EP.本集主題" /></div>
+            <div style={{ marginTop: 12 }}><label className="ad-lbl">收聽連結 url</label><input className="ad-in" value={sel.url} onChange={(e) => setF("url", e.target.value)} placeholder="https://…" /></div>
+          </div>
+          <div style={box}>
+            <label className="ad-lbl">逐字稿 transcript（{String(sel.transcript || "").length} 字）</label>
+            <textarea className="ad-in" style={{ minHeight: 260 }} value={sel.transcript} onChange={(e) => setF("transcript", e.target.value)}
+              placeholder={"貼上本機 Whisper 轉錄的繁中逐字稿。\n\n本機轉錄指令：\n  python scripts/podcast/transcribe.py 音檔.mp3\n（詳見 docs/PODCAST_WHISPER_SOP.md；轉錄後會輸出 .txt 逐字稿與 .notes.md 筆記草稿範本）"} />
+          </div>
+        </div>
+      )}
+
+      {tab === "notes" && (
+        <div>
+          <div style={box}>
+            <label className="ad-lbl">繁體中文摘要 summary（前台「最新一集」顯示）</label>
+            <textarea className="ad-in" style={{ minHeight: 130, fontFamily: "var(--font-body)" }} value={sel.summary} onChange={(e) => setF("summary", e.target.value)}
+              placeholder="以 150–250 字概括本集重點：主題、論點、結論與可行動的啟發…" />
+          </div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "0 0 10px" }}>
+            <div style={{ color: "var(--text-2)", fontSize: 14, fontWeight: 700, fontFamily: "var(--font-display)" }}>康乃爾筆記列（{(sel.cornell.rows || []).length}）— 左欄線索、右欄筆記</div>
+            <button className="ad-btn primary" onClick={addRow} style={{ padding: "7px 12px" }}>＋ 新增一列</button>
+          </div>
+          {(sel.cornell.rows || []).length === 0 ? (
+            <div style={{ color: "var(--text-3)", fontSize: 13, padding: "14px 16px", border: "1px dashed var(--border)", borderRadius: "var(--radius-md)", marginBottom: 14 }}>
+              還沒有筆記列。每列＝一個「線索／關鍵字」＋對應「筆記內容」，即康乃爾筆記法的左右兩欄。
+            </div>
+          ) : (sel.cornell.rows.map((r, i) => (
+            <div key={i} style={{ background: "var(--night-850)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", padding: 12, marginBottom: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span style={{ color: "var(--text-4)", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>#{i + 1}</span>
+                <div style={{ flex: 1 }} />
+                <button className="ad-btn ghost" style={{ padding: "5px 9px" }} disabled={i === 0} onClick={() => moveRow(i, -1)} title="上移">↑</button>
+                <button className="ad-btn ghost" style={{ padding: "5px 9px" }} disabled={i === sel.cornell.rows.length - 1} onClick={() => moveRow(i, 1)} title="下移">↓</button>
+                <button className="ad-btn danger" style={{ padding: "5px 9px" }} onClick={() => delRow(i)} title="刪除">✕</button>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "minmax(140px, 0.9fr) 1.8fr", gap: 10 }}>
+                <div><label className="ad-lbl">線索 cue</label>
+                  <input className="ad-in" value={r.cue || ""} onChange={(e) => setRow(i, "cue", e.target.value)} placeholder="關鍵字／問題" /></div>
+                <div><label className="ad-lbl">筆記 note</label>
+                  <textarea className="ad-in" style={{ minHeight: 56, fontFamily: "var(--font-body)" }} value={r.note || ""} onChange={(e) => setRow(i, "note", e.target.value)} placeholder="對應的重點內容…" /></div>
+              </div>
+            </div>
+          )))}
+          <div style={box}>
+            <label className="ad-lbl">底部總結 cornell.summary（圖卡最下方；留空則沿用上方摘要）</label>
+            <textarea className="ad-in" style={{ minHeight: 90, fontFamily: "var(--font-body)" }} value={sel.cornell.summary} onChange={(e) => setCornell("summary", e.target.value)}
+              placeholder="用 2–3 句話收斂整集：核心結論與下一步行動…" />
+          </div>
+        </div>
+      )}
+
+      {tab === "preview" && (
+        <div>
+          <div style={{ color: "var(--text-4)", fontSize: 12, marginBottom: 14 }}>
+            一頁康乃爾重點筆記圖卡（與前台顯示版型一致）。發布後若為最新一集，前台首頁「本集重點摘要」即顯示摘要與此圖卡。
+          </div>
+          <div style={{ background: "var(--night-850)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "26px 20px" }}>
+            <PcCornellPreview ep={sel} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ---------- 主控台 ---------- */
 function Console({ user }) {
   const [active, setActive] = useState(NL_NAV);
   const sec = SECTIONS.find((s) => s.id === active);
-  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: SUB_NAV, label: "訂閱用戶" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
+  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
       <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
@@ -1270,6 +1590,7 @@ function Console({ user }) {
         </nav>
         <main style={{ flex: 1, minWidth: 0 }}>
           {active === NL_NAV ? <NewsletterPanel />
+            : active === PC_NAV ? <PodcastPanel />
             : active === SUB_NAV ? <SubscribersPanel />
             : active === WEALTH_NAV ? <WealthPanel />
             : <SectionEditor key={sec.id} sec={sec} />}

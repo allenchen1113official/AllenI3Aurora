@@ -506,6 +506,101 @@
     );
   }
 
+  /* ── 最新一集 Podcast：繁中摘要＋一頁康乃爾重點筆記圖卡 ───────────────
+     資料來源 window.KIT.podcastEpisodes（Firestore aurora_podcast_episodes 覆蓋
+     內建預設；aurora-data.js 已過濾草稿）。逐字稿由本機 Whisper 轉錄
+     （scripts/podcast/transcribe.py），摘要與康乃爾筆記於後台編修。
+     取「最新一集」：日期（數字化）新者優先，同日再比 sort 大者。 */
+  function latestPodcastEpisode() {
+    const list = (window.KIT.podcastEpisodes || []).filter((e) => e && (!e.status || e.status === "published"));
+    if (!list.length) return null;
+    const num = (s) => Number(String(s == null ? "" : s).replace(/\D/g, "")) || 0;
+    return list.slice().sort((a, b) => (num(b.date) - num(a.date)) || ((Number(b.sort) || 0) - (Number(a.sort) || 0)))[0];
+  }
+
+  /* 一頁康乃爾筆記圖卡：左欄線索（Cues）、右欄筆記（Notes）、底部總結（Summary）。 */
+  function CornellCard({ ep }) {
+    const c = ep.cornell || {};
+    const rows = Array.isArray(c.rows) ? c.rows.filter((r) => r && (r.cue || r.note)) : [];
+    const summary = c.summary || ep.summary || "";
+    if (!rows.length && !summary) return null;
+    return (
+      <Card padding="0" style={{ overflow: "hidden" }}>
+        {/* 圖卡頁首：品牌＋節目資訊 */}
+        <div style={{ padding: "14px 18px", background: "linear-gradient(135deg, var(--intelligence-soft), transparent)", borderBottom: "1px solid var(--border)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 12, color: "var(--intelligence)", letterSpacing: ".1em" }}>CORNELL NOTES · 康乃爾筆記</span>
+            <span style={{ flex: 1 }} />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-3)" }}>艾倫報報 · Allen I³ Aurora</span>
+          </div>
+          <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: 14.5, marginTop: 6 }}>{ep.show}{ep.show && ep.title ? " — " : ""}{ep.title}</div>
+          <div style={{ color: "var(--text-3)", fontSize: 11.5, marginTop: 2, fontFamily: "var(--font-mono)" }}>{[ep.date, ep.duration].filter(Boolean).join(" · ")}</div>
+        </div>
+        {/* 主體：線索欄＋筆記欄 */}
+        {rows.length ? (
+          <div>
+            <div style={{ display: "grid", gridTemplateColumns: "0.9fr 1.8fr", padding: "8px 18px", borderBottom: "1px solid var(--border)", fontSize: 11, letterSpacing: ".08em", fontWeight: 700, color: "var(--text-3)" }}>
+              <span>線索 CUES</span><span>筆記 NOTES</span>
+            </div>
+            {rows.map((r, i) => (
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "0.9fr 1.8fr", gap: 10, padding: "10px 18px", borderBottom: i < rows.length - 1 ? "1px solid var(--border-subtle, var(--border))" : "none", alignItems: "start" }}>
+                <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 13, color: `var(--${ep.tone || "insight"})`, lineHeight: 1.45 }}>{r.cue}</span>
+                <span style={{ color: "var(--text-2)", fontSize: 13, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{r.note}</span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        {/* 底部總結 */}
+        {summary ? (
+          <div style={{ padding: "12px 18px", borderTop: "1px solid var(--border)", background: "var(--night-850)" }}>
+            <div style={{ fontSize: 11, letterSpacing: ".08em", fontWeight: 700, color: "var(--text-3)", marginBottom: 6 }}>總結 SUMMARY</div>
+            <div style={{ color: "var(--text-1)", fontSize: 13, lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{summary}</div>
+          </div>
+        ) : null}
+      </Card>
+    );
+  }
+
+  /* 最新一集節目卡：繁中摘要，並可展開康乃爾筆記圖卡。 */
+  function LatestPodcastNote() {
+    const I = window.Icons;
+    const ep = React.useMemo(latestPodcastEpisode, []);
+    const [openCard, setOpenCard] = React.useState(false);
+    if (!ep) return null;
+    const hasCornell = !!(ep.cornell && ((Array.isArray(ep.cornell.rows) && ep.cornell.rows.length) || ep.cornell.summary));
+    return (
+      <div>
+        <SectionHeader kicker="PODCAST · 最新一集" title="本集重點摘要" style={{ marginBottom: "var(--space-4)" }} />
+        <Card accent={ep.tone || "insight"} padding="var(--space-5)">
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+            <span style={{ width: 40, height: 40, flex: "none", borderRadius: 12, background: `var(--${ep.tone || "insight"}-soft)`, color: `var(--${ep.tone || "insight"})`, display: "grid", placeItems: "center" }}><I.headphones size={20} /></span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <Badge tone={ep.tone || "insight"}>{ep.show || "Podcast"}</Badge>
+                <span style={{ color: "var(--text-3)", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>{[ep.date, ep.duration].filter(Boolean).join(" · ")}</span>
+              </div>
+              <div style={{ color: "var(--text-1)", fontWeight: 800, fontFamily: "var(--font-display)", fontSize: 15, marginTop: 4, lineHeight: 1.3 }}>{ep.title}</div>
+            </div>
+          </div>
+          {ep.summary ? (
+            <p style={{ color: "var(--text-2)", fontSize: 13.5, lineHeight: 1.7, margin: "0 0 12px", whiteSpace: "pre-wrap" }}>{ep.summary}</p>
+          ) : null}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {hasCornell ? (
+              <Button variant="secondary" size="sm" icon={<I.book size={15} />} onClick={() => setOpenCard((v) => !v)}>
+                {openCard ? "收合筆記圖卡" : "康乃爾筆記圖卡"}
+              </Button>
+            ) : null}
+            {ep.url ? (
+              <Button variant="ghost" size="sm" iconRight={<I.ext size={14} />} onClick={() => window.open(ep.url, "_blank", "noopener,noreferrer")}>前往收聽</Button>
+            ) : null}
+          </div>
+        </Card>
+        {openCard && hasCornell ? <div style={{ marginTop: 10 }}><CornellCard ep={ep} /></div> : null}
+      </div>
+    );
+  }
+
   /* 以官方 iframe 嵌入我的 Google 行事曆（AGENDA 模式、台北時區）。 */
   function CalendarPanel() {
     const I = window.Icons;
@@ -659,8 +754,9 @@
             </Card>
           </div>
 
-          {/* Right: podcasts, links, annuli mini */}
+          {/* Right: latest episode note, podcasts, links, annuli mini */}
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
+            <LatestPodcastNote />
             <div>
               <SectionHeader kicker="INTELLIGENCE · 智慧" title="常聽 Podcast" style={{ marginBottom: "var(--space-4)" }} />
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
