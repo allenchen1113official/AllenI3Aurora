@@ -476,6 +476,30 @@ function WealthPanel() {
 const NL_NAV = "__newsletter";
 const NL_KINDS = ["日報", "週報", "月報", "特刊"];
 
+/* 發布狀態（無 pubStatus 的舊文件視為已發布；前台由 aurora-data.js 依此過濾） */
+const PUB_META = {
+  draft:     { label: "草稿",   color: "var(--text-3)",       bg: "var(--night-700)" },
+  scheduled: { label: "已排程", color: "var(--illumination)", bg: "var(--illumination-soft)" },
+  published: { label: "已發布", color: "var(--success)",      bg: "var(--insight-soft)" },
+};
+const pubStatusOf = (r) => (r && r.pubStatus) || "published";
+function PubBadge({ status, small }) {
+  const m = PUB_META[status] || PUB_META.published;
+  return (
+    <span style={{ padding: small ? "2px 9px" : "3px 10px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800,
+      background: m.bg, color: m.color, border: "1px solid var(--border)" }}>{m.label}</span>
+  );
+}
+/* datetime-local ↔ ISO（皆以瀏覽器本地時區） */
+function isoToLocalInput(iso) {
+  const t = Date.parse(iso || "");
+  if (!isFinite(t)) return "";
+  const d = new Date(t), p = (n) => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + "T" + p(d.getHours()) + ":" + p(d.getMinutes());
+}
+function localInputToIso(v) { const t = Date.parse(v || ""); return isFinite(t) ? new Date(t).toISOString() : ""; }
+const fmtLocal = (iso) => { const s = isoToLocalInput(iso); return s ? s.replace("T", " ") : "—"; };
+
 /* 各內文區塊型別與可編欄位（與前台 Block 對應） */
 const NL_BLOCKS = {
   rule:    { label: "分隔線／小標", fields: [{ k: "label", t: "text", ph: "例：INSIGHT · 洞察" }] },
@@ -640,7 +664,8 @@ function NLPreview({ issue }) {
 function blankIssue(maxSort) {
   return { __new: true, sort: (maxSort || 0) + 1, no: "", kind: "週報", date: "", tone: "insight",
     title: "", subtitle: "", cover: "", coverCaption: "", author: "Allen Chen 主編", readMinutes: "", items: 0,
-    blocks: [], social: { facebook: "", instagram: "", hashtags: "" } };
+    blocks: [], social: { facebook: "", instagram: "", hashtags: "" },
+    pubStatus: "draft", publishAt: "", publishedAt: "" }; // 新內容一律從草稿開始
 }
 function NewsletterPanel() {
   const [list, setList] = useState(null);
@@ -649,6 +674,8 @@ function NewsletterPanel() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [toast, setToast] = useState("");
+  const [kindFilter, setKindFilter] = useState("全部");
+  const [pubAt, setPubAt] = useState(""); // 發布分頁的 datetime-local 值
 
   const load = useCallback(async () => {
     setErr("");
@@ -669,10 +696,12 @@ function NewsletterPanel() {
       readMinutes: r.readMinutes ?? "", items: r.items ?? 0,
       blocks: Array.isArray(r.blocks) ? JSON.parse(JSON.stringify(r.blocks)) : [],
       social: { facebook: (r.social && r.social.facebook) || "", instagram: (r.social && r.social.instagram) || "", hashtags: (r.social && r.social.hashtags) || "" },
+      pubStatus: pubStatusOf(r), publishAt: r.publishAt || "", publishedAt: r.publishedAt || "",
     });
+    setPubAt(isoToLocalInput(r.publishAt));
     setTab("content");
   };
-  const newIssue = () => { setSel(blankIssue(maxSort)); setTab("content"); };
+  const newIssue = () => { setSel(blankIssue(maxSort)); setPubAt(""); setTab("content"); };
   const setF = (k, v) => setSel((s) => ({ ...s, [k]: v }));
   const setSocial = (k, v) => setSel((s) => ({ ...s, social: { ...s.social, [k]: v } }));
 
@@ -681,15 +710,17 @@ function NewsletterPanel() {
   const moveBlock = (i, d) => setSel((s) => { const b = [...s.blocks]; const j = i + d; if (j < 0 || j >= b.length) return s; const t = b[i]; b[i] = b[j]; b[j] = t; return { ...s, blocks: b }; });
   const delBlock = (i) => setSel((s) => ({ ...s, blocks: s.blocks.filter((_, x) => x !== i) }));
 
-  const save = async () => {
-    if (!sel) return;
+  /* 儲存；extra 供發布動作覆寫發布欄位，doneMsg 客製完成訊息 */
+  const save = async (extra, doneMsg) => {
+    if (!sel) return false;
     setBusy(true); setErr("");
     // table.rows 若仍是字串（未成合法 JSON）則擋下
     for (const b of sel.blocks || []) {
       if (b.t === "table" && b.rows != null && !Array.isArray(b.rows)) {
-        setErr("有一個「行情小表格」的 rows 不是合法 JSON，請修正後再儲存。"); setBusy(false); setTab("content"); return;
+        setErr("有一個「行情小表格」的 rows 不是合法 JSON，請修正後再儲存。"); setBusy(false); setTab("content"); return false;
       }
     }
+    const pub = { pubStatus: sel.pubStatus || "published", publishAt: sel.publishAt || "", publishedAt: sel.publishedAt || "", ...(extra || {}) };
     const payload = {
       sort: Number(sel.sort) || 0, no: sel.no, kind: sel.kind, tone: sel.tone, date: sel.date,
       title: sel.title, subtitle: sel.subtitle, cover: sel.cover, coverCaption: sel.coverCaption,
@@ -697,15 +728,32 @@ function NewsletterPanel() {
       items: Number(sel.items) || 0,
       blocks: (sel.blocks || []).map((b) => b.t === "table" ? { ...b, head: normHead(b.head) } : b),
       social: { facebook: sel.social.facebook || "", instagram: sel.social.instagram || "", hashtags: sel.social.hashtags || "" },
+      ...pub,
       updatedAt: new Date().toISOString(),
     };
     try {
-      if (sel.__new) { const ref = await db.collection("aurora_issues").add(payload); setSel((s) => ({ ...s, __new: false, id: ref.id })); }
-      else await db.collection("aurora_issues").doc(sel.id).update(payload);
+      if (sel.__new) { const ref = await db.collection("aurora_issues").add(payload); setSel((s) => ({ ...s, __new: false, id: ref.id, ...pub })); }
+      else { await db.collection("aurora_issues").doc(sel.id).update(payload); setSel((s) => ({ ...s, ...pub })); }
       await load();
-      setToast("已儲存 ✓ 前台重新整理即可看到最新內容"); setTimeout(() => setToast(""), 3000);
-    } catch (ex) { setErr("儲存失敗：" + errText(ex)); }
-    setBusy(false);
+      setToast(doneMsg || "已儲存 ✓ 前台重新整理即可看到最新內容"); setTimeout(() => setToast(""), 3600);
+      setBusy(false); return true;
+    } catch (ex) { setErr("儲存失敗：" + errText(ex)); setBusy(false); return false; }
+  };
+
+  /* 發布動作（皆會連同目前編輯內容一併儲存） */
+  const publishNow = async () => {
+    if (!window.confirm("確認發布「" + (sel.title || "第 " + sel.no + " 期") + "」？發布後前台立即可見。")) return;
+    await save({ pubStatus: "published", publishedAt: new Date().toISOString(), publishAt: "" }, "已發布 ✓ 前台重新整理即可看到本期內容");
+  };
+  const schedulePublish = async (localVal) => {
+    const iso = localInputToIso(localVal);
+    if (!iso) { setErr("請先選擇預計發布時間。"); return; }
+    if (Date.parse(iso) <= Date.now()) { setErr("預計發布時間需晚於現在；若要立即發布請按「確認發布」。"); return; }
+    await save({ pubStatus: "scheduled", publishAt: iso, publishedAt: "" }, "已排程 ✓ 前台將於 " + fmtLocal(iso) + " 起自動顯示本期");
+  };
+  const revertDraft = async () => {
+    if (!window.confirm("將本期退回草稿？前台將不再顯示。")) return;
+    await save({ pubStatus: "draft", publishAt: "" }, "已退回草稿，前台不再顯示本期");
   };
   const removeIssue = async () => {
     if (!sel || sel.__new) { setSel(null); return; }
@@ -733,21 +781,37 @@ function NewsletterPanel() {
           <button className="ad-btn primary" onClick={newIssue}>＋ 新增一期電子報</button>
         </div>
         {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+        <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
+          {["全部", ...NL_KINDS].map((k) => (
+            <button key={k} className="ad-btn ghost" onClick={() => setKindFilter(k)}
+              style={{ padding: "6px 12px", fontSize: 12.5,
+                borderColor: kindFilter === k ? "var(--border-aurora)" : "var(--border)",
+                background: kindFilter === k ? "var(--brand-soft)" : "transparent",
+                color: kindFilter === k ? "var(--text-1)" : "var(--text-4)" }}>
+              {k}{k !== "全部" ? `（${(list || []).filter((r) => r.kind === k).length}）` : ""}
+            </button>
+          ))}
+        </div>
         {list == null ? <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>
           : list.length === 0 ? <div style={{ color: "var(--text-3)", padding: 20 }}>尚無電子報，點右上角「新增一期電子報」開始。</div>
           : (
             <div style={{ display: "grid", gap: 10 }}>
-              {list.map((r) => (
+              {list.filter((r) => kindFilter === "全部" || r.kind === kindFilter).map((r) => {
+                const st = pubStatusOf(r);
+                return (
                 <button key={r.id} onClick={() => openIssue(r)} style={{ textAlign: "left", cursor: "pointer", background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
                     <span style={{ padding: "2px 9px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800, background: "var(--night-700)", color: "var(--text-2)" }}>{r.kind || "—"}</span>
+                    <PubBadge status={st} small />
+                    {st === "scheduled" ? <span style={{ color: "var(--illumination)", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>⏰ {fmtLocal(r.publishAt)}</span> : null}
                     <span style={{ color: "var(--text-3)", fontSize: 12, fontFamily: "var(--font-mono)" }}>第 {r.no ?? "—"} 期 · {r.date || "—"}</span>
                     {Array.isArray(r.blocks) && r.blocks.length ? <span style={{ color: "var(--success)", fontSize: 11.5 }}>● 已編內文（{r.blocks.length} 塊）</span> : <span style={{ color: "var(--text-4)", fontSize: 11.5 }}>○ 尚未編內文</span>}
                     {r.social && (r.social.facebook || r.social.instagram) ? <span style={{ color: "var(--intelligence)", fontSize: 11.5 }}>◆ 已備社群貼文</span> : null}
                   </div>
                   <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: 16 }}>{r.title || "（未命名）"}</div>
                 </button>
-              ))}
+                );
+              })}
             </div>
           )}
       </div>
@@ -766,7 +830,8 @@ function NewsletterPanel() {
           </div>
         </div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <button className="ad-btn primary" onClick={save} disabled={busy}>{busy ? "儲存中…" : "儲存"}</button>
+          <PubBadge status={sel.pubStatus || "published"} />
+          <button className="ad-btn primary" onClick={() => save()} disabled={busy}>{busy ? "儲存中…" : "儲存"}</button>
           <button className="ad-btn danger" onClick={removeIssue} disabled={busy}>{sel.__new ? "取消" : "刪除整期"}</button>
         </div>
       </div>
@@ -777,6 +842,7 @@ function NewsletterPanel() {
         {tabBtn("content", "內文編輯")}
         {tabBtn("social", "Facebook / IG 貼文")}
         {tabBtn("preview", "檢視成果 · 分享")}
+        {tabBtn("publish", "發布" + (sel.pubStatus === "draft" ? " ○" : sel.pubStatus === "scheduled" ? " ⏰" : " ●"))}
       </div>
 
       {tab === "content" && (
@@ -838,6 +904,66 @@ function NewsletterPanel() {
         </div>
       )}
 
+      {tab === "publish" && (
+        <div>
+          <div style={box}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 10 }}>
+              <span style={{ color: "var(--text-3)", fontSize: 13 }}>目前狀態</span>
+              <PubBadge status={sel.pubStatus || "published"} />
+              {sel.pubStatus === "scheduled" && sel.publishAt ? (
+                <span style={{ color: "var(--illumination)", fontSize: 13, fontFamily: "var(--font-mono)" }}>
+                  ⏰ 預計 {fmtLocal(sel.publishAt)} 發布{Date.parse(sel.publishAt) <= Date.now() ? "（時間已到，前台已可見）" : ""}
+                </span>
+              ) : null}
+              {sel.pubStatus === "published" && sel.publishedAt ? (
+                <span style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>發布於 {fmtLocal(sel.publishedAt)}</span>
+              ) : null}
+            </div>
+            <p style={{ color: "var(--text-2)", fontSize: 13, lineHeight: 1.7, margin: 0 }}>
+              {sel.pubStatus === "draft"
+                ? "本期為草稿，前台不會顯示。建議先在「檢視成果」分頁確認內容，再於下方發布或排程。"
+                : sel.pubStatus === "scheduled"
+                ? "本期已排程；前台會在預計時間起自動顯示（讀者載入頁面時依時間判斷，無需伺服器）。"
+                : "本期已發布，前台可見。可隨時退回草稿下架。"}
+            </p>
+          </div>
+
+          {sel.pubStatus !== "published" && (
+            <div style={box}>
+              <div style={{ fontWeight: 800, color: "var(--text-1)", fontFamily: "var(--font-display)", marginBottom: 10 }}>立即發布</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <button className="ad-btn primary" onClick={publishNow} disabled={busy}>✓ 確認發布</button>
+                <span style={{ color: "var(--text-4)", fontSize: 12.5 }}>發布會連同目前編輯內容一併儲存，前台立即可見。</span>
+              </div>
+            </div>
+          )}
+
+          <div style={box}>
+            <div style={{ fontWeight: 800, color: "var(--text-1)", fontFamily: "var(--font-display)", marginBottom: 10 }}>排程發布（訂定預計發布時間）</div>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 10, flexWrap: "wrap" }}>
+              <div>
+                <label className="ad-lbl">預計發布時間（你的當地時區）</label>
+                <input className="ad-in" type="datetime-local" value={pubAt} onChange={(e) => { setPubAt(e.target.value); setErr(""); }} style={{ width: "auto" }} />
+              </div>
+              <button className="ad-btn primary" onClick={() => schedulePublish(pubAt)} disabled={busy}>⏰ 排程發布</button>
+              {sel.pubStatus === "scheduled" ? (
+                <button className="ad-btn ghost" onClick={revertDraft} disabled={busy}>取消排程（退回草稿）</button>
+              ) : null}
+            </div>
+          </div>
+
+          {sel.pubStatus === "published" && (
+            <div style={box}>
+              <div style={{ fontWeight: 800, color: "var(--text-1)", fontFamily: "var(--font-display)", marginBottom: 10 }}>下架</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <button className="ad-btn danger" onClick={revertDraft} disabled={busy}>退回草稿（前台下架）</button>
+                <span style={{ color: "var(--text-4)", fontSize: 12.5 }}>內容不會刪除，可再次編修後重新發布。</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {tab === "preview" && (
         <div>
           <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap", alignItems: "center" }}>
@@ -847,7 +973,11 @@ function NewsletterPanel() {
             <button className="ad-btn ghost" onClick={() => nlCopy(nlInstagramText(sel), "已複製 IG 貼文", setToast)}>複製 IG 貼文</button>
             <a className="ad-btn ghost" href={nlIssueUrl(sel)} target="_blank" rel="noopener">在新視窗開啟前台頁面 ↗</a>
           </div>
-          <div style={{ color: "var(--text-4)", fontSize: 11.5, marginBottom: 14, wordBreak: "break-all" }}>分享連結：{nlIssueUrl(sel)}（需先「儲存」，前台才會顯示最新內容）</div>
+          <div style={{ color: "var(--text-4)", fontSize: 11.5, marginBottom: 14, wordBreak: "break-all" }}>
+            分享連結：{nlIssueUrl(sel)}（需先「儲存」，前台才會顯示最新內容）
+            {sel.pubStatus === "draft" ? <span style={{ color: "var(--illumination)" }}>　⚠ 本期仍是草稿，前台看不到；請到「發布」分頁確認發布或排程。</span>
+              : sel.pubStatus === "scheduled" && Date.parse(sel.publishAt || "") > Date.now() ? <span style={{ color: "var(--illumination)" }}>　⏰ 本期已排程，前台將於 {fmtLocal(sel.publishAt)} 起顯示。</span> : null}
+          </div>
           <div style={{ background: "var(--night-850)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "28px 22px" }}>
             <NLPreview issue={sel} />
           </div>

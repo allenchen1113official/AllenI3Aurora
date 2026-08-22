@@ -100,7 +100,7 @@ window.FIREBASE_CONFIG = {
 | `aurora_reading` | 待讀清單 | `sort, title, src, pct` |
 | `aurora_podcasts` | Podcast | `sort, title, meta, tone` |
 | `aurora_links` | 快速連結 | `sort, label, icon` |
-| `aurora_issues` | 歷期報報 | `sort, no, kind, date, tone, title, items, cover` |
+| `aurora_issues` | 歷期報報 | `sort, no, kind, date, tone, title, items, cover`；發布流程欄位 `pubStatus`（draft/scheduled/published，缺值視為已發布）、`publishAt`（預計發布時間）、`publishedAt` |
 | `aurora_annuli` | 個人年輪 | `sort, year, tone, title, body` |
 
 另有 **電子報訂閱者** collection（非 `sort` 排序、不公開讀）：
