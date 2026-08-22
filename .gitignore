@@ -6,3 +6,7 @@ package-lock.json
 # OS / editor cruft
 .DS_Store
 *.log
+
+# Python bytecode (scripts/podcast/transcribe.py)
+__pycache__/
+*.pyc
