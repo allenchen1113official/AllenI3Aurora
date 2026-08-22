@@ -10,3 +10,6 @@ package-lock.json
 # Python bytecode (scripts/podcast/transcribe.py)
 __pycache__/
 *.pyc
+
+# 社群圖卡渲染器自動下載的字型快取（scripts/podcast/render_social_card.py）
+scripts/podcast/.fonts/

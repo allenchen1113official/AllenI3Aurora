@@ -10,4 +10,4 @@
 - 純前端靜態網站（GitHub Pages），React 透過瀏覽器端 Babel standalone 載入，無建置步驟、無後端。
 - 資料層：Firestore（`aurora-data.js`）覆蓋 `kit.jsx` 內建預設；讀取失敗則保留內建值。
 - 首頁 TAIEX 加權指數：盤中經證交所 MIS 即時 API（`tse_t00.tw`，透過 CORS 代理），非交易時段用證交所 OpenAPI 收盤；見 `ui_kits/aurora/Dashboard.jsx`。
-- Podcast 節目系統：本機 Whisper 轉錄（`scripts/podcast/transcribe.py`）→ 後台「Podcast 節目」編修逐字稿／繁中摘要／康乃爾筆記（`aurora_podcast_episodes`）→ 前台首頁顯示最新一集摘要與筆記圖卡；SOP 見 `docs/PODCAST_WHISPER_SOP.md`。
+- Podcast 節目系統：本機 Whisper 轉錄（`scripts/podcast/transcribe.py`）→ 後台「Podcast 節目」編修逐字稿／繁中摘要／康乃爾筆記（`aurora_podcast_episodes`）→ 前台首頁顯示最新一集摘要與筆記圖卡；康乃爾筆記可輸出 FB/IG 社群圖檔（`scripts/podcast/render_social_card.py`，比照熱力圖圖卡附品牌鎖定）；SOP 見 `docs/PODCAST_WHISPER_SOP.md`。

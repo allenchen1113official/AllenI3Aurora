@@ -16,6 +16,10 @@ Podcast 音檔高效轉為準確的**繁體中文逐字稿**，於後台編修**
 後台 /admin →「Podcast 節目」→ 新增一集 → 貼上逐字稿／摘要／筆記 → 發布
   ▼
 前台首頁「本集重點摘要」：最新一集繁中摘要 ＋ 康乃爾筆記圖卡
+  │ （選配）後台「預覽筆記圖卡」→ 匯出本集 JSON
+  ▼
+python scripts/podcast/render_social_card.py --episode 本集.json
+  → FB（1200×630）／IG（1080×1080）社群圖檔（assets/podcast/）
 ```
 
 ## 1. 本機環境安裝（一次性）
@@ -79,7 +83,28 @@ CPU 機器建議加 `--compute-type int8` 提速；有 NVIDIA GPU 用 `--device 
 5. 「預覽筆記圖卡」確認一頁康乃爾圖卡版面 → 右上「**✓ 發布**」。
    （草稿不會出現在前台；可隨時「退回草稿」下架。）
 
-## 5. 前台顯示規則
+## 5. 社群圖卡（FB／IG，比照台股熱力圖圖卡）
+
+把該集康乃爾筆記輸出為可直接發社群的圖檔（深色極光風、右下角「艾倫報報
+ALLEN I³ AURORA」品牌圖卡，與熱力圖圖卡同一組品牌鎖定版式）：
+
+```bash
+pip install pillow                                     # 一次性
+python scripts/podcast/render_social_card.py           # 內建示範集，試跑驗版面
+python scripts/podcast/render_social_card.py --episode ep123.json
+python scripts/podcast/render_social_card.py --episode ep123.json --stem ep123
+```
+
+- 輸出：`assets/podcast/{stem}-fb.png`（1200×630）與 `{stem}-ig.png`（1080×1080），
+  預設 stem 為 `podcast-cornell`。
+- `--episode` 的 JSON 由後台「預覽筆記圖卡」分頁的「**⬇ 匯出本集 JSON**」下載，
+  欄位與後台一致（`show/title/date/duration/tone/summary/cornell`）。
+- 中文字型自動尋找系統 Noto Sans CJK／PingFang／文泉驛；都沒有時自動從
+  fonts.gstatic.com 下載 Noto Sans TC 到 `scripts/podcast/.fonts/`（不進版控）。
+- 版面自動處理：CJK 逐字換行（含避頭點）、超長筆記省略、列數超出以
+  「…及另外 N 個重點」註記、內容偏少時自動均分行距。
+
+## 6. 前台顯示規則
 
 - 資料存於 Firestore `aurora_podcast_episodes`（公開讀、僅管理者寫；
   規則見 `firebase/firestore.rules`，需重新發布規則一次）。
