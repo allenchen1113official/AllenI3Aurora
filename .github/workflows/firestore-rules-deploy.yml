@@ -1,0 +1,48 @@
+name: 部署 Firestore 安全規則
+
+# firebase/firestore.rules 合併進 main 時，自動部署到 Firebase 專案 alleni3aurora；
+# 也可在 Actions 頁面手動觸發（Run workflow）。
+# 需在 Repo Settings → Secrets and variables → Actions 設定：
+#   FIREBASE_SERVICE_ACCOUNT  （Google 服務帳戶金鑰 JSON 全文；
+#     須在 GCP 專案 alleni3aurora 內建立，並授予「Firebase Rules Admin」角色，
+#     設定步驟見 firebase/SETUP_SOP.md「方式 C」）
+# 未設定 Secret 時此 workflow 會失敗並提示，不影響其他 workflow。
+on:
+  push:
+    branches: [main]
+    paths:
+      - "firebase/firestore.rules"
+      - ".github/workflows/firestore-rules-deploy.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: firestore-rules-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 檢查 Secret 是否已設定
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [[ -z "$FIREBASE_SERVICE_ACCOUNT" ]]; then
+            echo "::error::未設定 FIREBASE_SERVICE_ACCOUNT Secret。請依 firebase/SETUP_SOP.md「方式 C」建立服務帳戶金鑰並加入 Repo Secrets 後重跑。"
+            exit 1
+          fi
+      - name: 部署規則到 alleni3aurora
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase-sa.json"
+          npx --yes firebase-tools deploy --only firestore:rules --project alleni3aurora --non-interactive --force
+          rm -f "$RUNNER_TEMP/firebase-sa.json"
