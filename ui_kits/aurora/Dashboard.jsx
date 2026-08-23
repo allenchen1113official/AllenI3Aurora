@@ -813,7 +813,12 @@
             <Card accent="intelligence" padding="var(--space-5)">
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                 <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: "var(--text-lg)" }}>個人年輪</div>
-                <Badge tone="intelligence">51 圈</Badge>
+                <Badge tone="intelligence">{(() => {
+                  const A = window.ANNULI || {};
+                  if (A.range) return `${A.range.end - A.range.start + 1} 圈`;
+                  const ys = (K.annuli || []).map((a) => parseInt(a.year, 10)).filter((y) => isFinite(y));
+                  return ys.length ? `${Math.max(...ys) - Math.min(...ys) + 1} 圈` : "51 圈";
+                })()}</Badge>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {K.annuli.slice(-3).reverse().map((a, i) => (

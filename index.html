@@ -18,6 +18,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="/AllenI3Aurora/firebase-config.js"></script>
 <script src="/AllenI3Aurora/aurora-data.js"></script>
+<script src="/AllenI3Aurora/annuli-live.js"></script>
 <style>
   html, body { height: 100%; }
   body { margin: 0; overflow: hidden; }
@@ -66,7 +67,12 @@ function App() {
     dashboard: { title: "儀表板", sub: window.KIT.brand.tagline, C: window.Dashboard },
     issue:     { title: "本期報報", sub: issueSub(), C: window.NewsletterIssue },
     archive:   { title: "歷期彙整", sub: "日報 · 週報 · 月報", C: window.Archive },
-    timeline:  { title: "個人年輪", sub: "1975 → 2026", C: window.Timeline },
+    timeline:  { title: "個人年輪", sub: (() => {
+      const A = window.ANNULI || {};
+      if (A.range) return `${A.range.start} → ${A.range.end}`;
+      const ys = ((window.KIT && window.KIT.annuli) || []).map((a) => parseInt(a.year, 10)).filter((y) => isFinite(y));
+      return ys.length ? `${Math.min(...ys)} → ${Math.max(...ys)}` : "1975 → 2026";
+    })(), C: window.Timeline },
     subscribe: { title: "訂閱管理", sub: "選擇你的閱讀節奏", C: window.Subscribe },
   }[screen];
   const Screen = meta.C;
@@ -84,6 +90,7 @@ function App() {
 async function boot() {
   if (!window.Dashboard || !window.Subscribe || !window.Sidebar) { return setTimeout(boot, 40); }
   try { const d = window.AURORA && await window.AURORA.ready; if (d) Object.assign(window.KIT, d); } catch (e) { /* fall back to built-in data */ }
+  try { const a = window.ANNULI && await window.ANNULI.ready; if (a && a.annuli && a.annuli.length) window.KIT.annuli = a.annuli; } catch (e) { /* 保留現有年輪資料 */ }
   ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 }
 boot();
