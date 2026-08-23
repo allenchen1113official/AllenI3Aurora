@@ -138,6 +138,22 @@ firebase login
 firebase deploy --only firestore:rules
 ```
 
+**方式 C — GitHub Actions 自動部署（一次設定，之後全自動）**
+
+`.github/workflows/firestore-rules-deploy.yml` 會在 `firebase/firestore.rules` 合併進 `main` 時
+自動部署，也可在 Actions 頁面手動觸發。只需一次性設定 Secret：
+
+1. [Google Cloud Console](https://console.cloud.google.com/) → 頂端專案選單切到 **alleni3aurora**
+   （注意：是 Firebase 的專案，**不是** `alleni3aurora-drive`；Drive 那把金鑰沒有部署權限）。
+2. **IAM 與管理 → 服務帳戶 → 建立服務帳戶**，名稱例如 `rules-deployer`。
+3. 角色授予 **Firebase Rules Admin**（`roles/firebaserules.admin`）→ 完成。
+4. 點該服務帳戶 → **金鑰(KEYS) → 新增金鑰 → JSON**，下載金鑰檔。
+5. GitHub Repo → **Settings → Secrets and variables → Actions → New repository secret**：
+   - Name：`FIREBASE_SERVICE_ACCOUNT`（一字不差）
+   - Secret：貼上金鑰 JSON 全文。
+6. Repo → **Actions → 部署 Firestore 安全規則 → Run workflow**，跑一次確認綠燈；
+   之後規則有變更合併進 `main` 就會自動部署，不需再手動處理。
+
 > ⚠️ **這一步不可省略。** 在 Firestore 建立資料庫時選「正式版 / Production mode」，其預設規則會**拒絕所有讀寫**；
 > 未把本專案規則發布上去，後台任何寫入都會出現 **Missing or insufficient permissions**。
 
