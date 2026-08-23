@@ -30,8 +30,11 @@ service cloud.firestore {
     match /aurora_podcast_episodes/{doc} { allow read: if true; allow write: if isOwner(); }
 
     // 電子報訂閱者：任何人可「建立」訂閱（嚴格欄位驗證），
-    // 讀取／修改／刪除僅限管理者 —— email 名單不可被外部讀走。
-    // doc id 即 email 小寫，同一 email 重複訂閱會因 update 被拒而擋下。
+    // 也可「自助更新」自己的訂閱（退訂／復訂／調整節奏，見 selfServiceValid）——
+    // 但僅能變更 status / cadence / updatedAt，email、createdAt 等其餘欄位鎖死；
+    // 讀取／刪除僅限管理者 —— email 名單不可被外部讀走。
+    // doc id 即 email 小寫；前台重複訂閱時 set 會被視為 update，
+    // 由前台改走自助更新完成節奏調整或復訂。
     match /aurora_subscribers/{email} {
       function subValid() {
         let d = request.resource.data;
@@ -51,8 +54,23 @@ service cloud.firestore {
           && d.createdAt is string && d.createdAt.size() <= 40
           && d.updatedAt is string && d.updatedAt.size() <= 40;
       }
+      // 自助管理（未登入即可）：只允許動 status / cadence / updatedAt，
+      // status 僅能是 active（復訂／調整節奏）或 unsubscribed（退訂）；
+      // 復訂時至少需保留一種節奏，退訂則不限。
+      function selfServiceValid() {
+        let d = request.resource.data;
+        return d.diff(resource.data).affectedKeys().hasOnly(['status', 'cadence', 'updatedAt'])
+          && d.status in ['active', 'unsubscribed']
+          && d.cadence is map
+          && d.cadence.keys().hasOnly(['day', 'week', 'month'])
+          && d.cadence.keys().hasAll(['day', 'week', 'month'])
+          && d.cadence.day is bool && d.cadence.week is bool && d.cadence.month is bool
+          && (d.status == 'unsubscribed' || d.cadence.day || d.cadence.week || d.cadence.month)
+          && d.updatedAt is string && d.updatedAt.size() <= 40;
+      }
       allow create: if isOwner() || subValid();
-      allow read, update, delete: if isOwner();
+      allow update: if isOwner() || selfServiceValid();
+      allow read, delete: if isOwner();
     }
   }
 }

@@ -11,7 +11,7 @@ between the five surfaces. Fully responsive (sidebar collapses to a drawer under
 | `NewsletterIssue.jsx` | 本期報報 — editorial reading view | Centered masthead, cover image, 洞察/理財/啟發 sections, mini stock table (紅漲綠跌), pull-quote, footer CTA. |
 | `Archive.jsx` | 歷期彙整 — past issues | Cadence tabs (全部/日報/週報/月報), year filter chips, cover-card grid. |
 | `Timeline.jsx` | 個人年輪 — life timeline | Aurora-spine vertical timeline, ring stat band, 1975→2026 milestones. |
-| `Subscribe.jsx` | 訂閱管理 — landing + signup | Hero, three cadence cards with toggles, email capture with success state. |
+| `Subscribe.jsx` | 訂閱管理 — landing + signup + self-unsubscribe | Hero, three cadence cards with toggles, email capture with success state, collapsible self-service unsubscribe form. |
 | `kit.jsx` | shared shell | Icon set (`window.Icons`), mock data (`window.KIT`), `Sidebar`, `Topbar`. |
 
 ## How it's wired
