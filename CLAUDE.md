@@ -16,7 +16,23 @@
 - **鐵則**：超過約 5KB 的二進位絕不用 base64 經 `create_file` 上傳（助手輸出高熵字串必漂移損毀）；每次上傳後必比對回傳 `fileSize` 與本機位元組數，完全一致才算完成。
 - **圖檔（PNG 圖卡等）**：依 `gdrive-image-backup-without-base64` skill 路徑 A——以純文字 HTML 重繪視覺後用 `textContent` 上傳（`text/html`＋`disableConversionToGoogleType: true`）；PNG 原檔留在 repo／本機供實際發布，兩者互補。
 - **`.skill` 檔（zip）**：內容全為純文字 → 不傳 zip 本體，改「解壓逐檔」以 `textContent` 上傳（保留原檔名與對應 MIME），並附 `README_如何還原skill檔.md`（各檔大小對照表＋兩條還原路徑：`zip -r` 重組、或直接把資料夾放進 `~/.claude/skills/`）。
-- **資料夾慣例**：Drive `AllenI3Aurora/<主題>/<skill名>-skill/`，主題與既有結構對齊（實例：`podcast/podcast-cornell-card-skill/`、`finance/taiex-heatmap-skill/`）。
+- **資料夾慣例**：Drive `AllenI3Aurora/<主題>/<skill名>-skill/`，主題與既有結構對齊。每個 skill 資料夾的標準內容物：skill 逐檔備份＋`README_如何還原skill檔.md`＋測試檢視頁 HTML（`*_TestReview_日期.html`）＋（選配）示範產出的 HTML 重繪版。現況（2026-08-23）：
+
+  ```
+  AllenI3Aurora/（Drive）
+  ├── podcast/
+  │   ├── Podcast_CornellCard_Sample_2026-08-21.html      # 示範圖卡 HTML 重繪版
+  │   └── podcast-cornell-card-skill/
+  │       ├── SKILL.md · render_social_card.py · episode.sample.json
+  │       ├── README_如何還原skill檔.md
+  │       └── Podcast_CornellCard_Skill_TestReview_2026-08-23.html
+  └── finance/
+      └── taiex-heatmap-skill/
+          ├── SKILL.md · taiex_heatmap.py · taiex_data.py
+          │   · taiex_heatmap_bymarket.py · make_brand_asset.py · render_one.py
+          ├── README_如何還原skill檔.md
+          └── Taiex_Heatmap_Skill_TestReview_2026-08-23.html
+  ```
 
 ## 專案概要
 - 純前端靜態網站（GitHub Pages），React 透過瀏覽器端 Babel standalone 載入，無建置步驟、無後端。
