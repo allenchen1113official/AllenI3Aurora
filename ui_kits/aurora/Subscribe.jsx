@@ -23,26 +23,111 @@
   }
 
   /* 訂閱寫入 Firestore（aurora_subscribers，doc id = email 小寫）。
-     規則僅允許「建立」：同一 email 重複訂閱會變成 update 而被拒，
-     以 permission-denied 辨識「已訂閱過」。未設定 Firebase 時走預覽模式。 */
+     規則允許任何人「建立」；同一 email 已存在時 set 會被視為 update 而被拒，
+     此時改走「自助更新」（規則僅放行 status / cadence / updatedAt）
+     完成節奏調整或復訂。未設定 Firebase 時走預覽模式。 */
   const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
   async function submitSubscription(email, cadence) {
     const db = window.AURORA && window.AURORA.db;
     if (!db) return { ok: true, demo: true };
     const key = email.trim().toLowerCase();
     const now = new Date().toISOString();
+    const cad = { day: !!cadence.day, week: !!cadence.week, month: !!cadence.month };
     try {
       await db.collection("aurora_subscribers").doc(key).set({
-        email: key, cadence: { day: !!cadence.day, week: !!cadence.week, month: !!cadence.month },
+        email: key, cadence: cad,
         status: "active", consent: true, source: "web", createdAt: now, updatedAt: now,
       });
       return { ok: true };
     } catch (e) {
       if (e && e.code === "permission-denied") {
-        return { ok: false, msg: "這個 Email 已經訂閱過了！如需調整閱讀節奏或退訂，請直接回信給主編。" };
+        try {
+          await db.collection("aurora_subscribers").doc(key).update({ status: "active", cadence: cad, updatedAt: now });
+          return { ok: true, updated: true };
+        } catch {
+          return { ok: false, msg: "訂閱設定更新失敗，請稍後再試。若持續發生，歡迎直接來信告訴我。" };
+        }
       }
       return { ok: false, msg: "訂閱暫時失敗，請稍後再試。若持續發生，歡迎直接來信告訴我。" };
     }
+  }
+
+  /* 自助退訂：把 status 改為 unsubscribed（保留紀錄，重新訂閱即復訂）。
+     名單依然不可被外部讀取；查無此 email 時 Firestore 會拒絕 update。 */
+  async function submitUnsubscribe(email) {
+    const db = window.AURORA && window.AURORA.db;
+    if (!db) return { ok: true, demo: true };
+    const key = email.trim().toLowerCase();
+    try {
+      await db.collection("aurora_subscribers").doc(key).update({ status: "unsubscribed", updatedAt: new Date().toISOString() });
+      return { ok: true };
+    } catch (e) {
+      if (e && (e.code === "not-found" || e.code === "permission-denied")) {
+        return { ok: false, msg: "這個 Email 不在訂閱名單中，請確認拼字與大小寫是否正確。" };
+      }
+      return { ok: false, msg: "退訂暫時失敗，請稍後再試。若持續發生，歡迎直接來信告訴我。" };
+    }
+  }
+
+  /* 自助退訂區：收合式，展開後輸入 Email 即可退訂，不需經過主編。 */
+  function UnsubscribeBox() {
+    const I = window.Icons;
+    const [open, setOpen] = React.useState(false);
+    const [email, setEmail] = React.useState("");
+    const [busy, setBusy] = React.useState(false);
+    const [err, setErr] = React.useState("");
+    const [done, setDone] = React.useState(false);
+    const [demo, setDemo] = React.useState(false);
+
+    const unsubscribe = async () => {
+      const v = email.trim();
+      if (!EMAIL_RE.test(v)) { setErr("請輸入有效的 Email 地址。"); return; }
+      setBusy(true); setErr("");
+      const r = await submitUnsubscribe(v);
+      setBusy(false);
+      if (r.ok) { setDemo(!!r.demo); setDone(true); setEmail(""); }
+      else setErr(r.msg);
+    };
+
+    if (!open) {
+      return (
+        <div style={{ textAlign: "center", marginTop: "var(--space-6)" }}>
+          <button onClick={() => setOpen(true)}
+            style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: "var(--text-3)", fontSize: 13, fontFamily: "inherit", textDecoration: "underline", textUnderlineOffset: 3 }}>
+            想退訂？輸入 Email 即可自行取消訂閱
+          </button>
+        </div>
+      );
+    }
+    return (
+      <Card padding="var(--space-6)" style={{ marginTop: "var(--space-6)" }}>
+        {done ? (
+          <div style={{ textAlign: "center", padding: "var(--space-2) 0" }}>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "var(--text-lg)", color: "var(--text-1)" }}>已完成退訂</div>
+            <p style={{ color: "var(--text-3)", fontSize: 13.5, marginTop: 8, lineHeight: 1.6 }}>
+              {demo ? "（預覽模式：尚未連接資料庫，實際上線後將更新訂閱名單。）" : "你將不再收到電子報。隨時歡迎回來——重新訂閱即可恢復寄送。"}
+            </p>
+            <div style={{ marginTop: 14 }}><Button variant="secondary" size="sm" onClick={() => { setDone(false); setOpen(false); }}>關閉</Button></div>
+          </div>
+        ) : (
+          <div>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "var(--text-lg)", color: "var(--text-1)", marginBottom: 6 }}>退訂電子報</div>
+            <p style={{ color: "var(--text-3)", fontSize: 13.5, margin: "0 0 16px", lineHeight: 1.6 }}>
+              輸入訂閱時使用的 Email，即可自行完成退訂，不需等候人工處理；之後重新訂閱就會恢復寄送。
+            </p>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
+              <Input label="訂閱的 Email" icon={<I.mail size={17} />} placeholder="you@example.com" type="email"
+                value={email} onChange={(e) => { setEmail(e.target.value); setErr(""); }}
+                onKeyDown={(e) => { if (e.key === "Enter" && !busy) unsubscribe(); }}
+                style={{ flex: 1, minWidth: 240 }} />
+              <Button variant="secondary" disabled={busy} onClick={unsubscribe}>{busy ? "處理中…" : "確認退訂"}</Button>
+              <Button variant="ghost" onClick={() => { setOpen(false); setErr(""); }}>取消</Button>
+            </div>
+            {err ? <div style={{ color: "var(--danger)", fontSize: 13, marginTop: 12, lineHeight: 1.6 }}>{err}</div> : null}
+          </div>
+        )}
+      </Card>
+    );
   }
 
   function Subscribe() {
@@ -54,6 +139,7 @@
     const [busy, setBusy] = React.useState(false);
     const [err, setErr] = React.useState("");
     const [demo, setDemo] = React.useState(false);
+    const [updated, setUpdated] = React.useState(false);
 
     const subscribe = async () => {
       const v = email.trim();
@@ -63,7 +149,7 @@
       setBusy(true); setErr("");
       const r = await submitSubscription(v, state);
       setBusy(false);
-      if (r.ok) { setDemo(!!r.demo); setDone(true); setEmail(""); }
+      if (r.ok) { setDemo(!!r.demo); setUpdated(!!r.updated); setDone(true); setEmail(""); }
       else setErr(r.msg);
     };
     return (
@@ -107,8 +193,8 @@
             {done ? (
               <div style={{ textAlign: "center", padding: "var(--space-6) 0" }}>
                 <div style={{ width: 64, height: 64, margin: "0 auto 16px", borderRadius: 99, background: "var(--insight-soft)", color: "var(--insight)", display: "grid", placeItems: "center" }}><I.check size={34} /></div>
-                <div style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "var(--text-2xl)", color: "var(--text-1)" }}>訂閱成功 🎉</div>
-                <p style={{ color: "var(--text-3)", marginTop: 8 }}>{demo ? "（預覽模式：尚未連接資料庫，實際上線後將寫入訂閱名單。）" : "已加入訂閱名單，選定的節奏將依排程送達你的信箱。"}</p>
+                <div style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "var(--text-2xl)", color: "var(--text-1)" }}>{updated ? "訂閱設定已更新 🎉" : "訂閱成功 🎉"}</div>
+                <p style={{ color: "var(--text-3)", marginTop: 8 }}>{demo ? "（預覽模式：尚未連接資料庫，實際上線後將寫入訂閱名單。）" : updated ? "已依最新選擇更新你的閱讀節奏；若先前退訂過，也已一併恢復寄送。" : "已加入訂閱名單，選定的節奏將依排程送達你的信箱。"}</p>
                 <div style={{ marginTop: 18 }}><Button variant="secondary" onClick={() => setDone(false)}>返回</Button></div>
               </div>
             ) : (
@@ -130,6 +216,9 @@
               </div>
             )}
           </Card>
+
+          {/* 自助退訂 */}
+          <UnsubscribeBox />
         </div>
       </div>
     );
