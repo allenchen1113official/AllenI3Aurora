@@ -12,6 +12,12 @@
 3. **檢視**：測試結果整理成 eval workspace（`iteration-N/eval-X/with_skill/outputs/`＋`eval_metadata.json` 斷言），用 skill-creator 的 `eval-viewer/generate_review.py --static` 產靜態檢視頁交給使用者過目；有 feedback 就迭代。
 4. **封裝交付**：`python -m scripts.package_skill <skill目錄>`（於 skill-creator 目錄下執行；`.skill` 會產在該處，記得搬走、排除 `__pycache__`），以檔案卡片附給使用者按「Save skill」安裝。
 
+## Skill 與二進位產出備份到 Google Drive（照此做，已驗證兩次）
+- **鐵則**：超過約 5KB 的二進位絕不用 base64 經 `create_file` 上傳（助手輸出高熵字串必漂移損毀）；每次上傳後必比對回傳 `fileSize` 與本機位元組數，完全一致才算完成。
+- **圖檔（PNG 圖卡等）**：依 `gdrive-image-backup-without-base64` skill 路徑 A——以純文字 HTML 重繪視覺後用 `textContent` 上傳（`text/html`＋`disableConversionToGoogleType: true`）；PNG 原檔留在 repo／本機供實際發布，兩者互補。
+- **`.skill` 檔（zip）**：內容全為純文字 → 不傳 zip 本體，改「解壓逐檔」以 `textContent` 上傳（保留原檔名與對應 MIME），並附 `README_如何還原skill檔.md`（各檔大小對照表＋兩條還原路徑：`zip -r` 重組、或直接把資料夾放進 `~/.claude/skills/`）。
+- **資料夾慣例**：Drive `AllenI3Aurora/<主題>/<skill名>-skill/`，主題與既有結構對齊（實例：`podcast/podcast-cornell-card-skill/`、`finance/taiex-heatmap-skill/`）。
+
 ## 專案概要
 - 純前端靜態網站（GitHub Pages），React 透過瀏覽器端 Babel standalone 載入，無建置步驟、無後端。
 - 資料層：Firestore（`aurora-data.js`）覆蓋 `kit.jsx` 內建預設；讀取失敗則保留內建值。
