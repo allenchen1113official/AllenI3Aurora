@@ -6,6 +6,12 @@
   - 驗證通過（語法解析／邏輯檢查／可行的測試）後，即自行將該 PR 合併進 `main`，不必等待再次確認。
 - 回報保持精簡，不重複提醒既定的合併流程。
 
+## Skill 建立與測試流程（把可重複的產出流程打包成 skill 時照此做）
+1. **建立**：以 `skill-creator` skill 進行；形式比照 `taiex-heatmap` —— `SKILL.md`（觸發時機寫進 frontmatter description、執行步驟、產後驗證清單、已知環境限制）＋ `scripts/`（把本次調校好的程式原樣打包，並註明「照抄執行、不要重新設計」）。附 `episode/data` 範例檔供試跑。腳本要與 repo 解耦（輸出預設目前目錄、相依自動解決如字型自動下載）。
+2. **測試**：在乾淨目錄照 SKILL.md 步驟實跑，至少兩案例 —— 正常範例＋壓力案例（長內容、截斷、非預設參數），用 Read 目視驗證產出。
+3. **檢視**：測試結果整理成 eval workspace（`iteration-N/eval-X/with_skill/outputs/`＋`eval_metadata.json` 斷言），用 skill-creator 的 `eval-viewer/generate_review.py --static` 產靜態檢視頁交給使用者過目；有 feedback 就迭代。
+4. **封裝交付**：`python -m scripts.package_skill <skill目錄>`（於 skill-creator 目錄下執行；`.skill` 會產在該處，記得搬走、排除 `__pycache__`），以檔案卡片附給使用者按「Save skill」安裝。
+
 ## 專案概要
 - 純前端靜態網站（GitHub Pages），React 透過瀏覽器端 Babel standalone 載入，無建置步驟、無後端。
 - 資料層：Firestore（`aurora-data.js`）覆蓋 `kit.jsx` 內建預設；讀取失敗則保留內建值。
