@@ -1,5 +1,17 @@
 [
   {
+    "no": "stockradar-20260821",
+    "kind": "選股",
+    "date": "2026.08.21",
+    "tone": "intelligence",
+    "title": "台股選股雷達 · TOP 10 訊號排行｜2026.08.21",
+    "desc": "今日排行前十名中，9 檔收紅…",
+    "cover": "https://drive.google.com/thumbnail?id=1AnAPggPUamOu3Dp0P8VhkQnRIgxQjaV9&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1AnAPggPUamOu3Dp0P8VhkQnRIgxQjaV9&sz=w1600",
+    "summary": "今日排行前十名中，9 檔收紅、1 檔收黑。，漲幅最亮眼的是 2609 陽明（+6.14%）與 3260 威剛（+5.36%），其中威剛更是今天名單裡「唯一」出現 KD 黃金交叉的個股 K 值從前一日的 35.86 一舉拉升到 57.24 越過 D …",
+    "items": 10
+  },
+  {
     "no": "stockradar-20260820",
     "kind": "選股",
     "date": "2026.08.20",

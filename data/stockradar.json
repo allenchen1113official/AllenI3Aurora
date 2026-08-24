@@ -1,9 +1,9 @@
 {
-  "date": "2026.08.21",
-  "dateLabel": "2026.08.21（最新）",
+  "date": "2026.08.24",
+  "dateLabel": "2026.08.24",
   "asOf": "2026.08.24",
-  "desc": "今日排行前十名中，9 檔收紅…",
-  "summary": "今日排行前十名中，9 檔收紅、1 檔收黑。，漲幅最亮眼的是 2609 陽明（+6.14%）與 3260 威剛（+5.36%），其中威剛更是今天名單裡「唯一」出現 KD 黃金交叉的個股 K 值從前一日的 35.86 一舉拉升到 57.24 越過 D …",
+  "desc": "StockRadar 台股每日排行 …",
+  "summary": "StockRadar 台股每日排行 TOP 10 2026-08-24（一），TOP1 聯茂(6213) 482.5元 ▼5.95%，高檔回檔但均線仍多頭，TOP2 華邦電(2344) 177元 ▼2.21%，營益率/營收/EPS三項基本面訊號達標",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -36,98 +36,79 @@
     {
       "code": "6213",
       "name": "聯茂",
-      "changePct": "+0.59%",
-      "up": true,
+      "changePct": "-5.95%",
+      "up": false,
       "signals": [
-        "ma",
-        "eps"
+        "ma"
       ]
     },
     {
       "code": "2344",
       "name": "華邦電",
-      "changePct": "+2.55%",
-      "up": true,
-      "signals": [
-        "om",
-        "rev",
-        "eps"
-      ]
+      "changePct": "-2.21%",
+      "up": false,
+      "signals": []
     },
     {
       "code": "3260",
       "name": "威剛",
-      "changePct": "+5.36%",
-      "up": true,
-      "signals": [
-        "gc",
-        "om",
-        "rev",
-        "eps"
-      ]
-    },
-    {
-      "code": "6505",
-      "name": "台塑化",
-      "changePct": "+3.84%",
-      "up": true,
-      "signals": [
-        "eps"
-      ]
-    },
-    {
-      "code": "2520",
-      "name": "冠德",
-      "changePct": "+0.68%",
-      "up": true,
-      "signals": [
-        "om"
-      ]
-    },
-    {
-      "code": "2609",
-      "name": "陽明",
-      "changePct": "+6.14%",
+      "changePct": "+3.79%",
       "up": true,
       "signals": []
     },
     {
       "code": "3034",
       "name": "聯詠",
-      "changePct": "+0.57%",
+      "changePct": "+2.26%",
       "up": true,
       "signals": [
-        "ma",
-        "om"
+        "ma"
       ]
     },
     {
       "code": "3653",
       "name": "健策",
-      "changePct": "-3.66%",
+      "changePct": "-4.45%",
       "up": false,
-      "signals": [
-        "om",
-        "eps"
-      ]
+      "signals": []
     },
     {
       "code": "4766",
       "name": "南寶",
-      "changePct": "+1.44%",
+      "changePct": "+0.28%",
       "up": true,
-      "signals": [
-        "om"
-      ]
+      "signals": []
+    },
+    {
+      "code": "6505",
+      "name": "台塑化",
+      "changePct": "-7.78%",
+      "up": false,
+      "signals": []
     },
     {
       "code": "1303",
       "name": "南亞",
-      "changePct": "+3.23%",
+      "changePct": "-6.25%",
+      "up": false,
+      "signals": [
+        "ma"
+      ]
+    },
+    {
+      "code": "1563",
+      "name": "巧新",
+      "changePct": "-0.79%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "2059",
+      "name": "川湖",
+      "changePct": "+7.66%",
       "up": true,
       "signals": [
-        "ma",
-        "eps"
+        "ma"
       ]
     }
   ],
@@ -135,9 +116,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1AnAPggPUamOu3Dp0P8VhkQnRIgxQjaV9&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1Bhu8pTKdti500yIwDYDridkzF2pMgdTO&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1Ex72V2WYLIDxzLToZUew_v6oG5dS-Iis/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1xu_tEKidycuvGYaf4VVMnObNtWoASh2B/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-08-24T12:56:00.883Z"
+  "updatedAt": "2026-08-24T15:41:45.667Z"
 }
