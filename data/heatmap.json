@@ -1,6 +1,6 @@
 {
-  "date": "2026.08.21",
-  "dateLabel": "2026.08.21（最新）",
+  "date": "2026.08.24",
+  "dateLabel": "2026.08.24",
   "asOf": "2026.08.24",
   "taiex": {
     "name": "加權指數 TAIEX",
@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "加權指數收在 45,224.29 點，上漲 290.55 點（+0.65%），指數紅、但個股冷熱極端分明。，資金明顯從電子往「傳產＋金融」搬家：航運、塑化、金控整片翻紅，台積電 +1.47%、聯發科 +2.43% 撐住權值基本盤。，反觀 PCB／載…",
+  "summary": "台股上市熱力圖 分享文案 2026-08-24，台股週一開高走低，加權指數終場下跌 461 點收 44,762 點（-1.02%），跌破 45,000 大關！美債殖利率走高與韓股重挫拖累亞股，權值股台積電 -1.45% 疲軟，塑化四寶更是重災區、台…",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1Ji26ZhCcTXjHu_zkY7Hze5jERxoqeUsM&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1698srIMQRl9eDJcrtw-dYbvsUuLatYIH&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1aCrwNdB4ELsROyXV0FMKvz_dHHPP9MDS&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1Onwy2HTaRsOszLyq_FzOE3KkPupy6p_X&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-08-24T09:51:33.817Z"
+  "updatedAt": "2026-08-24T12:55:58.476Z"
 }
