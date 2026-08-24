@@ -252,7 +252,7 @@
   /* ── 今日關注動態 ─────────────────────────────────────────────────────
      資料來源改為同源的 data/focus.json：由 GitHub Actions 定時任務
      （.github/workflows/focus-update.yml）在伺服器端讀取 Google Drive 今日
-     的 heatmap／stockradar／newsletter 資料夾彙整而成。前端同源讀取、無 CORS
+     的 TSMPreBrief／heatmap／stockradar／newsletter 資料夾彙整而成。前端同源讀取、無 CORS
      問題；讀到即以其取代「今日關注動態」列表（版型不變，僅換資料來源）。
      讀取失敗或無資料時，退回 kit.jsx／Firestore 既有的 focus 內容。 */
   const FOCUS_JSON_URL = "/AllenI3Aurora/data/focus.json";
