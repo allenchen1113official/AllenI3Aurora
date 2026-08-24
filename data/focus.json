@@ -6,7 +6,7 @@
       "title": "台股盤前速報",
       "desc": "美股收紅、費半收黑，台股今日看分歧…",
       "summary": "美股收紅、費半收黑，台股今日看分歧。，櫃買指數收 387.27 點、下跌 2.69 點（−0.69%），上市紅、上櫃黑，中小型股明顯落後大盤。，三大法人同步站買方，合計買超 331.06 億元，其中外資買超 283.05 億元、投信 18.78 億…",
-      "meta": "2026.08.24 · 盤前速報",
+      "meta": "2026.08.24 · 盤前速報（最新）",
       "icon": "bell",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/prebrief.html"
     },
@@ -16,7 +16,7 @@
       "title": "台股熱力圖 · 上市／上櫃",
       "desc": "台股上市熱力圖 分享文案 2026-…",
       "summary": "台股上市熱力圖 分享文案 2026-08-24，台股週一開高走低，加權指數終場下跌 461 點收 44,762 點（-1.02%），跌破 45,000 大關！美債殖利率走高與韓股重挫拖累亞股，權值股台積電 -1.45% 疲軟，塑化四寶更是重災區、台…",
-      "meta": "2026.08.24 · 市值熱力圖",
+      "meta": "2026.08.24 · 市值熱力圖（最新）",
       "icon": "chart",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
     },
@@ -26,7 +26,7 @@
       "title": "台股選股雷達",
       "desc": "StockRadar 台股每日排行 …",
       "summary": "StockRadar 台股每日排行 TOP 10 2026-08-24（一），TOP1 聯茂(6213) 482.5元 ▼5.95%，高檔回檔但均線仍多頭，TOP2 華邦電(2344) 177元 ▼2.21%，營益率/營收/EPS三項基本面訊號達標",
-      "meta": "2026.08.24 · 訊號雷達",
+      "meta": "2026.08.24 · 訊號雷達（最新）",
       "icon": "compass",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html"
     },
@@ -41,6 +41,6 @@
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/daily.html"
     }
   ],
-  "asOf": "2026.08.24",
-  "updatedAt": "2026-08-24T15:41:46.959Z"
+  "asOf": "2026.08.25",
+  "updatedAt": "2026-08-24T16:04:06.204Z"
 }
