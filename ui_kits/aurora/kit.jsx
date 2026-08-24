@@ -112,6 +112,40 @@ window.useHeatmapArchive = function (enabled) {
   return ready;
 };
 
+/* ---------- 歷期台股盤前速報（歷期彙整用） ----------
+   同源 data/prebrief-archive.json（今日關注動態的盤前速報每更新一日，前一日即
+   移入此彙整）。於「歷期彙整」按需載入，併入 window.KIT.issues（依 no 去重），
+   以 kind「盤前速報」呈現；卡片點擊開啟該日完整速報（it.link），不走 ?issue=。 */
+window.__prebriefArchive = null;
+window.__prebriefArchivePromise = null;
+window.loadPrebriefArchive = function () {
+  if (window.__prebriefArchive) return Promise.resolve(window.__prebriefArchive);
+  if (window.__prebriefArchivePromise) return window.__prebriefArchivePromise;
+  window.__prebriefArchivePromise = fetch("/AllenI3Aurora/data/prebrief-archive.json")
+    .then((r) => (r.ok ? r.json() : []))
+    .then((arr) => {
+      const briefs = Array.isArray(arr) ? arr : [];
+      const list = (window.KIT.issues = window.KIT.issues || []);
+      const seen = new Set(list.map((i) => String(i.no)));
+      for (const b of briefs) { if (!seen.has(String(b.no))) { list.push(b); seen.add(String(b.no)); } }
+      window.__prebriefArchive = briefs;
+      return briefs;
+    })
+    .catch(() => (window.__prebriefArchive = []));
+  return window.__prebriefArchivePromise;
+};
+window.usePrebriefArchive = function (enabled) {
+  const on = enabled !== false;
+  const [ready, setReady] = React.useState(!!window.__prebriefArchive);
+  React.useEffect(() => {
+    if (!on) return;
+    let alive = true;
+    window.loadPrebriefArchive().then(() => { if (alive) setReady(true); });
+    return () => { alive = false; };
+  }, [on]);
+  return ready;
+};
+
 /* ---------- 歷期艾倫極光日報（歷期彙整用） ----------
    同源 data/daily-archive.json（今日關注動態的艾倫極光日報每更新一日，前一日即
    移入此彙整）。於「歷期彙整」按需載入，併入 window.KIT.issues（依 no 去重），

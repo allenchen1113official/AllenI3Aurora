@@ -7,12 +7,12 @@
 <meta name="description" content="台股盤前速報：昨日收盤與三大法人、隔夜美股、類股輪動與今日觀察點，開盤前三分鐘掌握多空關鍵。艾倫報報 Allen I³ Aurora。">
 <link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
 <link rel="stylesheet" href="/AllenI3Aurora/styles.css">
-<!-- 開放社群預覽（Facebook 分享時顯示圖與說明）：盤前速報為文字型內容，採品牌圖示 -->
+<!-- 開放社群預覽（Facebook 分享時顯示圖與說明）：採盤前速報品牌圖卡（1200x630） -->
 <meta property="og:type" content="article">
 <meta property="og:title" content="台股盤前速報 — 艾倫報報">
 <meta property="og:description" content="昨日收盤與三大法人、隔夜美股、類股輪動與今日觀察點，開盤前三分鐘掌握多空關鍵。">
-<meta property="og:image" content="https://allenchen1113official.github.io/AllenI3Aurora/assets/apple-touch-icon.png">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://allenchen1113official.github.io/AllenI3Aurora/assets/prebrief/prebrief-card.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>
   html, body { height: auto; }
   body { margin: 0; min-height: 100vh; color: var(--text-2); }
@@ -29,6 +29,9 @@
   .badge.tag { background: var(--insight-soft); color: var(--insight); border-color: transparent; }
   h1 { font-family: var(--font-display, system-ui); font-weight: 900; font-size: clamp(1.9rem, 5vw, 2.8rem); line-height: 1.1; letter-spacing: -.02em; color: var(--text-1); margin: 0 0 14px; }
   .dek { color: var(--text-2); font-size: 1.05rem; line-height: 1.7; margin: 0 0 26px; max-width: 68ch; }
+  .figure { border: 1px solid var(--border); border-radius: var(--radius-xl, 24px); overflow: hidden; background: #0b0d12; box-shadow: var(--shadow-card); margin: 0 0 26px; }
+  .figure img { display: block; width: 100%; height: auto; }
+  .figure .cap { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 12px 18px; border-top: 1px solid var(--border-subtle); background: var(--night-800); font-size: 12.5px; color: var(--text-3); }
   .brief { border: 1px solid var(--border); border-radius: var(--radius-xl, 24px); overflow: hidden; background: var(--night-800); box-shadow: var(--shadow-card); }
   .brief .hd { display: flex; align-items: baseline; gap: 10px; padding: 18px 22px 6px; flex-wrap: wrap; }
   .brief .hd .t { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 1.15rem; color: var(--text-1); }
@@ -65,6 +68,14 @@
 
   <h1>台股盤前速報</h1>
   <p class="dek" id="dek">昨日收盤與三大法人、隔夜美股、類股輪動與今日觀察點，開盤前三分鐘掌握多空關鍵。</p>
+
+  <!-- 當日盤前速報圖卡：優先 Drive 當日圖檔（data/prebrief.json 的 image），
+       沒有時退回站內品牌圖卡 assets/prebrief/prebrief-card.png。 -->
+  <figure class="figure">
+    <img id="card-img" loading="lazy" alt="台股盤前速報圖卡"
+      src="/AllenI3Aurora/assets/prebrief/prebrief-card.png">
+    <figcaption class="cap"><span id="cap-t">台股盤前速報</span><span id="cap-d"></span></figcaption>
+  </figure>
 
   <div class="brief">
     <div class="hd"><span class="t">今日盤前重點</span><span class="s" id="hl-sub">自當日盤前速報彙整</span></div>
@@ -167,7 +178,17 @@
     if (d.summary) document.getElementById("dek").textContent = d.summary;
     document.getElementById("hl-sub").textContent = d.date ? ("自 " + d.date + " 盤前速報彙整") : "自當日盤前速報彙整";
     document.getElementById("note").textContent = d.note || DEFAULTS.note;
+    renderCard(d);
     renderHighlights(d);
+  }
+
+  // 圖卡：Drive 當日圖檔（image）優先，載入失敗或沒有時退回站內品牌圖卡。
+  var LOCAL_CARD = "/AllenI3Aurora/assets/prebrief/prebrief-card.png";
+  function renderCard(d) {
+    var img = document.getElementById("card-img");
+    img.onerror = function () { img.onerror = null; img.src = LOCAL_CARD; };
+    img.src = d.image || LOCAL_CARD;
+    document.getElementById("cap-d").textContent = d.date ? (d.date + (d.image ? " · 當日圖卡" : " · 品牌圖卡")) : "";
   }
 
   // 先套用預設立即可見，再以 data/prebrief.json 覆蓋（Drive 最新一日的彙整）。
