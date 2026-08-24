@@ -52,11 +52,15 @@ const SOURCES = [
     title: "台股盤前速報", note: "盤前速報", descFallback: "台股開盤前重點速報",
     // 連結連本站前台盤前速報頁面（prebrief.html：摘要＋盤前重點條列＋開啟完整速報）。
     site: true, sitePath: "prebrief.html",
-    // Drive 當日成品：完整報告為「台股盤前速報_YYYYMMDD.html」（另有 .md 與 Google 文件），
-    // 無圖檔，屬文字型內容——data/prebrief.json 的 source（完整速報連結）依此挑選。
+    // Drive 當日成品：完整報告為「台股盤前速報_YYYYMMDD.html」（另有 .md 與 Google 文件）
+    // ——data/prebrief.json 的 source（完整速報連結）依此挑選。
     linkPatterns: [/盤前速報_\d{8}\.html?$/i, /盤前速報.*\.html?$/i, /PreBrief.*\.html?$/i],
     sourcePatterns: [/盤前速報_\d{8}\.html?$/i, /盤前速報.*\.html?$/i, /PreBrief.*\.html?$/i, /盤前速報.*\.md$/i],
     textPatterns: [/SocialPost.*PreBrief.*\.txt$/i, /SocialPost.*\.txt$/i, /盤前速報.*\.txt$/i, /\.txt$/i],
+    // 前台頁面以 data/prebrief.json 的 image 顯示「Drive 當日圖卡」；以下樣式挑出代表圖檔
+    // （優先 FB 版）。當日資料夾沒有圖檔時 image 留空，前台退回站內品牌圖卡
+    // assets/prebrief/prebrief-card.png（scripts/prebrief/render_prebrief_card.py 產出）。
+    imgCard: [/PreBrief.*FB.*\.(png|jpe?g)$/i, /盤前速報.*FB.*\.(png|jpe?g)$/i, /PreBrief.*\.(png|jpe?g)$/i, /盤前速報.*\.(png|jpe?g)$/i, /\.(png|jpe?g)$/i],
   },
   {
     key: "heatmap", path: ["finance", "heatmap"], tag: "理財", tone: "insight", icon: "chart",
@@ -369,9 +373,41 @@ async function main() {
       // 全程 try/catch，任何失敗都不影響 focus.json 產出。
       if (src.key === "prebrief") {
         try {
+          const pick = (pats) => { for (const p of (pats || [])) { const f = files.find((x) => p.test(x.name)); if (f) return f; } return null; };
+          const driveThumb = (f) => (f && f.id) ? `https://drive.google.com/thumbnail?id=${f.id}&sz=w1600` : "";
+          const fCard = pick(src.imgCard);
           const PB = "data/prebrief.json";
+          const LOCAL_CARD = "/AllenI3Aurora/assets/prebrief/prebrief-card.png";
           let cur = {};
           try { cur = JSON.parse(readFileSync(PB, "utf8")); } catch { cur = {}; }
+
+          // 今日關注動態的盤前速報每更新到「新的一日」，前一日即移入
+          // data/prebrief-archive.json（歷期彙整頁以 kind「盤前速報」呈現，卡片
+          // 點擊開啟該日完整速報）。以 no 去重，任何失敗都不影響主流程。
+          const newDate = ymdDisplay(dateYmd);
+          if (cur.date && cur.date !== newDate) {
+            try {
+              const PA = "data/prebrief-archive.json";
+              let arch = [];
+              try { arch = JSON.parse(readFileSync(PA, "utf8")); } catch { arch = []; }
+              if (!Array.isArray(arch)) arch = [];
+              const prevNo = "prebrief-" + String(cur.date).replace(/\D/g, "");
+              if (!arch.some((x) => String(x.no) === prevNo)) {
+                arch.unshift({
+                  no: prevNo, kind: "盤前速報", date: cur.date, tone: "insight",
+                  title: `台股盤前速報｜${cur.date}`,
+                  desc: cur.desc || "",
+                  cover: cur.image || LOCAL_CARD,
+                  link: cur.source || "",
+                  summary: cur.summary || "",
+                  items: Array.isArray(cur.highlights) ? cur.highlights.length : 0,
+                });
+                writeFileSync(PA, JSON.stringify(arch, null, 2) + "\n");
+                console.log("已將前一日盤前速報移入 data/prebrief-archive.json：", prevNo);
+              }
+            } catch (e) { console.error("更新 data/prebrief-archive.json 失敗（略過）：", e.message); }
+          }
+
           cur.date = ymdDisplay(dateYmd);
           cur.dateLabel = `${ymdDisplay(dateYmd)}${dateYmd === today ? "" : "（最新）"}`;
           cur.asOf = ymdDisplay(today);
@@ -390,6 +426,9 @@ async function main() {
           for (const pat of (src.sourcePatterns || [])) { const f = files.find((x) => pat.test(x.name)); if (f) { srcLink = f.webViewLink || ""; break; } }
           if (!srcLink) { try { srcLink = (await drive.files.get({ fileId: dateId, fields: "webViewLink", supportsAllDrives: true })).data.webViewLink || ""; } catch { /* 忽略 */ } }
           if (srcLink) cur.source = srcLink;
+          // 當日圖卡（image）：僅採「同一個當日資料夾」內的圖檔，避免沿用前一日
+          // 圖卡與新文字內容不一致；資料夾沒有圖檔時留空，前台退回站內品牌圖卡。
+          cur.image = driveThumb(fCard);
           cur.updatedAt = new Date().toISOString();
           writeFileSync(PB, JSON.stringify(cur, null, 2) + "\n");
           console.log("已更新 data/prebrief.json（Drive 最新盤前速報）");
