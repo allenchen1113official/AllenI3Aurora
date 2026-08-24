@@ -214,7 +214,8 @@ window.KIT = {
   ],
   /* Podcast 各集節目（後台 aurora_podcast_episodes 覆蓋；status: draft|published，
      前台只顯示已發布。逐字稿由本機 Whisper 產出（scripts/podcast/transcribe.py），
-     摘要與康乃爾筆記於後台編修，前台顯示最新一集摘要與一頁康乃爾筆記圖卡。 */
+     摘要與康乃爾筆記於後台編修。前台儀表板將「常聽 Podcast」與「最新一集」合併：
+     每個常聽節目各取其最新一集，顯示摘要與一頁康乃爾筆記圖卡（依 show 對應）。 */
   podcastEpisodes: [
     { sort: 1, show: "股癌 Gooaye", title: "EP.整理盤心法", date: "2026.08.21", duration: "58m",
       tone: "insight", url: "https://open.firstory.me/user/stocks", status: "published",
@@ -227,6 +228,30 @@ window.KIT = {
           { cue: "心態提醒", note: "無聊的盤做無聊的事：檢視持股邏輯、更新觀察清單，勝過頻繁交易。" },
         ],
         summary: "整理盤的核心是「等」：控制部位、留住現金、降低交易頻率，把力氣花在檢視邏輯與觀察清單上，待趨勢表態再出手。",
+      } },
+    { sort: 2, show: "曼報 Manny's Newsletter Radio", title: "EP.科技巨頭的資本開支競賽", date: "2026.08.20", duration: "38m",
+      tone: "intelligence", url: "https://open.spotify.com/show/0jMy3OygUQts67tHIYcufS", status: "published",
+      summary: "本集拆解科技巨頭最新一輪財報中的資本開支訊號：AI 基礎建設的軍備競賽仍在加速，但市場開始追問投資回收的時間表。主持人比較各家雲端業務的成長與資本開支比值，指出「花得多」不再自動等於「故事好」，自由現金流與訂閱端的變現能力成為下一階段的關鍵分水嶺。",
+      cornell: {
+        rows: [
+          { cue: "資本開支競賽", note: "巨頭資本開支續創新高、集中於 AI 資料中心；供給端受電力與土地限制，交期仍長。" },
+          { cue: "回收時間表", note: "市場焦點從「投入規模」轉向「變現節奏」；資本開支對營收的轉換率成為估值核心。" },
+          { cue: "雲端業務對比", note: "成長率相近時，看資本開支比值與自由現金流：紀律者享有估值溢價。" },
+          { cue: "台鏈啟示", note: "上游供應鏈能見度仍佳，但須留意單一客戶集中度與下修風險。" },
+        ],
+        summary: "AI 軍備競賽進入下半場：比的不是誰花得多，而是誰能把資本開支轉成現金流。追蹤轉換率與變現節奏，勝過追逐開支頭條。",
+      } },
+    { sort: 3, show: "Lex Fridman", title: "Memory & Agents", date: "2026.08.18", duration: "2h 04m",
+      tone: "illumination", url: "https://lexfridman.com/podcast/", status: "published",
+      summary: "本集長談 AI 代理的記憶架構：當上下文視窗不再是瓶頸，真正的差異在於檢索與遺忘的策略——什麼該留下、什麼該主動忘掉。來賓從認知科學談到工程實作，主張好的代理記憶不是無限儲存，而是像人類一樣「有損但有結構」的壓縮；並討論長期記憶如何改變人機協作的信任邊界。",
+      cornell: {
+        rows: [
+          { cue: "記憶 ≠ 儲存", note: "無限儲存反而拖慢檢索；有損壓縮＋結構化索引，才是可用的長期記憶。" },
+          { cue: "遺忘策略", note: "主動遺忘是特性不是缺陷：淘汰過時脈絡，讓高價值記憶維持高訊噪比。" },
+          { cue: "檢索設計", note: "情境觸發（何時想起）比儲存格式更難；以任務脈絡驅動檢索優於關鍵字比對。" },
+          { cue: "信任邊界", note: "代理記得越多、越需要可審視與可刪除；記憶透明度決定人機協作的信任。" },
+        ],
+        summary: "代理的護城河在記憶：有結構的壓縮、有策略的遺忘、由脈絡驅動的檢索——三者兼備，長期記憶才會變成複利。",
       } },
   ],
   links: [

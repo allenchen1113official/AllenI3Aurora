@@ -506,16 +506,57 @@
     );
   }
 
-  /* ── 最新一集 Podcast：繁中摘要＋一頁康乃爾重點筆記圖卡 ───────────────
+  /* ── 常聽 Podcast × 最新一集（合併區塊） ──────────────────────────────
      資料來源 window.KIT.podcastEpisodes（Firestore aurora_podcast_episodes 覆蓋
      內建預設；aurora-data.js 已過濾草稿）。逐字稿由本機 Whisper 轉錄
      （scripts/podcast/transcribe.py），摘要與康乃爾筆記於後台編修。
-     取「最新一集」：日期（數字化）新者優先，同日再比 sort 大者。 */
-  function latestPodcastEpisode() {
-    const list = (window.KIT.podcastEpisodes || []).filter((e) => e && (!e.status || e.status === "published"));
-    if (!list.length) return null;
-    const num = (s) => Number(String(s == null ? "" : s).replace(/\D/g, "")) || 0;
-    return list.slice().sort((a, b) => (num(b.date) - num(a.date)) || ((Number(b.sort) || 0) - (Number(a.sort) || 0)))[0];
+     合併邏輯：每個節目（show）各取最新一集（日期數字化新者優先，同日比 sort），
+     依「常聽 Podcast」清單（KIT.podcasts）對應節目；有集數者以摘要卡呈現
+     （可展開康乃爾筆記圖卡＋前往收聽），並依日期新→舊排序、最新一集標記於首；
+     尚無集數的常聽節目維持原本的精簡連結卡殿後。 */
+  const epDateNum = (s) => Number(String(s == null ? "" : s).replace(/\D/g, "")) || 0;
+  // 遞減排序比較器：b 較新（日期大、同日 sort 大）時回傳正值。
+  const epNewer = (a, b) => (epDateNum(b.date) - epDateNum(a.date)) || ((Number(b.sort) || 0) - (Number(a.sort) || 0));
+
+  /* 各節目（show）→ 該節目最新一集。 */
+  function latestEpisodeByShow() {
+    const map = new Map();
+    (window.KIT.podcastEpisodes || [])
+      .filter((e) => e && (!e.status || e.status === "published"))
+      .forEach((e) => {
+        const key = String(e.show || "").trim();
+        const cur = map.get(key);
+        if (!cur || epNewer(cur, e) > 0) map.set(key, e);
+      });
+    return map;
+  }
+
+  /* 常聽清單項目 ↔ 各集節目：以節目名（title 破折號前段）與 show 互含比對。 */
+  function findEpisodeForShow(p, byShow) {
+    const head = String((p && p.title) || "").split(/—|-{2,}/)[0].trim().toLowerCase();
+    if (!head) return null;
+    let hit = null;
+    byShow.forEach((ep, show) => {
+      if (hit) return;
+      const s = String(show || "").toLowerCase();
+      if (s && (s.includes(head) || head.includes(s))) hit = ep;
+    });
+    return hit;
+  }
+
+  /* 合併清單：常聽節目逐一配對最新一集；後台新增、不在常聽清單的節目也顯示。 */
+  function mergedPodcastList() {
+    const byShow = latestEpisodeByShow();
+    const used = new Set();
+    const items = (window.KIT.podcasts || []).map((p) => {
+      const ep = findEpisodeForShow(p, byShow);
+      if (ep) used.add(ep);
+      return { p, ep };
+    });
+    byShow.forEach((ep) => { if (!used.has(ep)) items.push({ p: null, ep }); });
+    const withEp = items.filter((x) => x.ep).sort((a, b) => epNewer(a.ep, b.ep));
+    const linkOnly = items.filter((x) => !x.ep);
+    return withEp.concat(linkOnly);
   }
 
   /* 一頁康乃爾筆記圖卡：左欄線索（Cues）、右欄筆記（Notes）、底部總結（Summary）。 */
@@ -561,22 +602,20 @@
     );
   }
 
-  /* 最新一集節目卡：繁中摘要，並可展開康乃爾筆記圖卡。 */
-  function LatestPodcastNote() {
+  /* 單一節目最新一集卡：繁中摘要，可展開康乃爾筆記圖卡；isLatest 標記全站最新一集。 */
+  function PodcastEpisodeCard({ ep, isLatest }) {
     const I = window.Icons;
-    const ep = React.useMemo(latestPodcastEpisode, []);
     const [openCard, setOpenCard] = React.useState(false);
-    if (!ep) return null;
     const hasCornell = !!(ep.cornell && ((Array.isArray(ep.cornell.rows) && ep.cornell.rows.length) || ep.cornell.summary));
     return (
       <div>
-        <SectionHeader kicker="PODCAST · 最新一集" title="本集重點摘要" style={{ marginBottom: "var(--space-4)" }} />
         <Card accent={ep.tone || "insight"} padding="var(--space-5)">
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
             <span style={{ width: 40, height: 40, flex: "none", borderRadius: 12, background: `var(--${ep.tone || "insight"}-soft)`, color: `var(--${ep.tone || "insight"})`, display: "grid", placeItems: "center" }}><I.headphones size={20} /></span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                 <Badge tone={ep.tone || "insight"}>{ep.show || "Podcast"}</Badge>
+                {isLatest ? <Badge tone="illumination" dot>最新一集</Badge> : null}
                 <span style={{ color: "var(--text-3)", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>{[ep.date, ep.duration].filter(Boolean).join(" · ")}</span>
               </div>
               <div style={{ color: "var(--text-1)", fontWeight: 800, fontFamily: "var(--font-display)", fontSize: 15, marginTop: 4, lineHeight: 1.3 }}>{ep.title}</div>
@@ -597,6 +636,45 @@
           </div>
         </Card>
         {openCard && hasCornell ? <div style={{ marginTop: 10 }}><CornellCard ep={ep} /></div> : null}
+      </div>
+    );
+  }
+
+  /* 尚無集數資料的常聽節目：維持原本精簡連結卡。 */
+  function PodcastLinkCard({ p }) {
+    const I = window.Icons;
+    const hasUrl = !!(p.url && String(p.url).trim());
+    const inner = (
+      <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
+        <span style={{ width: 40, height: 40, flex: "none", borderRadius: 12, background: `var(--${p.tone}-soft)`, color: `var(--${p.tone})`, display: "grid", placeItems: "center" }}><I.headphones size={20} /></span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.title}</div>
+          <div style={{ color: "var(--text-3)", fontSize: 12 }}>{p.meta}</div>
+        </div>
+        <IconButton size="sm" variant="ghost" label={hasUrl ? "前往收聽" : "播放"}>{hasUrl ? <I.ext size={16} /> : <I.play size={16} />}</IconButton>
+      </div>
+    );
+    return (
+      <Card interactive padding="14px 16px">
+        {hasUrl ? (
+          <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", color: "inherit", textDecoration: "none" }}>{inner}</a>
+        ) : inner}
+      </Card>
+    );
+  }
+
+  /* 合併區塊：常聽 Podcast × 各節目最新一集重點筆記。 */
+  function PodcastNotes() {
+    const list = React.useMemo(mergedPodcastList, []);
+    if (!list.length) return null;
+    return (
+      <div>
+        <SectionHeader kicker="PODCAST · 最新一集" title="常聽 Podcast · 重點筆記" style={{ marginBottom: "var(--space-4)" }} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {list.map((x, i) => x.ep
+            ? <PodcastEpisodeCard key={i} ep={x.ep} isLatest={i === 0} />
+            : <PodcastLinkCard key={i} p={x.p} />)}
+        </div>
       </div>
     );
   }
@@ -625,7 +703,7 @@
     const wealth = useWealthLive();
     const focus = useFocusLive();
     const focusList = focus || K.focus;                 // 實際顯示的今日關注動態
-    const podcastCount = (K.podcasts || []).length;     // 實際 Podcast 則數
+    const podcastCount = mergedPodcastList().length;    // 常聽 × 最新一集合併後的實際則數
     // 分享提示（Instagram 複製流程）——顯示後 3.2 秒自動消失。
     const [toast, setToast] = React.useState("");
     const toastTimer = React.useRef(null);
@@ -754,34 +832,9 @@
             </Card>
           </div>
 
-          {/* Right: latest episode note, podcasts, links, annuli mini */}
+          {/* Right: merged podcast notes (常聽 × 最新一集), links, annuli mini */}
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
-            <LatestPodcastNote />
-            <div>
-              <SectionHeader kicker="INTELLIGENCE · 智慧" title="常聽 Podcast" style={{ marginBottom: "var(--space-4)" }} />
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {K.podcasts.map((p, i) => {
-                  const hasUrl = !!(p.url && String(p.url).trim());
-                  const inner = (
-                    <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
-                      <span style={{ width: 40, height: 40, flex: "none", borderRadius: 12, background: `var(--${p.tone}-soft)`, color: `var(--${p.tone})`, display: "grid", placeItems: "center" }}><I.headphones size={20} /></span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.title}</div>
-                        <div style={{ color: "var(--text-3)", fontSize: 12 }}>{p.meta}</div>
-                      </div>
-                      <IconButton size="sm" variant="ghost" label={hasUrl ? "前往收聽" : "播放"}>{hasUrl ? <I.ext size={16} /> : <I.play size={16} />}</IconButton>
-                    </div>
-                  );
-                  return (
-                    <Card key={i} interactive padding="14px 16px">
-                      {hasUrl ? (
-                        <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", color: "inherit", textDecoration: "none" }}>{inner}</a>
-                      ) : inner}
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
+            <PodcastNotes />
 
             <div>
               <SectionHeader kicker="常用網站" title="快速前往" style={{ marginBottom: "var(--space-4)" }} />
