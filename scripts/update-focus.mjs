@@ -9,11 +9,12 @@
    - desc：約 10 字的簡要內容（自來源文字檔擷取，失敗則用預設）。
 
    資料來源（Google Drive，皆以 YYYYMMDD＝今日 命名的日期資料夾）：
+     AllenI3Aurora/finance/TSMPreBrief/YYYYMMDD/  台股盤前速報
      AllenI3Aurora/finance/heatmap/YYYYMMDD/      台股熱力圖
      AllenI3Aurora/finance/stockradar/YYYYMMDD/   選股雷達
      AllenI3Aurora/newsletter/day/YYYYMMDD/       每日日報
    若當日資料夾尚未產生，該來源退回「最近一個日期資料夾」，並於說明標註
-   實際日期；三者皆無則保留現有 data/focus.json（不覆蓋）。
+   實際日期；全部皆無則保留現有 data/focus.json（不覆蓋）。
 
    授權：需以 Google 服務帳戶（Service Account）唯讀存取上述資料夾，
    金鑰（JSON 全文）由 GitHub Actions Secrets 提供：GDRIVE_SERVICE_ACCOUNT。
@@ -44,8 +45,19 @@ function taipeiYmd(date = new Date()) {
 }
 const ymdDisplay = (ymd) => `${ymd.slice(0, 4)}.${ymd.slice(4, 6)}.${ymd.slice(6, 8)}`;
 
-/* 三個來源：Drive 路徑、卡片樣式、代表檔（link）與文字檔（desc）挑選規則。 */
+/* 四個來源：Drive 路徑、卡片樣式、代表檔（link）與文字檔（desc）挑選規則。 */
 const SOURCES = [
+  {
+    key: "prebrief", path: ["finance", "TSMPreBrief"], tag: "盤前", tone: "insight", icon: "bell",
+    title: "台股盤前速報", note: "盤前速報", descFallback: "台股開盤前重點速報",
+    // 連結連本站前台盤前速報頁面（prebrief.html：摘要＋盤前重點條列＋開啟完整速報）。
+    site: true, sitePath: "prebrief.html",
+    // Drive 當日成品：完整報告為「台股盤前速報_YYYYMMDD.html」（另有 .md 與 Google 文件），
+    // 無圖檔，屬文字型內容——data/prebrief.json 的 source（完整速報連結）依此挑選。
+    linkPatterns: [/盤前速報_\d{8}\.html?$/i, /盤前速報.*\.html?$/i, /PreBrief.*\.html?$/i],
+    sourcePatterns: [/盤前速報_\d{8}\.html?$/i, /盤前速報.*\.html?$/i, /PreBrief.*\.html?$/i, /盤前速報.*\.md$/i],
+    textPatterns: [/SocialPost.*PreBrief.*\.txt$/i, /SocialPost.*\.txt$/i, /盤前速報.*\.txt$/i, /\.txt$/i],
+  },
   {
     key: "heatmap", path: ["finance", "heatmap"], tag: "理財", tone: "insight", icon: "chart",
     title: "台股熱力圖 · 上市／上櫃", note: "市值熱力圖", descFallback: "台股上市櫃市值熱力圖",
@@ -103,7 +115,7 @@ function cleanLine(s) {
 /* 自來源文字內容擷取「約 10 字」的簡要內容；找不到合適內容回傳空字串。
    策略：跳過標題／分隔／宣告等非內文行（含中文字數不足者），取首個內文行，
    於 8～上限字之間的標點處收尾，形成通順短句。 */
-const SKIP = /(社群分享文案|建議搭配圖片|盤後速報|每日科技|資料日期說明|資料說明|目標日期|補產出|發布日|休市|本篇|提示|重點摘要|今日重點|三項訊號|風險提醒|艾倫極光日報|艾倫報報|ALLEN|排行總覽|Facebook|Instagram|建議|來源[:：]|版$)/;
+const SKIP = /(社群分享文案|建議搭配圖片|盤後速報|盤前速報|每日科技|資料日期說明|資料說明|目標日期|補產出|發布日|休市|本篇|提示|重點摘要|今日重點|三項訊號|風險提醒|非投資建議|艾倫極光日報|艾倫極光報報|艾倫報報|ALLEN|排行總覽|Facebook|Instagram|建議|來源[:：]|版$)/;
 function extractDesc(raw) {
   const lines = String(raw).split(/\r?\n/).map(cleanLine).filter(Boolean);
   for (const ln of lines) {
@@ -153,6 +165,17 @@ function extractLines(raw, max = 4) {
     if (picked.length >= max) break;
   }
   return picked;
+}
+
+/* 自來源文字內容擷取 hashtag 列（供盤前速報頁分享文案）：由後往前找
+   含兩個以上「#標籤」的行，回傳以空白相連的標籤字串；找不到回傳空字串。 */
+function extractHashtags(raw) {
+  const lines = String(raw).split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const tags = lines[i].match(/#[^\s#，。、]+/g);
+    if (tags && tags.length >= 2) return tags.join(" ");
+  }
+  return "";
 }
 
 /* 自選股雷達當日完整 HTML 報表（StockRadar_TOP_YYYY-MM-DD.html）解析 TOP10 明細，
@@ -325,11 +348,13 @@ async function main() {
       let desc = src.descFallback;
       let summary = "";
       let summaryLines = [];
+      let rawText = "";
       try {
         let tf = null;
         for (const pat of src.textPatterns) { tf = files.find((x) => pat.test(x.name)); if (tf) break; }
         if (tf) {
           const raw = await readText(tf.id);
+          rawText = raw;
           const ex = extractDesc(raw); if (ex) desc = ex;
           summary = extractSummary(raw);
           summaryLines = extractLines(raw, 4);
@@ -338,6 +363,38 @@ async function main() {
 
       const meta = `${ymdDisplay(dateYmd)} · ${src.note}${dateYmd === today ? "" : "（最新）"}`;
       items.push({ tag: src.tag, tone: src.tone, title: src.title, desc, summary, meta, icon: src.icon, link });
+
+      // 盤前速報：另更新 data/prebrief.json，供前台 prebrief.html 顯示摘要、
+      // 盤前重點條列與「開啟完整速報」（Drive 當日完整 HTML 報告）。
+      // 全程 try/catch，任何失敗都不影響 focus.json 產出。
+      if (src.key === "prebrief") {
+        try {
+          const PB = "data/prebrief.json";
+          let cur = {};
+          try { cur = JSON.parse(readFileSync(PB, "utf8")); } catch { cur = {}; }
+          cur.date = ymdDisplay(dateYmd);
+          cur.dateLabel = `${ymdDisplay(dateYmd)}${dateYmd === today ? "" : "（最新）"}`;
+          cur.asOf = ymdDisplay(today);
+          if (desc) cur.desc = desc;
+          if (summary) cur.summary = summary;
+          // 盤前重點條列（比 focus 卡片的 4 行多取到 6 行）與 hashtag 自社群文字檔擷取，
+          // 擷取不到則保留原值（不覆蓋）。
+          if (rawText) {
+            const hl = extractLines(rawText, 6);
+            if (hl.length) cur.highlights = hl;
+            const tags = extractHashtags(rawText);
+            if (tags) cur.hashtags = tags;
+          }
+          // 完整速報連結（source）：優先當日完整 HTML 報告，找不到退回當日資料夾。
+          let srcLink = "";
+          for (const pat of (src.sourcePatterns || [])) { const f = files.find((x) => pat.test(x.name)); if (f) { srcLink = f.webViewLink || ""; break; } }
+          if (!srcLink) { try { srcLink = (await drive.files.get({ fileId: dateId, fields: "webViewLink", supportsAllDrives: true })).data.webViewLink || ""; } catch { /* 忽略 */ } }
+          if (srcLink) cur.source = srcLink;
+          cur.updatedAt = new Date().toISOString();
+          writeFileSync(PB, JSON.stringify(cur, null, 2) + "\n");
+          console.log("已更新 data/prebrief.json（Drive 最新盤前速報）");
+        } catch (e) { console.error("更新 data/prebrief.json 失敗（略過）：", e.message); }
+      }
 
       // 熱力圖：另更新 data/heatmap.json，讓前台頁面優先顯示「Drive 最新圖」。
       // 全程 try/catch，任何失敗都不影響 focus.json 產出。
@@ -500,7 +557,7 @@ async function main() {
     }
   }
 
-  if (!items.length) keepExisting("三個來源皆無可用資料夾");
+  if (!items.length) keepExisting("所有來源皆無可用資料夾");
 
   const result = { items, asOf: ymdDisplay(today), updatedAt: new Date().toISOString() };
   mkdirSync(dirname(OUT), { recursive: true });
