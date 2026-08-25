@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-25T08:55:40.422Z",
+  "updatedAt": "2026-08-25T08:57:25.086Z",
   "source": "https://allenchen1113official.github.io/allenannuli/",
   "count": 27,
   "range": {
@@ -9,48 +9,58 @@
   "stats": [
     {
       "id": "0c5a2167-c03b-4176-b986-2a7d942c5652",
-      "label": "捐血次數",
+      "user_id": "e9e3d8fd-66e3-4280-8235-c9e0063bd210",
       "number": 96,
       "unit": "次",
+      "label": "捐血次數",
       "color": "#ec4899",
       "visible": true,
-      "sort_order": 0
+      "sort_order": 0,
+      "created_at": "2026-04-14T01:03:44.999575+00:00"
     },
     {
       "id": "9e060bf9-c15a-44a8-832c-20d7dbb169ad",
-      "label": "旅遊國家",
+      "user_id": "e9e3d8fd-66e3-4280-8235-c9e0063bd210",
       "number": 12,
       "unit": "國",
+      "label": "旅遊國家",
       "color": "#f59e0b",
       "visible": true,
-      "sort_order": 1
+      "sort_order": 1,
+      "created_at": "2026-04-14T06:03:26.794178+00:00"
     },
     {
       "id": "216ed788-3a29-4480-8286-09371b4bc8f8",
-      "label": "百岳",
+      "user_id": "e9e3d8fd-66e3-4280-8235-c9e0063bd210",
       "number": 11,
       "unit": "座",
+      "label": "百岳",
       "color": "#3b82f6",
       "visible": true,
-      "sort_order": 2
+      "sort_order": 2,
+      "created_at": "2026-04-14T01:04:41.700592+00:00"
     },
     {
       "id": "13b78588-c064-4587-9bc1-8310c95fe494",
-      "label": "鐵人3項",
+      "user_id": "e9e3d8fd-66e3-4280-8235-c9e0063bd210",
       "number": 3,
       "unit": "場",
+      "label": "鐵人3項",
       "color": "#14b8a6",
       "visible": true,
-      "sort_order": 3
+      "sort_order": 3,
+      "created_at": "2026-04-14T07:16:18.383961+00:00"
     },
     {
       "id": "4bf7cf6e-99a2-4641-a6bb-8f778d65bc6e",
-      "label": "全程馬拉松",
+      "user_id": "e9e3d8fd-66e3-4280-8235-c9e0063bd210",
       "number": 3,
       "unit": "場",
+      "label": "全程馬拉松",
       "color": "#22c55e",
       "visible": true,
-      "sort_order": 4
+      "sort_order": 4,
+      "created_at": "2026-04-14T01:04:18.110435+00:00"
     }
   ],
   "annuli": [
