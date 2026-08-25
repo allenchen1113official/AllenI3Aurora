@@ -696,6 +696,76 @@
     );
   }
 
+  /* ---------- 個人年輪卡（首頁右下角）----------
+     年度資料同步 AllenAnnuli（annuli-live.js 覆蓋 KIT.annuli）；
+     僅顯示年度晶片，點選年度展開該年度紀事，再點一次收合。 */
+  function AnnuliYearsCard() {
+    const annuli = (window.KIT && window.KIT.annuli) || [];
+    const A = window.ANNULI || {};
+    const [year, setYear] = React.useState(null); // 選中的年度；null = 全部收合
+    const tones = ["insight", "intelligence", "illumination"];
+    const pad2 = (n) => String(n).padStart(2, "0");
+
+    const years = [];
+    annuli.forEach((a) => { const y = String(a.year); if (years.indexOf(y) === -1) years.push(y); });
+    years.sort((a, b) => Number(b) - Number(a));
+    const shown = years.slice(0, 12);
+
+    const rings = (() => {
+      if (A.range) return `${A.range.end - A.range.start + 1} 圈`;
+      const ys = annuli.map((a) => parseInt(a.year, 10)).filter((y) => isFinite(y));
+      return ys.length ? `${Math.max(...ys) - Math.min(...ys) + 1} 圈` : "51 圈";
+    })();
+
+    const events = year ? annuli.filter((a) => String(a.year) === year) : [];
+
+    return (
+      <Card accent="intelligence" padding="var(--space-5)">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: "var(--text-lg)" }}>個人年輪</div>
+          <Badge tone="intelligence">{rings}</Badge>
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {shown.map((y, i) => {
+            const active = y === year;
+            return (
+              <button key={y} type="button" aria-pressed={active} title={active ? "收合" : `展開 ${y} 年紀事`}
+                onClick={() => setYear(active ? null : y)}
+                style={{
+                  fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 13, cursor: "pointer",
+                  color: `var(--${tones[i % 3]})`, background: active ? "var(--brand-soft)" : "var(--night-700)",
+                  border: 0, borderRadius: 8, padding: "4px 10px",
+                  boxShadow: active ? `inset 0 0 0 1.5px var(--${tones[i % 3]})` : "none",
+                }}>{y}</button>
+            );
+          })}
+          {years.length > shown.length ? (
+            <span style={{ color: "var(--text-3)", fontSize: 12.5, alignSelf: "center" }}>…共 {years.length} 個年度</span>
+          ) : null}
+        </div>
+        {year ? (
+          <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--night-700)", display: "flex", flexDirection: "column", gap: 10 }}>
+            {events.map((a, i) => (
+              <div key={i} style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
+                <span style={{ fontFamily: "var(--font-mono)", color: `var(--${a.tone || tones[i % 3]})`, fontWeight: 700, fontSize: 12.5, width: 44, flex: "none" }}>
+                  {a.month ? pad2(a.month) + (a.day ? "." + pad2(a.day) : "") : "——"}
+                </span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 13.5 }}>{a.title}</div>
+                  {a.body ? <div style={{ color: "var(--text-3)", fontSize: 12.5, marginTop: 2 }}>{a.body}</div> : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        <div style={{ color: "var(--text-3)", fontSize: 12, marginTop: 10 }}>
+          同步自 <a href={A.siteUrl || "https://allenchen1113official.github.io/allenannuli/"} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>AllenAnnuli</a>
+          {A.live ? " · 即時" : A.snapshot ? " · 每日 01:00 快照" : ""}
+        </div>
+      </Card>
+    );
+  }
+
   function Dashboard() {
     const K = window.KIT, I = window.Icons;
     const taiex = useTaiexLive();
@@ -863,39 +933,7 @@
               </div>
             </div>
 
-            <Card accent="intelligence" padding="var(--space-5)">
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: "var(--text-lg)" }}>個人年輪</div>
-                <Badge tone="intelligence">{(() => {
-                  const A = window.ANNULI || {};
-                  if (A.range) return `${A.range.end - A.range.start + 1} 圈`;
-                  const ys = (K.annuli || []).map((a) => parseInt(a.year, 10)).filter((y) => isFinite(y));
-                  return ys.length ? `${Math.max(...ys) - Math.min(...ys) + 1} 圈` : "51 圈";
-                })()}</Badge>
-              </div>
-              {(() => {
-                // 同步 AllenAnnuli 的大事紀年度（annuli-live.js 覆蓋 K.annuli）；僅顯示年度
-                const seen = [];
-                (K.annuli || []).forEach((a) => { const y = String(a.year); if (seen.indexOf(y) === -1) seen.push(y); });
-                seen.sort((a, b) => Number(b) - Number(a));
-                const shown = seen.slice(0, 12);
-                const tones = ["insight", "intelligence", "illumination"];
-                return (
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    {shown.map((y, i) => (
-                      <span key={y} style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 13, color: `var(--${tones[i % 3]})`, background: "var(--night-700)", borderRadius: 8, padding: "4px 10px" }}>{y}</span>
-                    ))}
-                    {seen.length > shown.length ? (
-                      <span style={{ color: "var(--text-3)", fontSize: 12.5, alignSelf: "center" }}>…共 {seen.length} 個年度</span>
-                    ) : null}
-                  </div>
-                );
-              })()}
-              <div style={{ color: "var(--text-3)", fontSize: 12, marginTop: 10 }}>
-                同步自 <a href={(window.ANNULI && window.ANNULI.siteUrl) || "https://allenchen1113official.github.io/allenannuli/"} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>AllenAnnuli</a>
-                {window.ANNULI && window.ANNULI.live ? " · 即時" : window.ANNULI && window.ANNULI.snapshot ? " · 每日 01:00 快照" : ""}
-              </div>
-            </Card>
+            <AnnuliYearsCard />
           </div>
         </div>
 
