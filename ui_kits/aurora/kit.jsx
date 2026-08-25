@@ -207,10 +207,19 @@ window.KIT = {
     { title: "The Almanack of Naval Ravikant", src: "Kindle", pct: 45 },
     { title: "台股籌碼面實戰：三大法人解讀", src: "PDF", pct: 12 },
   ],
+  /* 常聽 Podcast 清單（後台 aurora_podcasts 覆蓋內建預設）。
+     首頁「常聽 Podcast · 重點筆記」合併區塊逐一與 podcastEpisodes 依 show 配對：
+     有最新一集者顯示摘要卡＋康乃爾筆記圖卡，尚無集數者以此清單的精簡連結卡呈現。
+     url 皆為查證過的官方節目頁（Spotify show 頁／官網）。 */
   podcasts: [
     { title: "股癌 Gooaye — EP.整理盤心法", meta: "1h 12m · 昨天", tone: "insight", url: "https://open.firstory.me/user/stocks" },
     { title: "曼報 Manny's Newsletter Radio", meta: "38m · 2 天前", tone: "intelligence", url: "https://open.spotify.com/show/0jMy3OygUQts67tHIYcufS" },
     { title: "Lex Fridman — Memory & Agents", meta: "2h 04m · 本週", tone: "illumination", url: "https://lexfridman.com/podcast/" },
+    { title: "財經一路發", meta: "News98 · 週一至週五", tone: "insight", url: "https://open.spotify.com/show/16vk9uoUXgbtWqIMbwyHsa" },
+    { title: "兆華與股惑仔", meta: "台股訪談 · 每日更新", tone: "intelligence", url: "https://open.spotify.com/show/6cMUsVRnTCrCqo4rs8LBjQ" },
+    { title: "AI懶人報", meta: "AI 工具速報 · 每日更新", tone: "illumination", url: "https://open.spotify.com/show/4tW0IXnjRP0i3Qz8Ui6EcD" },
+    { title: "游庭皓的財經皓角", meta: "早晨財經速解讀 · 每日", tone: "insight", url: "https://open.spotify.com/show/1HOGxT9M7a6kpcDi4q27Q7" },
+    { title: "Acquired", meta: "Business history · 月更長篇", tone: "intelligence", url: "https://open.spotify.com/show/7Fj0XEuUQLUqoMZQdsLXqp" },
   ],
   /* Podcast 各集節目（後台 aurora_podcast_episodes 覆蓋；status: draft|published，
      前台只顯示已發布。逐字稿由本機 Whisper 產出（scripts/podcast/transcribe.py），
