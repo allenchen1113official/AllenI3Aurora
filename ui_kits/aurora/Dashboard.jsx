@@ -873,13 +873,27 @@
                   return ys.length ? `${Math.max(...ys) - Math.min(...ys) + 1} 圈` : "51 圈";
                 })()}</Badge>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {K.annuli.slice(-3).reverse().map((a, i) => (
-                  <div key={i} style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
-                    <span style={{ fontFamily: "var(--font-mono)", color: `var(--${a.tone})`, fontWeight: 700, fontSize: 13, width: 42, flex: "none" }}>{a.year}</span>
-                    <span style={{ color: "var(--text-2)", fontSize: 13.5 }}>{a.title}</span>
+              {(() => {
+                // 同步 AllenAnnuli 的大事紀年度（annuli-live.js 覆蓋 K.annuli）；僅顯示年度
+                const seen = [];
+                (K.annuli || []).forEach((a) => { const y = String(a.year); if (seen.indexOf(y) === -1) seen.push(y); });
+                seen.sort((a, b) => Number(b) - Number(a));
+                const shown = seen.slice(0, 12);
+                const tones = ["insight", "intelligence", "illumination"];
+                return (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {shown.map((y, i) => (
+                      <span key={y} style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 13, color: `var(--${tones[i % 3]})`, background: "var(--night-700)", borderRadius: 8, padding: "4px 10px" }}>{y}</span>
+                    ))}
+                    {seen.length > shown.length ? (
+                      <span style={{ color: "var(--text-3)", fontSize: 12.5, alignSelf: "center" }}>…共 {seen.length} 個年度</span>
+                    ) : null}
                   </div>
-                ))}
+                );
+              })()}
+              <div style={{ color: "var(--text-3)", fontSize: 12, marginTop: 10 }}>
+                同步自 <a href={(window.ANNULI && window.ANNULI.siteUrl) || "https://allenchen1113official.github.io/allenannuli/"} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-3)", textDecoration: "underline", textUnderlineOffset: 3 }}>AllenAnnuli</a>
+                {window.ANNULI && window.ANNULI.live ? " · 即時" : window.ANNULI && window.ANNULI.snapshot ? " · 每日 01:00 快照" : ""}
               </div>
             </Card>
           </div>

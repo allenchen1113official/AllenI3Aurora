@@ -1,0 +1,357 @@
+{
+  "updatedAt": "2026-08-25T08:55:40.422Z",
+  "source": "https://allenchen1113official.github.io/allenannuli/",
+  "count": 27,
+  "range": {
+    "start": 1975,
+    "end": 2026
+  },
+  "stats": [
+    {
+      "id": "0c5a2167-c03b-4176-b986-2a7d942c5652",
+      "label": "捐血次數",
+      "number": 96,
+      "unit": "次",
+      "color": "#ec4899",
+      "visible": true,
+      "sort_order": 0
+    },
+    {
+      "id": "9e060bf9-c15a-44a8-832c-20d7dbb169ad",
+      "label": "旅遊國家",
+      "number": 12,
+      "unit": "國",
+      "color": "#f59e0b",
+      "visible": true,
+      "sort_order": 1
+    },
+    {
+      "id": "216ed788-3a29-4480-8286-09371b4bc8f8",
+      "label": "百岳",
+      "number": 11,
+      "unit": "座",
+      "color": "#3b82f6",
+      "visible": true,
+      "sort_order": 2
+    },
+    {
+      "id": "13b78588-c064-4587-9bc1-8310c95fe494",
+      "label": "鐵人3項",
+      "number": 3,
+      "unit": "場",
+      "color": "#14b8a6",
+      "visible": true,
+      "sort_order": 3
+    },
+    {
+      "id": "4bf7cf6e-99a2-4641-a6bb-8f778d65bc6e",
+      "label": "全程馬拉松",
+      "number": 3,
+      "unit": "場",
+      "color": "#22c55e",
+      "visible": true,
+      "sort_order": 4
+    }
+  ],
+  "annuli": [
+    {
+      "year": "1975",
+      "month": 11,
+      "day": 13,
+      "tone": "insight",
+      "title": "陳艾倫誕生",
+      "body": "出生於苗栗縣苑裡鎮，藺草的故鄉，為家中長子",
+      "cats": [
+        "👨‍👩‍👧 家庭"
+      ]
+    },
+    {
+      "year": "1982",
+      "month": 9,
+      "day": null,
+      "tone": "intelligence",
+      "title": "就讀小學",
+      "body": "就讀苗栗縣苑裡鎮文苑國民小學",
+      "cats": [
+        "📚 學習"
+      ]
+    },
+    {
+      "year": "1988",
+      "month": 9,
+      "day": null,
+      "tone": "illumination",
+      "title": "就讀國中",
+      "body": "就讀台中縣日南國民中學",
+      "cats": [
+        "📚 學習"
+      ]
+    },
+    {
+      "year": "1991",
+      "month": 6,
+      "day": null,
+      "tone": "insight",
+      "title": "日南國中畢業",
+      "body": "台中縣日南國民中學畢業",
+      "cats": [
+        "📚 學習"
+      ]
+    },
+    {
+      "year": "1991",
+      "month": 9,
+      "day": null,
+      "tone": "intelligence",
+      "title": "就讀中一中",
+      "body": "台中一中唸書",
+      "cats": [
+        "📚 學習"
+      ]
+    },
+    {
+      "year": "1994",
+      "month": 6,
+      "day": null,
+      "tone": "illumination",
+      "title": "中一中畢業",
+      "body": "台中市台中一中畢業",
+      "cats": [
+        "📚 學習",
+        "🎾 網球"
+      ]
+    },
+    {
+      "year": "1994",
+      "month": 7,
+      "day": null,
+      "tone": "insight",
+      "title": "就讀交大",
+      "body": "大學聯考放榜，考上交通大學",
+      "cats": [
+        "📚 學習"
+      ]
+    },
+    {
+      "year": "1998",
+      "month": 6,
+      "day": null,
+      "tone": "intelligence",
+      "title": "交大畢業",
+      "body": "交通大學運輸工程與管理學系學士畢業",
+      "cats": [
+        "📚 學習",
+        "🎾 網球"
+      ]
+    },
+    {
+      "year": "1998",
+      "month": 9,
+      "day": null,
+      "tone": "illumination",
+      "title": "就讀台大",
+      "body": "埋首浩然圖書館，如願考上台大研究所。",
+      "cats": [
+        "📚 學習",
+        "🏆 里程碑"
+      ]
+    },
+    {
+      "year": "2000",
+      "month": 6,
+      "day": null,
+      "tone": "insight",
+      "title": "台大畢業",
+      "body": "台灣大學土木所交通工程組研究所畢業",
+      "cats": [
+        "📚 學習"
+      ]
+    },
+    {
+      "year": "2002",
+      "month": 6,
+      "day": 12,
+      "tone": "intelligence",
+      "title": "退伍",
+      "body": "完成義務役",
+      "cats": [
+        "🧑‍💻 職涯"
+      ]
+    },
+    {
+      "year": "2003",
+      "month": 4,
+      "day": null,
+      "tone": "illumination",
+      "title": "任職北市公運處",
+      "body": "進入北市公運處稽查室擔任職代",
+      "cats": [
+        "🧑‍💻 職涯"
+      ]
+    },
+    {
+      "year": "2003",
+      "month": 12,
+      "day": 31,
+      "tone": "insight",
+      "title": "北市公運處離職",
+      "body": "離開北市公運處",
+      "cats": [
+        "🧑‍💻 職涯"
+      ]
+    },
+    {
+      "year": "2004",
+      "month": 1,
+      "day": 2,
+      "tone": "intelligence",
+      "title": "任職華夏科技",
+      "body": "進入華夏科技擔任系統工程師",
+      "cats": [
+        "🧑‍💻 職涯"
+      ]
+    },
+    {
+      "year": "2009",
+      "month": 12,
+      "day": 20,
+      "tone": "illumination",
+      "title": "全馬艾倫",
+      "body": "全馬初體驗，完成人生第一場全程馬拉松比賽",
+      "cats": [
+        "🏃 運動",
+        "🏆 里程碑"
+      ]
+    },
+    {
+      "year": "2010",
+      "month": 2,
+      "day": 24,
+      "tone": "insight",
+      "title": "9天1131公里單車環島",
+      "body": "9天完成1131公里騎過「四極點」燈塔單車環島",
+      "cats": [
+        "🏃 運動",
+        "🏆 里程碑"
+      ]
+    },
+    {
+      "year": "2010",
+      "month": 5,
+      "day": null,
+      "tone": "intelligence",
+      "title": "華夏離職",
+      "body": "華夏離職",
+      "cats": []
+    },
+    {
+      "year": "2010",
+      "month": 6,
+      "day": null,
+      "tone": "illumination",
+      "title": "台水工作",
+      "body": "台水工作",
+      "cats": []
+    },
+    {
+      "year": "2011",
+      "month": 11,
+      "day": 5,
+      "tone": "insight",
+      "title": "第二馬",
+      "body": "完成人生第二場全程馬拉松比賽",
+      "cats": [
+        "🏃 運動"
+      ]
+    },
+    {
+      "year": "2012",
+      "month": 2,
+      "day": 26,
+      "tone": "intelligence",
+      "title": "第三馬",
+      "body": "完成人生第三場全程馬拉松比賽",
+      "cats": [
+        "🏃 運動"
+      ]
+    },
+    {
+      "year": "2019",
+      "month": 12,
+      "day": 7,
+      "tone": "illumination",
+      "title": "蕯克斯風演奏初體驗",
+      "body": "民生社區成果發會演奏（團奏）",
+      "cats": [
+        "🎷 蕯克斯風",
+        "🏆 里程碑",
+        "🎵 音樂"
+      ]
+    },
+    {
+      "year": "2020",
+      "month": 5,
+      "day": 31,
+      "tone": "insight",
+      "title": "華夏科技離職",
+      "body": "離開華夏科技",
+      "cats": [
+        "🧑‍💻 職涯"
+      ]
+    },
+    {
+      "year": "2020",
+      "month": 6,
+      "day": 29,
+      "tone": "intelligence",
+      "title": "任公職",
+      "body": "進入國營事業擔任工程員",
+      "cats": [
+        "🧑‍💻 職涯"
+      ]
+    },
+    {
+      "year": "2023",
+      "month": 12,
+      "day": 31,
+      "tone": "illumination",
+      "title": "擁抱愛情",
+      "body": "和Ann在一起",
+      "cats": [
+        "💕 愛情"
+      ]
+    },
+    {
+      "year": "2026",
+      "month": 3,
+      "day": 31,
+      "tone": "insight",
+      "title": "人生第一間房",
+      "body": "新房入厝，擁有人生第一間自己的房子。",
+      "cats": [
+        "🏠 新家",
+        "🏆 里程碑"
+      ]
+    },
+    {
+      "year": "2026",
+      "month": 3,
+      "day": null,
+      "tone": "intelligence",
+      "title": "新房入厝",
+      "body": "新房入厝",
+      "cats": []
+    },
+    {
+      "year": "2026",
+      "month": 4,
+      "day": 13,
+      "tone": "illumination",
+      "title": "建立艾倫大事紀",
+      "body": "使用 Supabase + GitHub Pages 建立個人履歷大事紀網站",
+      "cats": [
+        "🏆 里程碑"
+      ]
+    }
+  ]
+}

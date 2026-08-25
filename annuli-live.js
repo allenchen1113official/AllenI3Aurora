@@ -2,8 +2,10 @@
    個人年輪 × AllenAnnuli 整合資料層：
    從 AllenAnnuli（https://allenchen1113official.github.io/allenannuli/）
    的 Supabase 後端讀取「大事紀」與「數字統計」，成功時覆蓋
-   window.KIT.annuli；失敗（離線、網域未授權、無資料）時保留原有
-   資料（Firestore／kit.jsx 內建預設），網站照常運作。
+   window.KIT.annuli；失敗（離線、網域未授權、無資料）時先退回
+   data/annuli.json（GitHub Actions 每日台北凌晨 01:00 同步的快照，
+   見 scripts/update-annuli.mjs），仍失敗才保留原有資料
+   （Firestore／kit.jsx 內建預設），網站照常運作。
    僅取資料、不引入 AllenAnnuli 的視覺樣式——色調維持本站 Aurora tokens。
    本檔於 <head> 載入，先啟動抓取並提供 ready promise，由 App 啟動時
    await 後合併進 window.KIT（與 aurora-data.js 相同模式）。
@@ -35,7 +37,25 @@
     ]);
   }
 
-  window.ANNULI.ready = withTimeout((async function () {
+  // 退援層：讀取排程同步的同源快照（data/annuli.json，每日 01:00 更新）。
+  function loadSnapshot() {
+    return fetch("/AllenI3Aurora/data/annuli.json", { cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (snap) {
+        if (!snap || !snap.annuli || !snap.annuli.length) throw new Error("快照無年輪資料");
+        window.ANNULI.stats = snap.stats || [];
+        window.ANNULI.range = snap.range || null;
+        window.ANNULI.count = snap.count || snap.annuli.length;
+        window.ANNULI.snapshot = true;
+        window.ANNULI.updatedAt = snap.updatedAt || null;
+        return { annuli: snap.annuli, stats: snap.stats || [], range: snap.range };
+      });
+  }
+
+  var liveFetch = (async function () {
     // supabase-js 與 AllenAnnuli 的加密設定檔（以本站網域解密；
     // github.io 與 localhost 皆在其授權清單內）
     await Promise.all([loadScript(SUPABASE_CDN), loadScript(SITE + "config.js")]);
@@ -82,8 +102,15 @@
     window.ANNULI.count = events.length;
     window.ANNULI.live = true;
     return { annuli: annuli, stats: stats, range: range };
-  })(), TIMEOUT_MS).catch(function (e) {
-    console.warn("[annuli] 讀取 AllenAnnuli 失敗，改用現有年輪資料：", e);
-    return null;
-  });
+  })();
+
+  window.ANNULI.ready = withTimeout(liveFetch, TIMEOUT_MS)
+    .catch(function (e) {
+      console.warn("[annuli] 即時讀取 AllenAnnuli 失敗，改用每日同步快照：", e);
+      return loadSnapshot();
+    })
+    .catch(function (e2) {
+      console.warn("[annuli] 快照亦不可用，改用現有年輪資料：", e2);
+      return null;
+    });
 })();
