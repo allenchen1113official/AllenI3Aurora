@@ -1,0 +1,57 @@
+name: 社群自動發文（Facebook）
+
+# 每 10 分鐘掃描 Firestore aurora_social_posts（queueState == 'pending'），
+# 依後台核准與排程時間發文到 Facebook 粉專：
+#   - 預定時間在 20 分鐘～29 天內 → 交給 Meta 原生排程（分鐘級準時）
+#   - 已到期 → 立即發布；原生排程到期後回頭對帳、撤銷請求則刪除 Meta 端排程
+# 狀態機與重試規則見 scripts/social/core.mjs；設定步驟見 docs/SOCIAL_SOP.md。
+#
+# 需要的 Repo Secrets：
+#   FIREBASE_SERVICE_ACCOUNT  服務帳戶 JSON（需加授「Cloud Datastore 使用者」角色）
+#   META_PAGE_TOKEN           粉專 Token（系統使用者 Token，不會過期）
+#   META_PAGE_ID              粉專 ID
+# 選用 Repo Variable：META_GRAPH_VERSION（預設 v25.0）
+# 未設定 Meta Secrets 時只會印出警告並略過，不會失敗。
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/social-publish.yml"
+      - "scripts/social/**"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只列出將執行的動作（不發文、不改資料）"
+        type: boolean
+        default: false
+
+concurrency:
+  group: social-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 行為測試
+        run: node --test scripts/social/publish.test.mjs
+      - name: 安裝 firebase-admin
+        run: npm install --no-save --no-audit --no-fund firebase-admin@13
+      - name: 執行發文排程
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION }}
+          SOCIAL_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
+        run: node scripts/social/publish-social-posts.mjs

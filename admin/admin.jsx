@@ -755,6 +755,15 @@ function NewsletterPanel() {
     if (!window.confirm("將本期退回草稿？前台將不再顯示。")) return;
     await save({ pubStatus: "draft", publishAt: "" }, "已退回草稿，前台不再顯示本期");
   };
+  /* 先儲存本期，再以 FB 貼文內文建立 aurora_social_posts 草稿，到「社群發文」審核排程 */
+  const queueSocial = async () => {
+    if (!sel.social.facebook && !sel.title) { setErr("請先填寫 Facebook 貼文內文或本期標題。"); return; }
+    if (!(await save(null, "已儲存"))) return;
+    try {
+      await socCreateFromIssue(sel);
+      setToast("已建立社群貼文草稿 ✓ 請到左側「社群發文」審核並排程"); setTimeout(() => setToast(""), 4200);
+    } catch (ex) { setErr("建立社群草稿失敗：" + errText(ex)); }
+  };
   const removeIssue = async () => {
     if (!sel || sel.__new) { setSel(null); return; }
     if (!window.confirm("確定刪除整期電子報「" + (sel.title || sel.no) + "」？")) return;
@@ -887,6 +896,7 @@ function NewsletterPanel() {
             <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
               <button className="ad-btn ghost" onClick={() => nlCopy(nlFacebookText(sel), "已複製 FB 貼文", setToast)}>複製 FB 貼文（含連結與標籤）</button>
               <button className="ad-btn ghost" onClick={() => window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(nlIssueUrl(sel)), "_blank", "noopener,width=640,height=640")}>開啟 Facebook 分享視窗 ↗</button>
+              <button className="ad-btn primary" onClick={queueSocial} disabled={busy}>送進社群發文審核（自動發 FB）</button>
             </div>
           </div>
           <div style={box}>
@@ -1572,11 +1582,463 @@ function PodcastPanel() {
   );
 }
 
+/* =====================================================================
+   社群發文 — aurora_social_posts 審核與排程（第一階段：Facebook 粉專）
+   後台只負責「內容與決策」：編修、核准、排程、取消；實際呼叫 Graph API
+   由 GitHub Actions（social-publish.yml，每 10 分鐘）以伺服器端 Token 執行，
+   Token 不會出現在前端。狀態機見 scripts/social/core.mjs。
+   ===================================================================== */
+const SOC_NAV = "__social";
+const SOC_COLL = "aurora_social_posts";
+const SOC_META_DOC = "aurora_social_meta/runner";
+const SOC_NATIVE_MIN_MIN = 20; // 與 core.mjs FB_NATIVE_MIN_LEAD_MS 一致
+
+const SOC_FB_META = {
+  draft:            { label: "待審核",     color: "var(--text-2)",       bg: "var(--night-700)" },
+  approved:         { label: "已核准・待送出", color: "var(--illumination)", bg: "var(--illumination-soft)" },
+  publishing:       { label: "送出中",     color: "var(--illumination)", bg: "var(--illumination-soft)" },
+  scheduled:        { label: "Meta 已排程", color: "var(--intelligence)", bg: "var(--brand-soft)" },
+  cancel_requested: { label: "取消中",     color: "var(--illumination)", bg: "var(--illumination-soft)" },
+  published:        { label: "已發布",     color: "var(--success)",      bg: "var(--insight-soft)" },
+  failed:           { label: "失敗",       color: "var(--danger)",       bg: "var(--night-700)" },
+  skipped:          { label: "不發 FB",    color: "var(--text-4)",       bg: "var(--night-700)" },
+};
+const socFbState = (r) => (r && r.fb && r.fb.state) || "draft";
+const socIsRejected = (r) => r && r.queueState === "rejected";
+const SOC_EDITABLE = ["draft", "failed"]; // 只有尚未交給排程器的才可編修
+const SOC_FILTERS = [
+  { id: "review",  label: "待審核", test: (r) => !socIsRejected(r) && socFbState(r) === "draft" },
+  { id: "queue",   label: "排程中", test: (r) => ["approved", "publishing", "scheduled", "cancel_requested"].includes(socFbState(r)) },
+  { id: "done",    label: "已發布", test: (r) => socFbState(r) === "published" },
+  { id: "failed",  label: "失敗",   test: (r) => socFbState(r) === "failed" },
+  { id: "rejected", label: "已退回", test: socIsRejected },
+  { id: "all",     label: "全部",   test: () => true },
+];
+
+/* 站內圖卡（GitHub Pages 公開網址；IG 第二階段也會沿用） */
+const SOC_SITE_BASE = location.origin + "/AllenI3Aurora/";
+const SOC_IMAGE_PICKS = [
+  { label: "上市熱力圖（FB）", path: "assets/heatmap/twse-heatmap-fb.png" },
+  { label: "上櫃熱力圖（FB）", path: "assets/heatmap/tpex-heatmap-fb.png" },
+  { label: "選股雷達（FB）",   path: "assets/stockradar/stockradar-fb.png" },
+  { label: "盤前速報圖卡",     path: "assets/prebrief/prebrief-card.png" },
+  { label: "Podcast 筆記（FB）", path: "assets/podcast/podcast-cornell-fb.png" },
+];
+/* 電子報封面（../../assets/x 或站內相對路徑）→ 公開絕對網址 */
+function socAbsUrl(u) {
+  const s = String(u || "").trim();
+  if (!s) return "";
+  if (/^https?:\/\//i.test(s)) return s;
+  const i = s.indexOf("assets/");
+  return i >= 0 ? SOC_SITE_BASE + s.slice(i) : "";
+}
+
+function socBlank() {
+  return { __new: true, title: "", imageUrl: "", scheduledAt: "", queueState: "draft", note: "",
+    source: { type: "manual" },
+    fb: { enabled: true, caption: "", link: "", state: "draft", attempts: 0, error: null, postId: null } };
+}
+
+/* 由電子報建立 FB 草稿（電子報「Facebook / IG 貼文」分頁呼叫） */
+async function socCreateFromIssue(issue) {
+  const s = issue.social || {};
+  const caption = [s.facebook || issue.title || "", s.hashtags || ""].filter(Boolean).join("\n\n");
+  const now = new Date().toISOString();
+  const ref = await db.collection(SOC_COLL).add({
+    title: `${issue.kind || "電子報"} 第 ${issue.no || "—"} 期 · ${issue.title || ""}`.trim(),
+    imageUrl: socAbsUrl(issue.cover), scheduledAt: "", queueState: "draft", note: "",
+    source: { type: "issue", issueId: issue.id || null, kind: issue.kind || "", no: issue.no ?? "" },
+    fb: { enabled: true, caption, link: nlIssueUrl(issue), state: "draft", attempts: 0, error: null, postId: null },
+    ig: { enabled: false, state: "skipped" },
+    lock: { by: null, at: null },
+    createdAt: now, updatedAt: now,
+  });
+  return ref.id;
+}
+
+function SocBadge({ r }) {
+  const st = socIsRejected(r) ? null : socFbState(r);
+  const m = st ? SOC_FB_META[st] : { label: "已退回", color: "var(--text-4)", bg: "var(--night-700)" };
+  return <span style={{ padding: "2px 9px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800, background: m.bg, color: m.color, border: "1px solid var(--border)" }}>{m.label}</span>;
+}
+
+/* Facebook 貼文樣式預覽（照片貼文：連結併入內文，與排程器送出內容一致） */
+function SocFbPreview({ p }) {
+  const isPhoto = !!p.imageUrl;
+  const text = isPhoto ? [p.fb.caption, p.fb.link].filter(Boolean).join("\n\n") : p.fb.caption;
+  return (
+    <div style={{ background: "#ffffff", color: "#050505", borderRadius: 10, maxWidth: 500, overflow: "hidden", fontFamily: "system-ui, -apple-system, 'Noto Sans TC', sans-serif", boxShadow: "0 2px 14px rgba(0,0,0,.35)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px 8px" }}>
+        <img src={SOC_SITE_BASE + "assets/avatar.jpg"} alt="" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }} />
+        <div>
+          <div style={{ fontWeight: 700, fontSize: 15 }}>艾倫報報</div>
+          <div style={{ color: "#65676b", fontSize: 12.5 }}>{p.scheduledAt ? fmtLocal(p.scheduledAt) : "立即"} · 🌐</div>
+        </div>
+      </div>
+      <div style={{ padding: "0 14px 12px", fontSize: 15, lineHeight: 1.45, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{text || <span style={{ color: "#8a8d91" }}>（尚無內文）</span>}</div>
+      {isPhoto ? (
+        <img src={p.imageUrl} alt="" style={{ display: "block", width: "100%", background: "#f0f2f5" }} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} />
+      ) : p.fb.link ? (
+        <div style={{ background: "#f0f2f5", borderTop: "1px solid #dadde1", padding: "10px 14px" }}>
+          <div style={{ color: "#65676b", fontSize: 12, textTransform: "uppercase" }}>{(() => { try { return new URL(p.fb.link).hostname; } catch (e) { return ""; } })()}</div>
+          <div style={{ fontWeight: 700, fontSize: 15 }}>{p.title || "連結預覽由 Facebook 抓取頁面 OG 標籤產生"}</div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function SocialPanel() {
+  const [list, setList] = useState(null);
+  const [meta, setMeta] = useState(null);
+  const [sel, setSel] = useState(null);
+  const [filter, setFilter] = useState("review");
+  const [when, setWhen] = useState(""); // datetime-local
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [toast, setToast] = useState("");
+
+  const who = (auth && auth.currentUser && auth.currentUser.email) || "";
+  const isOwnerUser = who === OWNER_EMAIL;
+
+  const load = useCallback(async () => {
+    setErr("");
+    try {
+      const snap = await db.collection(SOC_COLL).get();
+      const rows = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+      rows.sort((a, b) => String(b.scheduledAt || b.createdAt || "").localeCompare(String(a.scheduledAt || a.createdAt || "")));
+      setList(rows);
+    } catch (ex) { setErr("讀取失敗：" + errText(ex)); setList([]); }
+    try { const m = await db.doc(SOC_META_DOC).get(); setMeta(m.exists ? m.data() : {}); } catch (ex) { setMeta({}); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const flash = (m) => { setToast(m); setTimeout(() => setToast(""), 3600); };
+  const open = (r) => {
+    setSel({
+      id: r.id, title: r.title || "", imageUrl: r.imageUrl || "", scheduledAt: r.scheduledAt || "",
+      queueState: r.queueState || "draft", note: r.note || "", source: r.source || { type: "manual" },
+      fb: Object.assign({ enabled: true, caption: "", link: "", state: "draft", attempts: 0 }, r.fb || {}),
+    });
+    setWhen(isoToLocalInput(r.scheduledAt));
+    setErr(""); setToast("");
+  };
+  const setF = (k, v) => setSel((s) => ({ ...s, [k]: v }));
+  const setFb = (k, v) => setSel((s) => ({ ...s, fb: { ...s.fb, [k]: v } }));
+
+  const st = sel ? socFbState(sel) : "draft";
+  const editable = sel && isOwnerUser && (sel.__new || SOC_EDITABLE.includes(st) || sel.queueState === "rejected");
+
+  const contentPayload = (s) => ({
+    title: s.title || "", imageUrl: (s.imageUrl || "").trim(), note: s.note || "",
+    "fb.enabled": !!s.fb.enabled, "fb.caption": s.fb.caption || "", "fb.link": (s.fb.link || "").trim(),
+    updatedAt: new Date().toISOString(),
+  });
+
+  /* 儲存；成功回傳文件 id（新貼文為剛建立的 id），失敗回傳 false */
+  const saveDraft = async (silent) => {
+    setBusy(true); setErr("");
+    let id = sel.id;
+    try {
+      if (sel.__new) {
+        const now = new Date().toISOString();
+        const ref = await db.collection(SOC_COLL).add({
+          title: sel.title || "", imageUrl: (sel.imageUrl || "").trim(), note: sel.note || "",
+          scheduledAt: "", queueState: "draft", source: sel.source || { type: "manual" },
+          fb: { enabled: !!sel.fb.enabled, caption: sel.fb.caption || "", link: (sel.fb.link || "").trim(), state: "draft", attempts: 0, error: null, postId: null },
+          ig: { enabled: false, state: "skipped" }, lock: { by: null, at: null }, createdAt: now, updatedAt: now,
+        });
+        id = ref.id;
+        setSel((s) => ({ ...s, __new: false, id }));
+      } else {
+        await db.collection(SOC_COLL).doc(sel.id).update(contentPayload(sel));
+      }
+      await load();
+      if (!silent) flash("已儲存草稿 ✓");
+      setBusy(false); return id;
+    } catch (ex) { setErr("儲存失敗：" + errText(ex)); setBusy(false); return false; }
+  };
+
+  const validate = () => {
+    if (!sel.fb.enabled) return "第一階段只支援 Facebook，請勾選「發布到 Facebook 粉專」。";
+    if (!(sel.fb.caption || "").trim() && !(sel.imageUrl || "").trim()) return "請至少填寫貼文內文或圖片。";
+    if (sel.imageUrl && !/^https:\/\//i.test(sel.imageUrl.trim())) return "圖片需為 https:// 開頭的公開網址（Meta 會直接下載）。";
+    if (sel.fb.link && !/^https?:\/\//i.test(sel.fb.link.trim())) return "連結需為完整網址（https://…）。";
+    return "";
+  };
+
+  /* 核准：寫入時間、狀態，queueState=pending 交給排程器 */
+  const approve = async (iso, msg) => {
+    const v = validate(); if (v) { setErr(v); return; }
+    const id = await saveDraft(true);
+    if (!id) return;
+    setBusy(true);
+    try {
+      await db.collection(SOC_COLL).doc(id).update({
+        scheduledAt: iso, queueState: "pending", "fb.state": "approved", "fb.attempts": 0, "fb.error": null,
+        "review.approvedAt": new Date().toISOString(), "review.by": who, lock: { by: null, at: null },
+        updatedAt: new Date().toISOString(),
+      });
+      setSel((s) => ({ ...s, scheduledAt: iso, queueState: "pending", fb: { ...s.fb, state: "approved", attempts: 0, error: null } }));
+      await load(); flash(msg);
+    } catch (ex) { setErr("核准失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+  const approveScheduled = () => {
+    const iso = localInputToIso(when);
+    if (!iso) { setErr("請先選擇發文時間。"); return; }
+    if (Date.parse(iso) < Date.now() - 60000) { setErr("發文時間已過；若要馬上發，請按「立即發布」。"); return; }
+    const lead = (Date.parse(iso) - Date.now()) / 60000;
+    approve(iso, lead >= SOC_NATIVE_MIN_MIN
+      ? `已核准 ✓ 下一輪排程器（約 10 分鐘內）會交給 Meta 於 ${fmtLocal(iso)} 準時發出`
+      : `已核准 ✓ 不足 ${SOC_NATIVE_MIN_MIN} 分鐘，將由排程器於下一輪直接發出（約 10 分鐘內，尖峰可能延遲）`);
+  };
+  const approveNow = () => {
+    const v = validate(); if (v) { setErr(v); return; } // 先驗證，避免確認後才報錯
+    if (!window.confirm("確認立即發布到 Facebook 粉專？排程器下一輪（約 10 分鐘內）送出，送出後即公開。")) return;
+    approve(new Date().toISOString(), "已核准立即發布 ✓ 排程器下一輪送出");
+  };
+
+  /* 撤回尚未送出的核准：用 transaction 確認排程器沒有正在處理 */
+  const withdraw = async () => {
+    setBusy(true); setErr("");
+    const ref = db.collection(SOC_COLL).doc(sel.id);
+    try {
+      const ok = await db.runTransaction(async (tx) => {
+        const d = (await tx.get(ref)).data() || {};
+        const lockAt = Date.parse((d.lock && d.lock.at) || "");
+        if ((d.fb && d.fb.state) !== "approved" || (d.lock && d.lock.by && isFinite(lockAt) && Date.now() - lockAt < 15 * 60000)) return false;
+        tx.update(ref, { queueState: "draft", "fb.state": "draft", updatedAt: new Date().toISOString() });
+        return true;
+      });
+      if (ok) { setSel((s) => ({ ...s, queueState: "draft", fb: { ...s.fb, state: "draft" } })); flash("已撤回核准，回到待審核"); }
+      else setErr("排程器正在處理或已送出，無法撤回；請重新整理查看最新狀態（若已交給 Meta 排程，可改按「取消 Meta 排程」）。");
+      await load();
+    } catch (ex) { setErr("撤回失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+  /* 已交給 Meta 原生排程：請排程器刪除 Meta 端貼文 */
+  const cancelNative = async () => {
+    if (!window.confirm("取消 Meta 端排程？排程器下一輪會刪除 Facebook 上的排程貼文，並退回待審核。")) return;
+    setBusy(true); setErr("");
+    try {
+      await db.collection(SOC_COLL).doc(sel.id).update({ queueState: "pending", "fb.state": "cancel_requested", updatedAt: new Date().toISOString() });
+      setSel((s) => ({ ...s, queueState: "pending", fb: { ...s.fb, state: "cancel_requested" } }));
+      await load(); flash("已送出取消請求，約 10 分鐘內完成");
+    } catch (ex) { setErr("取消失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+  const reject = async () => {
+    const note = window.prompt("退回原因（選填，供日後參考）：", sel.note || "");
+    if (note === null) return;
+    setBusy(true);
+    try {
+      await db.collection(SOC_COLL).doc(sel.id).update({ queueState: "rejected", "fb.state": "draft", note, updatedAt: new Date().toISOString() });
+      await load(); setSel(null); flash("已退回");
+    } catch (ex) { setErr("退回失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+  const remove = async () => {
+    if (sel.__new) { setSel(null); return; }
+    if (!window.confirm("確定刪除這則社群貼文草稿？")) return;
+    setBusy(true);
+    try { await db.collection(SOC_COLL).doc(sel.id).delete(); setSel(null); await load(); }
+    catch (ex) { setErr("刪除失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+
+  const box = { background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 16, marginBottom: 14 };
+  const ownerBanner = !isOwnerUser ? (
+    <div style={{ ...box, borderColor: "var(--danger)", color: "var(--danger)", fontSize: 13, lineHeight: 1.7 }}>
+      目前登入為「{who || "未登入"}」，不是管理者帳號（{OWNER_EMAIL}）。社群發文佇列僅限管理者讀寫，請登出後改用管理者帳號登入。
+    </div>
+  ) : null;
+
+  /* 排程器健康狀態 */
+  const lastRun = meta && meta.lastRunAt ? Date.parse(meta.lastRunAt) : NaN;
+  const stale = isFinite(lastRun) && Date.now() - lastRun > 45 * 60000;
+  const health = (
+    <div style={{ ...box, display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", fontSize: 12.5 }}>
+      <span style={{ color: "var(--text-3)" }}>排程器</span>
+      {meta == null ? <span style={{ color: "var(--text-4)" }}>讀取中…</span>
+        : !isFinite(lastRun) ? <span style={{ color: "var(--illumination)" }}>尚未執行過（請依 docs/SOCIAL_SOP.md 設定 Secrets）</span>
+        : <span style={{ color: stale ? "var(--illumination)" : "var(--success)", fontFamily: "var(--font-mono)" }}>{stale ? "⚠ " : "● "}最後執行 {fmtLocal(meta.lastRunAt)}{stale ? "（超過 45 分鐘未執行）" : ""}</span>}
+      {meta && isFinite(lastRun) ? (
+        <span style={{ color: meta.tokenOk ? "var(--success)" : "var(--danger)" }}>
+          {meta.tokenOk ? "● Meta Token 正常" + (meta.pageName ? "（" + meta.pageName + "）" : "") : "✕ Meta Token 異常：" + (meta.tokenError || "")}
+        </span>
+      ) : null}
+    </div>
+  );
+
+  /* --- 列表 --- */
+  if (!sel) {
+    const f = SOC_FILTERS.find((x) => x.id === filter) || SOC_FILTERS[0];
+    const rows = (list || []).filter(f.test);
+    return (
+      <div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+          <div>
+            <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>社群發文</h2>
+            <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{SOC_COLL} · 審核後自動發到 Facebook 粉專（IG 第二階段）</div>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button className="ad-btn ghost" onClick={load}>重新整理</button>
+            <button className="ad-btn primary" disabled={!isOwnerUser} onClick={() => { setSel(socBlank()); setWhen(""); setErr(""); }}>＋ 新增貼文</button>
+          </div>
+        </div>
+        {ownerBanner}
+        {health}
+        {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+        {toast && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{toast}</div>}
+        <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
+          {SOC_FILTERS.map((x) => (
+            <button key={x.id} className="ad-btn ghost" onClick={() => setFilter(x.id)}
+              style={{ padding: "6px 12px", fontSize: 12.5,
+                borderColor: filter === x.id ? "var(--border-aurora)" : "var(--border)",
+                background: filter === x.id ? "var(--brand-soft)" : "transparent",
+                color: filter === x.id ? "var(--text-1)" : "var(--text-4)" }}>
+              {x.label}（{(list || []).filter(x.test).length}）
+            </button>
+          ))}
+        </div>
+        {list == null ? <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>
+          : rows.length === 0 ? <div style={{ color: "var(--text-3)", padding: 20, fontSize: 13.5, lineHeight: 1.8 }}>這個分類沒有貼文。可按「新增貼文」，或在「電子報 → Facebook / IG 貼文」分頁把某一期送進審核佇列。</div>
+          : (
+            <div style={{ display: "grid", gap: 10 }}>
+              {rows.map((r) => (
+                <button key={r.id} onClick={() => open(r)} style={{ textAlign: "left", cursor: "pointer", background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 14, display: "flex", gap: 14, alignItems: "center" }}>
+                  {r.imageUrl ? <img src={r.imageUrl} alt="" style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 8, flex: "none", background: "var(--night-700)" }} /> : <div style={{ width: 64, height: 64, borderRadius: 8, flex: "none", background: "var(--night-700)", display: "grid", placeItems: "center", color: "var(--text-4)", fontSize: 11 }}>無圖</div>}
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 4 }}>
+                      <SocBadge r={r} />
+                      {r.scheduledAt ? <span style={{ color: "var(--text-3)", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>⏰ {fmtLocal(r.scheduledAt)}</span> : null}
+                      {r.source && r.source.type === "issue" ? <span style={{ color: "var(--intelligence)", fontSize: 11.5 }}>◆ 來自電子報</span> : null}
+                      {r.fb && r.fb.error ? <span style={{ color: "var(--danger)", fontSize: 11.5 }}>⚠ {String(r.fb.error).slice(0, 40)}</span> : null}
+                    </div>
+                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: 15 }}>{r.title || "（未命名）"}</div>
+                    <div style={{ color: "var(--text-3)", fontSize: 12.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{(r.fb && r.fb.caption) || ""}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+      </div>
+    );
+  }
+
+  /* --- 編輯／審核 --- */
+  const capLen = (sel.fb.caption || "").length;
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button className="ad-btn ghost" onClick={() => { setSel(null); setErr(""); load(); }}>← 返回列表</button>
+          <div>
+            <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 20, margin: 0 }}>{sel.__new ? "新增社群貼文" : "審核社群貼文"}</h2>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 4 }}><SocBadge r={sel} />
+              {sel.fb.postId ? <span style={{ color: "var(--text-4)", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>post {sel.fb.postId}</span> : null}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {editable ? <button className="ad-btn" onClick={() => saveDraft()} disabled={busy}>{busy ? "處理中…" : "儲存草稿"}</button> : null}
+          {editable && !sel.__new ? <button className="ad-btn ghost" onClick={reject} disabled={busy}>退回</button> : null}
+          {(editable || sel.__new) && st !== "published" ? <button className="ad-btn danger" onClick={remove} disabled={busy}>{sel.__new ? "取消" : "刪除"}</button> : null}
+        </div>
+      </div>
+      {ownerBanner}
+      {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+      {toast && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{toast}</div>}
+      {sel.fb.error ? <div style={{ ...box, borderColor: "var(--danger)", color: "var(--danger)", fontSize: 13 }}>上次錯誤（第 {sel.fb.attempts || 0} 次）：{sel.fb.error}</div> : null}
+      {sel.fb.permalink ? <div style={{ ...box, fontSize: 13 }}><a href={sel.fb.permalink} target="_blank" rel="noopener" style={{ color: "var(--brand)" }}>在 Facebook 查看貼文 ↗</a></div> : null}
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16, alignItems: "start" }}>
+        <div>
+          <div style={box}>
+            <label className="ad-lbl">內部標題（只在後台顯示）</label>
+            <input className="ad-in" value={sel.title} disabled={!editable} onChange={(e) => setF("title", e.target.value)} placeholder="例：週報第 42 期 · AI 代理的記憶" />
+            <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, color: "var(--text-2)", fontSize: 13 }}>
+              <input type="checkbox" checked={!!sel.fb.enabled} disabled={!editable} onChange={(e) => setFb("enabled", e.target.checked)} /> 發布到 Facebook 粉專
+            </label>
+            <div style={{ marginTop: 12 }}>
+              <label className="ad-lbl">FB 貼文內文（{capLen} 字）</label>
+              <textarea className="ad-in" style={{ minHeight: 170, fontFamily: "var(--font-body)" }} value={sel.fb.caption} disabled={!editable} onChange={(e) => setFb("caption", e.target.value)} placeholder="貼文內文、hashtag…" />
+            </div>
+            <div style={{ marginTop: 12 }}>
+              <label className="ad-lbl">連結（選填；有圖片時會接在內文最後）</label>
+              <input className="ad-in" value={sel.fb.link} disabled={!editable} onChange={(e) => setFb("link", e.target.value)} placeholder="https://allenchen1113official.github.io/AllenI3Aurora/?issue=42" />
+            </div>
+          </div>
+          <div style={box}>
+            <label className="ad-lbl">圖片網址（https 公開網址；留空則發純文字／連結貼文）</label>
+            <input className="ad-in" value={sel.imageUrl} disabled={!editable} onChange={(e) => setF("imageUrl", e.target.value)} placeholder={SOC_SITE_BASE + "assets/…"} />
+            {editable ? (
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 10 }}>
+                {SOC_IMAGE_PICKS.map((p) => (
+                  <button key={p.path} className="ad-btn ghost" style={{ padding: "5px 10px", fontSize: 12 }} onClick={() => setF("imageUrl", SOC_SITE_BASE + p.path)}>{p.label}</button>
+                ))}
+              </div>
+            ) : null}
+            <div style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 8, lineHeight: 1.7 }}>
+              站內圖卡為固定檔名、每日覆寫。交給 Meta 排程時圖片會在「排程當下」上傳定格；立即發布則抓送出當下的版本。
+            </div>
+          </div>
+          <div style={{ ...box, opacity: 0.55 }}>
+            <div style={{ fontWeight: 800, color: "var(--text-2)", fontFamily: "var(--font-display)", fontSize: 14 }}>Instagram（第二階段開放）</div>
+            <div style={{ color: "var(--text-4)", fontSize: 12, marginTop: 4 }}>IG 需兩段式容器發布且無原生排程，下一階段加入。</div>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ ...box, background: "var(--night-850)" }}>
+            <div className="ad-lbl" style={{ marginBottom: 10 }}>Facebook 預覽</div>
+            <SocFbPreview p={sel} />
+          </div>
+
+          {isOwnerUser && (editable || sel.__new) ? (
+            <div style={box}>
+              <div style={{ fontWeight: 800, color: "var(--text-1)", fontFamily: "var(--font-display)", marginBottom: 10 }}>核准並排程</div>
+              <div style={{ display: "flex", alignItems: "flex-end", gap: 10, flexWrap: "wrap" }}>
+                <div>
+                  <label className="ad-lbl">發文時間（你的當地時區）</label>
+                  <input className="ad-in" type="datetime-local" value={when} onChange={(e) => { setWhen(e.target.value); setErr(""); }} style={{ width: "auto" }} />
+                </div>
+                <button className="ad-btn primary" onClick={approveScheduled} disabled={busy}>✓ 核准排程</button>
+                <button className="ad-btn" onClick={approveNow} disabled={busy}>立即發布</button>
+              </div>
+              <div style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 10, lineHeight: 1.7 }}>
+                {SOC_NATIVE_MIN_MIN} 分鐘以後、29 天以內的時間會交給 Meta 原生排程，準時到分鐘；更近的時間由排程器下一輪直接發出（每 10 分鐘一輪，尖峰可能延遲）。超過 29 天者會先保留，進入範圍後再交給 Meta。
+              </div>
+            </div>
+          ) : null}
+
+          {isOwnerUser && st === "approved" ? (
+            <div style={box}>
+              <div style={{ color: "var(--text-2)", fontSize: 13, marginBottom: 10 }}>已核准，等待排程器送出（預定 {fmtLocal(sel.scheduledAt)}）。</div>
+              <button className="ad-btn ghost" onClick={withdraw} disabled={busy}>撤回核准（回到待審核）</button>
+            </div>
+          ) : null}
+          {isOwnerUser && st === "scheduled" ? (
+            <div style={box}>
+              <div style={{ color: "var(--text-2)", fontSize: 13, marginBottom: 10 }}>已交給 Meta，將於 {fmtLocal(sel.scheduledAt)} 發出。要修改內容請先取消排程。</div>
+              <button className="ad-btn danger" onClick={cancelNative} disabled={busy}>取消 Meta 排程</button>
+            </div>
+          ) : null}
+          {st === "publishing" || st === "cancel_requested" ? (
+            <div style={{ ...box, color: "var(--text-3)", fontSize: 13 }}>排程器處理中，請稍後按「返回列表」查看最新結果。</div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- 主控台 ---------- */
 function Console({ user }) {
   const [active, setActive] = useState(NL_NAV);
   const sec = SECTIONS.find((s) => s.id === active);
-  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
+  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: SOC_NAV, label: "社群發文" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
       <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
@@ -1605,6 +2067,7 @@ function Console({ user }) {
         </nav>
         <main style={{ flex: 1, minWidth: 0 }}>
           {active === NL_NAV ? <NewsletterPanel />
+            : active === SOC_NAV ? <SocialPanel />
             : active === PC_NAV ? <PodcastPanel />
             : active === SUB_NAV ? <SubscribersPanel />
             : active === WEALTH_NAV ? <WealthPanel />
