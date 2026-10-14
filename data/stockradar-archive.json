@@ -1,5 +1,17 @@
 [
   {
+    "no": "stockradar-20260824",
+    "kind": "選股",
+    "date": "2026.08.24",
+    "tone": "intelligence",
+    "title": "台股選股雷達 · TOP 10 訊號排行｜2026.08.24",
+    "desc": "StockRadar 台股每日排行 …",
+    "cover": "https://drive.google.com/thumbnail?id=1Bhu8pTKdti500yIwDYDridkzF2pMgdTO&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1Bhu8pTKdti500yIwDYDridkzF2pMgdTO&sz=w1600",
+    "summary": "StockRadar 台股每日排行 TOP 10 2026-08-24（一），TOP1 聯茂(6213) 482.5元 ▼5.95%，高檔回檔但均線仍多頭，TOP2 華邦電(2344) 177元 ▼2.21%，營益率/營收/EPS三項基本面訊號達標",
+    "items": 10
+  },
+  {
     "no": "stockradar-20260821",
     "kind": "選股",
     "date": "2026.08.21",

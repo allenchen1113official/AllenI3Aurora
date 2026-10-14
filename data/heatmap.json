@@ -1,7 +1,7 @@
 {
-  "date": "2026.08.24",
-  "dateLabel": "2026.08.24（最新）",
-  "asOf": "2026.08.25",
+  "date": "2026.10.14",
+  "dateLabel": "2026.10.14（最新）",
+  "asOf": "2026.10.15",
   "taiex": {
     "name": "加權指數 TAIEX",
     "index": "45,811.01",
@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "台股上市熱力圖 分享文案 2026-08-24，台股週一開高走低，加權指數終場下跌 461 點收 44,762 點（-1.02%），跌破 45,000 大關！美債殖利率走高與韓股重挫拖累亞股，權值股台積電 -1.45% 疲軟，塑化四寶更是重災區、台…",
+  "summary": "加權指數收 48,625.83 點，上漲 284.52 點（+0.59%）。傳產與塑化族群領軍，台塑、台化亮燈漲停，南亞也大漲9.40%；電子權值則偏震盪，台積電收 2,490 元持平、聯發科 -1.10%。，焦點：台塑 +9.89%、台化 +9.…",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1698srIMQRl9eDJcrtw-dYbvsUuLatYIH&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1-8upx1H94YkRmIGVUTEHtAk0RBnqjPgD&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1Onwy2HTaRsOszLyq_FzOE3KkPupy6p_X&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1odt-J0cd60g2vpw9Plq6tHRukgJFN7AM&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-08-25T06:53:29.254Z"
+  "updatedAt": "2026-10-14T16:27:02.534Z"
 }
