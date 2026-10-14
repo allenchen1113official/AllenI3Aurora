@@ -4,7 +4,8 @@ name: 部署 Firestore 安全規則
 # 也可在 Actions 頁面手動觸發（Run workflow）。
 # 需在 Repo Settings → Secrets and variables → Actions 設定：
 #   FIREBASE_SERVICE_ACCOUNT  （Google 服務帳戶金鑰 JSON 全文；
-#     須在 GCP 專案 alleni3aurora 內建立，並授予「Firebase Rules Admin」角色，
+#     須在 GCP 專案 alleni3aurora 內建立，並授予下列 4 個角色（缺一會 Authorization failed）：
+#       Firebase Rules Admin / Firebase 檢視者 / Cloud Datastore 索引管理員 / 服務使用情形消費者
 #     設定步驟見 firebase/SETUP_SOP.md「方式 C」）
 # 未設定 Secret 時此 workflow 會失敗並提示，不影響其他 workflow。
 on:
@@ -26,10 +27,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
       - name: 檢查 Secret 是否已設定
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
@@ -44,5 +45,13 @@ jobs:
         run: |
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-sa.json"
           export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase-sa.json"
-          npx --yes firebase-tools deploy --only firestore:rules --project alleni3aurora --non-interactive --force
+          set +e
+          npx --yes firebase-tools@15 deploy --only firestore:rules --project alleni3aurora --non-interactive --force 2>&1 | tee "$RUNNER_TEMP/deploy.log"
+          status=${PIPESTATUS[0]}
           rm -f "$RUNNER_TEMP/firebase-sa.json"
+          if [[ $status -ne 0 ]]; then
+            # 把關鍵錯誤寫成 annotation，手機 GitHub App 不開 log 也看得到原因
+            msg=$(grep -E "Error:|missing the following|^  [a-z]+\.[a-zA-Z.]+$|PERMISSION_DENIED|HTTP Error" "$RUNNER_TEMP/deploy.log" | head -8 | tr '\n' ' ')
+            echo "::error title=Firestore 規則部署失敗::${msg:-請展開 log 查看}（權限不足時請依 firebase/SETUP_SOP.md 方式 C 補齊服務帳戶角色）"
+            exit $status
+          fi

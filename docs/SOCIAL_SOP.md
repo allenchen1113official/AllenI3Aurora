@@ -48,7 +48,7 @@ social-publish.yml（每 10 分鐘）── scripts/social/publish-social-posts.
 
 ## 三、服務帳戶加授 Firestore 權限
 
-排程器沿用既有的 `FIREBASE_SERVICE_ACCOUNT`（原本只用來部署 Firestore 規則，只有「Firebase Rules Admin」角色）。需要再加一個角色才能讀寫貼文佇列：
+排程器沿用既有的 `FIREBASE_SERVICE_ACCOUNT`（原本用來部署 Firestore 規則，角色見 firebase/SETUP_SOP.md 方式 C）。需要再加一個角色才能讀寫貼文佇列：
 
 GCP Console → IAM 與管理 → IAM → 找到該服務帳戶 → 編輯 → 新增角色 **Cloud Datastore 使用者**（`roles/datastore.user`）→ 儲存。
 
