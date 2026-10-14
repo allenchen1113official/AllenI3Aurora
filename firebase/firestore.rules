@@ -29,6 +29,12 @@ service cloud.firestore {
     // Podcast 各集節目（逐字稿／摘要／康乃爾筆記；前台僅顯示已發布者）
     match /aurora_podcast_episodes/{doc} { allow read: if true; allow write: if isOwner(); }
 
+    // 社群發文佇列（FB／IG 草稿、審核、排程）：不公開，僅管理者可讀寫。
+    // 發文排程器（GitHub Actions）以服務帳戶經 Admin SDK 存取，不受本規則限制。
+    match /aurora_social_posts/{doc} { allow read, write: if isOwner(); }
+    // 排程器執行摘要（最後執行時間、Token 狀態）：管理者唯讀，僅排程器寫入。
+    match /aurora_social_meta/{doc}  { allow read: if isOwner(); allow write: if false; }
+
     // 電子報訂閱者：任何人可「建立」訂閱（嚴格欄位驗證），
     // 也可「自助更新」自己的訂閱（退訂／復訂／調整節奏，見 selfServiceValid）——
     // 但僅能變更 status / cadence / updatedAt，email、createdAt 等其餘欄位鎖死；
