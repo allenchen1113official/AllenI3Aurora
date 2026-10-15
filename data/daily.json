@@ -4,9 +4,9 @@
   "asOf": "2026.10.15",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.10.15 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.10.15  洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "今天最值得關注的趨勢，是智慧家庭與無人機物流雙雙迎來規模化擴張：蘋果加碼智慧家庭新品陣容，Amazon與Uber也分別宣布無人機送貨大幅擴張。同時2026美網開打在即，Sinner因傷退賽為賽事投下變數，費德勒、小威廉絲等傳奇球星回歸更添話題，值得持續關注。",
+  "focusNote": "",
   "sections": [
     {
       "tag": "農業",
@@ -14,63 +14,33 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "南韓推動「Agroid」AI人形機器人投入溫室採收作業，盼解決缺工問題並提升採收效率。",
-          "sourceName": "HortiDaily",
-          "source": "https://www.hortidaily.com/article/9863198/south-korea-targets-ai-humanoid-robot-for-greenhouse-harvesting/"
-        },
-        {
-          "text": "荷蘭新創Value Carbon推出CO2捕捉系統，應用於番茄溫室的熱電聯產機組，回收二氧化碳供作物施肥使用。",
-          "sourceName": "VerticalFarmDaily",
-          "source": "https://www.verticalfarmdaily.com/article/9865469/with-our-system-you-can-capture-around-80-percent-of-the-co2-produced-by-a-chp-unit/"
-        },
-        {
-          "text": "荷蘭研究團隊重新設計植物工廠氣流配置，使羅勒（Marian等品種）產量提升達35%。",
-          "sourceName": "VerticalFarmDaily",
-          "source": "https://www.verticalfarmdaily.com/article/9865529/the-plant-has-never-been-the-center-of-attention-when-designing-a-growth-system/"
+          "text": "ZenaDrone 獲 AgTech Breakthrough 2026「無人機技術」獎：ZenaTech 的 AI 自主飛行＋多光譜精準農業無人機，可及早偵測作物壓力、減少肥料與用水浪費，但農業方案仍在試點階段（9/1 發布，超出7天，僅供參考）。",
+          "sourceName": "Fertilizer Daily",
+          "source": "https://www.fertilizerdaily.com/20260901-zenatech-drone-precision-agriculture-agtech-award-2026/md/"
         }
       ]
     },
     {
-      "tag": "居家",
+      "tag": "家庭",
       "tone": "intelligence",
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "Gemini for Home新版本讓使用者以語音指令精準調整燈光克氏色溫，控制更自然。",
-          "sourceName": "9to5Google",
-          "source": "https://9to5google.com/2026/08/20/google-home-update-improves-voice-controls/"
-        },
-        {
-          "text": "外電報導蘋果正整修門市，為HomePod mini、Apple TV與智慧家庭Hub等新品鋪路。",
-          "sourceName": "9to5Mac",
-          "source": "https://9to5mac.com/2026/08/23/apple-preparing-for-homepod-mini-apple-tv-smart-home-launches/"
-        },
-        {
-          "text": "傳蘋果最快今秋推出模組化智慧顯示器「HomePad」、智慧門鈴與攝影機，加碼布局智慧家庭市場。",
-          "sourceName": "TechNews 科技新報",
-          "source": "https://technews.tw/2026/08/17/apple-smart-home/"
+          "text": "蘋果 Siri AI 智慧家庭中樞預計今年10月登場：報導指 7 吋螢幕搭配 HomePod 喇叭、支援 Face ID 與 Matter 標準（7/30 報導，值得留意是否近期發表）。",
+          "sourceName": "Deccan Herald",
+          "source": "https://deccanherald.com/technology/artificial-intelligence/apple-to-bring-siri-ai-powered-smart-home-hub-this-year-end-4091872"
         }
       ]
     },
     {
-      "tag": "空拍",
+      "tag": "無人機",
       "tone": "illumination",
       "title": "無人機系統",
       "items": [
         {
-          "text": "美國FCC提案擴大無人機零組件進口限制範圍，公眾意見徵詢至9月2日截止，恐衝擊燈光秀與蜂群飛行技術。",
-          "sourceName": "DroneXL",
-          "source": "https://dronexl.co/2026/08/22/fcc-drone-light-shows-military-grade-swarm/"
-        },
-        {
-          "text": "亞馬遜宣布無人機送貨服務規模將擴增約6倍，年送貨量上看百萬件。",
-          "sourceName": "About Amazon",
-          "source": "https://www.aboutamazon.com/news/transportation/amazon-prime-air-drone-delivery-expansion"
-        },
-        {
-          "text": "雙方透過Uber Eats平台合作，長期目標鎖定每日最多百萬單無人機配送規模。",
-          "sourceName": "Uber Newsroom",
-          "source": "https://investor.uber.com/news-events/news/press-release-details/2026/Uber-and-Zipline-Partner-to-Bring-Drone-Delivery-to-Millions-of-Americans/default.aspx"
+          "text": "FAA Part 108 超視距（BVLOS）規則接近定案：FAA 與 EASA 官員在 Commercial UAV Expo 比較監管架構；預估全球 UTM 市場 2030 年成長至 33.1 億美元（9/30）。",
+          "sourceName": "NextMSC",
+          "source": "https://www.nextmsc.com/news/faa-part-108-bvlos-rule-nears-finalization-as-utm-market-gains-momentum"
         }
       ]
     },
@@ -80,19 +50,9 @@
       "title": "冰島旅行",
       "items": [
         {
-          "text": "東北部橋樑因鋼纜腐蝕自8月17日起平日日間封閉，僅開放四個短暫通行時段。",
-          "sourceName": "Iceland Review",
-          "source": "https://www.icelandreview.com/travel/driving/jokulsa-a-fjollum-bridge-closures-august-2026/"
-        },
-        {
-          "text": "冰島氣象局發布特報，南部沿海強風可能達每秒10-15公尺，對露營車、拖車構成危險。",
-          "sourceName": "Iceland Review",
-          "source": "https://www.icelandreview.com/travel/safety/south-iceland-strong-winds-driving-august-17-2026/"
-        },
-        {
-          "text": "8月22日雷克雅維克舉辦免費文化之夜，涵蓋馬拉松、博物館展覽、廣場音樂會與煙火，最能感受冰島人的熱情友善。",
-          "sourceName": "The Reykjavík Grapevine",
-          "source": "https://grapevine.is/icelandic-culture/2026/08/20/the-reykjavik-grapevines-culture-night-highlights/"
+          "text": "冰島 2026 租車新制：按公里收道路費：自 2026/1/1 起所有車輛按公里計費（轎車與 SUV 每公里 6.95 ISK），訂車時請比較含稅總價；混合動力車隊增加（本日無重大更新，此為近期實用資訊）。",
+          "sourceName": "Northbound",
+          "source": "https://www.northbound.is/blog/461/iceland-car-rental-in-2026-new-road-tax-hybrid-fleets-and-travel-changes"
         }
       ]
     },
@@ -102,19 +62,14 @@
       "title": "攝影",
       "items": [
         {
-          "text": "以「光線、色彩、手勢」哲學影響數代攝影師的美國攝影大師逝世，其作品曾登上Miles Davis專輯封面。",
-          "sourceName": "DPReview",
-          "source": "https://www.dpreview.com/news/jay-maisel-iconic-photographer-dies-95/"
+          "text": "Brightin Star 推出新標準定焦鏡：9/30 發表的新標準定焦鏡頭，主打「不平凡」的標準焦段設計。",
+          "sourceName": "Digital Camera World",
+          "source": "https://www.digitalcameraworld.com/cameras/lenses/brightin-star-launches-a-new-standard-prime-thats-anything-but-standard"
         },
         {
-          "text": "新鏡頭支援Sony E與Nikon Z接環，重332克，並提供可3D列印客製化外殼。",
-          "sourceName": "DPReview",
-          "source": "https://www.dpreview.com/news/ttartisan-af-85mm-f1p8-neo-lens-announcement/"
-        },
-        {
-          "text": "新增桌面級降噪、色彩平衡、修復克隆等原僅限桌面版的專業編輯功能。",
-          "sourceName": "DPReview",
-          "source": "https://www.dpreview.com/news/capture-one-mobile-4-0-announcement/"
+          "text": "廣角微距鏡頭可拍 1:1 環境特寫：9/30 報導的全球首款廣角微距鏡，可拍出帶環境的 1:1 近拍。",
+          "sourceName": "Digital Camera World",
+          "source": "https://www.digitalcameraworld.com/cameras/lenses/world-first-this-wide-angle-macro-lens-enables-you-to-capture-unique-1-1-environmental-close-ups"
         }
       ]
     },
@@ -124,19 +79,9 @@
       "title": "薩克斯風",
       "items": [
         {
-          "text": "跨界重奏團嘗試以薩克斯風重新演繹聖桑經典交響曲，展現薩克斯風的合奏張力。",
-          "sourceName": "自由藝文網",
-          "source": "https://art.ltn.com.tw/article/breakingnews/5479409"
-        },
-        {
-          "text": "瑞典亞斯塔德爵士音樂節今年多場薩克斯風演出獲樂評盛讚，展現薩克斯風在當代爵士的多元面貌。",
-          "sourceName": "Jazz in Europe",
-          "source": "https://jazzineurope.mfmmedia.nl/2026/08/festival-review-ystad-jazz-festival-2026/"
-        },
-        {
-          "text": "薩克斯風手Kamasi Washington在音樂節演出向爵士巨匠致敬曲目，融合傳統與未來爵士風格。",
-          "sourceName": "Arts Fuse",
-          "source": "https://artsfuse.org/332595/music-festival-review-at-newport-jazz-2026-the-past-and-future-jam-side-by-side/"
+          "text": "Juan David Toro Martín 奪 Andorra Sax Fest 獨奏賽冠軍：25 歲西班牙演奏家獲 8,000 歐元與 Selmer 薩克斯風（4月賽事，本日無重大更新，僅供參考）。",
+          "sourceName": "ALTO Andorra",
+          "source": "https://www.alto.ad/culture/2026/04/juan-david-toro-wins-solo-sax-andorra-fest"
         }
       ]
     },
@@ -146,19 +91,9 @@
       "title": "網球",
       "items": [
         {
-          "text": "世界排名頂尖好手Sinner因右膝傷勢未癒宣布退賽，男單籤表因此洗牌。",
+          "text": "上海大師賽 8 強出爐：Zverev 與 Davidovich Fokina 於 10/13 晉級八強，賽事至 10/18。",
           "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/news/sinner-us-open-2026-withdrawal"
-        },
-        {
-          "text": "Alcaraz獲外卡與傳奇球后Serena Williams搭檔出戰混雙，成為本屆最受矚目話題組合。",
-          "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/news/alcaraz-serena-williams-us-open-2026-mixed-doubles"
-        },
-        {
-          "text": "Federer將於美網球迷週回歸亞瑟艾許球場，與傳奇球星同台表演賽。",
-          "sourceName": "Yahoo Sports",
-          "source": "https://sports.yahoo.com/tennis/article/roger-federer-announces-exhibition-event-at-us-open-where-hell-play-with-andy-roddick-andre-agassi-and-john-mcenroe-123547488.html"
+          "source": "https://www.atptour.com/es/news/shanghai-2026-results"
         }
       ]
     }
@@ -186,17 +121,17 @@
     }
   ],
   "highlights": [
-    "南韓推動「Agroid」AI人形機器人投入溫室採收作業，盼解決缺工問題並提升採收效率。",
-    "Gemini for Home新版本讓使用者以語音指令精準調整燈光克氏色溫，控制更自然。",
-    "美國FCC提案擴大無人機零組件進口限制範圍，公眾意見徵詢至9月2日截止，恐衝擊燈光秀與蜂群飛行技術。",
-    "東北部橋樑因鋼纜腐蝕自8月17日起平日日間封閉，僅開放四個短暫通行時段。"
+    "ZenaDrone 獲 AgTech Breakthrough 2026「無人機技術」獎",
+    "蘋果 Siri AI 智慧家庭中樞預計今年10月登場",
+    "FAA Part 108 超視距（BVLOS）規則接近定案",
+    "冰島 2026 租車新制"
   ],
   "cover": {
     "title": "今日日報封面",
-    "local": "assets/rabbit-reading.jpeg",
-    "drive": ""
+    "drive": "",
+    "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/1M9GLS8EE-nxlM4DTI3PeivPDfpwxR_WQ5WRnTfxgCSc/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/1j4A6d0EsL0j87mQ8CveareSUM2i9O2Mdq8RXtXLKkBU/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-10-15T03:39:16.428Z"
+  "updatedAt": "2026-10-15T04:21:42.175Z"
 }
