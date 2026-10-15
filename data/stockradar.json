@@ -1,9 +1,9 @@
 {
-  "date": "2026.10.14",
-  "dateLabel": "2026.10.14（最新）",
-  "asOf": "2026.10.15",
-  "desc": "【台股每日分析 TOP10 2026…",
-  "summary": "【台股每日分析 TOP10 2026-10-14 星期三】，今日排行前10:禾伸堂、柏承、南亞、佳必琪、台化、萬海、安馳(AMAX-KY)、長榮、聯茂、陽明。，重點:KD黃金交叉 2 檔(柏承、安馳);均線多頭排列 10 檔全數符合;營益率10%近…",
+  "date": "2026.10.15",
+  "dateLabel": "2026.10.15（最新）",
+  "asOf": "2026.10.16",
+  "desc": "• 榜首為 6278 台表科（+4.…",
+  "summary": "• 榜首為 6278 台表科（+4.48%，KD 高檔 K92/D90），但五項訊號均未達標。，• 3167 大量為唯一營益率、營收年增、EPS年增三項基本面同時達標的個股。，• 航運股（2603 長榮、2609 陽明、2615 萬海）均線維持多頭…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,103 +34,101 @@
   ],
   "top10": [
     {
-      "code": "3026",
-      "name": "禾伸堂",
-      "changePct": "",
+      "code": "6278",
+      "name": "台表科",
+      "changePct": "+4.48%",
       "up": true,
-      "signals": [
-        "eps"
-      ]
+      "signals": []
     },
     {
-      "code": "6141",
-      "name": "柏承",
-      "changePct": "",
-      "up": true,
-      "signals": [
-        "gc"
-      ]
-    },
-    {
-      "code": "1303",
-      "name": "南亞",
-      "changePct": "",
-      "up": true,
-      "signals": [
-        "eps"
-      ]
-    },
-    {
-      "code": "6197",
-      "name": "佳必琪",
+      "code": "3167",
+      "name": "大量",
       "changePct": "",
       "up": true,
       "signals": [
         "om",
-        "eps"
-      ]
-    },
-    {
-      "code": "1326",
-      "name": "台化",
-      "changePct": "",
-      "up": true,
-      "signals": [
-        "eps"
-      ]
-    },
-    {
-      "code": "2615",
-      "name": "萬海",
-      "changePct": "",
-      "up": true,
-      "signals": [
-        "om"
-      ]
-    },
-    {
-      "code": "6933",
-      "name": "AMAX-KY",
-      "changePct": "",
-      "up": true,
-      "signals": [
-        "gc",
+        "rev",
         "eps"
       ]
     },
     {
       "code": "2603",
       "name": "長榮",
-      "changePct": "",
+      "changePct": "-2.28%",
+      "up": false,
+      "signals": [
+        "ma",
+        "om"
+      ]
+    },
+    {
+      "code": "2609",
+      "name": "陽明",
+      "changePct": "-2.62%",
+      "up": false,
+      "signals": [
+        "ma"
+      ]
+    },
+    {
+      "code": "2615",
+      "name": "萬海",
+      "changePct": "-4.80%",
+      "up": false,
+      "signals": [
+        "ma",
+        "om"
+      ]
+    },
+    {
+      "code": "3014",
+      "name": "聯陽",
+      "changePct": "+0.34%",
       "up": true,
       "signals": [
         "om"
       ]
     },
     {
-      "code": "6213",
-      "name": "聯茂",
-      "changePct": "",
-      "up": true,
+      "code": "3026",
+      "name": "禾伸堂",
+      "changePct": "-5.04%",
+      "up": false,
       "signals": [
+        "ma",
         "eps"
       ]
     },
     {
-      "code": "2609",
-      "name": "陽明",
-      "changePct": "",
-      "up": true,
-      "signals": []
+      "code": "6197",
+      "name": "佳必琪",
+      "changePct": "-3.27%",
+      "up": false,
+      "signals": [
+        "ma",
+        "om",
+        "eps"
+      ]
+    },
+    {
+      "code": "6672",
+      "name": "騰輝電子",
+      "changePct": "-3.72%",
+      "up": false,
+      "signals": [
+        "ma",
+        "om",
+        "eps"
+      ]
     }
   ],
   "radar": {
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1HhXSgZ8INfNWxkrFF-cPqNDyRznqrRYe&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1Se3eFEBqG_nQpiwVouxPCFkWtgJXkwkK&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1IBM0sjIH2bnbQJRiIE-ZkZQW1vHciqCR/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/19TP9V3HRmYs8D92zfxwGduINe3EAu1vh/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-10-15T10:48:11.862Z"
+  "updatedAt": "2026-10-15T16:14:02.769Z"
 }
