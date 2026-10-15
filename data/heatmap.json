@@ -1,6 +1,6 @@
 {
-  "date": "2026.10.14",
-  "dateLabel": "2026.10.14（最新）",
+  "date": "2026.10.15",
+  "dateLabel": "2026.10.15",
   "asOf": "2026.10.15",
   "taiex": {
     "name": "加權指數 TAIEX",
@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "加權指數收 48,625.83 點，上漲 284.52 點（+0.59%）。傳產與塑化族群領軍，台塑、台化亮燈漲停，南亞也大漲9.40%；電子權值則偏震盪，台積電收 2,490 元持平、聯發科 -1.10%。，焦點：台塑 +9.89%、台化 +9.…",
+  "summary": "加權指數收 46,969.87 點，下跌 1,655.96 點（-3.41%）。熱力圖一片綠，半導體、電子零組件與塑化是跌幅主力；金融、電信等內需防禦族群相對抗跌。，權值股：台積電 -2.01%、聯發科 -6.93%、台達電 -8.68%、日月光投…",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1-8upx1H94YkRmIGVUTEHtAk0RBnqjPgD&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1U31in4S9i6GGCOq2ZL-_d71jLYg-C_nx&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1odt-J0cd60g2vpw9Plq6tHRukgJFN7AM&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1cTcyF4eXhbVzZdANCNjmbbQY0aVBr-1U&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-10-15T03:00:29.118Z"
+  "updatedAt": "2026-10-15T10:48:08.255Z"
 }
