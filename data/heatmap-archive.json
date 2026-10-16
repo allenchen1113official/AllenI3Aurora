@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261015",
+    "kind": "熱力圖",
+    "date": "2026.10.15",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.10.15",
+    "cover": "https://drive.google.com/thumbnail?id=1U31in4S9i6GGCOq2ZL-_d71jLYg-C_nx&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1U31in4S9i6GGCOq2ZL-_d71jLYg-C_nx&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1U31in4S9i6GGCOq2ZL-_d71jLYg-C_nx&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1cTcyF4eXhbVzZdANCNjmbbQY0aVBr-1U&sz=w1600",
+    "summary": "加權指數收 46,969.87 點，下跌 1,655.96 點（-3.41%）。熱力圖一片綠，半導體、電子零組件與塑化是跌幅主力；金融、電信等內需防禦族群相對抗跌。，權值股：台積電 -2.01%、聯發科 -6.93%、台達電 -8.68%、日月光投…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261014",
     "kind": "熱力圖",
     "date": "2026.10.14",
