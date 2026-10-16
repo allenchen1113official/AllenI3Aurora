@@ -6,7 +6,7 @@
       "title": "台股盤前速報",
       "desc": "基本面轉多，籌碼面空單創新高…",
       "summary": "基本面轉多，籌碼面空單創新高。，上一交易日（10/15 週四）加權指數收 46,969.87 點，重挫 1,655.96 點、跌幅 3.41%，失守月線與 47,000 點，為史上第 6 大收盤跌點，成交金額 1 兆 3,197.7 億元。，櫃買指…",
-      "meta": "2026.10.16 · 盤前速報",
+      "meta": "2026.10.16 · 盤前速報（最新）",
       "icon": "bell",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/prebrief.html"
     },
@@ -16,7 +16,7 @@
       "title": "台股熱力圖 · 上市／上櫃",
       "desc": "加權指數反彈141點…",
       "summary": "加權指數反彈141點、收47,111點，但本週仍累計下跌2,202點，結束四週連漲。，台積電法說後收2,420元（-0.82%）拖累大盤約160點；資金轉向PCB、低軌衛星、記憶體與資安族群。，外資連8日賣超約461億元，投信連6日買超約118億元。",
-      "meta": "2026.10.16 · 市值熱力圖",
+      "meta": "2026.10.16 · 市值熱力圖（最新）",
       "icon": "chart",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
     },
@@ -26,7 +26,7 @@
       "title": "台股選股雷達",
       "desc": "6278 台表科…",
       "summary": "6278 台表科：本期無符合訊號，3167 大量：營益率、營收、EPS，2603 長榮：均線多頭、營益率，2609 陽明：均線多頭，2615 萬海：均線多頭、營益率，3014 聯陽：KD黃金交叉、營益率，3026 禾伸堂：均線多頭、EPS，6197…",
-      "meta": "2026.10.16 · 訊號雷達",
+      "meta": "2026.10.16 · 訊號雷達（最新）",
       "icon": "compass",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html"
     },
@@ -41,6 +41,6 @@
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/daily.html"
     }
   ],
-  "asOf": "2026.10.16",
-  "updatedAt": "2026-10-16T13:43:48.225Z"
+  "asOf": "2026.10.17",
+  "updatedAt": "2026-10-16T18:36:02.279Z"
 }
