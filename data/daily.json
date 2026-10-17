@@ -1,12 +1,12 @@
 {
-  "date": "2026.10.17",
-  "dateLabel": "2026/10/17（六）",
-  "asOf": "2026.10.17",
+  "date": "2026.10.16",
+  "dateLabel": "2026/10/16（五）",
+  "asOf": "2026.10.16",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.10.17 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.10.16 今天值得關注：Home Assistant 2026.10 加入讓 AI 應用存取智慧家庭的 MCP 伺服器，顯示智慧家庭與 AI 整合加速；無人機 BVLOS 仍靠個案豁免，標準規則待定；冰島自駕留意新的按里程道路稅。 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "",
+  "focusNote": "今天值得關注：Home Assistant 2026.10 加入讓 AI 應用存取智慧家庭的 MCP 伺服器，顯示智慧家庭與 AI 整合加速；無人機 BVLOS 仍靠個案豁免，標準規則待定；冰島自駕留意新的按里程道路稅。",
   "sections": [
     {
       "tag": "農業",
@@ -14,9 +14,9 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "ZenaDrone 獲 AgTech Breakthrough 2026「無人機技術」獎：ZenaTech 的 AI 自主飛行＋多光譜精準農業無人機，可及早偵測作物壓力、減少肥料與用水浪費，但農業方案仍在試點階段（9/1 發布，超出7天，僅供參考）。",
-          "sourceName": "Fertilizer Daily",
-          "source": "https://www.fertilizerdaily.com/20260901-zenatech-drone-precision-agriculture-agtech-award-2026/md/"
+          "text": "精準農業已成日常作法：農民結合感測器、無人機、田間機器人與AI，節省水與肥料並在乾旱高溫下穩定產量；頁面於10/11更新。（本日無重大更新，此為近期參考）",
+          "sourceName": "Farmonaut",
+          "source": "https://www.farmonaut.com/precision-farming/precision-agriculture-2026-7-smart-farming-wins"
         }
       ]
     },
@@ -26,9 +26,14 @@
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "蘋果 Siri AI 智慧家庭中樞預計今年10月登場：報導指 7 吋螢幕搭配 HomePod 喇叭、支援 Face ID 與 Matter 標準（7/30 報導，值得留意是否近期發表）。",
-          "sourceName": "Deccan Herald",
-          "source": "https://deccanherald.com/technology/artificial-intelligence/apple-to-bring-siri-ai-powered-smart-home-hub-this-year-end-4091872"
+          "text": "Home Assistant 2026.10 發布（10/8）：新增OpenStreetMap向量地圖、可直接勾選觸發器的簡化自動化，以及一鍵啟用、讓Claude、ChatGPT等AI存取智慧家庭的MCP伺服器。",
+          "sourceName": "SmartHomeAssistent",
+          "source": "https://www.smarthomeassistent.de/home-assistant-2026-10-das-sind-die-neuerungen/"
+        },
+        {
+          "text": "Matter 相容性大幅提升（背景參考）：超過550家公司開發相容產品，裝置相容率由約34%升至近89%，新裝置設定縮短到一分鐘內；攝影機支援仍不成熟。",
+          "sourceName": "Robb Sutton",
+          "source": "https://robbsutton.com/matter-protocol/"
         }
       ]
     },
@@ -38,9 +43,9 @@
       "title": "無人機系統",
       "items": [
         {
-          "text": "FAA Part 108 超視距（BVLOS）規則接近定案：FAA 與 EASA 官員在 Commercial UAV Expo 比較監管架構；預估全球 UTM 市場 2030 年成長至 33.1 億美元（9/30）。",
-          "sourceName": "NextMSC",
-          "source": "https://www.nextmsc.com/news/faa-part-108-bvlos-rule-nears-finalization-as-utm-market-gains-momentum"
+          "text": "FAA 仍以個案核發 BVLOS 豁免：標準化BVLOS最終規則仍在最終審查階段，營運者目前主要依賴豁免，例如ResilienX的豁免有效至2029年9月。",
+          "sourceName": "Unmanned Aerial Online",
+          "source": "https://unmanned-aerial.com/bvlos-waivers-2026-what-the-faa-approves/"
         }
       ]
     },
@@ -50,7 +55,7 @@
       "title": "冰島旅行",
       "items": [
         {
-          "text": "冰島 2026 租車新制：按公里收道路費：自 2026/1/1 起所有車輛按公里計費（轎車與 SUV 每公里 6.95 ISK），訂車時請比較含稅總價；混合動力車隊增加（本日無重大更新，此為近期實用資訊）。",
+          "text": "冰島2026自駕：改採按里程道路稅：自1月1日起轎車與休旅車每公里6.95冰島克朗，取代燃料稅，租車報價算法可能不同，訂車前請確認；租車車隊也漸轉向油電混合車。",
           "sourceName": "Northbound",
           "source": "https://www.northbound.is/blog/461/iceland-car-rental-in-2026-new-road-tax-hybrid-fleets-and-travel-changes"
         }
@@ -62,14 +67,19 @@
       "title": "攝影",
       "items": [
         {
-          "text": "Brightin Star 推出新標準定焦鏡：9/30 發表的新標準定焦鏡頭，主打「不平凡」的標準焦段設計。",
-          "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/cameras/lenses/brightin-star-launches-a-new-standard-prime-thats-anything-but-standard"
+          "text": "騰龍 16-50mm F2.8 APS-C 變焦鏡（10/14）：售價不到550美元，定位為各APS-C系統的大光圈套鏡替代選擇。",
+          "sourceName": "DPReview",
+          "source": "https://www.dpreview.com/news/tamrons-16-50mm-f2-8-is-a-fast-sub-550-kit-lens-replacement-for-every-aps-c-system/"
         },
         {
-          "text": "廣角微距鏡頭可拍 1:1 環境特寫：9/30 報導的全球首款廣角微距鏡，可拍出帶環境的 1:1 近拍。",
-          "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/cameras/lenses/world-first-this-wide-angle-macro-lens-enables-you-to-capture-unique-1-1-environmental-close-ups"
+          "text": "富士 Instax Square 2 發表（10/14）：新增可切換氛圍的開關，並推出柔霧風格的「Soft Haze」新底片。",
+          "sourceName": "DPReview",
+          "source": "https://www.dpreview.com/news/the-instax-square-2-gives-instant-film-shooters-a-switch-to-change-the-mood/"
+        },
+        {
+          "text": "Getty Images 轉為私人持有（10/15）：因與Shutterstock合併破局及AI衝擊而私有化，編輯與圖庫業務照常運作。",
+          "sourceName": "DPReview",
+          "source": "https://www.dpreview.com/news/getty-images-going-private-following-collapse-of-shutterstock-deal-and-rise-of-ai/"
         }
       ]
     },
@@ -79,9 +89,9 @@
       "title": "薩克斯風",
       "items": [
         {
-          "text": "Juan David Toro Martín 奪 Andorra Sax Fest 獨奏賽冠軍：25 歲西班牙演奏家獲 8,000 歐元與 Selmer 薩克斯風（4月賽事，本日無重大更新，僅供參考）。",
-          "sourceName": "ALTO Andorra",
-          "source": "https://www.alto.ad/culture/2026/04/juan-david-toro-wins-solo-sax-andorra-fest"
+          "text": "安道爾國際薩克斯風比賽回顧：六位決賽選手與安道爾國家古典管弦樂團同台，Wataru Hirai奪得第11屆獨奏組冠軍。（本日無重大更新，此為賽事參考）",
+          "sourceName": "WFIMC",
+          "source": "https://www.wfimc.org/news-media/thrilling-finals-andorra-saxfest"
         }
       ]
     },
@@ -91,7 +101,7 @@
       "title": "網球",
       "items": [
         {
-          "text": "上海大師賽 8 強出爐：Zverev 與 Davidovich Fokina 於 10/13 晉級八強，賽事至 10/18。",
+          "text": "上海大師賽八強出爐（10/16）：梅德韋傑夫6-3、1-6、6-3擊敗湯米·保羅；霍達爾逆轉魯德，兩人晉級四強。賽事至10/18。",
           "sourceName": "ATP Tour",
           "source": "https://www.atptour.com/es/news/shanghai-2026-results"
         }
@@ -121,17 +131,17 @@
     }
   ],
   "highlights": [
-    "ZenaDrone 獲 AgTech Breakthrough 2026「無人機技術」獎",
-    "蘋果 Siri AI 智慧家庭中樞預計今年10月登場",
-    "FAA Part 108 超視距（BVLOS）規則接近定案",
-    "冰島 2026 租車新制"
+    "精準農業已成日常作法",
+    "Home Assistant 2026.10 發布（10/8）",
+    "FAA 仍以個案核發 BVLOS 豁免",
+    "冰島2026自駕"
   ],
   "cover": {
     "title": "今日日報封面",
-    "local": "assets/rabbit-reading.jpeg",
-    "drive": ""
+    "drive": "",
+    "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/1j4A6d0EsL0j87mQ8CveareSUM2i9O2Mdq8RXtXLKkBU/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/1a6o13Ef_HjnTyKvCFowSpoRl1HEuq0v2Dg5hulKH3hY/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-10-17T03:25:30.118Z"
+  "updatedAt": "2026-10-17T04:07:23.575Z"
 }
