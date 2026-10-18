@@ -1,12 +1,12 @@
 {
-  "date": "2026.10.18",
-  "dateLabel": "2026/10/18（日）",
-  "asOf": "2026.10.18",
+  "date": "2026.10.17",
+  "dateLabel": "2026/10/17（六）",
+  "asOf": "2026.10.17",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.10.18 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.10.17 本週最值得關注：美國 Part 108 BVLOS 規則仍卡在審查，噴藥無人機供應鏈則轉向在地製造；智慧家庭方面 Aliro 與 Matter 持續擴大互通。另外達美新增波士頓—雷克雅維克直飛，也讓冰島自駕行更便利。 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "今天值得關注：Home Assistant 2026.10 加入讓 AI 應用存取智慧家庭的 MCP 伺服器，顯示智慧家庭與 AI 整合加速；無人機 BVLOS 仍靠個案豁免，標準規則待定；冰島自駕留意新的按里程道路稅。",
+  "focusNote": "本週最值得關注：美國 Part 108 BVLOS 規則仍卡在審查，噴藥無人機供應鏈則轉向在地製造；智慧家庭方面 Aliro 與 Matter 持續擴大互通。另外達美新增波士頓—雷克雅維克直飛，也讓冰島自駕行更便利。",
   "sections": [
     {
       "tag": "農業",
@@ -14,9 +14,14 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "精準農業已成日常作法：農民結合感測器、無人機、田間機器人與AI，節省水與肥料並在乾旱高溫下穩定產量；頁面於10/11更新。（本日無重大更新，此為近期參考）",
-          "sourceName": "Farmonaut",
-          "source": "https://www.farmonaut.com/precision-farming/precision-agriculture-2026-7-smart-farming-wins"
+          "text": "美國噴藥無人機廠轉向自製：Agri Spray Drones 由經銷轉為製造，規劃 2026 年小批量組裝、2028 年擴大本土供應鏈，並開發自動補給的 Drone Dock。",
+          "sourceName": "High Plains Journal",
+          "source": "https://hpj.com/2026/10/11/agri-spray-drones-manufacturing/"
+        },
+        {
+          "text": "2025 年美國噴藥無人機銷量下滑六成：據 AgFunder 報導，主因是美國海關攔截部分大疆貨物造成供給不足，而非需求減弱；Claas 亦在奧馬哈新設約 1,000 萬美元研發中心，聚焦 AI 精準農業。",
+          "sourceName": "Precision Farming Dealer",
+          "source": "https://www.precisionfarmingdealer.com/articles/7322-precision-farming-dealers-best-of-the-web-october-14-2026"
         }
       ]
     },
@@ -26,14 +31,14 @@
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "Home Assistant 2026.10 發布（10/8）：新增OpenStreetMap向量地圖、可直接勾選觸發器的簡化自動化，以及一鍵啟用、讓Claude、ChatGPT等AI存取智慧家庭的MCP伺服器。",
-          "sourceName": "SmartHomeAssistent",
-          "source": "https://www.smarthomeassistent.de/home-assistant-2026-10-das-sind-die-neuerungen/"
+          "text": "Aliro 標準入選《時代》雜誌 2026 最佳發明：連接標準聯盟（CSA）的 Aliro 數位門鎖／存取標準獲《時代》肯定，可望讓手機、穿戴裝置開門更通用。",
+          "sourceName": "TIME",
+          "source": "https://time.com/collection/best-inventions/2026/connectivity-standards-alliance-aliro/"
         },
         {
-          "text": "Matter 相容性大幅提升（背景參考）：超過550家公司開發相容產品，裝置相容率由約34%升至近89%，新裝置設定縮短到一分鐘內；攝影機支援仍不成熟。",
-          "sourceName": "Robb Sutton",
-          "source": "https://robbsutton.com/matter-protocol/"
+          "text": "Unifi Network 11 可顯示 Matter 裝置：Ubiquiti 新版網路總覽可直接看到網內的 Matter 設備，方便家中裝置管理與排錯。",
+          "sourceName": "Ubiquiti Blog",
+          "source": "https://blog.ui.com/article/introducing-unifi-network-11"
         }
       ]
     },
@@ -43,9 +48,14 @@
       "title": "無人機系統",
       "items": [
         {
-          "text": "FAA 仍以個案核發 BVLOS 豁免：標準化BVLOS最終規則仍在最終審查階段，營運者目前主要依賴豁免，例如ResilienX的豁免有效至2029年9月。",
-          "sourceName": "Unmanned Aerial Online",
-          "source": "https://unmanned-aerial.com/bvlos-waivers-2026-what-the-faa-approves/"
+          "text": "FAA Part 108 BVLOS 規則仍在審查：截至 10 月 10 日，該規則自 7 月 10 日起在白宮 OIRA 審查已滿 90 天，FAA 希望年底前公布，合規日期尚未確定。",
+          "sourceName": "DroneRanker",
+          "source": "https://www.droneranker.com/faa-part-108-bvlos-rule-status/"
+        },
+        {
+          "text": "無人機交通管理（UTM）市場持續成長（9/30 發布）：預估全球 UTM 市場將由 2024 年 7.377 億美元成長至 2030 年 33 億美元，推力來自法規正常化與 BVLOS 運作。",
+          "sourceName": "NextMSC",
+          "source": "https://www.nextmsc.com/news/faa-part-108-bvlos-rule-nears-finalization-as-utm-market-gains-momentum"
         }
       ]
     },
@@ -55,9 +65,19 @@
       "title": "冰島旅行",
       "items": [
         {
-          "text": "冰島2026自駕：改採按里程道路稅：自1月1日起轎車與休旅車每公里6.95冰島克朗，取代燃料稅，租車報價算法可能不同，訂車前請確認；租車車隊也漸轉向油電混合車。",
+          "text": "達美航空宣布波士頓—雷克雅維克直飛：10 月 17 日公布，2027 年 4 月 12 日至 10 月 30 日每日季節性航班，使用波音 757-200，對北美往返冰島更方便。",
+          "sourceName": "The Points Guy",
+          "source": "https://thepointsguy.com/news/delta-air-lines-boston-reykjavik-nonstop-flights"
+        },
+        {
+          "text": "自駕須知：道路里程費與租車趨勢（6/25 發布）：冰島自 2026 年起課徵按里程計算的道路費，租車公司車隊也朝油電混合轉型，租車時應確認費用呈現方式。",
           "sourceName": "Northbound",
           "source": "https://www.northbound.is/blog/461/iceland-car-rental-in-2026-new-road-tax-hybrid-fleets-and-travel-changes"
+        },
+        {
+          "text": "極光預報：10/11 預測 Kp 5.67、實測 4.0：提醒預報與實際有落差，賞極光仍需彈性安排行程並參考當地雲量。",
+          "sourceName": "Aurora Forecast",
+          "source": "https://auroraforecast.me/news/2026-10-11-northern-lights-iceland-forecast"
         }
       ]
     },
@@ -67,19 +87,14 @@
       "title": "攝影",
       "items": [
         {
-          "text": "騰龍 16-50mm F2.8 APS-C 變焦鏡（10/14）：售價不到550美元，定位為各APS-C系統的大光圈套鏡替代選擇。",
-          "sourceName": "DPReview",
-          "source": "https://www.dpreview.com/news/tamrons-16-50mm-f2-8-is-a-fast-sub-550-kit-lens-replacement-for-every-aps-c-system/"
+          "text": "10 月新機新鏡一覽：Canon EOS R8 Mark II（約 1,899 美元）預計 10/20 上市，OM System PEN 已於 10/14 開賣，Panasonic S 20mm f/2.5 約 498 美元，10/28 出貨。",
+          "sourceName": "Camera Decision",
+          "source": "https://cameradecision.com/blog/Nine-New-Cameras-and-Lenses-Ship-in-October-2026-From-a-498-Dollar-Panasonic-20mm-to-Sonys-600mm-GM"
         },
         {
-          "text": "富士 Instax Square 2 發表（10/14）：新增可切換氛圍的開關，並推出柔霧風格的「Soft Haze」新底片。",
+          "text": "Sigma 85mm F1.2 Art 與 20-60mm 套鏡（9/11 發表）：85mm 人像定焦約 1,599 美元，20-60mm F2.8-4 約 849 美元，重量僅 385g，適合旅行攝影。",
           "sourceName": "DPReview",
-          "source": "https://www.dpreview.com/news/the-instax-square-2-gives-instant-film-shooters-a-switch-to-change-the-mood/"
-        },
-        {
-          "text": "Getty Images 轉為私人持有（10/15）：因與Shutterstock合併破局及AI衝擊而私有化，編輯與圖庫業務照常運作。",
-          "sourceName": "DPReview",
-          "source": "https://www.dpreview.com/news/getty-images-going-private-following-collapse-of-shutterstock-deal-and-rise-of-ai/"
+          "source": "https://www.dpreview.com/news/this-week-in-photo-gear-the-launches-you-may-have-missed/"
         }
       ]
     },
@@ -89,9 +104,14 @@
       "title": "薩克斯風",
       "items": [
         {
-          "text": "安道爾國際薩克斯風比賽回顧：六位決賽選手與安道爾國家古典管弦樂團同台，Wataru Hirai奪得第11屆獨奏組冠軍。（本日無重大更新，此為賽事參考）",
-          "sourceName": "WFIMC",
-          "source": "https://www.wfimc.org/news-media/thrilling-finals-andorra-saxfest"
+          "text": "宮島 Migiwa《The Sax Project 1》新專輯 11/13 發行（10/1 公布）：專輯邀請 Dick Oatts 合作，由 SoundSpore Records 發行。",
+          "sourceName": "Lydia Liebman",
+          "source": "https://lydialiebman.com/index.php/2026/10/01/new-release-migiwa-miggy-miyajimas-the-sax-project-1-featuring-dick-oatts-is-out-november-13-2026-via-soundspore-records/"
+        },
+        {
+          "text": "第七屆 Mendoza Sax Fest 2026 邀請國際名家：阿根廷門多薩薩克斯風音樂節邁入第 7 屆，匯集多位國際演奏家。",
+          "sourceName": "ADN País",
+          "source": "https://adnpais.com/notas/103592-El-Mendoza-Sax-Fest-2026-celebra-su-7%C2%AA-edicion-con-figuras-internacionales-de-lujo"
         }
       ]
     },
@@ -101,9 +121,14 @@
       "title": "網球",
       "items": [
         {
-          "text": "上海大師賽八強出爐（10/16）：梅德韋傑夫6-3、1-6、6-3擊敗湯米·保羅；霍達爾逆轉魯德，兩人晉級四強。賽事至10/18。",
+          "text": "上海大師賽四強出爐（10/16）：梅德韋傑夫以 6-3、1-6、6-3 擊敗保羅，約達爾逆轉魯德 4-6、6-4、6-3，雙雙晉級；賽事至 10/18。",
           "sourceName": "ATP Tour",
           "source": "https://www.atptour.com/es/news/shanghai-2026-results"
+        },
+        {
+          "text": "網球運動傷害預防指南（常青參考）：AAOS 整理網球肘、肩傷等常見傷害的預防要點，含熱身與裝備建議。",
+          "sourceName": "OrthoInfo (AAOS)",
+          "source": "https://www.orthoinfo.org/staying-healthy/tennis-injury-prevention"
         }
       ]
     }
@@ -131,17 +156,17 @@
     }
   ],
   "highlights": [
-    "精準農業已成日常作法",
-    "Home Assistant 2026.10 發布（10/8）",
-    "FAA 仍以個案核發 BVLOS 豁免",
-    "冰島2026自駕"
+    "美國噴藥無人機廠轉向自製",
+    "Aliro 標準入選《時代》雜誌 2026 最佳發明",
+    "FAA Part 108 BVLOS 規則仍在審查",
+    "達美航空宣布波士頓—雷克雅維克直飛"
   ],
   "cover": {
     "title": "今日日報封面",
-    "local": "assets/rabbit-reading.jpeg",
-    "drive": ""
+    "drive": "",
+    "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/1a6o13Ef_HjnTyKvCFowSpoRl1HEuq0v2Dg5hulKH3hY/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/1GLJl7qtVdsV6ntBGhFnT4P4oT5ssOJv0AqlUaRBtlhA/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-10-18T03:32:01.514Z"
+  "updatedAt": "2026-10-18T04:14:56.612Z"
 }
