@@ -1,10 +1,10 @@
 {
-  "date": "2026.10.16",
-  "dateLabel": "2026/10/16（五）",
-  "asOf": "2026.10.16",
+  "date": "2026.10.18",
+  "dateLabel": "2026/10/18（日）",
+  "asOf": "2026.10.18",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.10.16 今天值得關注：Home Assistant 2026.10 加入讓 AI 應用存取智慧家庭的 MCP 伺服器，顯示智慧家庭與 AI 整合加速；無人機 BVLOS 仍靠個案豁免，標準規則待定；冰島自駕留意新的按里程道路稅。 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.10.18 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "focusNote": "今天值得關注：Home Assistant 2026.10 加入讓 AI 應用存取智慧家庭的 MCP 伺服器，顯示智慧家庭與 AI 整合加速；無人機 BVLOS 仍靠個案豁免，標準規則待定；冰島自駕留意新的按里程道路稅。",
   "sections": [
@@ -138,10 +138,10 @@
   ],
   "cover": {
     "title": "今日日報封面",
-    "drive": "",
-    "local": "assets/rabbit-reading.jpeg"
+    "local": "assets/rabbit-reading.jpeg",
+    "drive": ""
   },
   "source": "https://docs.google.com/document/d/1a6o13Ef_HjnTyKvCFowSpoRl1HEuq0v2Dg5hulKH3hY/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-10-17T04:07:23.575Z"
+  "updatedAt": "2026-10-18T03:32:01.514Z"
 }
