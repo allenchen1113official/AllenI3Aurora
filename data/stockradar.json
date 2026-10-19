@@ -1,9 +1,9 @@
 {
-  "date": "2026.10.16",
-  "dateLabel": "2026.10.16（最新）",
+  "date": "2026.10.19",
+  "dateLabel": "2026.10.19",
   "asOf": "2026.10.19",
-  "desc": "6278 台表科…",
-  "summary": "6278 台表科：本期無符合訊號，3167 大量：營益率、營收、EPS，2603 長榮：均線多頭、營益率，2609 陽明：均線多頭，2615 萬海：均線多頭、營益率，3014 聯陽：KD黃金交叉、營益率，3026 禾伸堂：均線多頭、EPS，6197…",
+  "desc": "※說明：今日開盤前產出…",
+  "summary": "※說明：今日開盤前產出，股價與技術指標採 2026-10-16(五)收盤資料；排行取自試算表最新一列(2026/10/15)。，• 大量(3167)單日 +9.90%，營益率、營收年增、EPS年增近4季皆達標(4/4)。，• 聯陽(3014)出現K…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -57,7 +57,7 @@
       "changePct": "+3.31%",
       "up": true,
       "signals": [
-        "gc",
+        "ma",
         "om"
       ]
     },
@@ -66,9 +66,7 @@
       "name": "陽明",
       "changePct": "+2.21%",
       "up": true,
-      "signals": [
-        "gc"
-      ]
+      "signals": []
     },
     {
       "code": "2615",
@@ -76,7 +74,7 @@
       "changePct": "+2.94%",
       "up": true,
       "signals": [
-        "gc",
+        "ma",
         "om"
       ]
     },
@@ -96,6 +94,7 @@
       "changePct": "-0.62%",
       "up": false,
       "signals": [
+        "ma",
         "eps"
       ]
     },
@@ -105,7 +104,6 @@
       "changePct": "+2.65%",
       "up": true,
       "signals": [
-        "gc",
         "om"
       ]
     },
@@ -115,16 +113,18 @@
       "changePct": "-1.69%",
       "up": false,
       "signals": [
+        "ma",
         "om",
         "eps"
       ]
     },
     {
       "code": "6672",
-      "name": "騰輝-KY",
+      "name": "騰輝電子-KY",
       "changePct": "+3.68%",
       "up": true,
       "signals": [
+        "ma",
         "om",
         "eps"
       ]
@@ -134,9 +134,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1f6qz7X_tcEOVpzZQ6T8ltGIAUOvyz6nf&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1SXRIyfKxuZOnsMfklf1ONM2UbKcR7FYP&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1UTyeav65KLWYdRPkUaeUyaM-PcjU8RKt/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1jDaxijXKHQIDfLRWtHq10qRFQKohxx0B/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-10-18T22:44:18.195Z"
+  "updatedAt": "2026-10-19T03:04:45.200Z"
 }
