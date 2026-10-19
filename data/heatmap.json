@@ -1,6 +1,6 @@
 {
-  "date": "2026.10.16",
-  "dateLabel": "2026.10.16（最新）",
+  "date": "2026.10.19",
+  "dateLabel": "2026.10.19",
   "asOf": "2026.10.19",
   "taiex": {
     "name": "加權指數 TAIEX",
@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "加權指數反彈141點、收47,111點，但本週仍累計下跌2,202點，結束四週連漲。，台積電法說後收2,420元（-0.82%）拖累大盤約160點；資金轉向PCB、低軌衛星、記憶體與資安族群。，外資連8日賣超約461億元，投信連6日買超約118億元。",
+  "summary": "加權指數收46,822點、下跌289點（-0.61%），盤中一度重挫逾900點，尾盤在台積電拉回平盤下明顯收斂。三大法人合計賣超約899億元，外資賣超約767億元；類股呈現塑化走弱、PCB概念股逆勢強攻的分化。，台積電(2330)：收平盤 0.00%",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1lHTvB-FMmUbkNeIEYi2ZmHAeqL1gR1oN&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1mXU0XJkzbuhrU-18jmq2GxCDRoVhYir3&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1uPPd_uDUZsaTTqihlBou4uRBCIdiHKDF&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1V10LpPXsCbzt0qpO2dR_l2a6KX2eKjQZ&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-10-19T03:04:42.068Z"
+  "updatedAt": "2026-10-19T11:59:47.034Z"
 }

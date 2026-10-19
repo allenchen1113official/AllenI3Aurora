@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261016",
+    "kind": "熱力圖",
+    "date": "2026.10.16",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.10.16",
+    "cover": "https://drive.google.com/thumbnail?id=1lHTvB-FMmUbkNeIEYi2ZmHAeqL1gR1oN&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1lHTvB-FMmUbkNeIEYi2ZmHAeqL1gR1oN&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1lHTvB-FMmUbkNeIEYi2ZmHAeqL1gR1oN&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1uPPd_uDUZsaTTqihlBou4uRBCIdiHKDF&sz=w1600",
+    "summary": "加權指數反彈141點、收47,111點，但本週仍累計下跌2,202點，結束四週連漲。，台積電法說後收2,420元（-0.82%）拖累大盤約160點；資金轉向PCB、低軌衛星、記憶體與資安族群。，外資連8日賣超約461億元，投信連6日買超約118億元。",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261015",
     "kind": "熱力圖",
     "date": "2026.10.15",
