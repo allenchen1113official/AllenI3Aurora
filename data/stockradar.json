@@ -1,9 +1,9 @@
 {
-  "date": "2026.10.19",
-  "dateLabel": "2026.10.19（最新）",
+  "date": "2026.10.20",
+  "dateLabel": "2026.10.20",
   "asOf": "2026.10.20",
   "desc": "【台股每日分析 TOP 10】202…",
-  "summary": "【台股每日分析 TOP 10】2026-10-19(星期一)，‧ KD黃金交叉:柏承(6141)今日大漲近10%,K值由55.74上穿D值至70.50,出現KD黃金交叉。，‧ 均線多頭排列:台表科、長榮、陽明、柏承、AMAX-KY、台化、騰輝電子-…",
+  "summary": "【台股每日分析 TOP 10】2026-10-20(星期二)，・KD黃金交叉:4770 上品(股價+6.34%)，・營益率、營收年增、EPS年增三項近4季皆達標:3167 大量，・均線多頭排列:6141、6278、3026、4770、6933、26…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,87 +34,95 @@
   ],
   "top10": [
     {
-      "code": "3167",
-      "name": "大量",
-      "changePct": "-6.26%",
-      "up": false,
+      "code": "6141",
+      "name": "柏承",
+      "changePct": "",
+      "up": true,
       "signals": [
-        "om",
-        "rev",
+        "ma"
+      ]
+    },
+    {
+      "code": "6278",
+      "name": "台表科",
+      "changePct": "",
+      "up": true,
+      "signals": [
+        "ma"
+      ]
+    },
+    {
+      "code": "3026",
+      "name": "禾伸堂",
+      "changePct": "",
+      "up": true,
+      "signals": [
+        "ma",
         "eps"
+      ]
+    },
+    {
+      "code": "6179",
+      "name": "概估分類",
+      "changePct": "",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "2324",
+      "name": "仁寶",
+      "changePct": "",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "4770",
+      "name": "上品",
+      "changePct": "",
+      "up": true,
+      "signals": [
+        "gc",
+        "ma",
+        "om"
+      ]
+    },
+    {
+      "code": "6933",
+      "name": "概估分類",
+      "changePct": "",
+      "up": true,
+      "signals": [
+        "ma",
+        "eps"
+      ]
+    },
+    {
+      "code": "2603",
+      "name": "長榮",
+      "changePct": "",
+      "up": true,
+      "signals": [
+        "ma",
+        "om"
       ]
     },
     {
       "code": "3014",
       "name": "聯陽",
-      "changePct": "-3.04%",
-      "up": false,
+      "changePct": "",
+      "up": true,
       "signals": [
         "om"
       ]
     },
     {
-      "code": "6179",
-      "name": "月線向下",
-      "changePct": "+1.48%",
+      "code": "3167",
+      "name": "大量",
+      "changePct": "",
       "up": true,
-      "signals": []
-    },
-    {
-      "code": "6278",
-      "name": "台表科",
-      "changePct": "-3.02%",
-      "up": false,
-      "signals": []
-    },
-    {
-      "code": "2603",
-      "name": "長榮",
-      "changePct": "-1.32%",
-      "up": false,
-      "signals": [
-        "om"
-      ]
-    },
-    {
-      "code": "2609",
-      "name": "陽明",
-      "changePct": "-1.85%",
-      "up": false,
-      "signals": []
-    },
-    {
-      "code": "6141",
-      "name": "柏承",
-      "changePct": "+9.98%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6933",
-      "name": "基期過小,參考性低",
-      "changePct": "-9.97%",
-      "up": false,
-      "signals": [
-        "eps"
-      ]
-    },
-    {
-      "code": "1326",
-      "name": "台化",
-      "changePct": "-4.07%",
-      "up": false,
-      "signals": [
-        "eps"
-      ]
-    },
-    {
-      "code": "6672",
-      "name": "騰輝電子-KY TWSE",
-      "changePct": "-4.91%",
-      "up": false,
       "signals": [
         "om",
+        "rev",
         "eps"
       ]
     }
@@ -123,9 +131,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1SXRIyfKxuZOnsMfklf1ONM2UbKcR7FYP&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=14tnic8Nn0yS1aVSsc01dxH3xSJkQoHpk&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1rzaUNpzoN2IdiemF3yD_MO3KbBlfjYnS/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1H-VBjd46gvqQ7ANrpiE-W8KQN7j5FIFd/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-10-20T08:09:29.302Z"
+  "updatedAt": "2026-10-20T14:04:06.585Z"
 }
