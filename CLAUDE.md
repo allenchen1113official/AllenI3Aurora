@@ -6,6 +6,14 @@
   - 驗證通過（語法解析／邏輯檢查／可行的測試）後，即自行將該 PR 合併進 `main`，不必等待再次確認。
 - 回報保持精簡，不重複提醒既定的合併流程。
 
+## 時區規則（全站統一台北時間 UTC+8）
+- **本站所有「今天／當日／交易日／星期」一律以台北時間（`Asia/Taipei`，UTC+8）為準。** 雲端執行環境給的 today 是 UTC，不可直接使用——台北 08:00 以前 UTC 仍是前一天，直接用會讓日期差一天。
+- **Shell**：一律 `TZ=Asia/Taipei date +%Y%m%d`（資料夾名）／`+%Y-%m-%d`（檔名）／`+%Y.%m.%d`（`data/*.json` 的 `date`）／`+%u`（星期），不要用不帶 TZ 的 `date`。
+- **Node 腳本**：日期用 `Intl.DateTimeFormat(..., { timeZone: "Asia/Taipei" })` 或 `Date.now() + 8*3600*1000` 再取 UTC 欄位（既有 `update-*.mjs`／`rotate-*.mjs` 皆已照此實作）；新腳本比照，勿用 `new Date().toISOString().slice(0,10)` 當「今天」。`updatedAt` 這類時間戳可維持 ISO UTC。
+- **換日腳本**：排程或手動執行 `rotate-daily.mjs`／`rotate-heatmap.mjs` 時，盡量明確帶入台北日期參數或 payload 日期，不依賴預設值。
+- **GitHub Actions cron 一律為 UTC**：新增或修改排程時，換算台北時間（UTC = 台北 − 8 小時），並在該行註解寫出對應的台北時間（如 `"0 0 * * *"   # 台北每日 08:00`）。注意跨日：台北 08:00 以前的排程，UTC 的星期會是前一天（如台北週一 04:00＝UTC 週日 20:00）。
+- **Claude 排程任務**：cron 以 `CRON_TZ=Asia/Taipei` 撰寫；任務指令開頭須寫明「先用 `TZ=Asia/Taipei date` 取得台北日期，環境 today 是 UTC 不可直接用」。
+
 ## Skill 建立與測試流程（把可重複的產出流程打包成 skill 時照此做）
 1. **建立**：以 `skill-creator` skill 進行；形式比照 `taiex-heatmap` —— `SKILL.md`（觸發時機寫進 frontmatter description、執行步驟、產後驗證清單、已知環境限制）＋ `scripts/`（把本次調校好的程式原樣打包，並註明「照抄執行、不要重新設計」）。附 `episode/data` 範例檔供試跑。腳本要與 repo 解耦（輸出預設目前目錄、相依自動解決如字型自動下載）。
 2. **測試**：在乾淨目錄照 SKILL.md 步驟實跑，至少兩案例 —— 正常範例＋壓力案例（長內容、截斷、非預設參數），用 Read 目視驗證產出。
