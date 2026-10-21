@@ -4,51 +4,93 @@
   "asOf": "2026.10.21",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.10.21 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.10.21 本日多數領域缺乏 7 日內的明確新聞。最值得關注的是 FAA Part 108 超視距規則即將定案，將影響無人機商用與 UTM 發展；網球則進入 ATP 年終總決賽資格賽的關鍵階段。 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "今日最新動態集中在網球上海大師賽的西班牙決賽，以及美國無人機法規（Part 108）仍未定案、超視距作業需靠豁免。其餘領域本日無重大更新，部分條目為最新可查之參考資料，已標註日期。",
+  "focusNote": "本日多數領域缺乏 7 日內的明確新聞。最值得關注的是 FAA Part 108 超視距規則即將定案，將影響無人機商用與 UTM 發展；網球則進入 ATP 年終總決賽資格賽的關鍵階段。",
   "sections": [
     {
       "tag": "農業",
       "tone": "insight",
       "title": "智慧農業",
-      "items": []
+      "items": [
+        {
+          "text": "ZenaDrone 精準農業平台獲獎：ZenaTech 的 ZenaDrone 憑自主飛行與多光譜成像協助優化施肥與灌溉，獲 AgTech Breakthrough 2026「年度無人機技術」獎（9/1 發布，非 7 日內）。",
+          "sourceName": "Fertilizer Daily",
+          "source": "https://www.fertilizerdaily.com/20260901-zenatech-drone-precision-agriculture-agtech-award-2026/md/"
+        }
+      ]
     },
     {
       "tag": "家庭",
       "tone": "intelligence",
       "title": "智慧家庭 / IoT",
-      "items": []
+      "items": [
+        {
+          "text": "Matter 標準進入實用階段：2026 年相容裝置增加、設定大幅簡化，但攝影機支援與進階自動化仍不足，舊裝置多半無法升級（4/17 發布，非 7 日內）。",
+          "sourceName": "Robb Sutton",
+          "source": "https://robbsutton.com/matter-protocol/"
+        }
+      ]
     },
     {
       "tag": "無人機",
       "tone": "illumination",
       "title": "無人機系統",
-      "items": []
+      "items": [
+        {
+          "text": "FAA Part 108 超視距規則即將定案：FAA 與 EASA 官員比較兩地監管路徑，核心風險評估理念相近；全球 UTM 市場預估 2030 年達約 33 億美元，年複合成長率 28.2%（9/30 發布）。",
+          "sourceName": "NextMSC",
+          "source": "https://www.nextmsc.com/news/faa-part-108-bvlos-rule-nears-finalization-as-utm-market-gains-momentum"
+        }
+      ]
     },
     {
       "tag": "冰島",
       "tone": "insight",
       "title": "冰島旅行",
-      "items": []
+      "items": [
+        {
+          "text": "2026 冰島自駕租車新制：2026/1/1 起實施里程道路費（轎車與休旅車每公里 6.95 ISK），租車費計算方式不同會影響總價，建議提早訂車並預留彈性（6/25 發布，非 7 日內）。",
+          "sourceName": "Northbound",
+          "source": "https://www.northbound.is/blog/461/iceland-car-rental-in-2026-new-road-tax-hybrid-fleets-and-travel-changes"
+        }
+      ]
     },
     {
       "tag": "攝影",
       "tone": "intelligence",
       "title": "攝影",
-      "items": []
+      "items": [
+        {
+          "text": "Sony 世界攝影獎 2026 入圍作品：彙整本屆 Sony World Photography Awards 入圍名單，適合攝影賞析（發布日期未能確認，非 7 日內）。",
+          "sourceName": "PhotoWorkout",
+          "source": "https://www.photoworkout.com/sony-world-photography-awards-2026-finalists/"
+        }
+      ]
     },
     {
       "tag": "薩克斯風",
       "tone": "illumination",
       "title": "薩克斯風",
-      "items": []
+      "items": [
+        {
+          "text": "Andorra SaxFest 2026 獨奏比賽決賽：西班牙的 Juan David Toro Martín 奪得 2026 Andorra SaxFest 獨奏薩克斯風比賽冠軍（4 月，非 7 日內）。",
+          "sourceName": "WFIMC",
+          "source": "https://www.wfimc.org/news-media/thrilling-finals-andorra-saxfest"
+        }
+      ]
     },
     {
       "tag": "網球",
       "tone": "insight",
       "title": "網球",
-      "items": []
+      "items": [
+        {
+          "text": "ATP 賽季尾聲動態：據 Tennisnerd 近期頁面彙整：ATP 年終總決賽資格競爭持續、里昂 ATP 250 賽事預覽，ATP 主席亦提出 2028 年後巡迴賽改革構想（細節請以原站為準）。",
+          "sourceName": "Tennisnerd",
+          "source": "https://www.tennisnerd.net/news/medvedev-a-new-world-number-one/26406"
+        }
+      ]
     }
   ],
   "topics": [
@@ -73,13 +115,18 @@
       "desc": "新曲、專輯與現場精選，為一天配上聲音"
     }
   ],
-  "highlights": [],
+  "highlights": [
+    "ZenaDrone 精準農業平台獲獎",
+    "Matter 標準進入實用階段",
+    "FAA Part 108 超視距規則即將定案",
+    "2026 冰島自駕租車新制"
+  ],
   "cover": {
     "title": "今日日報封面",
-    "local": "assets/rabbit-reading.jpeg",
-    "drive": ""
+    "drive": "",
+    "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/1wo63v0nyitjxKNoYanEZ_MJUZwH1qgz_YxwnY3ZKW2I/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/11sMWdcWFupV2atNYNfKGg8dx4iGFJFl8qBa0DJu42S8/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-10-21T03:43:49.884Z"
+  "updatedAt": "2026-10-21T04:27:20.951Z"
 }
