@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261020",
+    "kind": "熱力圖",
+    "date": "2026.10.20",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.10.20",
+    "cover": "https://drive.google.com/thumbnail?id=1H5MVe3nQgN52plI79nmc_7bHSbWAxj2w&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1H5MVe3nQgN52plI79nmc_7bHSbWAxj2w&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1H5MVe3nQgN52plI79nmc_7bHSbWAxj2w&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1xwJd6-AfOx2a0GGi7so8BILMU0Q6sDdd&sz=w1600",
+    "summary": "今天加權指數收 46,292.93 點，下跌 529.15 點（-1.13%），成交金額約 7,587 億元。電子權值股偏弱，台達電 -2.13%、欣興 -5.80%，塑化股也明顯回檔，台塑化 -8.19%；不過廣達 +1.91%、緯創 +5.00…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261019",
     "kind": "熱力圖",
     "date": "2026.10.19",

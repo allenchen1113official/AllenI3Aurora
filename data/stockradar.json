@@ -1,9 +1,9 @@
 {
-  "date": "2026.10.20",
-  "dateLabel": "2026.10.20（最新）",
-  "asOf": "2026.10.21",
-  "desc": "【台股每日分析 TOP 10】202…",
-  "summary": "【台股每日分析 TOP 10】2026-10-20(星期二)，・KD黃金交叉:4770 上品(股價+6.34%)，・營益率、營收年增、EPS年增三項近4季皆達標:3167 大量，・均線多頭排列:6141、6278、3026、4770、6933、26…",
+  "date": "2026.10.21",
+  "dateLabel": "2026.10.21（最新）",
+  "asOf": "2026.10.22",
+  "desc": "・KD黃金交叉:台表科(6278)…",
+  "summary": "・KD黃金交叉:台表科(6278)、禾伸堂(3026)，・均線多頭排列:台表科、禾伸堂、東和鋼鐵、長榮、瑞昱，・三項基本面(營益率、營收年增、EPS年增)近4季皆達標:大量(3167)，・台表科單日上漲 9.90%,為本日TOP10漲幅最大，1. …",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,94 +34,98 @@
   ],
   "top10": [
     {
-      "code": "6141",
-      "name": "柏承",
-      "changePct": "",
+      "code": "3014",
+      "name": "聯陽",
+      "changePct": "+1.42%",
       "up": true,
       "signals": [
-        "ma"
+        "om"
       ]
     },
     {
       "code": "6278",
       "name": "台表科",
-      "changePct": "",
+      "changePct": "+9.90%",
       "up": true,
       "signals": [
+        "gc",
         "ma"
       ]
     },
     {
       "code": "3026",
       "name": "禾伸堂",
-      "changePct": "",
+      "changePct": "+2.64%",
       "up": true,
       "signals": [
+        "gc",
         "ma",
         "eps"
       ]
     },
     {
-      "code": "6179",
-      "name": "概估分類",
-      "changePct": "",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "2324",
-      "name": "仁寶",
-      "changePct": "",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "4770",
-      "name": "上品",
-      "changePct": "",
+      "code": "3167",
+      "name": "大量",
+      "changePct": "+2.99%",
       "up": true,
       "signals": [
-        "gc",
-        "ma",
-        "om"
+        "om",
+        "rev",
+        "eps"
       ]
     },
     {
-      "code": "6933",
-      "name": "概估分類",
-      "changePct": "",
+      "code": "6179",
+      "name": "亞通",
+      "changePct": "+0.13%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "2006",
+      "name": "東和鋼鐵",
+      "changePct": "+2.87%",
       "up": true,
       "signals": [
         "ma",
+        "om",
+        "eps"
+      ]
+    },
+    {
+      "code": "6438",
+      "name": "迅得",
+      "changePct": "+2.99%",
+      "up": true,
+      "signals": [
         "eps"
       ]
     },
     {
       "code": "2603",
       "name": "長榮",
-      "changePct": "",
-      "up": true,
+      "changePct": "-0.77%",
+      "up": false,
       "signals": [
         "ma",
         "om"
       ]
     },
     {
-      "code": "3014",
-      "name": "聯陽",
-      "changePct": "",
+      "code": "2379",
+      "name": "瑞昱",
+      "changePct": "+2.33%",
       "up": true,
       "signals": [
-        "om"
+        "ma"
       ]
     },
     {
-      "code": "3167",
-      "name": "大量",
-      "changePct": "",
+      "code": "4916",
+      "name": "事欣科",
+      "changePct": "+2.48%",
       "up": true,
       "signals": [
-        "om",
         "rev",
         "eps"
       ]
@@ -131,9 +135,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=14tnic8Nn0yS1aVSsc01dxH3xSJkQoHpk&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1iyQB9_7ILRGaWIl_M5NFlSSibHyC10Bu&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1H-VBjd46gvqQ7ANrpiE-W8KQN7j5FIFd/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/18IlUEYnd-CPP7jbK4VHvB8xZDQP0ygC2/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-10-21T11:05:33.721Z"
+  "updatedAt": "2026-10-21T16:32:43.176Z"
 }

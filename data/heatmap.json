@@ -1,7 +1,7 @@
 {
-  "date": "2026.10.20",
-  "dateLabel": "2026.10.20（最新）",
-  "asOf": "2026.10.21",
+  "date": "2026.10.21",
+  "dateLabel": "2026.10.21（最新）",
+  "asOf": "2026.10.22",
   "taiex": {
     "name": "加權指數 TAIEX",
     "index": "45,811.01",
@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "今天加權指數收 46,292.93 點，下跌 529.15 點（-1.13%），成交金額約 7,587 億元。電子權值股偏弱，台達電 -2.13%、欣興 -5.80%，塑化股也明顯回檔，台塑化 -8.19%；不過廣達 +1.91%、緯創 +5.00…",
+  "summary": "加權指數收46,887.77點，上漲594.84點（+1.28%），盤中一度大漲逾900點，尾盤受期指結算影響漲幅收斂。被動元件、PCB、低軌衛星族群表現強勢，華新科漲停；面板、金融與塑化類股也普遍收紅，航運、電信相對疲弱。，台積電收2,420元，…",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1H5MVe3nQgN52plI79nmc_7bHSbWAxj2w&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=16lQhdDcAzuptsXlKWu-IvHsKCgEGac8r&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1xwJd6-AfOx2a0GGi7so8BILMU0Q6sDdd&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=15FiSxnkq-4mHEimJmDxtgIdMpG5vlNaq&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-10-21T11:05:31.088Z"
+  "updatedAt": "2026-10-21T16:32:40.028Z"
 }
