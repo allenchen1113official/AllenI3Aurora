@@ -1,0 +1,44 @@
+name: 寄送訂閱信件（確認信／歡迎信）
+
+# 純前端靜態站沒有後端可寄信，改由排程掃描 Firestore 的信件佇列後寄出。
+# 每 10 分鐘一次（UTC，與時區無關），訂閱者最久等 10 分鐘收到確認信。
+# 第一次執行會自動把舊格式訂閱者（doc id = email）搬成 token 文件。
+# 未設定 Secrets 時以 ::warning 略過，不變紅燈。設定方式見 docs/SUBSCRIBER_SOP.md。
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只列出待寄信件、不實際寄送"
+        type: boolean
+        default: false
+
+concurrency:
+  group: subscriber-mail
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 安裝相依套件
+        run: npm install --no-save firebase-admin nodemailer
+      - name: 掃描佇列並寄送
+        run: node scripts/mail/send-transactional.mjs
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_REPLY_TO: ${{ secrets.MAIL_REPLY_TO }}
+          MAIL_DRY_RUN: ${{ inputs.dry_run && '1' || '' }}

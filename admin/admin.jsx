@@ -998,9 +998,11 @@ function NewsletterPanel() {
 }
 
 /* =====================================================================
-   電子報使用者管理 — aurora_subscribers（doc id = email 小寫）
-   前台 Subscribe 表單建立；此面板供管理者檢視統計、搜尋篩選、
-   調整節奏、退訂／復訂、手動新增、刪除與匯出 CSV。
+   電子報使用者管理 — aurora_subscribers（doc id = 32 字元私密 token，email 為欄位）
+   前台 Subscribe 表單建立（pending）→ worker 寄確認信 → 讀者點擊後 confirmed（Double Opt-in）。
+   此面板供管理者檢視統計、搜尋篩選、調整節奏、退訂／復訂、重寄確認信、
+   複製讀者管理連結、手動新增、刪除與匯出 CSV。寄送邏輯在 scripts/mail/。
+   舊格式（doc id = email、status active）由 worker 下一輪自動搬遷，此處標示「待搬遷」。
    ===================================================================== */
 const SUB_NAV = "__subscribers";
 const SUB_EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -1010,21 +1012,37 @@ const CADENCE_DEFS = [
   { k: "month", label: "月報" },
 ];
 
+/* 以台北時間顯示（存的是 ISO UTC；直接切字串會差 8 小時） */
 function subFmtTime(iso) {
-  if (!iso) return "—";
-  const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
-  return m ? `${m[1]}.${m[2]}.${m[3]} ${m[4]}:${m[5]}` : String(iso);
+  const t = Date.parse(iso || "");
+  if (!isFinite(t)) return "—";
+  const p = new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date(t));
+  const g = (k) => (p.find((x) => x.type === k) || {}).value || "";
+  return `${g("year")}.${g("month")}.${g("day")} ${g("hour")}:${g("minute")}`;
+}
+const SUB_STATUS = {
+  confirmed:    { label: "訂閱中",   color: "var(--insight, var(--success))", bg: "var(--insight-soft, rgba(61,220,151,.14))" },
+  pending:      { label: "待確認",   color: "var(--illumination)", bg: "var(--illumination-soft, rgba(240,180,41,.14))" },
+  unsubscribed: { label: "已退訂",   color: "var(--text-3)", bg: "var(--night-700)" },
+  duplicate:    { label: "重複訂閱", color: "var(--text-4)", bg: "var(--night-700)" },
+  active:       { label: "待搬遷",   color: "var(--illumination)", bg: "var(--night-700)" }, // 舊格式
+};
+const subIsLegacy = (r) => String(r.id || "").includes("@");
+const subManageUrl = (id) => "https://allenchen1113official.github.io/AllenI3Aurora/manage.html?t=" + encodeURIComponent(id);
+function subNewToken() {
+  const a = new Uint8Array(16); crypto.getRandomValues(a);
+  return Array.from(a, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 function subToCsv(rows) {
-  const head = ["email", "status", "day", "week", "month", "source", "createdAt", "updatedAt", "note"];
+  const head = ["email", "status", "day", "week", "month", "source", "createdAt", "confirmedAt", "unsubscribedAt", "mailState", "note", "token"];
   const esc = (v) => {
     const s = v == null ? "" : String(v);
     return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   };
   const lines = rows.map((r) => [
     r.email, r.status, !!(r.cadence && r.cadence.day), !!(r.cadence && r.cadence.week),
-    !!(r.cadence && r.cadence.month), r.source || "", r.createdAt || "", r.updatedAt || "", r.note || "",
+    !!(r.cadence && r.cadence.month), r.source || "", r.createdAt || "", r.confirmedAt || "", r.unsubscribedAt || "", r.mailState || "", r.note || "", r.id,
   ].map(esc).join(","));
   return head.join(",") + "\n" + lines.join("\n") + "\n";
 }
@@ -1033,7 +1051,10 @@ function subToCsv(rows) {
 function SubscriberRow({ row, onChanged, onError }) {
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState(row.note || "");
-  const active = row.status === "active";
+  const legacy = subIsLegacy(row);
+  const active = row.status === "confirmed";
+  const pending = row.status === "pending";
+  const meta = SUB_STATUS[row.status] || { label: row.status || "未知", color: "var(--text-3)", bg: "var(--night-700)" };
 
   const patch = async (p) => {
     setBusy(true);
@@ -1055,6 +1076,10 @@ function SubscriberRow({ row, onChanged, onError }) {
     catch (ex) { onError("刪除失敗：" + errText(ex)); setBusy(false); }
   };
   const saveNote = () => { if ((row.note || "") !== note.trim()) patch({ note: note.trim() }); };
+  const copyLink = async () => {
+    const url = subManageUrl(row.id);
+    try { await navigator.clipboard.writeText(url); onError(""); } catch { window.prompt("複製這段連結：", url); }
+  };
 
   return (
     <div style={{ background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: "14px 16px", marginBottom: 10, opacity: active ? 1 : 0.72 }}>
@@ -1062,13 +1087,17 @@ function SubscriberRow({ row, onChanged, onError }) {
         <div style={{ flex: "1 1 240px", minWidth: 0 }}>
           <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 14.5, overflow: "hidden", textOverflow: "ellipsis" }}>{row.email}</div>
           <div style={{ color: "var(--text-4)", fontSize: 11.5, fontFamily: "var(--font-mono)", marginTop: 3 }}>
-            {row.source === "admin" ? "後台建立" : "網站訂閱"} · 訂閱 {subFmtTime(row.createdAt)} · 更新 {subFmtTime(row.updatedAt)}
+            {row.source === "admin" ? "後台建立" : row.source === "web-legacy" ? "網站訂閱（舊格式搬遷）" : "網站訂閱"} · 訂閱 {subFmtTime(row.createdAt)}
+            {row.confirmedAt ? " · 確認 " + subFmtTime(row.confirmedAt) : ""} · 更新 {subFmtTime(row.updatedAt)}
+            {row.mailState === "failed" ? <span style={{ color: "var(--danger)" }}> · 寄送失敗 {row.retries || 0} 次{row.lastError ? "：" + String(row.lastError).slice(0, 80) : ""}</span> : null}
+            {row.mailState === "need_confirm" ? <span style={{ color: "var(--illumination)" }}> · 確認信排隊中</span> : null}
+            {row.mailState === "need_welcome" ? <span style={{ color: "var(--illumination)" }}> · 歡迎信排隊中</span> : null}
+            {legacy ? <span style={{ color: "var(--illumination)" }}> · 舊格式，worker 下一輪自動搬遷</span> : null}
           </div>
         </div>
         <span style={{ padding: "3px 10px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800,
-          background: active ? "var(--insight-soft, rgba(61,220,151,.14))" : "var(--night-700)",
-          color: active ? "var(--insight, var(--success))" : "var(--text-3)", border: "1px solid var(--border)" }}>
-          {active ? "訂閱中" : "已退訂"}
+          background: meta.bg, color: meta.color, border: "1px solid var(--border)" }}>
+          {meta.label}
         </span>
         <div style={{ display: "flex", gap: 6 }}>
           {CADENCE_DEFS.map((c) => {
@@ -1085,10 +1114,17 @@ function SubscriberRow({ row, onChanged, onError }) {
             );
           })}
         </div>
-        <div style={{ display: "flex", gap: 6 }}>
-          <button className="ad-btn ghost" disabled={busy} onClick={() => patch({ status: active ? "unsubscribed" : "active" })}>
-            {active ? "退訂" : "復訂"}
-          </button>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {pending ? (
+            <button className="ad-btn ghost" disabled={busy || legacy} title="重設為排隊中，worker 下一輪（10 分鐘內）重寄"
+              onClick={() => patch({ mailState: "need_confirm", confirmSentAt: null, retries: 0, lastError: null })}>重寄確認信</button>
+          ) : null}
+          {row.status === "unsubscribed" ? (
+            <button className="ad-btn ghost" disabled={busy || legacy} onClick={() => patch({ status: "confirmed", mailState: "idle" })}>復訂</button>
+          ) : row.status !== "duplicate" ? (
+            <button className="ad-btn ghost" disabled={busy || legacy} onClick={() => patch({ status: "unsubscribed", mailState: "idle", unsubscribedAt: new Date().toISOString() })}>退訂</button>
+          ) : null}
+          {!legacy ? <button className="ad-btn ghost" disabled={busy} onClick={copyLink} title="讀者的偏好中心連結（等同其訂閱憑證，勿公開）">複製管理連結</button> : null}
           <button className="ad-btn danger" style={{ padding: "7px 10px" }} disabled={busy} onClick={del}>刪除</button>
         </div>
       </div>
@@ -1106,7 +1142,7 @@ function SubscribersPanel() {
   const [rows, setRows] = useState(null);
   const [err, setErr] = useState("");
   const [q, setQ] = useState("");
-  const [status, setStatus] = useState("all");     // all | active | unsubscribed
+  const [status, setStatus] = useState("all");     // all | confirmed | pending | unsubscribed
   const [cadence, setCadence] = useState("all");   // all | day | week | month
   const [adding, setAdding] = useState(false);
   const [newEmail, setNewEmail] = useState("");
@@ -1126,16 +1162,19 @@ function SubscribersPanel() {
   useEffect(() => { load(); }, [load]);
 
   const all = rows || [];
+  const live = (r) => r.status === "confirmed";
   const stats = {
     total: all.length,
-    active: all.filter((r) => r.status === "active").length,
-    unsub: all.filter((r) => r.status !== "active").length,
-    day: all.filter((r) => r.status === "active" && r.cadence && r.cadence.day).length,
-    week: all.filter((r) => r.status === "active" && r.cadence && r.cadence.week).length,
-    month: all.filter((r) => r.status === "active" && r.cadence && r.cadence.month).length,
+    active: all.filter(live).length,
+    pending: all.filter((r) => r.status === "pending").length,
+    unsub: all.filter((r) => r.status === "unsubscribed").length,
+    legacy: all.filter(subIsLegacy).length,
+    day: all.filter((r) => live(r) && r.cadence && r.cadence.day).length,
+    week: all.filter((r) => live(r) && r.cadence && r.cadence.week).length,
+    month: all.filter((r) => live(r) && r.cadence && r.cadence.month).length,
   };
   const shown = all.filter((r) => {
-    if (status !== "all" && (status === "active") !== (r.status === "active")) return false;
+    if (status !== "all" && r.status !== status) return false;
     if (cadence !== "all" && !(r.cadence && r.cadence[cadence])) return false;
     if (q.trim() && !String(r.email || "").includes(q.trim().toLowerCase())) return false;
     return true;
@@ -1145,13 +1184,15 @@ function SubscribersPanel() {
     const key = newEmail.trim().toLowerCase();
     if (!SUB_EMAIL_RE.test(key)) { setErr("請輸入有效的 Email。"); return; }
     if (!newCad.day && !newCad.week && !newCad.month) { setErr("請至少選擇一種節奏。"); return; }
-    if (all.some((r) => r.id === key)) { setErr(`「${key}」已在名單中。`); return; }
+    if (all.some((r) => r.email === key && r.status !== "unsubscribed")) { setErr(`「${key}」已在名單中。`); return; }
     setBusy(true); setErr("");
     const now = new Date().toISOString();
     try {
-      await db.collection("aurora_subscribers").doc(key).set({
+      // 後台手動新增視為已確認（例如讀者來信要求加入），不走確認信；仍記 consent 與來源以留軌跡。
+      await db.collection("aurora_subscribers").doc(subNewToken()).set({
         email: key, cadence: { day: !!newCad.day, week: !!newCad.week, month: !!newCad.month },
-        status: "active", consent: true, source: "admin", createdAt: now, updatedAt: now,
+        status: "confirmed", mailState: "idle", consent: true, source: "admin", locale: "zh-Hant",
+        createdAt: now, updatedAt: now, confirmedAt: now,
       });
       setAdding(false); setNewEmail(""); setNote(`已新增 ${key}`); setTimeout(() => setNote(""), 2500);
       await load();
@@ -1216,7 +1257,9 @@ function SubscribersPanel() {
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
         {statCard("總名單", stats.total)}
         {statCard("訂閱中", stats.active, "var(--success)")}
+        {statCard("待確認", stats.pending, "var(--illumination)")}
         {statCard("已退訂", stats.unsub, "var(--text-3)")}
+        {stats.legacy ? statCard("待搬遷", stats.legacy, "var(--illumination)") : null}
         {statCard("日報", stats.day, "var(--illumination)")}
         {statCard("週報", stats.week, "var(--insight)")}
         {statCard("月報", stats.month, "var(--intelligence)")}
@@ -1225,7 +1268,7 @@ function SubscribersPanel() {
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
         <input className="ad-in" style={{ flex: "1 1 200px", padding: "8px 12px" }} placeholder="搜尋 Email…" value={q} onChange={(e) => setQ(e.target.value)} />
         <select className="ad-in" style={selStyle} value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="all">全部狀態</option><option value="active">訂閱中</option><option value="unsubscribed">已退訂</option>
+          <option value="all">全部狀態</option><option value="confirmed">訂閱中</option><option value="pending">待確認</option><option value="unsubscribed">已退訂</option><option value="duplicate">重複訂閱</option>
         </select>
         <select className="ad-in" style={selStyle} value={cadence} onChange={(e) => setCadence(e.target.value)}>
           <option value="all">全部節奏</option>
@@ -1243,6 +1286,99 @@ function SubscribersPanel() {
       ) : (
         shown.map((r) => <SubscriberRow key={r.id} row={r} onChanged={load} onError={setErr} />)
       )}
+      <div style={{ color: "var(--text-4)", fontSize: 11.5, lineHeight: 1.7, marginTop: 18 }}>
+        確認信／歡迎信由 GitHub Actions「subscriber-mail」每 10 分鐘掃描佇列寄出；未設定寄信 Secrets 時狀態會停在「待確認」。
+        寄送本期電子報見「寄送紀錄」分頁。退訂建議用「退訂」而非刪除，以保留同意與撤回軌跡。
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   寄送紀錄 — aurora_campaigns（由 scripts/mail/send-issue.mjs 寫入）
+   每期一份，記錄已寄出 Email 清單；重跑同一期不重複寄送。只讀不寫：
+   寄送動作在 GitHub Actions「寄送本期電子報」，刻意不放後台以免誤按。
+   ===================================================================== */
+const CAMP_NAV = "__campaigns";
+
+function CampaignsPanel() {
+  const [rows, setRows] = useState(null);
+  const [meta, setMeta] = useState(null);
+  const [err, setErr] = useState("");
+  const [open, setOpen] = useState("");
+  const load = useCallback(async () => {
+    setErr(""); setRows(null);
+    try {
+      const snap = await db.collection("aurora_campaigns").orderBy("updatedAt", "desc").limit(100).get();
+      setRows(snap.docs.map((d) => Object.assign({ id: d.id }, d.data())));
+      const m = await db.doc("aurora_subscribers_meta/runner").get();
+      setMeta(m.exists ? m.data() : {});
+    } catch (ex) { setErr("讀取失敗：" + errText(ex)); setRows([]); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  const list = rows || [];
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+        <div>
+          <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>寄送紀錄</h2>
+          <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>
+            aurora_campaigns · 確認信 worker 最後執行 {meta && meta.lastRunAt ? subFmtTime(meta.lastRunAt) : "尚未執行"}
+            {meta && meta.lastRun ? `（寄 ${meta.lastRun.sent}／略 ${meta.lastRun.skipped}／敗 ${meta.lastRun.failed}）` : ""}
+            {meta && meta.legacyMigratedAt ? ` · 舊格式搬遷完成 ${subFmtTime(meta.legacyMigratedAt)}` : ""}
+          </div>
+        </div>
+        <button className="ad-btn ghost" onClick={load}>↻ 重新整理</button>
+      </div>
+      {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
+      {rows == null ? <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>
+      : !list.length ? (
+        <div style={{ color: "var(--text-3)", padding: "16px 18px", border: "1px dashed var(--border)", borderRadius: "var(--radius-md)" }}>
+          還沒有寄送過任何一期。到 GitHub → Actions →「寄送本期電子報」執行後，這裡會出現紀錄。
+        </div>
+      ) : (
+        <div style={{ display: "grid", gap: 8 }}>
+          {list.map((c) => {
+            const sent = Number(c.sentCount || 0), target = Number(c.targetCount || 0);
+            const pct = target ? Math.round((sent / target) * 100) : 0;
+            const done = !!c.finishedAt;
+            const fails = Array.isArray(c.failures) ? c.failures : [];
+            return (
+              <div key={c.id} style={{ background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: "13px 16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 14.5, color: "var(--text-1)" }}>{c.kind} 第 {c.no} 期</span>
+                  <span style={{ color: "var(--text-3)", fontSize: 13 }}>{c.title || "(無標題)"}</span>
+                  <span style={{ padding: "3px 9px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 700,
+                    background: done ? "var(--insight-soft)" : "var(--illumination-soft, var(--night-700))", color: done ? "var(--insight)" : "var(--illumination)" }}>{done ? "完成" : "寄送中"}</span>
+                  <div style={{ flex: 1 }} />
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-2)" }}>{sent} / {target}</span>
+                </div>
+                <div style={{ height: 5, borderRadius: 99, background: "var(--night-600)", marginTop: 10, overflow: "hidden" }}>
+                  <div style={{ width: pct + "%", height: "100%", background: done ? "var(--insight)" : "var(--aurora-gradient)" }} />
+                </div>
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 9, color: "var(--text-4)", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>
+                  <span>節奏 {c.cadenceKey || "—"}</span><span>起 {subFmtTime(c.startedAt)}</span><span>更新 {subFmtTime(c.updatedAt)}</span>
+                  {!done && target > sent ? <span style={{ color: "var(--illumination)" }}>尚餘 {target - sent} 人，重跑 workflow 即可續寄</span> : null}
+                  {fails.length ? <span style={{ color: "var(--danger)" }}>失敗 {fails.length}</span> : null}
+                </div>
+                {fails.length ? (
+                  <div style={{ marginTop: 8 }}>
+                    <button className="ad-btn ghost" style={{ padding: "5px 9px", fontSize: 12 }} onClick={() => setOpen(open === c.id ? "" : c.id)}>{open === c.id ? "收合" : "查看失敗明細"}</button>
+                    {open === c.id ? (
+                      <div style={{ marginTop: 8, padding: "10px 12px", background: "var(--night-900)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
+                        {fails.map((f, i) => <div key={i} style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text-3)", marginBottom: 4 }}><span style={{ color: "var(--text-2)" }}>{f.email}</span> — {f.error}</div>)}
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <div style={{ color: "var(--text-4)", fontSize: 11.5, lineHeight: 1.7, marginTop: 18 }}>
+        寄送動作在 GitHub → Actions →「寄送本期電子報」（dry_run → test_to 試寄 → 正式），刻意不放在後台：寄信不可逆。每期已寄名單記在這裡，重跑同一期不會有人收到第二份。
+      </div>
     </div>
   );
 }
@@ -2038,7 +2174,7 @@ function SocialPanel() {
 function Console({ user }) {
   const [active, setActive] = useState(NL_NAV);
   const sec = SECTIONS.find((s) => s.id === active);
-  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: SOC_NAV, label: "社群發文" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
+  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: SOC_NAV, label: "社群發文" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
       <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
@@ -2070,6 +2206,7 @@ function Console({ user }) {
             : active === SOC_NAV ? <SocialPanel />
             : active === PC_NAV ? <PodcastPanel />
             : active === SUB_NAV ? <SubscribersPanel />
+            : active === CAMP_NAV ? <CampaignsPanel />
             : active === WEALTH_NAV ? <WealthPanel />
             : <SectionEditor key={sec.id} sec={sec} />}
         </main>

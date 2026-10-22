@@ -1,0 +1,59 @@
+name: 寄送本期電子報
+
+# 把後台已發布的某一期報報，寄給訂閱該節奏的已確認讀者。
+# 刻意「不排程、只手動觸發」——寄信不可逆，應由人按下送出。
+# 建議順序：dry_run 看人數 → test_to 寄給自己看版面 → 正式送出。
+# 名單較大時每輪只寄 200 封，跑完提示尚餘人數，重跑即可續寄（不會重複）。
+on:
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: "期別（特刊＝寄給全體已確認讀者）"
+        type: choice
+        required: true
+        default: "週報"
+        options: ["日報", "週報", "月報", "特刊"]
+      no:
+        description: "期號（留空＝該期別最新一期「已發布」者）"
+        type: string
+        required: false
+      test_to:
+        description: "試寄地址（填了就只寄這一封，不動寄送紀錄）"
+        type: string
+        required: false
+      dry_run:
+        description: "只列出收件人、不實際寄送"
+        type: boolean
+        default: false
+
+concurrency:
+  group: newsletter-send
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 安裝相依套件
+        run: npm install --no-save firebase-admin nodemailer
+      - name: 寄送
+        run: node scripts/mail/send-issue.mjs
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_REPLY_TO: ${{ secrets.MAIL_REPLY_TO }}
+          NL_KIND: ${{ inputs.kind }}
+          NL_NO: ${{ inputs.no }}
+          NL_TEST_TO: ${{ inputs.test_to }}
+          MAIL_DRY_RUN: ${{ inputs.dry_run && '1' || '' }}

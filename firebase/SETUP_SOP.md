@@ -103,20 +103,19 @@ window.FIREBASE_CONFIG = {
 | `aurora_issues` | 歷期報報 | `sort, no, kind, date, tone, title, items, cover`；發布流程欄位 `pubStatus`（draft/scheduled/published，缺值視為已發布）、`publishAt`（預計發布時間）、`publishedAt` |
 | `aurora_annuli` | 個人年輪 | `sort, year, tone, title, body` |
 
-另有 **電子報訂閱者** collection（非 `sort` 排序、不公開讀）：
+另有 **電子報訂閱者** 相關 collection（不公開讀）：
 
-| Collection | 區塊 | 主要欄位 |
+| Collection | 用途 | 主要欄位 |
 | --- | --- | --- |
-| `aurora_subscribers` | 電子報使用者管理 | doc id = email 小寫；`email, cadence{day,week,month}, status, consent, source, createdAt, updatedAt, note` |
+| `aurora_subscribers` | 電子報使用者管理 | **doc id = 32 字元私密 token**；`email, status(pending/confirmed/unsubscribed/duplicate), cadence{day,week,month}, mailState, consent, source, createdAt, updatedAt, confirmedAt, unsubscribedAt, note` |
+| `aurora_campaigns` | 每期寄送紀錄（已寄 Email 清單，重跑不重複） | `kind, no, sentTo[], sentCount, targetCount, failures[], finishedAt` |
+| `aurora_subscribers_meta` | 寄信 worker 執行摘要 | `lastRunAt, lastRun, legacyMigratedAt` |
 
-`aurora_subscribers` 權限與其他 collection 不同：**任何人可「建立」訂閱**（前台訂閱表單用，
-規則會驗證欄位白名單、email 格式、`consent=true`、至少勾一種節奏），
-也允許**自助更新**（前台退訂／復訂／調整節奏用）——但僅能變更
-`status`（限 `active` / `unsubscribed`）、`cadence`、`updatedAt` 三個欄位，
-`email`、`createdAt` 等其餘欄位鎖死；**讀取／刪除僅限管理者** —— email 名單不會被外部讀走。
-同一 email 重複訂閱時，前台會自動改走自助更新完成節奏調整或復訂；
-前台「訂閱管理」頁底部另有「自助退訂」表單，讀者輸入 Email 即可自行退訂，無需主編處理。
-後台「訂閱用戶」面板提供統計、搜尋篩選、節奏調整、退訂／復訂、手動新增與 CSV 匯出。
+`aurora_subscribers` 權限與其他 collection 不同：**任何人可「建立」訂閱**（規則驗證欄位白名單、
+email 格式、`consent=true`、至少一種節奏，且 `status` 鎖定 `pending`→ 必走確認信），
+**憑 token 可「讀／改自己那一筆」**（確認、調整節奏、退訂、復訂；Email 與建立時間不可改），
+**列表／刪除僅限管理者** —— 名單不可被列舉，也無法用別人的 Email 變更他的訂閱。
+確認信／歡迎信與本期電子報由 GitHub Actions 寄出。完整流程與寄信設定見 **`docs/SUBSCRIBER_SOP.md`**。
 
 ## 6. 部署 Firestore 安全規則
 
@@ -176,16 +175,14 @@ firebase deploy --only firestore:rules
 - [ ] **寫入權限** — 後台新增/修改/刪除一筆，重新整理前台可見變更。
 - [ ] **權限隔離** — 用非管理者帳號登入後嘗試寫入應被拒絕（規則生效）。
 - [ ] **回退機制** — 暫時清空 `firebase-config.js` 任一必填欄位，前台仍以內建預設資料正常顯示。
-- [ ] **訂閱寫入** — 前台「訂閱管理」頁以未登入身分送出 Email，成功顯示「訂閱成功」；
-      後台「訂閱用戶」面板可看到該筆（狀態：訂閱中）。
-- [ ] **重複訂閱＝更新設定** — 同一 Email 換一組節奏再送出一次，前台顯示「訂閱設定已更新」；
-      後台該筆 `cadence` 隨之變更（規則放行自助更新）。
-- [ ] **自助退訂** — 前台「訂閱管理」頁底部展開「退訂電子報」，輸入已訂閱 Email 送出，
-      顯示「已完成退訂」；後台該筆狀態變為「已退訂」。輸入未訂閱過的 Email 應顯示
-      「不在訂閱名單中」。退訂後再次於訂閱表單送出同一 Email，狀態應恢復「訂閱中」（復訂）。
-- [ ] **名單保護** — 未登入時嘗試讀取 `aurora_subscribers`（例如前台 Console 執行
-      `firebase.firestore().collection("aurora_subscribers").get()`）應被拒絕；
-      未登入時嘗試變更 `email`／`createdAt` 或整份刪除文件也應被拒絕。
+- [ ] **訂閱寫入** — 前台「訂閱管理」頁以未登入身分送出 Email，顯示「確認信已寄出」；
+      後台「訂閱用戶」面板可看到該筆（狀態：待確認）。
+- [ ] **Double Opt-in** — 設好寄信 Secrets 後 10 分鐘內收到確認信，點擊後 `confirm.html` 顯示「訂閱已啟用」，
+      後台狀態轉「訂閱中」，再 10 分鐘內收到歡迎信。
+- [ ] **偏好中心** — 歡迎信底部「管理訂閱」→ `manage.html?t=…` 可調整節奏、退訂、復訂，後台同步。
+- [ ] **名單保護** — 未登入時 `firebase.firestore().collection("aurora_subscribers").get()` 應被拒絕；
+      對任意 token 執行 `create` 時若 `status` 不是 `pending` 應被拒絕；
+      未登入時變更 `email`／`createdAt` 或刪除文件應被拒絕。Rules Playground 六案例見 `docs/SUBSCRIBER_SOP.md`。
 
 全部通過即設定完成。
 

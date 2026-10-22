@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>訂閱偏好中心 · 艾倫報報</title>
+<link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
+<link rel="stylesheet" href="/AllenI3Aurora/styles.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/AllenI3Aurora/firebase-config.js"></script>
+<script src="/AllenI3Aurora/subscriber-data.js"></script>
+<style>
+  html, body { min-height: 100%; margin: 0; }
+  .mg-wrap { max-width: 560px; margin: 0 auto; padding: 48px 20px 80px; }
+  .mg-top { display: flex; align-items: center; gap: 11px; margin-bottom: 30px; text-decoration: none; }
+  .mg-mark { width: 40px; height: 40px; border-radius: 12px; background: var(--aurora-gradient); display: grid; place-items: center;
+             font-family: var(--font-display); font-weight: 900; font-size: 16px; color: var(--text-on-accent); box-shadow: var(--glow-brand); }
+  .mg-brand { font-family: var(--font-display); font-weight: 900; font-size: 19px; color: var(--text-1); }
+  .mg-h { font-family: var(--font-display); font-weight: 900; font-size: var(--text-3xl); color: var(--text-1); margin: 0 0 8px; }
+  .mg-sub { color: var(--text-3); font-size: 14px; margin: 0 0 26px; line-height: 1.6; }
+  .mg-mail { font-family: var(--font-mono); color: var(--text-2); font-size: 13px; word-break: break-all; }
+  .mg-card { background: var(--night-800); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 22px; margin-bottom: 14px; }
+  .mg-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); }
+  .mg-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .mg-row:first-child { padding-top: 0; }
+  .mg-name { font-family: var(--font-display); font-weight: 800; color: var(--text-1); font-size: 15px; }
+  .mg-desc { color: var(--text-3); font-size: 13px; margin-top: 3px; line-height: 1.5; }
+  .mg-sw { width: 46px; height: 26px; flex: none; border-radius: var(--radius-pill); border: 1px solid var(--border);
+           background: var(--night-600); position: relative; cursor: pointer; transition: background .18s; margin-left: auto; }
+  .mg-sw[aria-checked="true"] { background: var(--aurora-gradient); border-color: transparent; box-shadow: var(--glow-brand); }
+  .mg-sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 99px;
+                  background: var(--text-1); transition: transform .18s cubic-bezier(.22,1,.36,1); }
+  .mg-sw[aria-checked="true"]::after { transform: translateX(20px); }
+  .mg-btn { cursor: pointer; padding: 12px 20px; border-radius: var(--radius-md); font-family: var(--font-display);
+            font-weight: 800; font-size: 14px; border: 1px solid var(--border); background: var(--night-700); color: var(--text-1); text-decoration: none; display: inline-block; }
+  .mg-btn.primary { background: var(--aurora-gradient); border-color: transparent; color: var(--text-on-accent); box-shadow: var(--glow-brand); }
+  .mg-btn.danger { background: transparent; border-color: var(--danger); color: var(--danger); }
+  .mg-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .mg-acts { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .mg-note { color: var(--text-4); font-size: 12.5px; line-height: 1.6; margin-top: 18px; }
+  .mg-note a { color: var(--text-3); }
+  .mg-toast { color: var(--insight); font-size: 13px; font-weight: 600; }
+  .mg-err { color: var(--danger); font-size: 13px; font-weight: 600; }
+  .mg-tag { display: inline-block; padding: 3px 10px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; }
+</style>
+</head>
+<body class="aurora-bg">
+<div class="mg-wrap">
+  <a class="mg-top" href="/AllenI3Aurora/"><div class="mg-mark">I³</div><div class="mg-brand">艾倫報報</div></a>
+  <div id="mg-root"><p class="mg-sub">載入中…</p></div>
+</div>
+<script>
+(function () {
+  var root = document.getElementById("mg-root");
+  var API = window.AURORA_SUB || {};
+  var token = API.tokenFromUrl ? API.tokenFromUrl() : "";
+  if (!token && API.savedToken) token = API.savedToken();
+
+  var CADENCES = [
+    { k: "day",   name: "日報 · 早晨速報", desc: "三則你今天該知道的事，兩分鐘讀完。每日 07:00。" },
+    { k: "week",  name: "週報 · 深度彙整", desc: "一週脈絡的收斂，旗艦內容。每週一 09:00。" },
+    { k: "month", name: "月報 · 沉澱回顧", desc: "成長回顧與下月計畫，附年輪新刻度。每月 1 號。" },
+  ];
+  function simple(title, desc, actions) {
+    root.innerHTML = '<h1 class="mg-h">' + title + '</h1><p class="mg-sub">' + desc + '</p>' + (actions || "");
+  }
+  if (!API.configured) return simple("系統尚未設定完成", "訂閱服務暫時無法使用，請稍後再試。");
+  if (!token) return simple("需要你的專屬連結",
+    "為了保護 Email，偏好中心只能透過信件裡的連結進入。請打開任何一封艾倫報報，點最下方的「管理訂閱」。弄丟了所有信？在首頁重新訂閱一次，我們會把管理連結寄給你。",
+    '<a class="mg-btn" href="/AllenI3Aurora/">回到首頁</a>');
+
+  var rec = null, draft = { day: false, week: false, month: false };
+  function statusTag(s) {
+    var map = { confirmed: ["已訂閱", "insight"], pending: ["待確認", "warning"], unsubscribed: ["已退訂", ""], duplicate: ["重複訂閱", "warning"] };
+    var m = map[s] || ["未知", ""];
+    return '<span class="mg-tag" style="background:' + (m[1] ? "var(--" + m[1] + "-soft)" : "var(--night-700)") + ';color:' + (m[1] ? "var(--" + m[1] + ")" : "var(--text-3)") + ';">' + m[0] + '</span>';
+  }
+  function render(msg, isErr) {
+    var off = rec.status === "unsubscribed";
+    root.innerHTML =
+      '<h1 class="mg-h">訂閱偏好中心</h1>' +
+      '<p class="mg-sub"><span class="mg-mail">' + rec.email + '</span> &nbsp;' + statusTag(rec.status) +
+      (rec.status === "pending" ? '<br>這筆訂閱還沒完成確認，請到信箱點擊確認信裡的連結。' : "") +
+      (rec.status === "duplicate" ? '<br>這是重複的訂閱，請改用原本那封信裡的「管理訂閱」連結。' : "") + '</p>' +
+      (off
+        ? '<div class="mg-card"><div class="mg-name">你已退訂艾倫報報</div>' +
+          '<div class="mg-desc">感謝這段時間的閱讀。隨時歡迎回來 —— 按下方按鈕即可恢復，原本的節奏設定會一併還原。</div></div>' +
+          '<div class="mg-acts"><button class="mg-btn primary" id="mg-resub">重新訂閱</button><a class="mg-btn" href="/AllenI3Aurora/">回到首頁</a></div>'
+        : '<div class="mg-card">' + CADENCES.map(function (c) {
+            return '<div class="mg-row"><div style="flex:1;min-width:0;"><div class="mg-name">' + c.name + '</div><div class="mg-desc">' + c.desc + '</div></div>' +
+              '<div class="mg-sw" role="switch" data-k="' + c.k + '" aria-checked="' + (draft[c.k] ? "true" : "false") + '"></div></div>';
+          }).join("") + '</div>' +
+          '<div class="mg-acts"><button class="mg-btn primary" id="mg-save">儲存變更</button><button class="mg-btn danger" id="mg-unsub">全部退訂</button>' +
+          (msg ? '<span class="' + (isErr ? "mg-err" : "mg-toast") + '">' + msg + '</span>' : "") + '</div>') +
+      '<p class="mg-note">關掉全部節奏等同退訂。我們只用你的 Email 寄送你選擇的內容，不轉售、不分享給第三方；' +
+      '退訂後仍會保留一筆「已退訂」紀錄作為同意軌跡。這個頁面的連結等同你的訂閱憑證，請不要轉發給別人。' +
+      '<br><a href="/AllenI3Aurora/privacy.html">個人資料告知暨隱私權政策</a></p>';
+
+    Array.prototype.forEach.call(root.querySelectorAll(".mg-sw"), function (sw) {
+      sw.addEventListener("click", function () {
+        var k = sw.getAttribute("data-k"); draft[k] = !draft[k];
+        sw.setAttribute("aria-checked", draft[k] ? "true" : "false");
+      });
+    });
+    var save = document.getElementById("mg-save");
+    if (save) save.addEventListener("click", function () {
+      save.disabled = true;
+      var none = !draft.day && !draft.week && !draft.month;
+      if (none && !window.confirm("三個節奏都關掉等同退訂，確定嗎？")) { save.disabled = false; return; }
+      API.updateCadence(token, draft).then(function (r) {
+        rec = r; draft = API.normalizeCadence(r.cadence); render(none ? "已為你退訂。" : "已儲存 ✓", false);
+      }).catch(function (e) { save.disabled = false; render("儲存失敗，請稍後再試。", true); console.warn(e); });
+    });
+    var unsub = document.getElementById("mg-unsub");
+    if (unsub) unsub.addEventListener("click", function () {
+      if (!window.confirm("確定要退訂艾倫報報嗎？")) return;
+      unsub.disabled = true;
+      API.unsubscribe(token).then(function (r) { rec = r; render("", false); })
+        .catch(function (e) { unsub.disabled = false; render("退訂失敗，請稍後再試。", true); console.warn(e); });
+    });
+    var resub = document.getElementById("mg-resub");
+    if (resub) resub.addEventListener("click", function () {
+      resub.disabled = true;
+      API.resubscribe(token, rec.cadence).then(function (r) { rec = r; draft = API.normalizeCadence(r.cadence); render("歡迎回來 ✓", false); })
+        .catch(function (e) { resub.disabled = false; console.warn(e); });
+    });
+  }
+
+  API.get(token).then(function (r) {
+    if (!r) return simple("找不到這筆訂閱", "連結可能已失效，或該筆訂閱已被移除。你可以重新訂閱一次。", '<a class="mg-btn primary" href="/AllenI3Aurora/">重新訂閱</a>');
+    rec = r; draft = API.normalizeCadence(r.cadence); API.rememberToken(token); render("", false);
+  }).catch(function (e) { console.warn("[aurora] manage load failed:", e); simple("暫時無法載入", "系統忙碌中，請稍後重新整理。"); });
+})();
+</script>
+</body>
+</html>
