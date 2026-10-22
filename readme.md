@@ -117,6 +117,8 @@ Derived from Allen's real marketing copy and blog voice.
 
 **UI kit**
 
+- `scripts/mail/` — subscriber e-mail pipeline (double opt-in confirmation, welcome mail, issue delivery with an idempotent per-issue ledger). Pure logic in `core.mjs`, `node --test scripts/mail/mail.test.mjs`. Setup & ops: `docs/SUBSCRIBER_SOP.md`.
+- `subscriber-data.js`, `confirm.html`, `manage.html`, `privacy.html` — reader-side subscription: the Firestore document ID is a 32-char capability token, so readers never create an account and the list can't be enumerated.
 - `ui_kits/aurora/` — interactive product recreation: `index.html` + Dashboard, NewsletterIssue, Archive, Timeline, Subscribe screens (see its README).
 
 **Specimen cards** — `guidelines/*.html` (Colors · Type · Spacing · Brand), rendered in the Design System tab.

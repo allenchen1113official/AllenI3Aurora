@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- token 在網址列，避免經由 Referer 外流到第三方 -->
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>確認訂閱 · 艾倫報報</title>
+<link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
+<link rel="stylesheet" href="/AllenI3Aurora/styles.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/AllenI3Aurora/firebase-config.js"></script>
+<script src="/AllenI3Aurora/subscriber-data.js"></script>
+<style>
+  html, body { min-height: 100%; margin: 0; }
+  .sc-wrap { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 24px; box-sizing: border-box; }
+  .sc-card { width: 100%; max-width: 460px; background: var(--night-800); border: 1px solid var(--border);
+             border-radius: var(--radius-xl); padding: 36px 30px; text-align: center; box-shadow: var(--shadow-card); }
+  .sc-mark { width: 46px; height: 46px; margin: 0 auto 22px; border-radius: 14px; background: var(--aurora-gradient);
+             display: grid; place-items: center; font-family: var(--font-display); font-weight: 900; font-size: 18px;
+             color: var(--text-on-accent); box-shadow: var(--glow-brand); }
+  .sc-icon { width: 62px; height: 62px; margin: 0 auto 18px; border-radius: 99px; display: grid; place-items: center; font-size: 30px; }
+  .sc-h { font-family: var(--font-display); font-weight: 900; font-size: var(--text-2xl); color: var(--text-1); margin: 0 0 10px; }
+  .sc-p { color: var(--text-3); font-size: 14.5px; line-height: 1.65; margin: 0; }
+  .sc-mail { font-family: var(--font-mono); color: var(--text-2); font-size: 13px; word-break: break-all; }
+  .sc-btn { display: inline-block; margin-top: 22px; cursor: pointer; text-decoration: none; padding: 12px 22px;
+            border-radius: var(--radius-md); font-family: var(--font-display); font-weight: 800; font-size: 14px;
+            background: var(--aurora-gradient); color: var(--text-on-accent); border: 1px solid transparent; box-shadow: var(--glow-brand); }
+  .sc-link { display: inline-block; margin-top: 14px; color: var(--text-3); font-size: 13px; text-decoration: none; border-bottom: 1px solid var(--border); }
+  .sc-link:hover { color: var(--text-1); }
+</style>
+</head>
+<body class="aurora-bg">
+<div class="sc-wrap"><div class="sc-card">
+  <div class="sc-mark">I³</div>
+  <div id="sc-body">
+    <div class="sc-icon" style="background:var(--brand-soft);color:var(--brand);">⏳</div>
+    <h1 class="sc-h">確認中…</h1>
+    <p class="sc-p">正在啟用你的訂閱，請稍候。</p>
+  </div>
+</div></div>
+<script>
+(function () {
+  var el = document.getElementById("sc-body");
+  var API = window.AURORA_SUB || {};
+  function render(icon, tint, title, html, actions) {
+    el.innerHTML =
+      '<div class="sc-icon" style="background:var(--' + tint + '-soft);color:var(--' + tint + ');">' + icon + '</div>' +
+      '<h1 class="sc-h">' + title + '</h1><p class="sc-p">' + html + '</p>' + (actions || "");
+  }
+  var token = API.tokenFromUrl ? API.tokenFromUrl() : "";
+  if (!API.configured) return render("⚙️", "warning", "系統尚未設定完成", "訂閱服務暫時無法使用。請稍後再試，或直接回信給主編。");
+  if (!token) return render("🔗", "warning", "連結不完整", "這個網址缺少確認碼。請直接點擊確認信裡的按鈕，或整段網址複製後貼上。");
+
+  API.confirm(token).then(function (rec) {
+    API.rememberToken(token);
+    render("✅", "insight", "訂閱已啟用 🎉",
+      '<span class="sc-mail">' + rec.email + '</span><br>之後將依你選擇的節奏（' + API.cadenceLabel(rec.cadence) + '）送達信箱。歡迎信馬上就到。',
+      '<a class="sc-btn" href="/AllenI3Aurora/">前往艾倫報報</a><br>' +
+      '<a class="sc-link" href="' + API.manageUrl(token) + '">管理我的訂閱設定</a><br>' +
+      '<a class="sc-link" href="/AllenI3Aurora/privacy.html">個人資料告知暨隱私權政策</a>');
+  }).catch(function (e) {
+    var code = (e && e.message) || "";
+    if (code === "NOT_FOUND") {
+      render("🔍", "warning", "找不到這筆訂閱", "確認碼可能已失效，或該筆訂閱已被移除。你可以重新訂閱一次。",
+        '<a class="sc-btn" href="/AllenI3Aurora/">重新訂閱</a>');
+    } else if (code === "DUPLICATE") {
+      render("📬", "insight", "你已經訂閱了", "這個 Email 原本就在名單上，所以這一筆不會再重複啟用。請改用原本那封信裡的「管理訂閱」連結。",
+        '<a class="sc-link" href="/AllenI3Aurora/">回到首頁</a>');
+    } else {
+      render("⚠️", "danger", "確認失敗", "系統暫時無法完成確認，請稍後再點一次信中的連結。",
+        '<a class="sc-link" href="/AllenI3Aurora/">回到首頁</a>');
+      console.warn("[aurora] confirm failed:", e);
+    }
+  });
+})();
+</script>
+</body>
+</html>

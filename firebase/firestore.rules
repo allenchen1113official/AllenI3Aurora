@@ -35,48 +35,72 @@ service cloud.firestore {
     // 排程器執行摘要（最後執行時間、Token 狀態）：管理者唯讀，僅排程器寫入。
     match /aurora_social_meta/{doc}  { allow read: if isOwner(); allow write: if false; }
 
-    // 電子報訂閱者：任何人可「建立」訂閱（嚴格欄位驗證），
-    // 也可「自助更新」自己的訂閱（退訂／復訂／調整節奏，見 selfServiceValid）——
-    // 但僅能變更 status / cadence / updatedAt，email、createdAt 等其餘欄位鎖死；
-    // 讀取／刪除僅限管理者 —— email 名單不可被外部讀走。
-    // doc id 即 email 小寫；前台重複訂閱時 set 會被視為 update，
-    // 由前台改走自助更新完成節奏調整或復訂。
-    match /aurora_subscribers/{email} {
-      function subValid() {
-        let d = request.resource.data;
-        return d.keys().hasOnly(['email', 'cadence', 'status', 'consent', 'source', 'createdAt', 'updatedAt'])
-          && d.keys().hasAll(['email', 'cadence', 'status', 'consent', 'source', 'createdAt', 'updatedAt'])
-          && d.email is string && d.email == email && d.email.lower() == d.email
-          && d.email.size() >= 6 && d.email.size() <= 254
-          && d.email.matches('[^@\\s]+@[^@\\s]+\\.[^@\\s]+')
-          && d.cadence is map
-          && d.cadence.keys().hasOnly(['day', 'week', 'month'])
-          && d.cadence.keys().hasAll(['day', 'week', 'month'])
-          && d.cadence.day is bool && d.cadence.week is bool && d.cadence.month is bool
-          && (d.cadence.day || d.cadence.week || d.cadence.month)
-          && d.status == 'active'
-          && d.consent == true
-          && d.source == 'web'
-          && d.createdAt is string && d.createdAt.size() <= 40
-          && d.updatedAt is string && d.updatedAt.size() <= 40;
-      }
-      // 自助管理（未登入即可）：只允許動 status / cadence / updatedAt，
-      // status 僅能是 active（復訂／調整節奏）或 unsubscribed（退訂）；
-      // 復訂時至少需保留一種節奏，退訂則不限。
-      function selfServiceValid() {
-        let d = request.resource.data;
-        return d.diff(resource.data).affectedKeys().hasOnly(['status', 'cadence', 'updatedAt'])
-          && d.status in ['active', 'unsubscribed']
-          && d.cadence is map
-          && d.cadence.keys().hasOnly(['day', 'week', 'month'])
-          && d.cadence.keys().hasAll(['day', 'week', 'month'])
-          && d.cadence.day is bool && d.cadence.week is bool && d.cadence.month is bool
-          && (d.status == 'unsubscribed' || d.cadence.day || d.cadence.week || d.cadence.month)
-          && d.updatedAt is string && d.updatedAt.size() <= 40;
-      }
-      allow create: if isOwner() || subValid();
-      allow update: if isOwner() || selfServiceValid();
-      allow read, delete: if isOwner();
+    // ---------------------------------------------------------------
+    // 電子報訂閱者 aurora_subscribers/{token}
+    // ---------------------------------------------------------------
+    // 文件 ID = 32 字元亂數 token，同時是讀者信中連結的自助憑證（capability URL）。
+    // get   ：開放（需知道 token）→ 偏好中心／確認頁可顯示並修改自己那一筆。
+    // list  ：僅管理者 → 名單無法被列舉。
+    // create：開放但嚴格驗證，且 status 鎖定 pending、mailState 鎖定 need_confirm
+    //         → 強制走確認信（Double Opt-in），沒人能替別人的 Email 直接「訂閱成功」。
+    // update：管理者不限；一般人只能改自己那筆（憑 token）的狀態／節奏，Email 不可改。
+    // 與舊版（doc id = email、未登入可 update 任何 email）的差別：
+    //   不能再用別人的 Email 退訂他、也不能探測某 Email 是否在名單上。
+    // 排程 worker（GitHub Actions）以服務帳戶經 Admin SDK 存取，不受本規則限制。
+
+    function subFields() {
+      return ['email', 'status', 'cadence', 'mailState', 'source', 'locale', 'consent',
+              'createdAt', 'updatedAt', 'confirmedAt', 'unsubscribedAt',
+              'confirmSentAt', 'welcomeSentAt', 'lastError', 'retries', 'note'];
     }
+    function validEmail(e) {
+      return e is string && e.size() > 3 && e.size() <= 254 && e == e.lower()
+        && e.matches('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+[.][a-zA-Z]{2,}$');
+    }
+    function cadenceShape(c) {
+      return c is map && c.keys().hasOnly(['day', 'week', 'month'])
+        && c.get('day', false) is bool && c.get('week', false) is bool && c.get('month', false) is bool;
+    }
+    function cadenceAnyOn(c) {
+      return c.get('day', false) == true || c.get('week', false) == true || c.get('month', false) == true;
+    }
+    function newSubscriber() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(subFields())
+        && d.keys().hasAll(['email', 'status', 'cadence', 'mailState', 'consent', 'createdAt'])
+        && validEmail(d.email)
+        && d.status == 'pending'
+        && d.mailState == 'need_confirm'
+        && d.consent == true
+        && cadenceShape(d.cadence) && cadenceAnyOn(d.cadence)
+        && d.get('source', '') is string && d.get('source', '').size() <= 40
+        && d.createdAt is string && d.createdAt.size() <= 40;
+    }
+    // 自助修改：憑 token 操作自己那一筆，但 Email／同意紀錄／建立時間不可竄改。
+    function selfService() {
+      let d = request.resource.data;
+      let p = resource.data;
+      return d.keys().hasOnly(subFields())
+        && d.email == p.email
+        && d.consent == p.consent
+        && d.createdAt == p.createdAt
+        && d.status in ['pending', 'confirmed', 'unsubscribed']
+        && !(p.status == 'confirmed' && d.status == 'pending')
+        && !(p.status == 'duplicate' && d.status == 'confirmed')
+        // 允許維持原值，否則寄送失敗（mailState = failed）者會連退訂都做不到
+        && (d.mailState == p.mailState || d.mailState in ['need_confirm', 'need_welcome', 'idle'])
+        && cadenceShape(d.cadence);
+    }
+    match /aurora_subscribers/{token} {
+      allow get:    if true;
+      allow list:   if isOwner();
+      allow create: if token.size() >= 24 && newSubscriber();
+      allow update: if isOwner() || selfService();
+      allow delete: if isOwner();
+    }
+    // 寄送紀錄（每期一份，含已寄出名單）：僅管理者可讀，前台不需要；寫入由 worker 執行。
+    match /aurora_campaigns/{id} { allow read, write: if isOwner(); }
+    // 訂閱 worker 執行摘要（最後執行、舊資料搬遷結果）：管理者唯讀，僅 worker 寫入。
+    match /aurora_subscribers_meta/{doc} { allow read: if isOwner(); allow write: if false; }
   }
 }
