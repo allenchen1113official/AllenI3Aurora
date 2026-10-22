@@ -1,9 +1,9 @@
 {
-  "date": "2026.10.21",
-  "dateLabel": "2026.10.21（最新）",
-  "asOf": "2026.10.22",
-  "desc": "・KD黃金交叉:台表科(6278)…",
-  "summary": "・KD黃金交叉:台表科(6278)、禾伸堂(3026)，・均線多頭排列:台表科、禾伸堂、東和鋼鐵、長榮、瑞昱，・三項基本面(營益率、營收年增、EPS年增)近4季皆達標:大量(3167)，・台表科單日上漲 9.90%,為本日TOP10漲幅最大，1. …",
+  "date": "2026.10.22",
+  "dateLabel": "2026.10.22（最新）",
+  "asOf": "2026.10.23",
+  "desc": "台股每日分析報表 TOP 10 20…",
+  "summary": "台股每日分析報表 TOP 10 2026-10-22(星期四)，今日 TOP10:萬海、亞通、長榮、信昌電、台表科、漢達、聯陽、耕興、東和鋼鐵、大量。，・KD黃金交叉:本日10檔皆無。，・均線多頭排列(月季半年年,且皆向上):萬海、亞通、長榮、台表…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,100 +34,85 @@
   ],
   "top10": [
     {
-      "code": "3014",
-      "name": "聯陽",
-      "changePct": "+1.42%",
+      "code": "2615",
+      "name": "萬海",
+      "changePct": "+2.58%",
       "up": true,
       "signals": [
-        "om"
-      ]
-    },
-    {
-      "code": "6278",
-      "name": "台表科",
-      "changePct": "+9.90%",
-      "up": true,
-      "signals": [
-        "gc",
         "ma"
       ]
     },
     {
-      "code": "3026",
-      "name": "禾伸堂",
-      "changePct": "+2.64%",
-      "up": true,
-      "signals": [
-        "gc",
-        "ma",
-        "eps"
-      ]
-    },
-    {
-      "code": "3167",
-      "name": "大量",
-      "changePct": "+2.99%",
-      "up": true,
-      "signals": [
-        "om",
-        "rev",
-        "eps"
-      ]
-    },
-    {
       "code": "6179",
-      "name": "亞通",
-      "changePct": "+0.13%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "2006",
-      "name": "東和鋼鐵",
-      "changePct": "+2.87%",
+      "name": "TPEx",
+      "changePct": "+0.53%",
       "up": true,
       "signals": [
-        "ma",
-        "om",
-        "eps"
-      ]
-    },
-    {
-      "code": "6438",
-      "name": "迅得",
-      "changePct": "+2.99%",
-      "up": true,
-      "signals": [
-        "eps"
+        "ma"
       ]
     },
     {
       "code": "2603",
       "name": "長榮",
-      "changePct": "-0.77%",
-      "up": false,
-      "signals": [
-        "ma",
-        "om"
-      ]
-    },
-    {
-      "code": "2379",
-      "name": "瑞昱",
-      "changePct": "+2.33%",
+      "changePct": "+0.97%",
       "up": true,
       "signals": [
         "ma"
       ]
     },
     {
-      "code": "4916",
-      "name": "事欣科",
-      "changePct": "+2.48%",
+      "code": "6173",
+      "name": "信昌電",
+      "changePct": "+3.16%",
       "up": true,
+      "signals": []
+    },
+    {
+      "code": "6278",
+      "name": "台表科",
+      "changePct": "-8.21%",
+      "up": false,
       "signals": [
-        "rev",
-        "eps"
+        "ma"
+      ]
+    },
+    {
+      "code": "6620",
+      "name": "漢達",
+      "changePct": "+4.12%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "3014",
+      "name": "聯陽",
+      "changePct": "-1.40%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "6146",
+      "name": "TPEx",
+      "changePct": "-0.47%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "2006",
+      "name": "東和鋼鐵",
+      "changePct": "-0.11%",
+      "up": false,
+      "signals": [
+        "ma"
+      ]
+    },
+    {
+      "code": "3167",
+      "name": "大量",
+      "changePct": "-7.60%",
+      "up": false,
+      "signals": [
+        "ma"
       ]
     }
   ],
@@ -135,9 +120,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1iyQB9_7ILRGaWIl_M5NFlSSibHyC10Bu&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1DTIscCVNSeJU8YD0M-VFLKqYGtPuW8SO&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/18IlUEYnd-CPP7jbK4VHvB8xZDQP0ygC2/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1_yfJd6kVOa51n5-e0MsIYEtMTv67TVz6/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-10-22T11:05:27.457Z"
+  "updatedAt": "2026-10-22T16:33:48.451Z"
 }
