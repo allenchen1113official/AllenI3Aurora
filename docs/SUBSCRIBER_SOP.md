@@ -76,6 +76,16 @@
   "createdAt": "2026-10-23T00:00:00.000Z", "updatedAt": "2026-10-23T00:00:00.000Z" }
 ```
 
+### 1-b. 規則自動部署目前是壞的（6/6 失敗），先手動貼
+
+`firestore-rules-deploy.yml` 自 8 月建立以來每次都失敗在「部署規則」這一步（Secret 檢查有過）。
+`subscriber-mail.yml` 用同一把 `FIREBASE_SERVICE_ACCOUNT` 卻能正常讀 Firestore，所以金鑰本身沒問題——
+是這個服務帳戶**缺「Firebase Rules Admin」角色**（部署規則需要，讀寫資料不需要）。
+
+- **立刻**：Firebase Console → Firestore → 規則 → 貼上 `firebase/firestore.rules` 全文 → 發布 → 跑下方六案例。
+- **治本**：Google Cloud Console → IAM → 找到該服務帳戶 → 新增角色 **Firebase Rules Admin**（`roles/firebaserules.admin`）
+  → Actions → 「部署 Firestore 安全規則」→ Run workflow 確認轉綠。之後規則改動就會自動部署。
+
 ### 2. 服務帳戶角色
 
 既有的 `FIREBASE_SERVICE_ACCOUNT`（規則部署用）需**加上「Cloud Datastore 使用者」角色**才能讀寫訂閱者，
