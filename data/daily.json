@@ -1,10 +1,10 @@
 {
-  "date": "2026.10.22",
-  "dateLabel": "2026/10/22（四）",
-  "asOf": "2026.10.22",
+  "date": "2026.10.23",
+  "dateLabel": "2026/10/23（五）",
+  "asOf": "2026.10.23",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.10.22 本週最值得關注：Google Home 讓既有 Hue 設備無痛升級 Matter，顯示生態系整合持續落地；FAA Part 108 逼近定案，將影響無人機 BVLOS 與 UTM 佈局。網球方面上海大師賽誕生新科冠軍，年終賽席位進入最後衝刺。十月是冰島自駕與極光的好時機，出發前務必確認路況。 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.10.23 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "focusNote": "本週最值得關注：Google Home 讓既有 Hue 設備無痛升級 Matter，顯示生態系整合持續落地；FAA Part 108 逼近定案，將影響無人機 BVLOS 與 UTM 佈局。網球方面上海大師賽誕生新科冠軍，年終賽席位進入最後衝刺。十月是冰島自駕與極光的好時機，出發前務必確認路況。",
   "sections": [
@@ -76,10 +76,10 @@
   "highlights": [],
   "cover": {
     "title": "今日日報封面",
-    "drive": "",
-    "local": "assets/rabbit-reading.jpeg"
+    "local": "assets/rabbit-reading.jpeg",
+    "drive": ""
   },
   "source": "https://docs.google.com/document/d/1RF87om6Or9d5uQ5VSBPtDZfArOTvQZ2aS3HdDOl6k_8/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-10-22T04:25:32.416Z"
+  "updatedAt": "2026-10-23T03:47:49.269Z"
 }
