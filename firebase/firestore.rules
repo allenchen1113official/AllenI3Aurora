@@ -94,7 +94,7 @@ service cloud.firestore {
     match /aurora_subscribers/{token} {
       allow get:    if true;
       allow list:   if isOwner();
-      allow create: if token.size() >= 24 && newSubscriber();
+      allow create: if isOwner() || (token.size() >= 24 && newSubscriber());
       allow update: if isOwner() || selfService();
       allow delete: if isOwner();
     }
