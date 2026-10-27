@@ -1,9 +1,9 @@
 {
-  "date": "2026.10.22",
-  "dateLabel": "2026.10.22（最新）",
-  "asOf": "2026.10.27",
-  "desc": "今日關注動態 台股選股雷達 2026…",
-  "summary": "今日關注動態 台股選股雷達 2026/10/22（週四），‧ 均線多頭排列：萬海、亞通、長榮、台表科、東和鋼鐵、大量，共6檔，‧ 五項訊號全數達標：大量(3167)，但單日下跌7.60%，波動大，‧ 跌幅較大：台表科(6278) -8.22%、大量…",
+  "date": "2026.10.27",
+  "dateLabel": "2026.10.27（最新）",
+  "asOf": "2026.10.28",
+  "desc": "✅ KD黃金交叉:2464 盟立(K…",
+  "summary": "✅ KD黃金交叉:2464 盟立(K值仍在低檔,需觀察後續確認)，✅ 均線多頭排列(月季半年年且皆向上):6933、2603、2609、6278、2347、6141、6179，✅ 營益率10%(近4季達標≥3季):2603、3014、3006，✅ …",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,19 +34,9 @@
   ],
   "top10": [
     {
-      "code": "2615",
-      "name": "TWSE",
-      "changePct": "+2.58%",
-      "up": true,
-      "signals": [
-        "ma",
-        "om"
-      ]
-    },
-    {
-      "code": "6179",
-      "name": "TPEx",
-      "changePct": "+0.53%",
+      "code": "6933",
+      "name": "14.1%",
+      "changePct": "+5.42%",
       "up": true,
       "signals": [
         "ma"
@@ -54,82 +44,79 @@
     },
     {
       "code": "2603",
-      "name": "TWSE",
-      "changePct": "+0.97%",
+      "name": "長榮",
+      "changePct": "+0.58%",
       "up": true,
       "signals": [
-        "ma",
-        "om"
+        "ma"
       ]
     },
     {
-      "code": "6173",
-      "name": "TPEx",
-      "changePct": "+3.16%",
+      "code": "3014",
+      "name": "聯陽",
+      "changePct": "-0.71%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "2609",
+      "name": "陽明",
+      "changePct": "+1.78%",
       "up": true,
       "signals": [
-        "om",
-        "eps"
+        "ma"
       ]
     },
     {
       "code": "6278",
-      "name": "TWSE",
-      "changePct": "-8.22%",
+      "name": "台表科",
+      "changePct": "-4.13%",
       "up": false,
       "signals": [
         "ma"
       ]
     },
     {
-      "code": "6620",
-      "name": "TPEx",
-      "changePct": "+4.12%",
+      "code": "3006",
+      "name": "晶豪科",
+      "changePct": "+7.05%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "2347",
+      "name": "聯強",
+      "changePct": "+2.72%",
       "up": true,
       "signals": [
-        "om",
-        "eps"
+        "ma"
       ]
     },
     {
-      "code": "3014",
-      "name": "TWSE",
-      "changePct": "-1.40%",
-      "up": false,
+      "code": "6141",
+      "name": "柏承",
+      "changePct": "+0.59%",
+      "up": true,
       "signals": [
-        "om"
+        "ma"
       ]
     },
     {
-      "code": "6146",
-      "name": "TPEx",
-      "changePct": "-0.47%",
+      "code": "6179",
+      "name": "亞通",
+      "changePct": "-0.26%",
       "up": false,
       "signals": [
-        "om"
+        "ma"
       ]
     },
     {
-      "code": "2006",
-      "name": "TWSE",
-      "changePct": "-0.11%",
-      "up": false,
+      "code": "2464",
+      "name": "盟立",
+      "changePct": "+9.94%",
+      "up": true,
       "signals": [
-        "ma",
-        "om",
-        "eps"
-      ]
-    },
-    {
-      "code": "3167",
-      "name": "TWSE",
-      "changePct": "-7.60%",
-      "up": false,
-      "signals": [
-        "ma",
-        "om",
-        "rev",
-        "eps"
+        "gc"
       ]
     }
   ],
@@ -137,9 +124,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1DTIscCVNSeJU8YD0M-VFLKqYGtPuW8SO&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1aAE2-YR5UPR_97kIPcCEcbBNr4Iov1kH&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1W9b7GokwaN2mHGrk_feNvIhKn5xoaDxP/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1Y7cRMzdb9R3HfeaQnenhcjgtQ_LeGe19/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-10-27T15:06:03.845Z"
+  "updatedAt": "2026-10-27T20:11:48.932Z"
 }
