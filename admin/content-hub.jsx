@@ -2,8 +2,9 @@
    內容中控台（Content Hub）— 一次製作、逐平台微調、排程與追蹤
    資料沿用 aurora_social_posts（與「社群發文」同一佇列），多平台欄位放在
    hub：{ stage, body, hashtags, category, platforms, variants }，排程器忽略此欄。
-   實際送出仍由 social-publish.yml 處理：第一階段只發 Facebook，
-   IG／Threads／YouTube／Podcast 先存草稿與微調內容，待各平台串接後啟用。
+   實際送出由 social-publish.yml 處理：Facebook、Instagram、Threads 由排程器自動發布
+   （各頻道狀態存在 fb／ig／th 欄位，狀態機見 scripts/social/core.mjs）；
+   YouTube／Podcast 先存草稿與微調內容，待串接後啟用。
    需於 admin.jsx 之後載入（共用 db、auth、errText、socFbState、SocFbPreview…）。
    ===================================================================== */
 (function () {
@@ -12,8 +13,8 @@ const FbPreview = SocFbPreview; // admin.jsx 的 FB 貼文預覽
 
 const HUB_PF = [
   { id: "fb", short: "FB", name: "Facebook 粉絲專頁", color: "#1877F2", live: true, api: "Meta Graph API（Token 存於 Secrets）", formats: "圖文 · 連結貼文" },
-  { id: "ig", short: "IG", name: "Instagram 商業帳號", color: "#C13584", phase: "第二階段", api: "Instagram Graph API", formats: "貼文 · 輪播 · Reels", limit: 2200 },
-  { id: "th", short: "TH", name: "Threads", color: "#101010", phase: "第二階段", api: "Threads API", formats: "文字 · 圖片 · 串文", limit: 500 },
+  { id: "ig", short: "IG", name: "Instagram 商業帳號", color: "#C13584", live: true, api: "Instagram Graph API（沿用 Meta Token）", formats: "單張圖片貼文（必須有圖）", limit: 2200 },
+  { id: "th", short: "TH", name: "Threads", color: "#101010", live: true, api: "Threads API（長效 Token 每日自動續期）", formats: "文字 · 單張圖片", limit: 500 },
   { id: "yt", short: "YT", name: "YouTube 頻道", color: "#FF0000", phase: "第二階段", api: "YouTube Data API", formats: "影片 · Shorts", limit: 5000 },
   { id: "pc", short: "PC", name: "Podcast（RSS 託管）", color: "#7C3AED", phase: "第二階段", api: "RSS 託管", formats: "音檔 · Show notes" },
 ];
@@ -23,7 +24,7 @@ const HUB_RESERVED = [
 ];
 const HUB_CATS = ["智慧家庭", "無人機", "智慧農業", "ITS", "智慧水資源", "AI 應用", "理財", "生活"];
 
-/* 內容狀態（以 FB 狀態機為準，草稿再細分「草稿／待審核」） */
+/* 內容狀態（彙整 FB／IG／Threads 各頻道狀態，草稿再細分「草稿／待審核」） */
 const HUB_ST = {
   draft:     { label: "草稿",   color: "var(--illumination)", bg: "var(--illumination-soft)" },
   review:    { label: "待審核", color: "var(--intelligence)", bg: "var(--intelligence-soft)" },
@@ -33,16 +34,47 @@ const HUB_ST = {
   rejected:  { label: "已退回", color: "var(--text-4)",       bg: "var(--night-700)" },
 };
 const HUB_ORDER = ["draft", "review", "scheduled", "published", "failed"];
+const HUB_LIVE = ["fb", "ig", "th"]; // 排程器會發布的頻道
+const HUB_ACTIVE = ["approved", "publishing", "processing", "scheduled", "cancel_requested"];
+const HUB_CH_LABEL = { draft: "草稿", approved: "已核准・待送出", processing: "媒體處理中", publishing: "送出中", scheduled: "Meta 已排程",
+  cancel_requested: "取消中", published: "已發布", failed: "失敗", skipped: "未啟用" };
+const chOn = (r, ch) => !!(r[ch] && r[ch].enabled);
+const chState = (r, ch) => (r[ch] && r[ch].state) || "draft";
+const hubLiveOn = (r) => HUB_LIVE.filter((ch) => chOn(r, ch));
+/* IG／Threads 串接前存的草稿只在 hub.platforms 記錄（ig 為 skipped 佔位）→ 沿用當時的勾選 */
+const chWanted = (r, ch) => (!r[ch] || r[ch].state === "skipped") && !chOn(r, ch) ? !!(r.hub && r.hub.platforms && r.hub.platforms[ch]) : chOn(r, ch);
 function hubStatus(r) {
   if (socIsRejected(r)) return "rejected";
-  const st = socFbState(r);
-  if (st === "published") return "published";
-  if (st === "failed") return "failed";
-  if (["approved", "publishing", "scheduled", "cancel_requested"].includes(st)) return "scheduled";
+  const sts = hubLiveOn(r).map((ch) => chState(r, ch));
+  if (sts.some((x) => HUB_ACTIVE.includes(x))) return "scheduled";
+  if (sts.includes("failed")) return "failed";
+  if (sts.length && sts.every((x) => x === "published" || x === "skipped") && sts.includes("published")) return "published";
   return r.hub && r.hub.stage === "draft" ? "draft" : "review"; // 舊資料（無 hub）沿用「社群發文」的待審核
 }
-const hubPlatforms = (r) => HUB_PF.filter((p) => p.id === "fb" ? !!(r.fb && r.fb.enabled !== false) : !!(r.hub && r.hub.platforms && r.hub.platforms[p.id]));
-const hubWhen = (r) => (r.fb && r.fb.publishedAt) || r.scheduledAt || "";
+/* 第一個失敗頻道的錯誤訊息（附平台簡稱） */
+function hubError(r) {
+  const ch = HUB_LIVE.find((c) => chOn(r, c) && chState(r, c) === "failed" && r[c].error);
+  if (!ch) return "";
+  const e = r[ch].error;
+  return ch.toUpperCase() + "：" + String(e.message || e);
+}
+/* 多頻道進度，例：已發布 2/3 */
+function hubProgress(r) {
+  const on = hubLiveOn(r);
+  return { done: on.filter((ch) => chState(r, ch) === "published").length, total: on.length };
+}
+const hubPlatforms = (r) => HUB_PF.filter((p) => HUB_LIVE.includes(p.id)
+  ? (p.id === "fb" ? !!(r.fb && r.fb.enabled !== false) : chWanted(r, p.id))
+  : !!(r.hub && r.hub.platforms && r.hub.platforms[p.id]));
+const hubWhen = (r) => HUB_LIVE.map((ch) => r[ch] && r[ch].enabled && r[ch].publishedAt).filter(Boolean).sort()[0] || r.scheduledAt || "";
+/* 排程器回報的平台連線狀態（舊版只有 FB 欄位） */
+function hubChannelHealth(meta, ch) {
+  if (!meta || !meta.lastRunAt) return { ran: false };
+  const c = meta.channels && meta.channels[ch];
+  if (c) return { ran: true, configured: !!c.configured, ok: !!c.ok, name: c.name, error: c.error, expiresAt: c.expiresAt || null };
+  return ch === "fb" ? { ran: true, configured: true, ok: !!meta.tokenOk, name: meta.pageName, error: meta.tokenError } : { ran: true, configured: false };
+}
+const healthTag = (h) => !h.ran ? ["draft", "尚未執行"] : !h.configured ? ["rejected", "尚未設定"] : h.ok ? ["published", "已連線"] : ["failed", "需重新授權"];
 
 /* 台北時間（UTC+8）日期工具 */
 const DAY = 86400000, TP = 8 * 3600000;
@@ -63,17 +95,27 @@ const h2s = { fontFamily: "var(--font-display)", color: "var(--text-1)", fontSiz
 const muted = { color: "var(--text-3)", fontSize: 12.5 };
 const linkBtn = { background: "none", border: 0, padding: 0, cursor: "pointer", color: "var(--brand)", fontSize: 13, fontFamily: "var(--font-body)" };
 
-function PfChip({ pf, off, size = 22, title }) {
+const RING = { published: "var(--success)", failed: "var(--danger)" };
+function PfChip({ pf, off, size = 22, title, ring }) {
   return (
     <span title={title || pf.name} style={{ display: "inline-grid", placeItems: "center", width: size, height: size, flex: "none", borderRadius: size > 30 ? 10 : 6,
       background: pf.color, color: "var(--on-solid)", fontSize: size > 30 ? 12 : 10, fontWeight: 800, letterSpacing: ".02em",
-      border: "1px solid var(--border-strong)", opacity: off ? 0.3 : 1 }}>{pf.short}</span>
+      border: "1px solid var(--border-strong)", boxShadow: ring ? "0 0 0 2px " + ring : "none", opacity: off ? 0.3 : 1 }}>{pf.short}</span>
   );
 }
+/* 平台晶片列：外框標示各頻道結果（綠＝已發布、紅＝失敗、藍＝排程中），滑鼠移上看狀態 */
 function PfRow({ r, all }) {
   const on = hubPlatforms(r).map((p) => p.id);
   const list = all ? HUB_PF : HUB_PF.filter((p) => on.includes(p.id));
-  return <div style={{ display: "flex", gap: 5 }}>{list.map((p) => <PfChip key={p.id} pf={p} off={!on.includes(p.id)} title={p.name + (on.includes(p.id) ? (p.live ? "" : "（尚未串接）") : "（未啟用）")} />)}</div>;
+  const tip = (p) => p.name + (!on.includes(p.id) ? "（未啟用）" : !HUB_LIVE.includes(p.id) ? "（尚未串接）" : " · " + (HUB_CH_LABEL[chState(r, p.id)] || chState(r, p.id)));
+  const ring = (p) => on.includes(p.id) && HUB_LIVE.includes(p.id) ? (RING[chState(r, p.id)] || (HUB_ACTIVE.includes(chState(r, p.id)) ? "var(--info)" : null)) : null;
+  return <div style={{ display: "flex", gap: 6 }}>{list.map((p) => <PfChip key={p.id} pf={p} off={!on.includes(p.id)} title={tip(p)} ring={ring(p)} />)}</div>;
+}
+/* 狀態標籤；多頻道時附進度（已發布 2/3） */
+function HubTag({ r }) {
+  const st = hubStatus(r), pg = hubProgress(r);
+  const text = pg.total > 1 && ["scheduled", "published", "failed"].includes(st) && pg.done < pg.total ? `${HUB_ST[st].label} · ${pg.done}/${pg.total}` : null;
+  return <StTag st={st} text={text} />;
 }
 function StTag({ st, text }) {
   const m = HUB_ST[st] || HUB_ST.draft;
@@ -132,7 +174,6 @@ function HubDashboard({ list, meta, go, openPost }) {
   const failed = list.filter((r) => hubStatus(r) === "failed" && now - Date.parse(r.updatedAt || "") < 7 * DAY);
   const recent = list.filter((r) => hubStatus(r) === "published").sort((a, b) => hubWhen(b).localeCompare(hubWhen(a))).slice(0, 6);
   const tp = tpParts(now);
-  const fbOk = meta && meta.lastRunAt ? !!meta.tokenOk : null;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -142,7 +183,7 @@ function HubDashboard({ list, meta, go, openPost }) {
         <Kpi label="今日待發布" value={todayPending.length} sub={next ? `下一筆 ${tpHm(hubWhen(next))} · ${hubPlatforms(next).map((p) => p.short).join("/") || "—"}` : "今日已無待發布"} />
         <Kpi label="待審核草稿" value={drafts.length} sub={stale ? <span style={{ color: "var(--warning)" }}>{stale} 篇超過 3 天未處理</span> : "皆在 3 天內"} />
         <Kpi label="發布失敗（7 日）" value={failed.length} tone={failed.length ? "var(--danger)" : undefined}
-          sub={failed.length ? String((failed[0].fb && failed[0].fb.error && (failed[0].fb.error.message || failed[0].fb.error)) || "請至內容庫查看").slice(0, 40) : "無失敗紀錄"} />
+          sub={failed.length ? String(hubError(failed[0]) || "請至內容庫查看").slice(0, 40) : "無失敗紀錄"} />
       </section>
 
       <section style={{ display: "flex", flexWrap: "wrap", gap: 14, alignItems: "flex-start" }}>
@@ -159,7 +200,7 @@ function HubDashboard({ list, meta, go, openPost }) {
                   <span style={{ fontSize: 12, color: fail ? "var(--danger)" : "var(--text-3)" }}>{fail ? "發布失敗，點開查看原因後重試" : (r.hub && r.hub.category) || "社群貼文"}</span>
                 </span>
                 <PfRow r={r} />
-                <StTag st={st} />
+                <HubTag r={r} />
               </button>
             );
           })}
@@ -172,7 +213,7 @@ function HubDashboard({ list, meta, go, openPost }) {
               <PfChip pf={p} size={24} />
               <span style={{ flex: 1, fontSize: 13.5, color: "var(--text-2)" }}>{p.name}</span>
               {p.live
-                ? <StTag st={fbOk == null ? "draft" : fbOk ? "published" : "failed"} text={fbOk == null ? "尚未執行" : fbOk ? "已連線" : "需重新授權"} />
+                ? (() => { const [t, l] = healthTag(hubChannelHealth(meta, p.id)); return <StTag st={t} text={l} />; })()
                 : <StTag st="rejected" text={p.phase} />}
             </div>
           ))}
@@ -205,7 +246,7 @@ function HubTable({ rows, openPost, empty, compact }) {
         </tr></thead>
         <tbody>{rows.map((r) => {
           const st = hubStatus(r);
-          const err = st === "failed" && r.fb && r.fb.error ? String(r.fb.error.message || r.fb.error) : "";
+          const err = st === "failed" ? hubError(r) : "";
           return (
             <tr key={r.id}>
               <td style={{ ...td, maxWidth: 340 }}>
@@ -223,7 +264,7 @@ function HubTable({ rows, openPost, empty, compact }) {
               {compact ? null : <td style={{ ...td, whiteSpace: "nowrap" }}>{(r.hub && r.hub.category) || "—"}</td>}
               <td style={td}><PfRow r={r} all={!compact} /></td>
               <td style={{ ...td, fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>{tpMdHm(hubWhen(r))}</td>
-              <td style={td}><StTag st={st} /></td>
+              <td style={td}><HubTag r={r} /></td>
               <td style={{ ...td, textAlign: "right" }}>
                 <button className={"ad-btn" + (st === "review" ? " primary" : " ghost")} style={{ padding: "6px 11px", fontSize: 12.5, whiteSpace: "nowrap" }} onClick={() => openPost(r)}>
                   {st === "review" ? "審核" : st === "draft" || st === "rejected" ? "繼續編輯" : st === "failed" ? "查看重試" : "檢視"}
@@ -341,9 +382,10 @@ function hubFromPost(r) {
   const h = r.hub || {};
   return { __new: false, id: r.id, title: r.title || "", body: h.body != null ? h.body : (r.fb && r.fb.caption) || "", hashtags: h.hashtags || "",
     category: h.category || HUB_CATS[0], imageUrl: r.imageUrl || "", link: (r.fb && r.fb.link) || "", note: r.note || "",
-    platforms: Object.assign({ fb: !!(r.fb && r.fb.enabled !== false), ig: false, th: false, yt: false, pc: false }, h.platforms || {}, { fb: !!(r.fb && r.fb.enabled !== false) }),
+    platforms: Object.assign({ ig: false, th: false, yt: false, pc: false }, h.platforms || {},
+      { fb: !!(r.fb && r.fb.enabled !== false), ig: chWanted(r, "ig"), th: chWanted(r, "th") }),
     variants: Object.assign({ fb: "", ig: "", th: "", yt: "", pc: "" }, h.variants || {}),
-    hub: r.hub || null, fb: Object.assign({ state: "draft" }, r.fb || {}), queueState: r.queueState || "draft", scheduledAt: r.scheduledAt || "",
+    hub: r.hub || null, fb: Object.assign({ state: "draft" }, r.fb || {}), ig: r.ig || null, th: r.th || null, queueState: r.queueState || "draft", scheduledAt: r.scheduledAt || "",
     mode: "time", when: isoToTpInput(r.scheduledAt), needReview: false };
 }
 const hubMaster = (s) => [s.body.trim(), s.hashtags.trim()].filter(Boolean).join("\n\n");
@@ -358,7 +400,8 @@ function HubComposer({ init, reload, flash, go }) {
 
   const who = (auth && auth.currentUser && auth.currentUser.email) || "";
   const st = s.__new ? "draft" : hubStatus(s);
-  const editable = who === OWNER_EMAIL && (s.__new || SOC_EDITABLE.includes(socFbState(s)) || s.queueState === "rejected");
+  // 任一頻道仍在排程器手上（已核准／處理中／Meta 已排程…）或全部已發布 → 只能檢視
+  const editable = who === OWNER_EMAIL && (s.__new || s.queueState === "rejected" || (st !== "scheduled" && st !== "published"));
   const set = (k, v) => setS((x) => ({ ...x, [k]: v }));
   const setPf = (id, v) => setS((x) => ({ ...x, platforms: { ...x.platforms, [id]: v } }));
   const setVar = (id, v) => setS((x) => ({ ...x, variants: { ...x.variants, [id]: v } }));
@@ -366,6 +409,8 @@ function HubComposer({ init, reload, flash, go }) {
   const pf = HUB_PF.find((p) => p.id === tab);
 
   const hubField = (stage) => ({ stage, body: s.body, hashtags: s.hashtags, category: s.category, platforms: s.platforms, variants: s.variants });
+  /* 已發布的頻道維持原狀；失敗的保留錯誤供參考，重新核准時才清除 */
+  const keepState = (ch) => { const x = chState(s, ch); return x === "published" || x === "failed" ? x : "draft"; };
   const save = async (stage) => {
     setBusy(true); setErr("");
     const now = new Date().toISOString();
@@ -375,11 +420,14 @@ function HubComposer({ init, reload, flash, go }) {
         const ref = await db.collection(SOC_COLL).add({
           title: s.title, imageUrl: s.imageUrl.trim(), note: s.note, scheduledAt: "", queueState: "draft", source: { type: "hub" },
           fb: { enabled: !!s.platforms.fb, caption: hubText(s, "fb"), link: s.link.trim(), state: "draft", attempts: 0, error: null, postId: null },
-          ig: { enabled: false, state: "skipped" }, lock: { by: null, at: null }, hub: hubField(stage), createdAt: now, updatedAt: now,
+          ig: { enabled: !!s.platforms.ig, caption: hubText(s, "ig"), state: "draft", attempts: 0, error: null },
+          th: { enabled: !!s.platforms.th, caption: hubText(s, "th"), state: "draft", attempts: 0, error: null },
+          lock: { by: null, at: null }, hub: hubField(stage), createdAt: now, updatedAt: now,
         });
         id = ref.id;
       } else {
         const upd = { title: s.title, imageUrl: s.imageUrl.trim(), "fb.enabled": !!s.platforms.fb, "fb.caption": hubText(s, "fb"), "fb.link": s.link.trim(), hub: hubField(stage), updatedAt: now };
+        for (const ch of ["ig", "th"]) Object.assign(upd, { [ch + ".enabled"]: !!s.platforms[ch], [ch + ".caption"]: hubText(s, ch), [ch + ".state"]: keepState(ch) });
         if (s.queueState === "rejected") upd.queueState = "draft"; // 退回後重新編修，回到佇列
         await db.collection(SOC_COLL).doc(id).update(upd);
       }
@@ -389,13 +437,23 @@ function HubComposer({ init, reload, flash, go }) {
     } catch (ex) { setErr("儲存失敗：" + errText(ex)); setBusy(false); return false; }
   };
 
+  /* 這次要交給排程器的頻道：已啟用、且尚未發布 */
+  const toSend = HUB_LIVE.filter((ch) => s.platforms[ch] && chState(s, ch) !== "published");
+  const sendNames = toSend.map((ch) => HUB_PF.find((p) => p.id === ch).name.split(/[ （]/)[0]).join("、");
   const validate = () => {
     if (!s.title.trim()) return "請填寫標題。";
     if (!chosen.length) return "請至少選擇一個發布平台。";
-    if (!s.platforms.fb) return "目前排程器只會發 Facebook；其他平台請先「儲存草稿」，待串接後再排程。";
-    if (!hubText(s, "fb") && !s.imageUrl.trim()) return "Facebook 貼文至少需要內文或圖片。";
-    if (s.imageUrl && !/^https:\/\//i.test(s.imageUrl.trim())) return "圖片需為 https:// 開頭的公開網址（Meta 會直接下載）。";
+    if (!toSend.length) return "請至少啟用 Facebook、Instagram 或 Threads 其中之一（YouTube／Podcast 尚未串接，只會保存內容）。";
+    const img = s.imageUrl.trim();
+    if (img && !/^https:\/\//i.test(img)) return "圖片需為 https:// 開頭的公開網址（平台會直接下載）。";
     if (s.link && !/^https?:\/\//i.test(s.link.trim())) return "連結需為完整網址（https://…）。";
+    if (toSend.includes("fb") && !hubText(s, "fb") && !img) return "Facebook 貼文至少需要內文或圖片。";
+    if (toSend.includes("ig") && !img) return "Instagram 貼文必須有圖片，請填寫圖片網址或取消 IG。";
+    if (toSend.includes("th") && !hubText(s, "th") && !img) return "Threads 貼文至少需要文字或圖片。";
+    for (const ch of toSend) {
+      const pf = HUB_PF.find((p) => p.id === ch);
+      if (pf.limit && [...hubText(s, ch)].length > pf.limit) return `${pf.name} 文字超過 ${pf.limit.toLocaleString()} 字上限，請在「逐平台微調」縮短。`;
+    }
     return "";
   };
 
@@ -404,12 +462,12 @@ function HubComposer({ init, reload, flash, go }) {
     const v = validate(); if (v) { setErr(v); return; }
     if (await save("review")) { flash("已送交審核 ✓ 可在內容庫或「社群發文」核准"); go("library"); }
   };
-  /* 核准：與「社群發文」相同的寫入（queueState=pending、fb.state=approved），交給排程器 */
+  /* 核准：要發的頻道設為 approved、queueState=pending，交給排程器（FB 寫入與「社群發文」相同） */
   const approve = async () => {
     const v = validate(); if (v) { setErr(v); return; }
     let iso;
     if (s.mode === "now") {
-      if (!window.confirm("確認立即發布到 Facebook 粉專？排程器下一輪（約 10 分鐘內）送出，送出後即公開。")) return;
+      if (!window.confirm(`確認立即發布到 ${sendNames}？排程器下一輪（約 10 分鐘內）送出，送出後即公開。`)) return;
       iso = new Date().toISOString();
     } else {
       iso = tpInputToIso(s.when);
@@ -420,12 +478,11 @@ function HubComposer({ init, reload, flash, go }) {
     if (!id) return;
     setBusy(true);
     try {
-      await db.collection(SOC_COLL).doc(id).update({
-        scheduledAt: iso, queueState: "pending", "fb.state": "approved", "fb.attempts": 0, "fb.error": null,
-        "review.approvedAt": new Date().toISOString(), "review.by": who, lock: { by: null, at: null }, updatedAt: new Date().toISOString(),
-      });
+      const upd = { scheduledAt: iso, queueState: "pending", "review.approvedAt": new Date().toISOString(), "review.by": who, lock: { by: null, at: null }, updatedAt: new Date().toISOString() };
+      for (const ch of toSend) Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null }, ch === "fb" ? {} : { [ch + ".containerId"]: null });
+      await db.collection(SOC_COLL).doc(id).update(upd);
       await reload();
-      flash(s.mode === "now" ? "已核准立即發布 ✓ 排程器下一輪送出" : `已核准 ✓ 將於 ${isoToTpInput(iso).replace("T", " ")}（台北）發布到 Facebook`);
+      flash(s.mode === "now" ? "已核准立即發布 ✓ 排程器下一輪送出" : `已核准 ✓ 將於 ${isoToTpInput(iso).replace("T", " ")}（台北）發布到 ${sendNames}`);
       go("calendar");
     } catch (ex) { setErr("核准失敗：" + errText(ex)); }
     setBusy(false);
@@ -449,7 +506,7 @@ function HubComposer({ init, reload, flash, go }) {
           <div style={{ fontSize: 12.5, color: "var(--text-3)" }}><button type="button" style={linkBtn} onClick={() => go("library")}>內容庫</button> / {s.__new ? "建立內容" : "編輯內容"}</div>
           <h3 style={{ ...h2s, fontSize: 20 }}>一次製作，多平台發布</h3>
         </div>
-        {!s.__new ? <StTag st={st} /> : null}
+        {!s.__new ? <HubTag r={s} /> : null}
         {editable ? <button className="ad-btn" disabled={busy} onClick={saveDraft}>儲存草稿</button> : null}
       </div>
       {!editable ? (
@@ -498,10 +555,14 @@ function HubComposer({ init, reload, flash, go }) {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <strong style={{ color: "var(--text-1)", fontSize: 14 }}>{pf.name}</strong>
-                <span style={{ fontSize: 12, color: pf.live ? "var(--text-3)" : "var(--warning)" }}>{pf.live ? "排程器自動發布" : `${pf.phase}串接 · 目前僅保存內容`}</span>
+                <span style={{ fontSize: 12, color: pf.live ? "var(--text-3)" : "var(--warning)" }}>
+                  {!pf.live ? `${pf.phase}串接 · 目前僅保存內容` : s[pf.id] && s[pf.id].state && s[pf.id].state !== "draft" ? "排程器自動發布 · " + (HUB_CH_LABEL[s[pf.id].state] || s[pf.id].state) : "排程器自動發布"}</span>
               </div>
               <Toggle on={s.platforms[pf.id]} onChange={(v) => setPf(pf.id, v)}>啟用</Toggle>
             </div>
+            {pf.live && s[pf.id] && s[pf.id].error ? <div style={{ fontSize: 12.5, color: "var(--danger)", lineHeight: 1.6 }}>上次錯誤：{String(s[pf.id].error.message || s[pf.id].error)}</div> : null}
+            {pf.id === "ig" && s.platforms.ig ? <div style={{ fontSize: 12, color: s.imageUrl.trim() ? "var(--text-3)" : "var(--warning)", lineHeight: 1.6 }}>
+              {s.imageUrl.trim() ? "IG 會使用主稿圖片；Meta 官方保證支援 JPEG，PNG 若被拒會顯示在錯誤訊息。" : "IG 貼文必須有圖片，請在主稿填寫圖片網址。"}</div> : null}
             <div>
               <label className="ad-lbl" htmlFor="hub-variant">{pf.id === "pc" ? "Show notes（留空沿用主稿）" : "說明文字（留空沿用主稿）"}</label>
               <textarea id="hub-variant" className="ad-in" style={{ minHeight: 130, fontFamily: "var(--font-body)", lineHeight: 1.6 }} value={s.variants[pf.id]} placeholder={hubMaster(s) || "沿用主稿"} onChange={(e) => setVar(pf.id, e.target.value)} />
@@ -533,11 +594,11 @@ function HubComposer({ init, reload, flash, go }) {
             {s.mode === "time" ? (
               <div><label className="ad-lbl" htmlFor="hub-when">發布時間（台北 UTC+8）</label><input id="hub-when" className="ad-in" type="datetime-local" value={s.when} onChange={(e) => set("when", e.target.value)} /></div>
             ) : null}
-            <div style={{ fontSize: 12, color: "var(--text-3)", lineHeight: 1.6 }}>{SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程（分鐘級準時）；其餘由排程器每 10 分鐘送出。</div>
+            <div style={{ fontSize: 12, color: "var(--text-3)", lineHeight: 1.6 }}>FB：{SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程（分鐘級準時）。IG／Threads 沒有原生排程，於預定時間前 5 分鐘內由排程器送出（每 10 分鐘一輪，尖峰可能延遲）。</div>
             <Toggle on={s.needReview} onChange={(v) => set("needReview", v)}>發布前需審核（先送交待審核）</Toggle>
             {editable ? (
               <button className="ad-btn primary" disabled={busy} onClick={s.needReview ? submit : approve}>
-                {s.needReview ? "送交審核" : s.mode === "now" ? "核准並立即發布" : `確認排程 · ${chosen.length} 個平台`}
+                {s.needReview ? "送交審核" : s.mode === "now" ? "核准並立即發布" : `確認排程 · ${toSend.length} 個平台`}
               </button>
             ) : null}
             {chosen.some((p) => !p.live) ? <div style={{ fontSize: 12, color: "var(--warning)" }}>
@@ -619,9 +680,14 @@ function HubPlatforms({ list, meta, reload }) {
   const lastRun = meta && meta.lastRunAt ? Date.parse(meta.lastRunAt) : NaN;
   const ran = isFinite(lastRun);
   const stale = ran && Date.now() - lastRun > 45 * 60000;
-  const fbOk = ran && !!meta.tokenOk;
-  const lastFb = list.filter((r) => hubStatus(r) === "published").map(hubWhen).sort().pop();
-  const affected = list.filter((r) => hubStatus(r) === "scheduled").length;
+  const health = Object.fromEntries(HUB_LIVE.map((ch) => [ch, hubChannelHealth(meta, ch)]));
+  const pending = (ch) => list.filter((r) => chOn(r, ch) && HUB_ACTIVE.includes(chState(r, ch))).length;
+  const lastPub = (ch) => list.map((r) => chOn(r, ch) && chState(r, ch) === "published" && r[ch].publishedAt).filter(Boolean).sort().pop();
+  const ENV = { fb: "META_PAGE_TOKEN／META_PAGE_ID", ig: "META_IG_USER_ID（沿用 META_PAGE_TOKEN）", th: "THREADS_USER_ID／THREADS_TOKEN" };
+  const thExp = health.th.expiresAt ? Date.parse(health.th.expiresAt) : NaN;
+  const thDays = isFinite(thExp) ? Math.floor((thExp - Date.now()) / DAY) : null;
+  const broken = HUB_LIVE.filter((ch) => health[ch].ran && health[ch].configured && !health[ch].ok);
+  const connected = HUB_LIVE.filter((ch) => health[ch].ok).length;
   const kv = (k, v, tone) => (
     <div style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 13 }}>
       <span style={{ color: "var(--text-3)" }}>{k}</span><span style={{ fontWeight: 600, textAlign: "right", color: tone || "var(--text-2)" }}>{v}</span>
@@ -631,10 +697,12 @@ function HubPlatforms({ list, meta, reload }) {
   const rules = [
     "時區固定為台北（UTC+8）",
     "排程器每 10 分鐘執行一次（GitHub Actions · social-publish.yml）",
-    `發布時間在 ${SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程`,
+    `FB 發布時間在 ${SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程`,
+    "IG／Threads 以容器兩段式發布，到期前 5 分鐘內送出",
     "結果不明不重送，避免重複發文；失敗可在內容庫重新核准",
-    "所有內容發布前皆需在後台核准",
-    "平台 Token 只存在 Repo Secrets，不出現在前端",
+    "某平台 Token 失效時只暫停該平台，其他平台照常發布",
+    "Threads Token 每日自動續期，60 天到期日隨之順延",
+    "平台 Token 只存在 Repo Secrets 與排程器專用資料，不出現在前端",
   ];
 
   return (
@@ -643,33 +711,45 @@ function HubPlatforms({ list, meta, reload }) {
         <span style={{ ...muted, flex: "1 1 260px" }}>以伺服器端 Token 連線；狀態由排程器每輪回報（最後執行 {ran ? tpMdHm(meta.lastRunAt) : "—"}）</span>
         <button className="ad-btn ghost" onClick={reload}>檢查所有連線</button>
       </div>
-      {ran && (!fbOk || stale) ? (
-        <div role="alert" style={{ ...card, padding: "12px 16px", borderColor: "var(--danger)", background: "var(--danger-soft)", fontSize: 13, color: "var(--text-1)", lineHeight: 1.6 }}>
-          {!fbOk ? `Facebook Token 異常：${meta.tokenError || "請更新 META_PAGE_TOKEN"}。${affected} 筆排程受影響，更新 Secrets 後排程器會自動接續。` : "排程器超過 45 分鐘未執行，請檢查 GitHub Actions 是否被停用。"}
+      {broken.length || stale ? (
+        <div role="alert" style={{ ...card, padding: "12px 16px", borderColor: "var(--danger)", background: "var(--danger-soft)", fontSize: 13, color: "var(--text-1)", lineHeight: 1.7 }}>
+          {broken.map((ch) => <div key={ch}>{HUB_PF.find((p) => p.id === ch).name} Token 異常：{health[ch].error || "請更新 " + ENV[ch]}。{pending(ch)} 筆排程暫停，更新 Secrets 後排程器會自動接續。</div>)}
+          {stale ? <div>排程器超過 45 分鐘未執行，請檢查 GitHub Actions 是否被停用。</div> : null}
+        </div>
+      ) : null}
+      {thDays != null && thDays < 7 ? (
+        <div role="alert" style={{ ...card, padding: "12px 16px", borderColor: "var(--warning)", background: "var(--warning-soft)", fontSize: 13, color: "var(--text-1)", lineHeight: 1.7 }}>
+          Threads Token 將於 {tpMdHm(health.th.expiresAt)} 到期（剩 {Math.max(thDays, 0)} 天）。{health.th.refreshError ? "自動續期失敗：" + health.th.refreshError + "。" : ""}請重新產生長效 Token 並更新 THREADS_TOKEN。
         </div>
       ) : null}
 
       <section aria-label="第一階段核心平台" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}><h3 style={h2s}>第一階段 · 核心平台</h3><span style={muted}>{fbOk ? 1 : 0} / {HUB_PF.length} 已連線</span></div>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}><h3 style={h2s}>第一階段 · 核心平台</h3><span style={muted}>{connected} / {HUB_PF.length} 已連線</span></div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: 14 }}>
-          {HUB_PF.map((p) => (
-            <article key={p.id} style={pcard}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <PfChip pf={p} size={40} />
-                <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-                  <strong style={{ color: "var(--text-1)", fontSize: 14 }}>{p.name}</strong>
-                  <span style={{ fontSize: 12, color: "var(--text-3)" }}>{p.live ? (meta && meta.pageName) || "艾倫報報" : p.phase}</span>
+          {HUB_PF.map((p) => {
+            const h = health[p.id];
+            const [tag, tagText] = p.live ? healthTag(h) : ["rejected", "尚未串接"];
+            return (
+              <article key={p.id} style={pcard}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <PfChip pf={p} size={40} />
+                  <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+                    <strong style={{ color: "var(--text-1)", fontSize: 14 }}>{p.name}</strong>
+                    <span style={{ fontSize: 12, color: "var(--text-3)" }}>{p.live ? (h.name || (h.configured === false ? "Secrets 未設定" : "—")) : p.phase}</span>
+                  </div>
+                  <StTag st={tag} text={tagText} />
                 </div>
-                {p.live ? <StTag st={!ran ? "draft" : fbOk ? "published" : "failed"} text={!ran ? "尚未執行" : fbOk ? "已連線" : "需重新授權"} /> : <StTag st="rejected" text="尚未串接" />}
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                {kv("授權方式", p.api)}
-                {kv("支援格式", p.formats)}
-                {p.live ? kv("最近發布", lastFb ? tpMdHm(lastFb) : "—") : kv("內容保存", list.filter((r) => r.hub && r.hub.platforms && r.hub.platforms[p.id]).length + " 篇")}
-                {p.live ? kv("排程中", affected + " 筆") : null}
-              </div>
-            </article>
-          ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                  {kv("授權方式", p.api)}
+                  {kv("支援格式", p.formats)}
+                  {p.live ? kv("最近發布", lastPub(p.id) ? tpMdHm(lastPub(p.id)) : "—") : kv("內容保存", list.filter((r) => r.hub && r.hub.platforms && r.hub.platforms[p.id]).length + " 篇")}
+                  {p.live ? kv("排程中", pending(p.id) + " 筆") : null}
+                  {p.id === "th" && h.expiresAt ? kv("Token 到期", tpMdHm(h.expiresAt), thDays != null && thDays < 7 ? "var(--warning)" : undefined) : null}
+                  {p.live && h.ran && h.configured === false ? kv("需要的 Secrets", ENV[p.id], "var(--warning)") : null}
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
 

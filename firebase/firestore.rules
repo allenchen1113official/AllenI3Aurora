@@ -34,6 +34,8 @@ service cloud.firestore {
     match /aurora_social_posts/{doc} { allow read, write: if isOwner(); }
     // 排程器執行摘要（最後執行時間、Token 狀態）：管理者唯讀，僅排程器寫入。
     match /aurora_social_meta/{doc}  { allow read: if isOwner(); allow write: if false; }
+    // 排程器續期後的 Threads Token：只有排程器（Admin SDK）能讀寫，前端一律拒絕。
+    match /aurora_social_secrets/{doc} { allow read, write: if false; }
 
     // ---------------------------------------------------------------
     // 電子報訂閱者 aurora_subscribers/{token}
