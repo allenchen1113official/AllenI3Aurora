@@ -17,44 +17,14 @@
      META_GRAPH_VERSION        選填，預設 v25.0
      SOCIAL_DRY_RUN            '1' 時只列出將執行的動作，不呼叫發文 API、不改資料
    ===================================================================== */
-import { createHash } from "node:crypto";
-import { runOnce, createFbGraph, createIgGraph, createThreadsGraph, refreshThreadsToken, LOCK_STALE_MS, isAuthError, CHANNEL_LABEL } from "./core.mjs";
+import { runOnce, createFbGraph, createIgGraph, createThreadsGraph, LOCK_STALE_MS, isAuthError, CHANNEL_LABEL } from "./core.mjs";
+import { threadsToken } from "./threads-token.mjs";
 
 const COLL = "aurora_social_posts";
 const META_DOC = "aurora_social_meta/runner";
-const TH_SECRET_DOC = "aurora_social_secrets/threads";
 const RUNNER = `gha-${process.env.GITHUB_RUN_ID || "local"}`;
-const HOUR = 3600 * 1000;
-const TH_REFRESH_EVERY_MS = 20 * HOUR; // 每日續期一次，60 天到期日隨之順延
-const TH_RETRY_MS = HOUR;              // 續期失敗（如 Token 未滿 24 小時）1 小時後再試
 
 const env = (name) => (process.env[name] || "").trim();
-
-/* Threads Token：Secret 為種子；續期後的新 Token 存 Firestore（僅 Admin SDK 可讀）。
-   使用者更新 THREADS_TOKEN Secret 時，以雜湊辨識並改用新種子。 */
-async function threadsToken(db, seed, dryRun) {
-  const ref = db.doc(TH_SECRET_DOC);
-  const seedHash = createHash("sha256").update(seed).digest("hex").slice(0, 16);
-  const snap = await ref.get();
-  const d = snap.exists && snap.data().seedHash === seedHash ? snap.data() : {};
-  let token = d.token || seed;
-  let expiresAt = d.expiresAt || null;
-  let refreshError = null;
-  const now = Date.now();
-  const last = Date.parse(d.refreshedAt || "");
-  const tried = Date.parse(d.refreshTriedAt || "");
-  if (!dryRun && (!isFinite(last) || now - last > TH_REFRESH_EVERY_MS) && (!isFinite(tried) || now - tried > TH_RETRY_MS)) {
-    try {
-      const r = await refreshThreadsToken({ token });
-      token = r.token; expiresAt = r.expiresAt;
-      await ref.set({ token, expiresAt, seedHash, refreshedAt: new Date(now).toISOString(), refreshTriedAt: new Date(now).toISOString(), refreshError: null });
-    } catch (e) {
-      refreshError = e.message;
-      await ref.set({ seedHash, refreshTriedAt: new Date(now).toISOString(), refreshError }, { merge: true });
-    }
-  }
-  return { token, expiresAt, refreshError };
-}
 
 async function main() {
   const dryRun = process.env.SOCIAL_DRY_RUN === "1";
@@ -107,7 +77,7 @@ async function main() {
   if (configured.fb) clients.fb = createFbGraph({ token: metaToken, pageId, version });
   if (configured.ig) clients.ig = createIgGraph({ token: metaToken, igUserId, version });
   if (configured.th) {
-    thToken = await threadsToken(db, thSeed, dryRun);
+    thToken = await threadsToken(db, thSeed, { refresh: !dryRun });
     clients.th = createThreadsGraph({ token: thToken.token, userId: thUserId });
   }
   for (const ch of Object.keys(clients)) {
