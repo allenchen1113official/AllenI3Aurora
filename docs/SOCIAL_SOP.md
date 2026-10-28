@@ -1,4 +1,4 @@
-# 社群自動發文 SOP（第一階段：Facebook 粉專）
+# 社群自動發文 SOP（Facebook 粉專／Instagram／Threads）
 
 後台審核 → GitHub Actions 排程器 → Meta Graph API。後台只負責內容與決策，Token 只存在 GitHub Secrets，前端完全碰不到。
 
@@ -11,8 +11,11 @@ social-publish.yml（每 10 分鐘）── scripts/social/publish-social-posts.
    ├─ 預定時間在 20 分鐘～29 天內 → 交給 Meta 原生排程（準時到分鐘）
    ├─ 已到期／20 分鐘內 → 立即發布
    ├─ 原生排程到期 → 對帳，標記已發布並取回貼文連結
-   └─ 取消請求 → 刪除 Meta 端排程貼文，退回待審核
+   ├─ 取消請求 → 刪除 Meta 端排程貼文，退回待審核
+   └─ Instagram／Threads（無原生排程）→ 到期前 5 分鐘內：建立容器 → 確認 FINISHED → 發布
 ```
+
+後台「內容中控台 → 建立內容」可一次勾選 FB／IG／Threads 並逐平台微調文字；三個平台各自獨立，某平台失敗或 Token 失效不影響其他平台。IG、Threads 都是選用：沒設定對應 Secrets 時，該平台的貼文會標記失敗並說明缺什麼，FB 照常運作。
 
 ## 一、事前授權清單
 
@@ -46,6 +49,42 @@ social-publish.yml（每 10 分鐘）── scripts/social/publish-social-posts.
 
 > 只發自己的粉專、且操作者是 App 的管理員時，App 維持「開發模式」即可，不需送審。
 
+## 二之一、Instagram 設定（選用）
+
+前提：IG 帳號已轉為**商業帳號**（或創作者帳號），並在 IG App「帳號中心」連結到「艾倫報報」粉專。
+
+1. 第二節第 4 步產生 Token 時，額外勾選：`instagram_basic`、`instagram_content_publish`，並在「指派資產」把 IG 帳號也指派給系統使用者。重新產生後照第 5 步換出新的粉專 Token，更新 `META_PAGE_TOKEN`。
+2. 取得 IG 商業帳號 ID（＝ **META_IG_USER_ID**）：
+   ```bash
+   curl -s "https://graph.facebook.com/v25.0/<META_PAGE_ID>?fields=instagram_business_account&access_token=<META_PAGE_TOKEN>"
+   ```
+3. 驗證（不會發文）：
+   ```bash
+   curl -s "https://graph.facebook.com/v25.0/<META_IG_USER_ID>?fields=id,username&access_token=<META_PAGE_TOKEN>"
+   ```
+
+限制：IG 貼文**必須有圖片**（公開 https 網址），文字上限 2,200 字、hashtag 最多 30 個。Meta 官方只保證支援 JPEG；PNG 若被拒，錯誤會顯示在內容庫。
+
+## 二之二、Threads 設定（選用）
+
+Threads 用的是獨立的 API 與 Token（不能沿用 Meta 粉專 Token）。
+
+1. developers.facebook.com → 建立 App → 使用案例選「存取 Threads API」，權限勾 `threads_basic`、`threads_content_publish`。
+2. 在 App 的「Threads 測試人員」加入自己的 Threads 帳號，並到 Threads App → 設定 → 帳號 → 網站權限 接受邀請。
+3. 用 App 的「使用者權杖產生器」產生短效 Token，換成 60 天長效 Token：
+   ```bash
+   curl -s "https://graph.threads.net/access_token?grant_type=th_exchange_token&client_secret=<APP_SECRET>&access_token=<SHORT_TOKEN>"
+   ```
+   回傳的 `access_token` ＝ **THREADS_TOKEN**。
+4. 取得使用者 ID（＝ **THREADS_USER_ID**）：
+   ```bash
+   curl -s "https://graph.threads.net/v1.0/me?fields=id,username&access_token=<THREADS_TOKEN>"
+   ```
+
+**自動續期**：長效 Token 60 天到期。排程器每天自動續期一次，新 Token 存在 Firestore `aurora_social_secrets/threads`（安全規則禁止前端讀寫，只有排程器能存取），所以 Secret 不需要每 60 天手動更新。後台「平台連線」會顯示到期日，剩不到 7 天會警示。若手動更新了 `THREADS_TOKEN` Secret，排程器會自動改用新的那一把。
+
+限制：文字上限 500 字；可附一張圖片。
+
 ## 三、服務帳戶加授 Firestore 權限
 
 排程器沿用既有的 `FIREBASE_SERVICE_ACCOUNT`（原本只用來部署 Firestore 規則，只有「Firebase Rules Admin」角色）。需要再加一個角色才能讀寫貼文佇列：
@@ -61,9 +100,12 @@ Repo → Settings → Secrets and variables → Actions：
 | `FIREBASE_SERVICE_ACCOUNT` | Secret | 既有，不用動（但要完成第三節） |
 | `META_PAGE_TOKEN` | Secret | 第二節第 5 步的粉專 `access_token` |
 | `META_PAGE_ID` | Secret | 第二節第 5 步的粉專 `id` |
+| `META_IG_USER_ID` | Secret（選用） | 第二之一節的 IG 商業帳號 ID |
+| `THREADS_USER_ID` | Secret（選用） | 第二之二節的 Threads 使用者 ID |
+| `THREADS_TOKEN` | Secret（選用） | 第二之二節的 Threads 長效 Token |
 | `META_GRAPH_VERSION` | Variable（選用） | 預設 `v25.0`；Meta 淘汰舊版前改成新版即可 |
 
-未設定 Meta Secrets 時，排程器只印警告並略過，不會讓 workflow 失敗。
+所有平台都未設定時，排程器只印警告並略過，不會讓 workflow 失敗。某平台 Token 失效時，只暫停該平台（貼文保持排程中），workflow 會失敗讓 GitHub 寄信通知。
 
 ## 五、首次上線驗證
 
@@ -84,6 +126,18 @@ Repo → Settings → Secrets and variables → Actions：
 | `cancel_requested` | 取消中 | 後台 | 排程器刪除 Meta 端貼文 → `draft` |
 | `published` | 已發布 | 排程器 | 完成，附貼文連結 |
 | `failed` | 失敗 | 排程器 | 看錯誤訊息，修正後重新核准 |
+
+IG／Threads（`ig.state`、`th.state`）：
+
+| 狀態 | 後台顯示 | 說明 |
+|------|----------|------|
+| `draft` | 草稿 | 編修中 |
+| `approved` | 已核准・待送出 | 到期前 5 分鐘內由排程器建立容器 |
+| `processing` | 媒體處理中 | 容器已建立，平台還在處理圖片；下一輪再確認 |
+| `publishing` | 送出中 | 發布請求進行中（帶鎖）。若中斷，下一輪會查容器狀態：已發出就標記完成，未發出才重送，不會重複發文 |
+| `cancel_requested` | 取消中 | 排程器退回草稿（未發布的容器 24 小時後自動失效） |
+| `published` | 已發布 | 附貼文連結 |
+| `failed` | 失敗 | 看錯誤訊息，修正後重新核准 |
 
 `queueState` 是排程器唯一查詢的欄位（單欄位查詢，不需複合索引）：`pending` 表示需要排程器處理；`draft`／`rejected`／`done` 都不處理。
 
@@ -113,12 +167,12 @@ Repo → Settings → Secrets and variables → Actions：
 ## 十、測試
 
 ```bash
-node --test scripts/social/publish.test.mjs   # 22 項行為測試，不連外部服務
+node --test scripts/social/publish.test.mjs   # 39 項行為測試（FB 22＋IG／Threads 17），不連外部服務
 ```
 
 workflow 每次執行前也會先跑這組測試；push 到 main 時以 dry_run 模式執行。
 
 ## 下一階段
 
-- **第二階段**：Instagram（容器兩段式發布、輪詢 `status_code`、冪等使用 `creationId`），IG 專用 1080×1080 圖卡。
+- ~~**第二階段**：Instagram、Threads~~（已完成：容器兩段式發布、冪等使用 `creation_id`、Threads Token 自動續期）。待做：IG 專用 1080×1080 JPEG 圖卡、輪播與 Reels。
 - **第三階段**：Claude API 自動產生 FB／IG 文案草稿、「要求重寫」回饋、失敗通知信。

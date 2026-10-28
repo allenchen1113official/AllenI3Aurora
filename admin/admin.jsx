@@ -1855,6 +1855,7 @@ function SocialPanel() {
       id: r.id, title: r.title || "", imageUrl: r.imageUrl || "", scheduledAt: r.scheduledAt || "",
       queueState: r.queueState || "draft", note: r.note || "", source: r.source || { type: "manual" },
       fb: Object.assign({ enabled: true, caption: "", link: "", state: "draft", attempts: 0 }, r.fb || {}),
+      ig: r.ig || null, th: r.th || null, // 內容中控台建立的 IG／Threads 頻道，核准與撤回時一併處理
     });
     setWhen(isoToLocalInput(r.scheduledAt));
     setErr(""); setToast("");
@@ -1910,11 +1911,15 @@ function SocialPanel() {
     if (!id) return;
     setBusy(true);
     try {
-      await db.collection(SOC_COLL).doc(id).update({
+      const upd = {
         scheduledAt: iso, queueState: "pending", "fb.state": "approved", "fb.attempts": 0, "fb.error": null,
         "review.approvedAt": new Date().toISOString(), "review.by": who, lock: { by: null, at: null },
         updatedAt: new Date().toISOString(),
-      });
+      };
+      for (const ch of ["ig", "th"]) if (sel[ch] && sel[ch].enabled && sel[ch].state !== "published") {
+        Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null, [ch + ".containerId"]: null });
+      }
+      await db.collection(SOC_COLL).doc(id).update(upd);
       setSel((s) => ({ ...s, scheduledAt: iso, queueState: "pending", fb: { ...s.fb, state: "approved", attempts: 0, error: null } }));
       await load(); flash(msg);
     } catch (ex) { setErr("核准失敗：" + errText(ex)); }
@@ -1944,7 +1949,9 @@ function SocialPanel() {
         const d = (await tx.get(ref)).data() || {};
         const lockAt = Date.parse((d.lock && d.lock.at) || "");
         if ((d.fb && d.fb.state) !== "approved" || (d.lock && d.lock.by && isFinite(lockAt) && Date.now() - lockAt < 15 * 60000)) return false;
-        tx.update(ref, { queueState: "draft", "fb.state": "draft", updatedAt: new Date().toISOString() });
+        const upd = { queueState: "draft", "fb.state": "draft", updatedAt: new Date().toISOString() };
+        for (const ch of ["ig", "th"]) if (d[ch] && d[ch].state === "approved") upd[ch + ".state"] = "draft";
+        tx.update(ref, upd);
         return true;
       });
       if (ok) { setSel((s) => ({ ...s, queueState: "draft", fb: { ...s.fb, state: "draft" } })); flash("已撤回核准，回到待審核"); }
@@ -1958,7 +1965,10 @@ function SocialPanel() {
     if (!window.confirm("取消 Meta 端排程？排程器下一輪會刪除 Facebook 上的排程貼文，並退回待審核。")) return;
     setBusy(true); setErr("");
     try {
-      await db.collection(SOC_COLL).doc(sel.id).update({ queueState: "pending", "fb.state": "cancel_requested", updatedAt: new Date().toISOString() });
+      const upd = { queueState: "pending", "fb.state": "cancel_requested", updatedAt: new Date().toISOString() };
+      // 尚未發出的 IG／Threads 一併取消（排程器退回草稿）
+      for (const ch of ["ig", "th"]) if (sel[ch] && ["approved", "processing"].includes(sel[ch].state)) upd[ch + ".state"] = "cancel_requested";
+      await db.collection(SOC_COLL).doc(sel.id).update(upd);
       setSel((s) => ({ ...s, queueState: "pending", fb: { ...s.fb, state: "cancel_requested" } }));
       await load(); flash("已送出取消請求，約 10 分鐘內完成");
     } catch (ex) { setErr("取消失敗：" + errText(ex)); }
