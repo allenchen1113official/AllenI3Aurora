@@ -8,6 +8,7 @@
    ===================================================================== */
 (function () {
 const { useState, useEffect, useCallback } = React;
+const FbPreview = SocFbPreview; // admin.jsx 的 FB 貼文預覽
 
 const HUB_PF = [
   { id: "fb", short: "FB", name: "Facebook 粉絲專頁", color: "#1877F2", live: true, api: "Meta Graph API（Token 存於 Secrets）", formats: "圖文 · 連結貼文" },
@@ -51,6 +52,9 @@ const tpParts = (t) => { const d = new Date(t + TP); return { y: d.getUTCFullYea
 const p2 = (n) => String(n).padStart(2, "0");
 const tpHm = (iso) => { const t = Date.parse(iso || ""); if (!isFinite(t)) return "未定"; const p = tpParts(t); return p2(p.hh) + ":" + p2(p.mm); };
 const tpMdHm = (iso) => { const t = Date.parse(iso || ""); if (!isFinite(t)) return "未排程"; const p = tpParts(t); return p2(p.m) + "/" + p2(p.d) + " " + p2(p.hh) + ":" + p2(p.mm); };
+/* datetime-local ⇄ ISO：輸入框固定解讀為台北時間，不受瀏覽器時區影響 */
+const tpInputToIso = (v) => { const t = Date.parse((v || "") + ":00Z"); return v && isFinite(t) ? new Date(t - TP).toISOString() : ""; };
+const isoToTpInput = (iso) => { const t = Date.parse(iso || ""); if (!isFinite(t)) return ""; const p = tpParts(t); return p.y + "-" + p2(p.m) + "-" + p2(p.d) + "T" + p2(p.hh) + ":" + p2(p.mm); };
 const WEEKDAY = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
 
 /* ---------- 共用小元件 ---------- */
@@ -340,7 +344,7 @@ function hubFromPost(r) {
     platforms: Object.assign({ fb: !!(r.fb && r.fb.enabled !== false), ig: false, th: false, yt: false, pc: false }, h.platforms || {}, { fb: !!(r.fb && r.fb.enabled !== false) }),
     variants: Object.assign({ fb: "", ig: "", th: "", yt: "", pc: "" }, h.variants || {}),
     hub: r.hub || null, fb: Object.assign({ state: "draft" }, r.fb || {}), queueState: r.queueState || "draft", scheduledAt: r.scheduledAt || "",
-    mode: "time", when: isoToLocalInput(r.scheduledAt), needReview: false };
+    mode: "time", when: isoToTpInput(r.scheduledAt), needReview: false };
 }
 const hubMaster = (s) => [s.body.trim(), s.hashtags.trim()].filter(Boolean).join("\n\n");
 const hubText = (s, id) => (s.variants[id] || "").trim() || hubMaster(s);
@@ -408,7 +412,7 @@ function HubComposer({ init, reload, flash, go }) {
       if (!window.confirm("確認立即發布到 Facebook 粉專？排程器下一輪（約 10 分鐘內）送出，送出後即公開。")) return;
       iso = new Date().toISOString();
     } else {
-      iso = localInputToIso(s.when);
+      iso = tpInputToIso(s.when);
       if (!iso) { setErr("請先選擇發布時間。"); return; }
       if (Date.parse(iso) < Date.now() - 60000) { setErr("發布時間已過；若要馬上發，請改選「立即發布」。"); return; }
     }
@@ -421,7 +425,7 @@ function HubComposer({ init, reload, flash, go }) {
         "review.approvedAt": new Date().toISOString(), "review.by": who, lock: { by: null, at: null }, updatedAt: new Date().toISOString(),
       });
       await reload();
-      flash(s.mode === "now" ? "已核准立即發布 ✓ 排程器下一輪送出" : `已核准 ✓ 將於 ${fmtLocal(iso)} 發布到 Facebook`);
+      flash(s.mode === "now" ? "已核准立即發布 ✓ 排程器下一輪送出" : `已核准 ✓ 將於 ${isoToTpInput(iso).replace("T", " ")}（台北）發布到 Facebook`);
       go("calendar");
     } catch (ex) { setErr("核准失敗：" + errText(ex)); }
     setBusy(false);
@@ -436,7 +440,7 @@ function HubComposer({ init, reload, flash, go }) {
   );
   const sec = { ...card, padding: 18, display: "flex", flexDirection: "column", gap: 14, minWidth: 0 };
   const len = (t) => [...(t || "")].length;
-  const preview = { title: s.title, imageUrl: s.imageUrl.trim(), scheduledAt: s.mode === "now" ? "" : localInputToIso(s.when), fb: { caption: hubText(s, "fb"), link: s.link.trim() } };
+  const preview = { title: s.title, imageUrl: s.imageUrl.trim(), scheduledAt: s.mode === "now" ? "" : tpInputToIso(s.when), fb: { caption: hubText(s, "fb"), link: s.link.trim() } };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -464,17 +468,17 @@ function HubComposer({ init, reload, flash, go }) {
       <fieldset disabled={!editable || busy} style={{ border: 0, padding: 0, margin: 0, display: "flex", flexWrap: "wrap", gap: 14, alignItems: "flex-start", minWidth: 0 }}>
         <section aria-label="主稿內容" style={{ ...sec, flex: "1 1 340px" }}>
           <h3 style={h2s}>主稿（所有平台共用）</h3>
-          <div><label className="ad-lbl">標題</label><input className="ad-in" value={s.title} onChange={(e) => set("title", e.target.value)} placeholder="例：Home Assistant 自動化 3 個新手最常踩的坑" />
+          <div><label className="ad-lbl" htmlFor="hub-title">標題</label><input id="hub-title" className="ad-in" value={s.title} onChange={(e) => set("title", e.target.value)} placeholder="例：Home Assistant 自動化 3 個新手最常踩的坑" />
             <div style={{ ...muted, fontSize: 11.5, marginTop: 5 }}>下標原則：數字＋目標族群＋承諾</div></div>
-          <div><label className="ad-lbl">內文</label><textarea className="ad-in" style={{ minHeight: 150, fontFamily: "var(--font-body)", lineHeight: 1.6 }} value={s.body} onChange={(e) => set("body", e.target.value)} /></div>
-          <div><label className="ad-lbl">圖片網址（https，公開可下載）</label><input className="ad-in" value={s.imageUrl} onChange={(e) => set("imageUrl", e.target.value)} placeholder="https://…" />
+          <div><label className="ad-lbl" htmlFor="hub-body">內文</label><textarea id="hub-body" className="ad-in" style={{ minHeight: 150, fontFamily: "var(--font-body)", lineHeight: 1.6 }} value={s.body} onChange={(e) => set("body", e.target.value)} /></div>
+          <div><label className="ad-lbl" htmlFor="hub-image">圖片網址（https，公開可下載）</label><input id="hub-image" className="ad-in" value={s.imageUrl} onChange={(e) => set("imageUrl", e.target.value)} placeholder="https://…" />
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 6 }}>
               {SOC_IMAGE_PICKS.map((x) => <button key={x.path} type="button" className="ad-btn ghost" style={{ padding: "4px 9px", fontSize: 11.5 }} onClick={() => set("imageUrl", SOC_SITE_BASE + x.path)}>{x.label}</button>)}
             </div></div>
-          <div><label className="ad-lbl">連結（選填）</label><input className="ad-in" value={s.link} onChange={(e) => set("link", e.target.value)} placeholder="https://…" /></div>
-          <div><label className="ad-lbl">標籤 / Hashtag</label><input className="ad-in" value={s.hashtags} onChange={(e) => set("hashtags", e.target.value)} placeholder="#智慧家庭 #自動化" /></div>
-          <div><label className="ad-lbl">內容分類</label>
-            <select className="ad-in" value={s.category} onChange={(e) => set("category", e.target.value)}>{HUB_CATS.map((c) => <option key={c}>{c}</option>)}</select></div>
+          <div><label className="ad-lbl" htmlFor="hub-link">連結（選填）</label><input id="hub-link" className="ad-in" value={s.link} onChange={(e) => set("link", e.target.value)} placeholder="https://…" /></div>
+          <div><label className="ad-lbl" htmlFor="hub-tags">標籤 / Hashtag</label><input id="hub-tags" className="ad-in" value={s.hashtags} onChange={(e) => set("hashtags", e.target.value)} placeholder="#智慧家庭 #自動化" /></div>
+          <div><label className="ad-lbl" htmlFor="hub-cat">內容分類</label>
+            <select id="hub-cat" className="ad-in" value={s.category} onChange={(e) => set("category", e.target.value)}>{HUB_CATS.map((c) => <option key={c}>{c}</option>)}</select></div>
         </section>
 
         <div style={{ flex: "1 1 340px", minWidth: 0, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -499,8 +503,8 @@ function HubComposer({ init, reload, flash, go }) {
               <Toggle on={s.platforms[pf.id]} onChange={(v) => setPf(pf.id, v)}>啟用</Toggle>
             </div>
             <div>
-              <label className="ad-lbl">{pf.id === "pc" ? "Show notes（留空沿用主稿）" : "說明文字（留空沿用主稿）"}</label>
-              <textarea className="ad-in" style={{ minHeight: 130, fontFamily: "var(--font-body)", lineHeight: 1.6 }} value={s.variants[pf.id]} placeholder={hubMaster(s) || "沿用主稿"} onChange={(e) => setVar(pf.id, e.target.value)} />
+              <label className="ad-lbl" htmlFor="hub-variant">{pf.id === "pc" ? "Show notes（留空沿用主稿）" : "說明文字（留空沿用主稿）"}</label>
+              <textarea id="hub-variant" className="ad-in" style={{ minHeight: 130, fontFamily: "var(--font-body)", lineHeight: 1.6 }} value={s.variants[pf.id]} placeholder={hubMaster(s) || "沿用主稿"} onChange={(e) => setVar(pf.id, e.target.value)} />
               <div style={{ fontSize: 11.5, marginTop: 5, color: pf.limit && len(hubText(s, pf.id)) > pf.limit ? "var(--danger)" : "var(--text-3)" }}>
                 {s.variants[pf.id].trim() ? "已覆寫主稿" : "沿用主稿"} · {len(hubText(s, pf.id)).toLocaleString()}{pf.limit ? " / " + pf.limit.toLocaleString() + " 字" : " 字"}
               </div>
@@ -511,7 +515,7 @@ function HubComposer({ init, reload, flash, go }) {
         <section aria-label="預覽與排程" style={sec}>
           <h3 style={h2s}>預覽</h3>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            {tab === "fb" ? <SocFbPreview p={preview} /> : (
+            {tab === "fb" ? <FbPreview p={preview} /> : (
               <div style={{ width: "100%", padding: 14, borderRadius: "var(--radius-md)", background: "var(--night-850)", border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}><PfChip pf={pf} size={24} /><strong style={{ color: "var(--text-1)", fontSize: 13 }}>{pf.name}</strong></div>
                 {s.imageUrl ? <img src={s.imageUrl} alt="" style={{ width: "100%", borderRadius: "var(--radius-md)", background: "var(--night-700)" }} /> : null}
@@ -527,7 +531,7 @@ function HubComposer({ init, reload, flash, go }) {
               </label>
             ))}
             {s.mode === "time" ? (
-              <div><label className="ad-lbl">發布時間（台北 UTC+8）</label><input className="ad-in" type="datetime-local" value={s.when} onChange={(e) => set("when", e.target.value)} /></div>
+              <div><label className="ad-lbl" htmlFor="hub-when">發布時間（台北 UTC+8）</label><input id="hub-when" className="ad-in" type="datetime-local" value={s.when} onChange={(e) => set("when", e.target.value)} /></div>
             ) : null}
             <div style={{ fontSize: 12, color: "var(--text-3)", lineHeight: 1.6 }}>{SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程（分鐘級準時）；其餘由排程器每 10 分鐘送出。</div>
             <Toggle on={s.needReview} onChange={(v) => set("needReview", v)}>發布前需審核（先送交待審核）</Toggle>
@@ -636,7 +640,7 @@ function HubPlatforms({ list, meta, reload }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
-        <span style={{ ...muted, flex: "1 1 260px" }}>以伺服器端 Token 連線；狀態由排程器每輪回報（最後執行 {ran ? fmtLocal(meta.lastRunAt) : "—"}）</span>
+        <span style={{ ...muted, flex: "1 1 260px" }}>以伺服器端 Token 連線；狀態由排程器每輪回報（最後執行 {ran ? tpMdHm(meta.lastRunAt) : "—"}）</span>
         <button className="ad-btn ghost" onClick={reload}>檢查所有連線</button>
       </div>
       {ran && (!fbOk || stale) ? (
@@ -715,7 +719,7 @@ function ContentHubPanel() {
       const snap = await db.collection(SOC_COLL).get();
       setList(snap.docs.map((d) => Object.assign({ id: d.id }, d.data())));
     } catch (ex) { setErr("讀取失敗：" + errText(ex)); setList([]); }
-    try { const m = await db.doc(SOC_META_DOC).get(); setMeta(m.exists ? m.data() : {}); } catch (ex) { setMeta({}); }
+    try { const m = await db.doc(SOC_META_DOC).get(); setMeta(m.exists ? m.data() : {}); } catch { setMeta({}); }
   }, []);
   useEffect(() => { load(); }, [load]);
 

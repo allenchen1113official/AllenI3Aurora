@@ -2175,6 +2175,7 @@ const HUB_NAV = "__hub"; // 內容中控台（admin/content-hub.jsx）
 function Console({ user }) {
   const [active, setActive] = useState(NL_NAV);
   const sec = SECTIONS.find((s) => s.id === active);
+  const HubPanel = window.ContentHubPanel; // admin/content-hub.jsx 於本檔之後載入
   const NAV = [{ id: NL_NAV, label: "電子報" }, { id: HUB_NAV, label: "內容中控台" }, { id: SOC_NAV, label: "社群發文" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
@@ -2204,7 +2205,7 @@ function Console({ user }) {
         </nav>
         <main style={{ flex: 1, minWidth: 0 }}>
           {active === NL_NAV ? <NewsletterPanel />
-            : active === HUB_NAV ? (window.ContentHubPanel ? <window.ContentHubPanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)
+            : active === HUB_NAV ? (HubPanel ? <HubPanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)
             : active === SOC_NAV ? <SocialPanel />
             : active === PC_NAV ? <PodcastPanel />
             : active === SUB_NAV ? <SubscribersPanel />
