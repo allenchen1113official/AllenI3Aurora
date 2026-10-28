@@ -12,6 +12,33 @@ const db = configured ? window.firebase.firestore() : null;
 
 const OWNER_EMAIL = "allenchen1113.official@gmail.com"; // 需與 firebase/firestore.rules 一致
 
+/* ---------- PilotOne：社群發文中控的產品名與品牌 ----------
+   PilotOne＝內容中控台＋社群發文審核，同一份 aurora_social_posts 佇列。
+   獨立入口 admin/pilotone/（window.PILOTONE=true 時以產品殼呈現）；後台管理的左側導覽也保留這兩項。 */
+const IS_PILOTONE = !!window.PILOTONE;
+const PILOTONE = {
+  name: "PilotOne",
+  zh: "社群發文中控",
+  tagline: "一次製作 · 一鍵起飛",
+  byline: "艾倫報報 · ALLEN I³ AURORA",
+  mark: "/AllenI3Aurora/assets/pilotone/pilotone-mark.svg",
+  url: "/AllenI3Aurora/admin/pilotone/",
+};
+/* PilotOne 標誌：圖＋字標（size 控制圖的邊長） */
+function PilotOneLogo({ size = 36, dense }) {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: dense ? 8 : 10 }}>
+      <img src={PILOTONE.mark} alt="" width={size} height={size} style={{ borderRadius: size * 0.25, boxShadow: "var(--glow-brand)", flex: "none" }} />
+      <span style={{ display: "grid", lineHeight: 1.1 }}>
+        <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, color: "var(--text-1)", fontSize: dense ? 15 : 18, letterSpacing: ".01em" }}>
+          Pilot<span style={{ background: "var(--aurora-gradient)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One</span>
+        </span>
+        {!dense && <span style={{ color: "var(--text-3)", fontSize: 11.5 }}>{PILOTONE.zh} · {PILOTONE.tagline}</span>}
+      </span>
+    </span>
+  );
+}
+
 /* 將 Firestore 錯誤轉為可操作訊息；permission-denied 給出明確排查方向 */
 function errText(ex) {
   const code = ex && ex.code ? ex.code : "";
@@ -151,9 +178,13 @@ function Login() {
     <Center>
       <form onSubmit={submit} style={{ width: 340, background: "var(--night-850)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: 28, boxShadow: "var(--shadow-lg)" }}>
         <div style={{ textAlign: "center", marginBottom: 22 }}>
-          <span style={{ display: "inline-grid", placeItems: "center", width: 44, height: 44, borderRadius: 12, background: "var(--aurora-gradient)", color: "var(--text-on-accent)", fontFamily: "var(--font-display)", fontWeight: 900, boxShadow: "var(--glow-brand)" }}>AI³A</span>
-          <h1 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 20, margin: "12px 0 2px" }}>後台管理登入</h1>
-          <div style={{ color: "var(--text-3)", fontSize: 12.5 }}>艾倫報報 · Allen I³ Aurora</div>
+          {IS_PILOTONE
+            ? <img src={PILOTONE.mark} alt="PilotOne" width={56} height={56} style={{ borderRadius: 14, boxShadow: "var(--glow-brand)" }} />
+            : <span style={{ display: "inline-grid", placeItems: "center", width: 44, height: 44, borderRadius: 12, background: "var(--aurora-gradient)", color: "var(--text-on-accent)", fontFamily: "var(--font-display)", fontWeight: 900, boxShadow: "var(--glow-brand)" }}>AI³A</span>}
+          <h1 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 20, margin: "12px 0 2px" }}>
+            {IS_PILOTONE ? <>Pilot<span style={{ background: "var(--aurora-gradient)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One</span> 登入</> : "後台管理登入"}
+          </h1>
+          <div style={{ color: "var(--text-3)", fontSize: 12.5 }}>{IS_PILOTONE ? PILOTONE.zh + " · " + PILOTONE.byline : "艾倫報報 · Allen I³ Aurora"}</div>
         </div>
         <label className="ad-lbl">Email</label>
         <input className="ad-in" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="username" required style={{ marginBottom: 14 }} />
@@ -761,7 +792,7 @@ function NewsletterPanel() {
     if (!(await save(null, "已儲存"))) return;
     try {
       await socCreateFromIssue(sel);
-      setToast("已建立社群貼文草稿 ✓ 請到左側「社群發文」審核並排程"); setTimeout(() => setToast(""), 4200);
+      setToast("已建立社群貼文草稿 ✓ 請到左側「PilotOne 審核」審核並排程"); setTimeout(() => setToast(""), 4200);
     } catch (ex) { setErr("建立社群草稿失敗：" + errText(ex)); }
   };
   const removeIssue = async () => {
@@ -896,7 +927,7 @@ function NewsletterPanel() {
             <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
               <button className="ad-btn ghost" onClick={() => nlCopy(nlFacebookText(sel), "已複製 FB 貼文", setToast)}>複製 FB 貼文（含連結與標籤）</button>
               <button className="ad-btn ghost" onClick={() => window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(nlIssueUrl(sel)), "_blank", "noopener,width=640,height=640")}>開啟 Facebook 分享視窗 ↗</button>
-              <button className="ad-btn primary" onClick={queueSocial} disabled={busy}>送進社群發文審核（自動發 FB）</button>
+              <button className="ad-btn primary" onClick={queueSocial} disabled={busy}>送進 PilotOne 審核（自動發 FB）</button>
             </div>
           </div>
           <div style={box}>
@@ -2025,8 +2056,8 @@ function SocialPanel() {
       <div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
           <div>
-            <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>社群發文</h2>
-            <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{SOC_COLL} · 審核後自動發到 Facebook 粉專（IG 第二階段）</div>
+            <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>{PILOTONE.name} · 發文審核</h2>
+            <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{SOC_COLL} · 審核後自動發到 Facebook 粉專（IG／Threads 由中控台建立）</div>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             <button className="ad-btn ghost" onClick={load}>重新整理</button>
@@ -2186,7 +2217,7 @@ function Console({ user }) {
   const [active, setActive] = useState(NL_NAV);
   const sec = SECTIONS.find((s) => s.id === active);
   const HubPanel = window.ContentHubPanel; // admin/content-hub.jsx 於本檔之後載入
-  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: HUB_NAV, label: "內容中控台" }, { id: SOC_NAV, label: "社群發文" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
+  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: HUB_NAV, label: "PilotOne 中控台" }, { id: SOC_NAV, label: "PilotOne 審核" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
       <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
@@ -2212,6 +2243,11 @@ function Console({ user }) {
               </button>
             );
           })}
+          <a href={PILOTONE.url} target="_blank" rel="noopener" title="以 PilotOne 產品介面開啟社群發文中控"
+            style={{ marginTop: 10, padding: "8px 10px", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)", textDecoration: "none", display: "block" }}>
+            <PilotOneLogo size={22} dense />
+            <div style={{ color: "var(--text-4)", fontSize: 10.5, marginTop: 4 }}>獨立入口 ↗</div>
+          </a>
         </nav>
         <main style={{ flex: 1, minWidth: 0 }}>
           {active === NL_NAV ? <NewsletterPanel />
@@ -2222,6 +2258,58 @@ function Console({ user }) {
             : active === CAMP_NAV ? <CampaignsPanel />
             : active === WEALTH_NAV ? <WealthPanel />
             : <SectionEditor key={sec.id} sec={sec} />}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- PilotOne 產品殼（admin/pilotone/index.html） ----------
+   同一份後台元件，只露出與社群發文相關的兩個面板，並以 PilotOne 品牌包裝。 */
+const P1_VIEWS = [
+  { id: HUB_NAV, label: "中控台", hint: "儀表板 · 日曆 · 建立 · 內容庫 · 平台" },
+  { id: SOC_NAV, label: "發文審核", hint: "核准／排程／撤回" },
+];
+function PilotOneConsole({ user }) {
+  const initial = location.hash === "#review" ? SOC_NAV : HUB_NAV;
+  const [active, setActive] = useState(initial);
+  const HubPanel = window.ContentHubPanel;
+  const go = (id) => { setActive(id); try { history.replaceState(null, "", id === SOC_NAV ? "#review" : "#hub"); } catch {} };
+  useEffect(() => { document.title = (active === SOC_NAV ? "發文審核" : "中控台") + " · PilotOne — 艾倫報報"; }, [active]);
+  return (
+    <div>
+      <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
+        <div style={{ ...wrap, display: "flex", alignItems: "center", gap: 14, padding: "12px 20px" }}>
+          <PilotOneLogo size={38} />
+          <div style={{ flex: 1 }} />
+          <div style={{ color: "var(--text-3)", fontSize: 11.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 220 }}>{user.email}</div>
+          <a className="ad-btn ghost" href="/AllenI3Aurora/admin/" title="艾倫報報 · 後台管理（電子報、Podcast、訂閱…）">後台管理</a>
+          <a className="ad-btn ghost" href="/AllenI3Aurora/" target="_blank" rel="noopener">前往網站 ↗</a>
+          <button className="ad-btn" onClick={() => auth.signOut()}>登出</button>
+        </div>
+      </header>
+      <div style={{ ...wrap, display: "flex", gap: 22, padding: "22px 20px", alignItems: "flex-start" }}>
+        <nav className="p1-nav" style={{ width: 176, flex: "none", display: "flex", flexDirection: "column", gap: 4, position: "sticky", top: 82 }}>
+          {P1_VIEWS.map((v) => {
+            const on = v.id === active;
+            return (
+              <button key={v.id} data-on={on ? "1" : "0"} onClick={() => go(v.id)}
+                style={{ textAlign: "left", cursor: "pointer", padding: "10px 12px 10px 16px", borderRadius: "var(--radius-md)", fontFamily: "var(--font-display)",
+                  border: "1px solid " + (on ? "var(--border-aurora)" : "transparent"), background: on ? "var(--brand-soft)" : "transparent" }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: on ? "var(--text-1)" : "var(--text-3)" }}>{v.label}</div>
+                <div style={{ fontSize: 10.5, color: "var(--text-4)", marginTop: 2, fontFamily: "var(--font-body)" }}>{v.hint}</div>
+              </button>
+            );
+          })}
+          <div style={{ marginTop: 14, padding: "10px 12px", borderRadius: "var(--radius-md)", background: "var(--aurora-gradient-soft)", border: "1px solid var(--border-subtle)", color: "var(--text-3)", fontSize: 11, lineHeight: 1.6 }}>
+            <div style={{ color: "var(--text-2)", fontWeight: 700, fontFamily: "var(--font-display)" }}>PilotOne 是什麼</div>
+            一份主稿 → FB／IG／Threads 各自微調 → 審核排程 → 排程器自動發布並回收成效。
+          </div>
+          <div style={{ marginTop: 10, color: "var(--text-4)", fontSize: 10.5, lineHeight: 1.6 }}>{PILOTONE.byline}</div>
+        </nav>
+        <main style={{ flex: 1, minWidth: 0 }}>
+          {active === SOC_NAV ? <SocialPanel />
+            : (HubPanel ? <HubPanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)}
         </main>
       </div>
     </div>
@@ -2241,7 +2329,7 @@ function App() {
   if (!configured) return <Setup />;
   if (!ready) return <Center><div style={{ color: "var(--text-3)" }}>載入中…</div></Center>;
   if (!user) return <Login />;
-  return <Console user={user} />;
+  return IS_PILOTONE ? <PilotOneConsole user={user} /> : <Console user={user} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
