@@ -1,5 +1,5 @@
 /* =====================================================================
-   內容中控台（Content Hub）— 一次製作、逐平台微調、排程與追蹤
+   PilotOne · 內容中控台（Content Hub）— 一次製作、逐平台微調、排程與追蹤
    資料沿用 aurora_social_posts（與「社群發文」同一佇列），多平台欄位放在
    hub：{ stage, body, hashtags, category, platforms, variants }，排程器忽略此欄。
    實際送出由 social-publish.yml 處理：Facebook、Instagram、Threads 由排程器自動發布
@@ -1029,7 +1029,7 @@ function ContentHubPanel() {
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
         <div>
-          <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>內容中控台</h2>
+          <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>{PILOTONE.name} · 內容中控台</h2>
           <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{SOC_COLL} · 一次製作 → 逐平台微調 → 排程發布（FB／IG／Threads 自動發布）</div>
         </div>
         <div style={{ display: "flex", gap: 8 }}>

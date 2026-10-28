@@ -1,4 +1,13 @@
-# 社群自動發文 SOP（Facebook 粉專／Instagram／Threads）
+# PilotOne · 社群自動發文 SOP（Facebook 粉專／Instagram／Threads）
+
+**產品名：PilotOne（社群發文中控）** — 一次製作 · 一鍵起飛。品牌隸屬「艾倫報報 ALLEN I³ AURORA」，視覺沿用 Aurora tokens（夜空底＋極光漸層），標誌為 `assets/pilotone/pilotone-mark.svg`（極光航線環＋「1」）。
+
+| 入口 | 網址 | 內容 |
+|------|------|------|
+| PilotOne 獨立管理頁 | https://allenchen1113official.github.io/AllenI3Aurora/admin/pilotone/ | 中控台（`#hub`）＋發文審核（`#review`）兩個面板，PilotOne 品牌殼 |
+| 後台管理 | https://allenchen1113official.github.io/AllenI3Aurora/admin/ | 左側導覽「PilotOne 中控台」「PilotOne 審核」，與獨立頁共用同一份元件與 `aurora_social_posts` 佇列 |
+
+兩個入口都用後台的管理者帳號登入（Firebase Auth，Email 需為 `OWNER_EMAIL`）；`admin/pilotone/index.html` 只是設定 `window.PILOTONE=true` 後載入同一份 `admin/admin.jsx`＋`admin/content-hub.jsx`，沒有另一套程式。文件中「後台『社群發文』」即 PilotOne 審核、「內容中控台」即 PilotOne 中控台。
 
 後台審核 → GitHub Actions 排程器 → Meta Graph API。後台只負責內容與決策，Token 只存在 GitHub Secrets，前端完全碰不到。
 
