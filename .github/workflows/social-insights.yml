@@ -1,0 +1,50 @@
+name: 社群成效同步（FB／IG／Threads）
+
+# 每日抓取近 30 天已發布貼文的觸及與互動，寫回 aurora_social_posts.stats，
+# 後台「內容中控台」儀表板與內容庫顯示。邏輯見 scripts/social/insights.mjs。
+# 使用與 social-publish.yml 相同的 Secrets；未設定的平台自動略過。
+# 註：GitHub 排程以 UTC 計；台北 = UTC+8。
+on:
+  schedule:
+    - cron: "47 0 * * *"   # 台北每日 08:47（UTC 00:47），避開整點尖峰
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/social-insights.yml"
+      - "scripts/social/insights.mjs"
+      - "scripts/social/sync-insights.mjs"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只列出成效數字（不寫入資料）"
+        type: boolean
+        default: false
+
+concurrency:
+  group: social-insights
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 行為測試
+        run: node --test scripts/social/insights.test.mjs
+      - name: 安裝 firebase-admin
+        run: npm install --no-save --no-audit --no-fund firebase-admin@13
+      - name: 同步成效
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+          META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION }}
+          SOCIAL_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
+        run: node scripts/social/sync-insights.mjs

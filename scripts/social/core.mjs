@@ -59,7 +59,7 @@ export const isRetryable = (e) => {
 };
 
 /* ---------- Graph 呼叫（FB／IG 共用 graph.facebook.com，Threads 用 graph.threads.net） ---------- */
-function makeCaller(base, token, fetchImpl) {
+export function makeCaller(base, token, fetchImpl) {
   return async function call(method, path, params = {}) {
     const body = new URLSearchParams({ ...params, access_token: token });
     const url = method === "GET" || method === "DELETE" ? `${base}/${path}?${body}` : `${base}/${path}`;

@@ -51,6 +51,13 @@ function hubStatus(r) {
   if (sts.length && sts.every((x) => x === "published" || x === "skipped") && sts.includes("published")) return "published";
   return r.hub && r.hub.stage === "draft" ? "draft" : "review"; // 舊資料（無 hub）沿用「社群發文」的待審核
 }
+/* 成效（social-insights.yml 每日寫入 stats）：數字格式與各平台明細 */
+const fmtN = (v) => (v == null ? "—" : Number(v).toLocaleString());
+function statsTip(r) {
+  const c = (r.stats && r.stats.channels) || {};
+  return Object.keys(c).map((ch) => `${ch.toUpperCase()} 觸及 ${fmtN(c[ch].reach)}・互動 ${fmtN(c[ch].engagement)}`).join("\n")
+    + (r.stats && r.stats.updatedAt ? `\n更新於 ${tpMdHm(r.stats.updatedAt)}` : "");
+}
 /* 第一個失敗頻道的錯誤訊息（附平台簡稱） */
 function hubError(r) {
   const ch = HUB_LIVE.find((c) => chOn(r, c) && chState(r, c) === "failed" && r[c].error);
@@ -160,7 +167,7 @@ function SecHead({ title, action, onAction }) {
 /* =====================================================================
    01 儀表板
    ===================================================================== */
-function HubDashboard({ list, meta, go, openPost }) {
+function HubDashboard({ list, meta, ins, go, openPost }) {
   const now = Date.now(), today = tpMidnight(now), wk = tpWeekStart(now);
   const inRange = (r, a, b) => { const t = Date.parse(hubWhen(r)); return isFinite(t) && t >= a && t < b; };
   const live = list.filter((r) => ["scheduled", "published"].includes(hubStatus(r)));
@@ -224,11 +231,50 @@ function HubDashboard({ list, meta, go, openPost }) {
         </div>
       </section>
 
+      <HubPerformance list={list} ins={ins} />
+
       <section style={{ ...card, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
         <SecHead title="最近發布" action="前往內容庫" onAction={() => go("library")} />
         <HubTable rows={recent} openPost={openPost} empty="尚無已發布內容。" compact />
       </section>
     </div>
+  );
+}
+
+/* 近 30 天成效：總觸及／總互動與各平台明細（資料由每日同步寫入） */
+function HubPerformance({ list, ins }) {
+  const since = Date.now() - 30 * DAY;
+  const rows = list.filter((r) => r.stats && Date.parse(hubWhen(r)) >= since);
+  const sum = (f) => rows.reduce((a, r) => a + (Number(f(r)) || 0), 0);
+  const per = HUB_LIVE.map((ch) => {
+    const xs = rows.map((r) => r.stats.channels && r.stats.channels[ch]).filter(Boolean);
+    return { ch, posts: xs.length, reach: xs.reduce((a, x) => a + (Number(x.reach) || 0), 0), eng: xs.reduce((a, x) => a + (Number(x.engagement) || 0), 0) };
+  }).filter((x) => x.posts);
+  const synced = ins && ins.lastRunAt;
+  return (
+    <section aria-label="近 30 天成效" style={{ ...card, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <h3 style={h2s}>近 30 天成效</h3>
+        <span style={muted}>{synced ? `每日同步 · 最後更新 ${tpMdHm(ins.lastRunAt)}` : "尚未同步（social-insights.yml 每日台北 08:47 執行）"}</span>
+      </div>
+      {!rows.length ? <div style={{ ...muted, padding: "6px 0" }}>還沒有成效資料。貼文發布後，下一次每日同步就會出現觸及與互動數字。</div> : (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 22, alignItems: "flex-end" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}><span style={{ fontSize: 12, color: "var(--text-3)" }}>總觸及</span>
+            <strong style={{ fontFamily: "var(--font-display)", fontSize: 26, color: "var(--text-1)" }}>{fmtN(sum((r) => r.stats.reach))}</strong></div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}><span style={{ fontSize: 12, color: "var(--text-3)" }}>總互動</span>
+            <strong style={{ fontFamily: "var(--font-display)", fontSize: 26, color: "var(--text-1)" }}>{fmtN(sum((r) => r.stats.engagement))}</strong></div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}><span style={{ fontSize: 12, color: "var(--text-3)" }}>篇數</span>
+            <strong style={{ fontFamily: "var(--font-display)", fontSize: 26, color: "var(--text-1)" }}>{rows.length}</strong></div>
+          <span style={{ flex: 1 }} />
+          {per.map((x) => (
+            <div key={x.ch} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <PfChip pf={HUB_PF.find((p) => p.id === x.ch)} size={24} />
+              <span style={{ fontSize: 12.5, color: "var(--text-2)", fontFamily: "var(--font-mono)" }}>觸及 {fmtN(x.reach)} · 互動 {fmtN(x.eng)}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -239,10 +285,12 @@ function HubTable({ rows, openPost, empty, compact }) {
   if (!rows.length) return <div style={{ ...muted, padding: "18px 0" }}>{empty}</div>;
   return (
     <div style={{ overflowX: "auto" }}>
-      <table style={{ borderCollapse: "collapse", width: "100%", minWidth: compact ? 560 : 760 }}>
+      <table style={{ borderCollapse: "collapse", width: "100%", minWidth: compact ? 680 : 900 }}>
         <thead><tr>
           <th style={th}>內容</th>{compact ? null : <th style={th}>分類</th>}<th style={th}>{compact ? "平台" : "平台發布狀態"}</th>
-          <th style={th}>{compact ? "發布時間" : "排程 / 發布時間"}</th><th style={th}>狀態</th><th style={th}></th>
+          <th style={th}>{compact ? "發布時間" : "排程 / 發布時間"}</th>
+          <th style={{ ...th, textAlign: "right" }}>觸及</th><th style={{ ...th, textAlign: "right" }}>互動</th>
+          <th style={th}>狀態</th><th style={th}></th>
         </tr></thead>
         <tbody>{rows.map((r) => {
           const st = hubStatus(r);
@@ -264,6 +312,8 @@ function HubTable({ rows, openPost, empty, compact }) {
               {compact ? null : <td style={{ ...td, whiteSpace: "nowrap" }}>{(r.hub && r.hub.category) || "—"}</td>}
               <td style={td}><PfRow r={r} all={!compact} /></td>
               <td style={{ ...td, fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>{tpMdHm(hubWhen(r))}</td>
+              <td style={{ ...td, fontFamily: "var(--font-mono)", textAlign: "right" }} title={r.stats ? statsTip(r) : "成效每日同步（發布後 30 天內）"}>{fmtN(r.stats && r.stats.reach)}</td>
+              <td style={{ ...td, fontFamily: "var(--font-mono)", textAlign: "right" }} title={r.stats ? statsTip(r) : undefined}>{fmtN(r.stats && r.stats.engagement)}</td>
               <td style={td}><HubTag r={r} /></td>
               <td style={{ ...td, textAlign: "right" }}>
                 <button className={"ad-btn" + (st === "review" ? " primary" : " ghost")} style={{ padding: "6px 11px", fontSize: 12.5, whiteSpace: "nowrap" }} onClick={() => openPost(r)}>
@@ -617,8 +667,9 @@ function HubComposer({ init, reload, flash, go }) {
 const HUB_PAGE = 20;
 function hubCsv(rows) {
   const esc = (v) => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
-  const head = ["標題", "分類", "平台", "排程/發布時間（台北）", "狀態", "更新時間（台北）"];
-  return "﻿" + [head, ...rows.map((r) => [r.title, (r.hub && r.hub.category) || "", hubPlatforms(r).map((p) => p.short).join("/"), tpMdHm(hubWhen(r)), HUB_ST[hubStatus(r)].label, tpMdHm(r.updatedAt)])]
+  const head = ["標題", "分類", "平台", "排程/發布時間（台北）", "狀態", "觸及", "互動", "更新時間（台北）"];
+  return "﻿" + [head, ...rows.map((r) => [r.title, (r.hub && r.hub.category) || "", hubPlatforms(r).map((p) => p.short).join("/"), tpMdHm(hubWhen(r)), HUB_ST[hubStatus(r)].label,
+    r.stats && r.stats.reach != null ? r.stats.reach : "", r.stats ? r.stats.engagement : "", tpMdHm(r.updatedAt)])]
     .map((l) => l.map(esc).join(",")).join("\r\n");
 }
 function HubLibrary({ list, openPost, query, setQuery }) {
@@ -702,6 +753,7 @@ function HubPlatforms({ list, meta, reload }) {
     "結果不明不重送，避免重複發文；失敗可在內容庫重新核准",
     "某平台 Token 失效時只暫停該平台，其他平台照常發布",
     "Threads Token 每日自動續期，60 天到期日隨之順延",
+    "每日台北 08:47 同步近 30 天貼文的觸及與互動（social-insights.yml）",
     "平台 Token 只存在 Repo Secrets 與排程器專用資料，不出現在前端",
   ];
 
@@ -788,6 +840,7 @@ function ContentHubPanel() {
   const [view, setView] = useState("dash");
   const [list, setList] = useState(null);
   const [meta, setMeta] = useState(null);
+  const [ins, setIns] = useState(null); // aurora_social_meta/insights：成效同步摘要
   const [err, setErr] = useState("");
   const [toast, setToast] = useState("");
   const [draft, setDraft] = useState(hubBlank);
@@ -800,6 +853,7 @@ function ContentHubPanel() {
       setList(snap.docs.map((d) => Object.assign({ id: d.id }, d.data())));
     } catch (ex) { setErr("讀取失敗：" + errText(ex)); setList([]); }
     try { const m = await db.doc(SOC_META_DOC).get(); setMeta(m.exists ? m.data() : {}); } catch { setMeta({}); }
+    try { const m = await db.doc("aurora_social_meta/insights").get(); setIns(m.exists ? m.data() : {}); } catch { setIns({}); }
   }, []);
   useEffect(() => { load(); }, [load]);
 
@@ -813,7 +867,7 @@ function ContentHubPanel() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
         <div>
           <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: 0 }}>內容中控台</h2>
-          <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{SOC_COLL} · 一次製作 → 逐平台微調 → 排程發布（第一階段自動發 FB）</div>
+          <div style={{ color: "var(--text-3)", fontSize: 12.5, fontFamily: "var(--font-mono)" }}>{SOC_COLL} · 一次製作 → 逐平台微調 → 排程發布（FB／IG／Threads 自動發布）</div>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <button className="ad-btn ghost" onClick={load}>重新整理</button>
@@ -829,7 +883,7 @@ function ContentHubPanel() {
       {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
       {toast && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{toast}</div>}
       {list == null ? <div style={{ color: "var(--text-3)" }}>載入中…</div>
-        : view === "dash" ? <HubDashboard list={list} meta={meta} go={go} openPost={openPost} />
+        : view === "dash" ? <HubDashboard list={list} meta={meta} ins={ins} go={go} openPost={openPost} />
         : view === "calendar" ? <HubCalendar list={list} openPost={openPost} newPost={newPost} />
         : view === "compose" ? <HubComposer init={draft} reload={load} flash={flash} go={go} />
         : view === "library" ? <HubLibrary list={list} openPost={openPost} query={query} setQuery={setQuery} />

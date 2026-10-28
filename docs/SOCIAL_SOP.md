@@ -164,10 +164,26 @@ IG／Threads（`ig.state`、`th.state`）：
 - 公開 repo 若 60 天沒有任何 commit，GitHub 會自動停用排程 workflow。本 repo 每天都有自動更新，目前不會發生；後台若顯示「超過 45 分鐘未執行」請到 Actions 檢查。
 - 站內圖卡（熱力圖、選股雷達等）是固定檔名、每日覆寫。交給 Meta 排程時，圖片在排程當下就上傳定格；立即發布則用送出當下的版本。
 
+## 九之一、成效同步
+
+`social-insights.yml` 每日台北 08:47 執行 `scripts/social/sync-insights.mjs`，抓近 30 天已發布貼文的觸及與互動，寫入各貼文的 `stats`（總計與各平台明細），後台「內容中控台」儀表板的「近 30 天成效」、最近發布與內容庫表格會顯示，CSV 匯出也包含這兩欄。
+
+| 平台 | 觸及 | 互動 | 需要的權限 |
+|------|------|------|------------|
+| Facebook | `post_impressions_unique`（取不到改用 `post_media_view`） | 心情＋留言＋分享 | `read_insights`、`pages_read_engagement` |
+| Instagram | `reach` | 讚＋留言＋分享＋收藏 | `instagram_manage_insights` |
+| Threads | `views` | 讚＋回覆＋轉發＋引用 | `threads_manage_insights` |
+
+- Meta 不時汰換指標名稱，所以每個指標個別請求，取不到的就略過，不會中斷整批。
+- 使用與發文排程器相同的 Secrets，不需另外設定；Threads 沿用排程器續期後的 Token。
+- 某些貼文讀取失敗只記錄在 `aurora_social_meta/insights`；全部都失敗（多半是權限不足）才會讓 workflow 失敗。
+- 手動執行：Actions →「社群成效同步」→ Run workflow（可勾 dry_run 只看數字不寫入）。
+
 ## 十、測試
 
 ```bash
 node --test scripts/social/publish.test.mjs   # 39 項行為測試（FB 22＋IG／Threads 17），不連外部服務
+node --test scripts/social/insights.test.mjs  # 7 項成效同步測試
 ```
 
 workflow 每次執行前也會先跑這組測試；push 到 main 時以 dry_run 模式執行。
