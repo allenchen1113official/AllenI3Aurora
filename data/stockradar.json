@@ -1,9 +1,9 @@
 {
-  "date": "2026.10.27",
-  "dateLabel": "2026.10.27（最新）",
-  "asOf": "2026.10.28",
-  "desc": "✅ KD黃金交叉:2464 盟立(K…",
-  "summary": "✅ KD黃金交叉:2464 盟立(K值仍在低檔,需觀察後續確認)，✅ 均線多頭排列(月季半年年且皆向上):6933、2603、2609、6278、2347、6141、6179，✅ 營益率10%(近4季達標≥3季):2603、3014、3006，✅ …",
+  "date": "2026.10.28",
+  "dateLabel": "2026.10.28（最新）",
+  "asOf": "2026.10.29",
+  "desc": "台股每日分析 TOP 10 2026…",
+  "summary": "台股每日分析 TOP 10 2026-10-28（三），「項」＝達標訊號數（KD黃金交叉／均線多頭／營益率10%／營收年增20%／EPS年增10%），詳見圖卡。，台股選股雷達",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,99 +34,89 @@
   ],
   "top10": [
     {
-      "code": "6933",
-      "name": "14.1%",
-      "changePct": "+5.42%",
+      "code": "4916",
+      "name": "事欣科",
+      "changePct": "",
       "up": true,
-      "signals": [
-        "ma"
-      ]
-    },
-    {
-      "code": "2603",
-      "name": "長榮",
-      "changePct": "+0.58%",
-      "up": true,
-      "signals": [
-        "ma"
-      ]
-    },
-    {
-      "code": "3014",
-      "name": "聯陽",
-      "changePct": "-0.71%",
-      "up": false,
       "signals": []
-    },
-    {
-      "code": "2609",
-      "name": "陽明",
-      "changePct": "+1.78%",
-      "up": true,
-      "signals": [
-        "ma"
-      ]
-    },
-    {
-      "code": "6278",
-      "name": "台表科",
-      "changePct": "-4.13%",
-      "up": false,
-      "signals": [
-        "ma"
-      ]
     },
     {
       "code": "3006",
       "name": "晶豪科",
-      "changePct": "+7.05%",
+      "changePct": "",
       "up": true,
       "signals": []
     },
     {
-      "code": "2347",
-      "name": "聯強",
-      "changePct": "+2.72%",
+      "code": "2603",
+      "name": "長榮",
+      "changePct": "",
       "up": true,
-      "signals": [
-        "ma"
-      ]
+      "signals": []
     },
     {
-      "code": "6141",
-      "name": "柏承",
-      "changePct": "+0.59%",
+      "code": "3014",
+      "name": "聯陽",
+      "changePct": "",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "3167",
+      "name": "大量",
+      "changePct": "",
       "up": true,
       "signals": [
-        "ma"
+        "gc"
       ]
     },
     {
       "code": "6179",
       "name": "亞通",
-      "changePct": "-0.26%",
-      "up": false,
-      "signals": [
-        "ma"
-      ]
-    },
-    {
-      "code": "2464",
-      "name": "盟立",
-      "changePct": "+9.94%",
+      "changePct": "",
       "up": true,
       "signals": [
         "gc"
       ]
+    },
+    {
+      "code": "1303",
+      "name": "南亞",
+      "changePct": "",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "6147",
+      "name": "頎邦",
+      "changePct": "",
+      "up": true,
+      "signals": [
+        "gc"
+      ]
+    },
+    {
+      "code": "6278",
+      "name": "台表科",
+      "changePct": "",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "6438",
+      "name": "迅得",
+      "changePct": "",
+      "up": true,
+      "signals": []
     }
   ],
   "radar": {
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1aAE2-YR5UPR_97kIPcCEcbBNr4Iov1kH&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1JI1a226LEP8Uyi46l8mb33IfEUlIWRNv&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1Y7cRMzdb9R3HfeaQnenhcjgtQ_LeGe19/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1ESZV60qJpFZPtVhKmrtbrn7JwabCoDgE/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-10-28T12:02:32.524Z"
+  "updatedAt": "2026-10-28T20:03:40.108Z"
 }
