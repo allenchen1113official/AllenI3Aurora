@@ -279,7 +279,7 @@ function HubPerformance({ list, ins }) {
 }
 
 /* 內容表格（儀表板「最近發布」與內容庫共用） */
-function HubTable({ rows, openPost, empty, compact }) {
+function HubTable({ rows, openPost, empty, compact, selected, onToggle, onToggleAll }) {
   const th = { textAlign: "left", fontWeight: 600, color: "var(--text-3)", fontSize: 12, padding: "9px 10px", borderBottom: "1px solid var(--border)", whiteSpace: "nowrap" };
   const td = { padding: "11px 10px", borderBottom: "1px solid var(--border-subtle)", verticalAlign: "middle", fontSize: 13.5, color: "var(--text-2)" };
   if (!rows.length) return <div style={{ ...muted, padding: "18px 0" }}>{empty}</div>;
@@ -287,6 +287,8 @@ function HubTable({ rows, openPost, empty, compact }) {
     <div style={{ overflowX: "auto" }}>
       <table style={{ borderCollapse: "collapse", width: "100%", minWidth: compact ? 680 : 900 }}>
         <thead><tr>
+          {selected ? <th style={{ ...th, width: 34 }}><input type="checkbox" aria-label="全選本頁" checked={rows.length > 0 && rows.every((r) => selected.has(r.id))}
+            onChange={(e) => onToggleAll(rows.map((r) => r.id), e.target.checked)} /></th> : null}
           <th style={th}>內容</th>{compact ? null : <th style={th}>分類</th>}<th style={th}>{compact ? "平台" : "平台發布狀態"}</th>
           <th style={th}>{compact ? "發布時間" : "排程 / 發布時間"}</th>
           <th style={{ ...th, textAlign: "right" }}>觸及</th><th style={{ ...th, textAlign: "right" }}>互動</th>
@@ -296,7 +298,8 @@ function HubTable({ rows, openPost, empty, compact }) {
           const st = hubStatus(r);
           const err = st === "failed" ? hubError(r) : "";
           return (
-            <tr key={r.id}>
+            <tr key={r.id} style={selected && selected.has(r.id) ? { background: "var(--brand-soft)" } : undefined}>
+              {selected ? <td style={td}><input type="checkbox" aria-label={"選取「" + (r.title || "未命名") + "」"} checked={selected.has(r.id)} onChange={() => onToggle(r.id)} /></td> : null}
               <td style={{ ...td, maxWidth: 340 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   {!compact ? (r.imageUrl
@@ -305,7 +308,7 @@ function HubTable({ rows, openPost, empty, compact }) {
                   <div style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 0 }}>
                     <strong style={{ color: "var(--text-1)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.title || "（未命名）"}</strong>
                     {!compact ? <span style={{ fontSize: 12, color: err ? "var(--danger)" : "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {err || ("更新於 " + tpMdHm(r.updatedAt || r.createdAt))}</span> : null}
+                      {err || ((hubArchived(r) ? "已封存 · " : "") + "更新於 " + tpMdHm(r.updatedAt || r.createdAt))}</span> : null}
                   </div>
                 </div>
               </td>
@@ -664,6 +667,113 @@ function HubComposer({ init, reload, flash, go }) {
 /* =====================================================================
    04 內容庫與發布管理
    ===================================================================== */
+/* ---------- 批次操作：核准、取消排程、複製、封存、刪除 ----------
+   每筆各自檢查、各自寫入；不符合條件的略過並列出原因，不會整批失敗。 */
+const hubArchived = (r) => !!(r.hub && r.hub.archived);
+const hubSendable = (r) => HUB_LIVE.filter((ch) => (ch === "fb" ? !!(r.fb && r.fb.enabled !== false) : chOn(r, ch)) && chState(r, ch) !== "published");
+const hubBusy = (r) => HUB_LIVE.some((ch) => chOn(r, ch) && HUB_ACTIVE.includes(chState(r, ch)));
+const hubAnyPublished = (r) => HUB_LIVE.some((ch) => chOn(r, ch) && chState(r, ch) === "published");
+const HUB_LIMITS = { ig: 2200, th: 500 };
+
+/* 核准前檢查（與建立內容頁相同規則），回傳錯誤訊息或空字串 */
+function hubApproveCheck(r, iso) {
+  if (hubArchived(r)) return "已封存";
+  if (hubBusy(r)) return "已在排程中";
+  const send = hubSendable(r);
+  if (!send.length) return hubAnyPublished(r) ? "已全部發布" : "沒有啟用可發布的平台（FB／IG／Threads）";
+  const t = Date.parse(iso || "");
+  if (!isFinite(t)) return "沒有排程時間（請在批次列選擇時間）";
+  if (t < Date.now() - 60000) return "排程時間已過（請在批次列選擇新時間）";
+  const img = String(r.imageUrl || "").trim();
+  const cap = (ch) => String((r[ch] && r[ch].caption) || "").trim();
+  if (img && !/^https:\/\//i.test(img)) return "圖片不是 https 公開網址";
+  if (send.includes("fb") && !cap("fb") && !img) return "FB 缺少內文或圖片";
+  if (send.includes("ig") && !img) return "IG 必須有圖片";
+  if (send.includes("th") && !cap("th") && !img) return "Threads 缺少文字或圖片";
+  for (const ch of send) if (HUB_LIMITS[ch] && [...cap(ch)].length > HUB_LIMITS[ch]) return `${ch.toUpperCase()} 超過 ${HUB_LIMITS[ch]} 字`;
+  return "";
+}
+
+const HUB_OPS = {
+  approve: {
+    label: "核准排程",
+    async run(r, { iso, who }) {
+      const when = iso || r.scheduledAt;
+      const why = hubApproveCheck(r, when); if (why) return why;
+      const now = new Date().toISOString();
+      const upd = { scheduledAt: new Date(Date.parse(when)).toISOString(), queueState: "pending", "review.approvedAt": now, "review.by": who, lock: { by: null, at: null }, updatedAt: now };
+      for (const ch of hubSendable(r)) Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null }, ch === "fb" ? {} : { [ch + ".containerId"]: null });
+      await db.collection(SOC_COLL).doc(r.id).update(upd);
+      return "";
+    },
+  },
+  /* 取消排程：尚未送出的退回草稿；已交給 Meta／平台處理中的改為取消請求，由排程器收尾 */
+  cancel: {
+    label: "取消排程",
+    async run(r) {
+      const ref = db.collection(SOC_COLL).doc(r.id);
+      return db.runTransaction(async (tx) => {
+        const d = (await tx.get(ref)).data() || {};
+        const lockAt = Date.parse((d.lock && d.lock.at) || "");
+        if (d.lock && d.lock.by && isFinite(lockAt) && Date.now() - lockAt < 15 * 60000) return "排程器正在處理，稍後再試";
+        if (HUB_LIVE.some((ch) => d[ch] && d[ch].enabled && d[ch].state === "publishing")) return "正在送出中，無法取消";
+        const upd = {}; const next = {};
+        for (const ch of HUB_LIVE) {
+          const st = d[ch] && d[ch].enabled ? d[ch].state : null;
+          if (st === "approved") next[ch] = "draft";
+          else if ((ch === "fb" && st === "scheduled") || (ch !== "fb" && st === "processing")) next[ch] = "cancel_requested";
+          else if (st) next[ch] = st;
+          if (next[ch] && next[ch] !== st) upd[ch + ".state"] = next[ch];
+        }
+        if (!Object.keys(upd).length) return "沒有可取消的排程";
+        const states = Object.values(next);
+        upd.queueState = states.includes("cancel_requested") ? "pending" : states.every((x) => x === "draft") ? "draft" : "done";
+        upd.updatedAt = new Date().toISOString();
+        tx.update(ref, upd);
+        return "";
+      });
+    },
+  },
+  copy: {
+    label: "複製為新草稿",
+    async run(r) {
+      const now = new Date().toISOString();
+      const ch = (c, extra = {}) => ({ enabled: !!(r[c] && r[c].enabled !== false && (c === "fb" || r[c].enabled)), caption: (r[c] && r[c].caption) || "", state: "draft", attempts: 0, error: null, ...extra });
+      await db.collection(SOC_COLL).add({
+        title: (r.title || "未命名") + "（複本）", imageUrl: r.imageUrl || "", note: "", scheduledAt: "", queueState: "draft",
+        source: { type: "copy", from: r.id },
+        fb: ch("fb", { link: (r.fb && r.fb.link) || "", postId: null }), ig: ch("ig"), th: ch("th"),
+        lock: { by: null, at: null }, hub: { ...(r.hub || {}), stage: "draft", archived: false }, createdAt: now, updatedAt: now,
+      });
+      return "";
+    },
+  },
+  archive: {
+    label: "封存",
+    async run(r) {
+      if (hubBusy(r)) return "排程中的內容請先取消排程";
+      await db.collection(SOC_COLL).doc(r.id).update({ "hub.archived": true, updatedAt: new Date().toISOString() });
+      return "";
+    },
+  },
+  unarchive: {
+    label: "取消封存",
+    async run(r) {
+      await db.collection(SOC_COLL).doc(r.id).update({ "hub.archived": false, updatedAt: new Date().toISOString() });
+      return "";
+    },
+  },
+  remove: {
+    label: "刪除",
+    async run(r) {
+      if (hubBusy(r)) return "排程中的內容請先取消排程";
+      if (hubAnyPublished(r)) return "已發布的內容保留紀錄與成效，請改用封存";
+      await db.collection(SOC_COLL).doc(r.id).delete();
+      return "";
+    },
+  },
+};
+
 const HUB_PAGE = 20;
 function hubCsv(rows) {
   const esc = (v) => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
@@ -672,16 +782,46 @@ function hubCsv(rows) {
     r.stats && r.stats.reach != null ? r.stats.reach : "", r.stats ? r.stats.engagement : "", tpMdHm(r.updatedAt)])]
     .map((l) => l.map(esc).join(",")).join("\r\n");
 }
-function HubLibrary({ list, openPost, query, setQuery }) {
+function HubLibrary({ list, openPost, query, setQuery, reload }) {
   const [f, setF] = useState("all");
   const [pf, setPf] = useState("all");
   const [cat, setCat] = useState("all");
   const [page, setPage] = useState(0);
-  useEffect(() => setPage(0), [f, pf, cat, query]);
+  const [selected, setSelected] = useState(() => new Set());
+  const [when, setWhen] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState(null); // { ok, lines }
+  useEffect(() => { setPage(0); setSelected(new Set()); }, [f, pf, cat, query]);
+  const who = (auth && auth.currentUser && auth.currentUser.email) || "";
   const q = query.trim().toLowerCase();
-  const base = list.filter((r) => (pf === "all" || hubPlatforms(r).some((p) => p.id === pf)) && (cat === "all" || (r.hub && r.hub.category) === cat)
+  const matched = list.filter((r) => (pf === "all" || hubPlatforms(r).some((p) => p.id === pf)) && (cat === "all" || (r.hub && r.hub.category) === cat)
     && (!q || [r.title, r.hub && r.hub.hashtags, r.fb && r.fb.caption].some((x) => String(x || "").toLowerCase().includes(q))));
-  const rows = base.filter((r) => f === "all" || hubStatus(r) === f).sort((a, b) => String(b.updatedAt || b.createdAt || "").localeCompare(String(a.updatedAt || a.createdAt || "")));
+  const base = matched.filter((r) => !hubArchived(r)); // 封存的只在「已封存」篩選出現
+  const archived = matched.filter(hubArchived);
+  const rows = (f === "archived" ? archived : base.filter((r) => f === "all" || hubStatus(r) === f))
+    .sort((a, b) => String(b.updatedAt || b.createdAt || "").localeCompare(String(a.updatedAt || a.createdAt || "")));
+  const picked = rows.filter((r) => selected.has(r.id));
+  const toggle = (id) => setSelected((x) => { const n = new Set(x); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const toggleAll = (ids, on) => setSelected((x) => { const n = new Set(x); ids.forEach((id) => (on ? n.add(id) : n.delete(id))); return n; });
+
+  const runBatch = async (op) => {
+    const def = HUB_OPS[op];
+    if (op === "remove" && !window.confirm(`確定刪除選取的 ${picked.length} 筆內容？刪除後無法復原（已發布的會自動略過）。`)) return;
+    if (op === "approve" && !window.confirm(`核准選取的 ${picked.length} 筆並交給排程器？${when ? "全部排在 " + when.replace("T", " ") + "（台北）" : "沿用各篇原本的排程時間"}。`)) return;
+    setBusy(true); setNote(null);
+    const iso = tpInputToIso(when);
+    let done = 0; const skipped = [];
+    for (const r of picked) {
+      try {
+        const why = await def.run(r, { iso, who });
+        if (why) skipped.push(`「${r.title || "未命名"}」${why}`); else done++;
+      } catch (ex) { skipped.push(`「${r.title || "未命名"}」失敗：${errText(ex)}`); }
+    }
+    await reload();
+    setSelected(new Set());
+    setNote({ ok: done > 0, lines: [`${def.label}：完成 ${done} 筆` + (skipped.length ? `，略過 ${skipped.length} 筆` : "")].concat(skipped) });
+    setBusy(false);
+  };
   const pages = Math.max(1, Math.ceil(rows.length / HUB_PAGE));
   const shown = rows.slice(page * HUB_PAGE, page * HUB_PAGE + HUB_PAGE);
   const exportCsv = () => {
@@ -699,6 +839,7 @@ function HubLibrary({ list, openPost, query, setQuery }) {
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
         <Pill on={f === "all"} onClick={() => setF("all")}>全部 <b>{base.length}</b></Pill>
         {[...HUB_ORDER, "rejected"].map((k) => <Pill key={k} on={f === k} onClick={() => setF(k)}>{HUB_ST[k].label} <b>{base.filter((r) => hubStatus(r) === k).length}</b></Pill>)}
+        <Pill on={f === "archived"} onClick={() => setF("archived")}>已封存 <b>{archived.length}</b></Pill>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
         <select className="ad-in" aria-label="平台" style={sel} value={pf} onChange={(e) => setPf(e.target.value)}>
@@ -709,8 +850,29 @@ function HubLibrary({ list, openPost, query, setQuery }) {
         </select>
         <input className="ad-in" type="search" aria-label="搜尋內容" placeholder="搜尋標題、內文或標籤" style={{ ...sel, flex: "1 1 200px" }} value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
+      {picked.length ? (
+        <div role="toolbar" aria-label="批次操作" style={{ ...card, padding: "10px 14px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, borderColor: "var(--border-aurora)" }}>
+          <strong style={{ fontSize: 13.5, color: "var(--text-1)", marginRight: 4 }}>已選 {picked.length} 筆</strong>
+          <label className="ad-lbl" htmlFor="hub-batch-when" style={{ margin: 0 }}>排程時間（台北）</label>
+          <input id="hub-batch-when" className="ad-in" type="datetime-local" style={{ width: "auto", padding: "6px 10px" }} value={when} onChange={(e) => setWhen(e.target.value)} title="留空則沿用各篇原本的排程時間" />
+          <button className="ad-btn primary" disabled={busy || who !== OWNER_EMAIL} onClick={() => runBatch("approve")}>核准排程</button>
+          <button className="ad-btn" disabled={busy || who !== OWNER_EMAIL} onClick={() => runBatch("cancel")}>取消排程</button>
+          <button className="ad-btn ghost" disabled={busy || who !== OWNER_EMAIL} onClick={() => runBatch("copy")}>複製為新草稿</button>
+          {f === "archived"
+            ? <button className="ad-btn ghost" disabled={busy || who !== OWNER_EMAIL} onClick={() => runBatch("unarchive")}>取消封存</button>
+            : <button className="ad-btn ghost" disabled={busy || who !== OWNER_EMAIL} onClick={() => runBatch("archive")}>封存</button>}
+          <button className="ad-btn danger" disabled={busy || who !== OWNER_EMAIL} onClick={() => runBatch("remove")}>刪除</button>
+          <span style={{ flex: 1 }} />
+          <button className="ad-btn ghost" onClick={() => setSelected(new Set())}>清除選取</button>
+        </div>
+      ) : null}
+      {note ? (
+        <div role="status" style={{ fontSize: 13, lineHeight: 1.7, color: note.ok ? "var(--success)" : "var(--warning)" }}>
+          {note.lines.map((l, i) => <div key={i} style={i ? { color: "var(--text-3)", fontSize: 12.5 } : undefined}>{l}</div>)}
+        </div>
+      ) : null}
       <section aria-label="內容清單" style={{ ...card, padding: "6px 14px 12px" }}>
-        <HubTable rows={shown} openPost={openPost} empty="沒有符合條件的內容。" />
+        <HubTable rows={shown} openPost={openPost} empty="沒有符合條件的內容。" selected={selected} onToggle={toggle} onToggleAll={toggleAll} />
         <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 12, flexWrap: "wrap" }}>
           <span style={muted}>顯示 {rows.length ? page * HUB_PAGE + 1 : 0}–{page * HUB_PAGE + shown.length}，共 {rows.length} 筆</span>
           <span style={{ flex: 1 }} />
@@ -858,6 +1020,7 @@ function ContentHubPanel() {
   useEffect(() => { load(); }, [load]);
 
   const flash = (m) => { setToast(m); setTimeout(() => setToast(""), 4200); };
+  const live = (list || []).filter((r) => !hubArchived(r)); // 封存的內容只在內容庫「已封存」出現
   const openPost = (r) => { setDraft(hubFromPost(r)); setView("compose"); setToast(""); };
   const newPost = () => { setDraft(hubBlank()); setView("compose"); setToast(""); };
   const go = (v) => { if (v === "compose") newPost(); else setView(v); };
@@ -883,11 +1046,11 @@ function ContentHubPanel() {
       {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
       {toast && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{toast}</div>}
       {list == null ? <div style={{ color: "var(--text-3)" }}>載入中…</div>
-        : view === "dash" ? <HubDashboard list={list} meta={meta} ins={ins} go={go} openPost={openPost} />
-        : view === "calendar" ? <HubCalendar list={list} openPost={openPost} newPost={newPost} />
+        : view === "dash" ? <HubDashboard list={live} meta={meta} ins={ins} go={go} openPost={openPost} />
+        : view === "calendar" ? <HubCalendar list={live} openPost={openPost} newPost={newPost} />
         : view === "compose" ? <HubComposer init={draft} reload={load} flash={flash} go={go} />
-        : view === "library" ? <HubLibrary list={list} openPost={openPost} query={query} setQuery={setQuery} />
-        : <HubPlatforms list={list} meta={meta} reload={load} />}
+        : view === "library" ? <HubLibrary list={list} openPost={openPost} query={query} setQuery={setQuery} reload={load} />
+        : <HubPlatforms list={live} meta={meta} reload={load} />}
     </div>
   );
 }
