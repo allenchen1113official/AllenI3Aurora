@@ -1,9 +1,9 @@
 {
-  "date": "2026.10.28",
-  "dateLabel": "2026.10.28（最新）",
-  "asOf": "2026.10.29",
-  "desc": "台股每日分析 TOP 10 2026…",
-  "summary": "台股每日分析 TOP 10 2026-10-28（三），「項」＝達標訊號數（KD黃金交叉／均線多頭／營益率10%／營收年增20%／EPS年增10%），詳見圖卡。，台股選股雷達",
+  "date": "2026.10.29",
+  "dateLabel": "2026.10.29（最新）",
+  "asOf": "2026.10.30",
+  "desc": "【台股選股雷達 TOP 10 202…",
+  "summary": "【台股選股雷達 TOP 10 2026/10/29（週四）】，今日 TOP10 中，晶豪科三項基本面全達標；禾伸堂出現 KD 黃金交叉（低檔交叉）。，台股選股雷達",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -36,76 +36,72 @@
     {
       "code": "4916",
       "name": "事欣科",
-      "changePct": "",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "3006",
-      "name": "晶豪科",
-      "changePct": "",
+      "changePct": "+25.34%",
       "up": true,
       "signals": []
     },
     {
       "code": "2603",
       "name": "長榮",
-      "changePct": "",
+      "changePct": "+73.69%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "3006",
+      "name": "晶豪科",
+      "changePct": "+42.32%",
       "up": true,
       "signals": []
     },
     {
       "code": "3014",
       "name": "聯陽",
-      "changePct": "",
+      "changePct": "+24.80%",
       "up": true,
       "signals": []
-    },
-    {
-      "code": "3167",
-      "name": "大量",
-      "changePct": "",
-      "up": true,
-      "signals": [
-        "gc"
-      ]
-    },
-    {
-      "code": "6179",
-      "name": "亞通",
-      "changePct": "",
-      "up": true,
-      "signals": [
-        "gc"
-      ]
-    },
-    {
-      "code": "1303",
-      "name": "南亞",
-      "changePct": "",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6147",
-      "name": "頎邦",
-      "changePct": "",
-      "up": true,
-      "signals": [
-        "gc"
-      ]
     },
     {
       "code": "6278",
       "name": "台表科",
-      "changePct": "",
+      "changePct": "+69.39%",
       "up": true,
       "signals": []
     },
     {
-      "code": "6438",
-      "name": "迅得",
-      "changePct": "",
+      "code": "3026",
+      "name": "禾伸堂",
+      "changePct": "+45.41%",
+      "up": true,
+      "signals": [
+        "gc"
+      ]
+    },
+    {
+      "code": "3293",
+      "name": "鈊象",
+      "changePct": "+54.21%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "3675",
+      "name": "德微",
+      "changePct": "+55.20%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "6173",
+      "name": "信昌電",
+      "changePct": "+57.86%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "2609",
+      "name": "陽明",
+      "changePct": "+63.70%",
       "up": true,
       "signals": []
     }
@@ -114,9 +110,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1JI1a226LEP8Uyi46l8mb33IfEUlIWRNv&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1aMuI2ULffgIKNrRCsME7yjfnQYQZTpag&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1ESZV60qJpFZPtVhKmrtbrn7JwabCoDgE/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1R1oILqSHmQl__PA0YVN3GLPFX7oo45fl/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-10-29T09:17:21.522Z"
+  "updatedAt": "2026-10-29T17:58:39.655Z"
 }
