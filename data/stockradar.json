@@ -1,9 +1,9 @@
 {
-  "date": "2026.10.29",
-  "dateLabel": "2026.10.29（最新）",
+  "date": "2026.10.30",
+  "dateLabel": "2026.10.30",
   "asOf": "2026.10.30",
-  "desc": "【台股選股雷達 TOP 10 202…",
-  "summary": "【台股選股雷達 TOP 10 2026/10/29（週四）】，今日 TOP10 中，晶豪科三項基本面全達標；禾伸堂出現 KD 黃金交叉（低檔交叉）。，台股選股雷達",
+  "desc": "• 長榮(2603) 今日 KD 黃…",
+  "summary": "• 長榮(2603) 今日 KD 黃金交叉，且均線呈多頭排列、營益率近4季達標。，• 大量(3167) 五項訊號中四項達標（均線多頭、營益率、營收年增、EPS年增），為本日訊號最完整個股。，• 晶豪科(3006) 財務三項達標，但月線走勢向下、均線…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,74 +34,74 @@
   ],
   "top10": [
     {
-      "code": "4916",
-      "name": "事欣科",
-      "changePct": "+25.34%",
-      "up": true,
-      "signals": []
-    },
-    {
       "code": "2603",
       "name": "長榮",
-      "changePct": "+73.69%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "3006",
-      "name": "晶豪科",
-      "changePct": "+42.32%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "3014",
-      "name": "聯陽",
-      "changePct": "+24.80%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6278",
-      "name": "台表科",
-      "changePct": "+69.39%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "3026",
-      "name": "禾伸堂",
-      "changePct": "+45.41%",
+      "changePct": "+4.02%",
       "up": true,
       "signals": [
         "gc"
       ]
     },
     {
-      "code": "3293",
-      "name": "鈊象",
-      "changePct": "+54.21%",
+      "code": "2615",
+      "name": "萬海",
+      "changePct": "+4.35%",
       "up": true,
       "signals": []
     },
     {
-      "code": "3675",
-      "name": "德微",
-      "changePct": "+55.20%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6173",
-      "name": "信昌電",
-      "changePct": "+57.86%",
-      "up": true,
+      "code": "3006",
+      "name": "晶豪科",
+      "changePct": "-1.95%",
+      "up": false,
       "signals": []
     },
     {
       "code": "2609",
       "name": "陽明",
-      "changePct": "+63.70%",
+      "changePct": "+2.42%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "6179",
+      "name": "亞通",
+      "changePct": "+2.28%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "6278",
+      "name": "台表科",
+      "changePct": "-8.18%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "3167",
+      "name": "大量",
+      "changePct": "-0.42%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "6146",
+      "name": "耕興",
+      "changePct": "+2.18%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "2612",
+      "name": "中航",
+      "changePct": "",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "2617",
+      "name": "台航",
+      "changePct": "+0.79%",
       "up": true,
       "signals": []
     }
@@ -110,9 +110,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1aMuI2ULffgIKNrRCsME7yjfnQYQZTpag&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=157D71aBtWhH2eu8F1Es22yB4iX0DBc-F&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1R1oILqSHmQl__PA0YVN3GLPFX7oo45fl/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1ojkFc8Ees6GZDgIAWHEHRanzBGA_A-sc/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-10-30T12:04:02.209Z"
+  "updatedAt": "2026-10-30T15:08:44.000Z"
 }
