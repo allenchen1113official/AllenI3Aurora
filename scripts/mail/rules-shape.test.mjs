@@ -79,3 +79,9 @@ test("規則仍禁止在舊規則中存在的危險路徑：以 email 為 doc id
   assert.ok(!/match \/aurora_subscribers\/\{email\}/.test(rules), "規則仍以 email 為路徑參數");
   assert.ok(!/selfServiceValid|subValid/.test(rules), "舊版函式殘留");
 });
+
+test("規則檔首行語法版本固定為 2，並有版次與最後更新註解", () => {
+  assert.equal(rules.split("\n")[0].trim(), "rules_version = '2';", "rules_version 只接受 '1' 或 '2'，不可遞增");
+  assert.match(rules, /規則版次：r\d+/, "缺「規則版次：rN」");
+  assert.match(rules, /最後更新：\d{4}-\d{2}-\d{2} \d{2}:\d{2}/, "缺「最後更新：YYYY-MM-DD HH:MM」");
+});
