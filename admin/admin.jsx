@@ -16,6 +16,7 @@ const OWNER_EMAIL = "allenchen1113.official@gmail.com"; // 需與 firebase/fires
    PilotOne＝內容中控台＋社群發文審核，同一份 aurora_social_posts 佇列。
    獨立入口 admin/pilotone/（window.PILOTONE=true 時以產品殼呈現）；後台管理的左側導覽也保留這兩項。 */
 const IS_PILOTONE = !!window.PILOTONE;
+const IS_MONITOR = !!window.AURORA_MONITOR; // admin/monitor/：只露出「排程監控」（admin/schedule-monitor.jsx）
 const PILOTONE = {
   name: "PilotOne",
   zh: "社群發文中控",
@@ -182,7 +183,7 @@ function Login() {
             ? <img src={PILOTONE.mark} alt="PilotOne" width={56} height={56} style={{ borderRadius: 14, boxShadow: "var(--glow-brand)" }} />
             : <span style={{ display: "inline-grid", placeItems: "center", width: 44, height: 44, borderRadius: 12, background: "var(--aurora-gradient)", color: "var(--text-on-accent)", fontFamily: "var(--font-display)", fontWeight: 900, boxShadow: "var(--glow-brand)" }}>AI³A</span>}
           <h1 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 20, margin: "12px 0 2px" }}>
-            {IS_PILOTONE ? <>Pilot<span style={{ background: "var(--aurora-gradient)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One</span> 登入</> : "後台管理登入"}
+            {IS_PILOTONE ? <>Pilot<span style={{ background: "var(--aurora-gradient)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One</span> 登入</> : IS_MONITOR ? "排程監控登入" : "後台管理登入"}
           </h1>
           <div style={{ color: "var(--text-3)", fontSize: 12.5 }}>{IS_PILOTONE ? PILOTONE.zh + " · " + PILOTONE.byline : "艾倫報報 · Allen I³ Aurora"}</div>
         </div>
@@ -2213,16 +2214,18 @@ function SocialPanel() {
 
 /* ---------- 主控台 ---------- */
 const HUB_NAV = "__hub"; // 內容中控台（admin/content-hub.jsx）
+const MON_NAV = "__monitor"; // 排程監控（admin/schedule-monitor.jsx）
 function Console({ user }) {
-  const [active, setActive] = useState(NL_NAV);
+  const [active, setActive] = useState(() => (location.hash === "#monitor" ? MON_NAV : NL_NAV));
   const sec = SECTIONS.find((s) => s.id === active);
   const HubPanel = window.ContentHubPanel; // admin/content-hub.jsx 於本檔之後載入
-  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: HUB_NAV, label: "PilotOne 中控台" }, { id: SOC_NAV, label: "PilotOne 審核" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
+  const MonPanel = window.ScheduleMonitorPanel; // admin/schedule-monitor.jsx 於本檔之後載入
+  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: HUB_NAV, label: "PilotOne 中控台" }, { id: SOC_NAV, label: "PilotOne 審核" }, { id: PC_NAV, label: "Podcast 節目" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, { id: MON_NAV, label: "排程監控" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
       <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
-        <div style={{ ...wrap, display: "flex", alignItems: "center", gap: 14, padding: "14px 20px" }}>
-          <span style={{ display: "inline-grid", placeItems: "center", width: 34, height: 34, borderRadius: 10, background: "var(--aurora-gradient)", color: "var(--text-on-accent)", fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 12 }}>AI³A</span>
+        <div className="ad-top" style={{ ...wrap, display: "flex", alignItems: "center", gap: 14, padding: "14px 20px" }}>
+          <span style={{ flex: "none", display: "inline-grid", placeItems: "center", width: 34, height: 34, borderRadius: 10, background: "var(--aurora-gradient)", color: "var(--text-on-accent)", fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 12 }}>AI³A</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "var(--font-display)", fontWeight: 900, color: "var(--text-1)", fontSize: 16 }}>後台管理</div>
             <div style={{ color: "var(--text-3)", fontSize: 11.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
@@ -2231,12 +2234,12 @@ function Console({ user }) {
           <button className="ad-btn" onClick={() => auth.signOut()}>登出</button>
         </div>
       </header>
-      <div style={{ ...wrap, display: "flex", gap: 22, padding: "22px 20px", alignItems: "flex-start" }}>
-        <nav style={{ width: 168, flex: "none", display: "flex", flexDirection: "column", gap: 4, position: "sticky", top: 78 }}>
+      <div className="ad-shell" style={{ ...wrap, display: "flex", gap: 22, padding: "22px 20px", alignItems: "flex-start" }}>
+        <nav className="ad-nav" style={{ width: 168, flex: "none", display: "flex", flexDirection: "column", gap: 4, position: "sticky", top: 78 }}>
           {NAV.map((s) => {
             const on = s.id === active;
             return (
-              <button key={s.id} onClick={() => setActive(s.id)}
+              <button key={s.id} onClick={() => { setActive(s.id); try { history.replaceState(null, "", s.id === MON_NAV ? "#monitor" : location.pathname); } catch {} }}
                 style={{ textAlign: "left", cursor: "pointer", padding: "10px 12px", borderRadius: "var(--radius-md)", fontSize: 14, fontFamily: "var(--font-display)", fontWeight: 700,
                   border: "1px solid " + (on ? "var(--border-aurora)" : "transparent"), background: on ? "var(--brand-soft)" : "transparent", color: on ? "var(--text-1)" : "var(--text-3)" }}>
                 {s.label}
@@ -2257,6 +2260,7 @@ function Console({ user }) {
             : active === SUB_NAV ? <SubscribersPanel />
             : active === CAMP_NAV ? <CampaignsPanel />
             : active === WEALTH_NAV ? <WealthPanel />
+            : active === MON_NAV ? (MonPanel ? <MonPanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)
             : <SectionEditor key={sec.id} sec={sec} />}
         </main>
       </div>
@@ -2316,6 +2320,31 @@ function PilotOneConsole({ user }) {
   );
 }
 
+/* ---------- 排程監控獨立入口（admin/monitor/index.html） ----------
+   同一份登入與 Firestore，只露出「排程監控」面板，手機上全寬顯示。 */
+function MonitorConsole({ user }) {
+  const MonPanel = window.ScheduleMonitorPanel;
+  useEffect(() => { document.title = "排程監控 · 艾倫報報後台"; }, []);
+  return (
+    <div>
+      <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
+        <div className="ad-top" style={{ maxWidth: 1280, margin: "0 auto", display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}>
+          <span style={{ flex: "none", display: "inline-grid", placeItems: "center", width: 34, height: 34, borderRadius: 10, background: "var(--aurora-gradient)", color: "var(--text-on-accent)", fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 12 }}>AI³A</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 900, color: "var(--text-1)", fontSize: 16 }}>排程監控</div>
+            <div style={{ color: "var(--text-3)", fontSize: 11.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
+          </div>
+          <a className="ad-btn ghost" href="/AllenI3Aurora/admin/">後台管理</a>
+          <button className="ad-btn" onClick={() => auth.signOut()}>登出</button>
+        </div>
+      </header>
+      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "18px 16px 40px" }}>
+        {MonPanel ? <MonPanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>}
+      </main>
+    </div>
+  );
+}
+
 /* ---------- 根 ---------- */
 function App() {
   const [user, setUser] = useState(null);
@@ -2329,7 +2358,7 @@ function App() {
   if (!configured) return <Setup />;
   if (!ready) return <Center><div style={{ color: "var(--text-3)" }}>載入中…</div></Center>;
   if (!user) return <Login />;
-  return IS_PILOTONE ? <PilotOneConsole user={user} /> : <Console user={user} />;
+  return IS_MONITOR ? <MonitorConsole user={user} /> : IS_PILOTONE ? <PilotOneConsole user={user} /> : <Console user={user} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);

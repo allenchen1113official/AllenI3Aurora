@@ -1,0 +1,57 @@
+name: 排程監控代理
+
+# 監控本 repo 所有 GitHub Actions 排程、data/*.json 產出新鮮度與 Claude 排程任務的產出，
+# 並處理後台「排程監控」頁送來的重新執行請求。邏輯見 scripts/monitor/（SOP：docs/SCHEDULE_MONITOR_SOP.md）。
+#   - 自動重試：冪等的資料同步排程失敗 → 重跑失敗的工作一次
+#   - 補跑：GitHub 尖峰時會延遲甚至丟棄排程（*/10 的工作實測常數小時才跑一次）
+#           → 以 workflow_dispatch 補跑（dispatch 事件不受排程節流）
+#   - 告警：異常時開 GitHub Issue（label: schedule-monitor），恢復後自動關閉
+#   - 快照：寫入 Firestore aurora_ops/schedule_status，後台監控頁即時訂閱
+# 需要的 Secrets：FIREBASE_SERVICE_ACCOUNT（與社群發文共用；未設定時只做監控與 Issue 告警）
+# 選用 Variables：MONITOR_ISSUES=off（關閉 Issue 告警）、MONITOR_AUTOHEAL=off（關閉自動重試與補跑）
+# 註：GitHub 排程以 UTC 計，本排程與時區無關；避開整點以降低被延遲的機率。
+on:
+  schedule:
+    - cron: "3-58/5 * * * *"   # 每 5 分鐘（每小時 :03 起），台北／UTC 皆同
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/schedule-monitor.yml"
+      - "scripts/monitor/**"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只評估並列出（不觸發、不開 Issue、不寫入快照）"
+        type: boolean
+        default: false
+
+concurrency:
+  group: schedule-monitor
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write   # 觸發 workflow_dispatch／重跑失敗的工作
+  issues: write    # 異常告警
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 行為測試
+        run: node --test scripts/monitor/monitor.test.mjs
+      - name: 安裝 firebase-admin
+        run: npm install --no-save --no-audit --no-fund firebase-admin@13
+      - name: 監控一輪
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          MONITOR_ISSUES: ${{ vars.MONITOR_ISSUES }}
+          MONITOR_AUTOHEAL: ${{ vars.MONITOR_AUTOHEAL }}
+          MONITOR_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
+        run: node scripts/monitor/run-monitor.mjs

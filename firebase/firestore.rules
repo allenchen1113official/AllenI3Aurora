@@ -104,5 +104,40 @@ service cloud.firestore {
     match /aurora_campaigns/{id} { allow read, write: if isOwner(); }
     // 訂閱 worker 執行摘要（最後執行、舊資料搬遷結果）：管理者唯讀，僅 worker 寫入。
     match /aurora_subscribers_meta/{doc} { allow read: if isOwner(); allow write: if false; }
+
+    // ---------------------------------------------------------------
+    // 排程監控（後台「排程監控」頁 ↔ schedule-monitor.yml 監控代理）
+    // ---------------------------------------------------------------
+    // 監控快照與代理日誌：管理者唯讀，僅代理（Admin SDK）寫入。
+    match /aurora_ops/{doc} { allow read: if isOwner(); allow write: if false; }
+
+    // 重新執行請求：管理者建立，代理認領後觸發 workflow 並回寫結果。
+    // 佇列模式 state 必為 queued；後台以個人 Token 直接觸發時寫 dispatched＋mode direct（僅留紀錄供代理追蹤結果）。
+    // 管理者之後只能把 queued 改成 cancelled（其餘狀態由代理推進）。
+    function opsReqFields() {
+      return ['workflow', 'action', 'runId', 'inputs', 'note', 'state', 'mode',
+              'requestedBy', 'requestedAt', 'dispatchedAt', 'runUrl', 'updatedAt'];
+    }
+    function validOpsRequest() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(opsReqFields())
+        && d.keys().hasAll(['workflow', 'action', 'state', 'mode', 'requestedAt'])
+        && d.workflow is string && d.workflow.matches('^[a-z0-9][a-z0-9-]{0,60}[.]ya?ml$')
+        && d.action in ['dispatch', 'rerun_failed', 'rerun']
+        && ((d.state == 'queued' && d.mode == 'queue') || (d.state == 'dispatched' && d.mode == 'direct'))
+        && d.requestedAt is string && d.requestedAt.size() <= 40
+        && d.get('note', '') is string && d.get('note', '').size() <= 200
+        && d.get('inputs', {}) is map && d.get('inputs', {}).size() <= 5
+        && (d.action == 'dispatch' || d.get('runId', null) is int);
+    }
+    match /aurora_ops_requests/{id} {
+      allow read: if isOwner();
+      allow create: if isOwner() && validOpsRequest();
+      allow update: if isOwner()
+        && resource.data.state == 'queued'
+        && request.resource.data.state == 'cancelled'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['state', 'updatedAt']);
+      allow delete: if isOwner();
+    }
   }
 }
