@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vlog 影片系列 — 艾倫報報</title>
+<meta name="description" content="Allen & Ann 的旅行 Vlog：冰島環島 2026 共 12 集，每集 18 分鐘，含行前規劃、每日自駕行程、花費總整理與極光攝影設定。艾倫報報 Allen I³ Aurora。">
+<link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
+<link rel="stylesheet" href="/AllenI3Aurora/styles.css">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vlog 影片系列 — 艾倫報報">
+<meta property="og:description" content="冰島環島 2026：12 集自駕 Vlog，行前準備、每日行程、花費與極光攝影。">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/AllenI3Aurora/firebase-config.js"></script>
+<style>
+  html, body { height: auto; }
+  body { margin: 0; min-height: 100vh; color: var(--text-2); }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: var(--space-8, 28px) var(--gutter, 20px) var(--space-24, 96px); }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--aurora-gradient); display: grid; place-items: center; font-family: var(--font-display, system-ui); font-weight: 900; font-size: 12px; color: var(--text-on-accent, #0b0d12); }
+  .brand .name { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 18px; color: var(--text-1); letter-spacing: .02em; }
+  .back { font-size: 14px; color: var(--text-3); text-decoration: none; border: 1px solid var(--border); border-radius: var(--radius-pill, 999px); padding: 7px 15px; }
+  h1 { font-family: var(--font-display, system-ui); font-weight: 900; font-size: clamp(1.9rem, 5vw, 2.8rem); line-height: 1.1; letter-spacing: -.02em; color: var(--text-1); margin: 0 0 14px; }
+  .dek { color: var(--text-2); font-size: 1.05rem; line-height: 1.7; margin: 0 0 26px; max-width: 68ch; }
+  .series { font-family: var(--font-display, system-ui); font-weight: 800; color: var(--text-1); font-size: 1.2rem; margin: 30px 0 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .card { border: 1px solid var(--border); border-radius: var(--radius-xl, 24px); overflow: hidden; background: var(--night-800); box-shadow: var(--shadow-card); display: flex; flex-direction: column; }
+  .card .media { aspect-ratio: 16/9; background: #0b0d12; }
+  .card .media iframe, .card .media img { width: 100%; height: 100%; border: 0; display: block; object-fit: cover; }
+  .card .body { padding: 14px 16px 16px; display: grid; gap: 8px; }
+  .ep { font-family: var(--font-mono, monospace); font-size: 12px; color: var(--brand, #7dd3fc); letter-spacing: .08em; }
+  .ttl { font-family: var(--font-display, system-ui); font-weight: 800; color: var(--text-1); font-size: 15.5px; line-height: 1.4; }
+  .meta { color: var(--text-3); font-size: 12.5px; }
+  details { border-top: 1px solid var(--border-subtle); padding-top: 8px; }
+  summary { cursor: pointer; color: var(--text-3); font-size: 13px; }
+  .chap { font-size: 13px; line-height: 1.8; color: var(--text-2); margin: 6px 0 0; padding: 0; list-style: none; }
+  .chap b { font-family: var(--font-mono, monospace); color: var(--text-3); font-weight: 500; margin-right: 8px; }
+  .desc { white-space: pre-wrap; font-size: 13px; line-height: 1.7; color: var(--text-2); margin-top: 6px; }
+  .empty { color: var(--text-3); padding: 30px 0; }
+</style>
+</head>
+<body class="aurora-bg">
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="/AllenI3Aurora/"><span class="mark">AI³A</span><span class="name">艾倫報報</span></a>
+    <a class="back" href="/AllenI3Aurora/">← 回首頁</a>
+  </div>
+  <h1>Vlog 影片系列</h1>
+  <p class="dek">Allen &amp; Ann 的旅行影片日記。冰島環島 2026：逆時針一號公路、2,294 公里、10 天 9 晚，從行前規劃到極光夜，一集一天。</p>
+  <div id="list" class="empty">載入中…</div>
+</div>
+<script>
+(function () {
+  var FBC = window.FIREBASE_CONFIG || {};
+  var el = document.getElementById("list");
+  if (!(FBC.apiKey && FBC.projectId && window.firebase)) { el.textContent = "尚未設定資料來源。"; return; }
+  if (!firebase.apps.length) firebase.initializeApp(FBC);
+  var esc = function (s) { return String(s || "").replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]; }); };
+  var ytId = function (m) { var v = (m && (m.youtubeId || m.youtubeUrl)) || ""; var x = String(v).match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([A-Za-z0-9_-]{6,})/); return x ? x[1] : (/^[A-Za-z0-9_-]{6,}$/.test(v) ? v : ""); };
+  firebase.firestore().collection("aurora_vlog_episodes").where("status", "==", "published").get().then(function (snap) {
+    var rows = snap.docs.map(function (d) { return d.data(); }).sort(function (a, b) { return (a.sort || 0) - (b.sort || 0); });
+    if (!rows.length) { el.textContent = "影片陸續上架中，敬請期待。"; return; }
+    var bySeries = {};
+    rows.forEach(function (r) { (bySeries[r.series || "其他"] = bySeries[r.series || "其他"] || []).push(r); });
+    el.className = ""; el.innerHTML = "";
+    Object.keys(bySeries).forEach(function (name) {
+      var h = document.createElement("div"); h.className = "series"; h.textContent = name + "（" + bySeries[name].length + " 集）"; el.appendChild(h);
+      var g = document.createElement("div"); g.className = "grid";
+      bySeries[name].forEach(function (r) {
+        var id = ytId(r.media), m = r.media || {};
+        var media = id ? '<iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/' + id + '" title="' + esc(r.title) + '" allowfullscreen></iframe>'
+          : (/^https?:/.test(m.thumbnail || "") ? '<img loading="lazy" src="' + esc(m.thumbnail) + '" alt="">' : "");
+        var chap = (r.chapters || []).map(function (c) { return "<li><b>" + esc(c.t) + "</b>" + esc(c.name) + "</li>"; }).join("");
+        var lead = String(r.description || "").split("\n").slice(0, 2).join("\n");
+        g.insertAdjacentHTML("beforeend",
+          '<article class="card"><div class="media">' + media + '</div><div class="body">' +
+          '<div class="ep">EP' + String(r.ep || 0).padStart(2, "0") + (r.day ? " · " + esc(r.day) : "") + (m.duration ? " · " + esc(m.duration) : "") + '</div>' +
+          '<div class="ttl">' + (id ? '<a href="https://www.youtube.com/watch?v=' + id + '" target="_blank" rel="noopener" style="text-decoration:none">' + esc(r.title) + '</a>' : esc(r.title)) + '</div>' +
+          '<div class="desc">' + esc(lead) + '</div>' +
+          (chap ? '<details><summary>章節（' + (r.chapters || []).length + '）</summary><ul class="chap">' + chap + '</ul></details>' : "") +
+          '</div></article>');
+      });
+      el.appendChild(g);
+    });
+  }).catch(function (e) { el.textContent = "讀取失敗：" + (e && e.message || e); });
+})();
+</script>
+</body>
+</html>
