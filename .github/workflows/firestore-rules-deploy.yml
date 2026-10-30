@@ -27,6 +27,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # 需要上一版 firestore.rules 比對版次
+      - name: 檢查規則版次與語法版本
+        run: |
+          F=firebase/firestore.rules
+          head -n 1 "$F" | grep -qx "rules_version = '2';" || { echo "::error::首行必須是 rules_version = '2';（Firestore 規則語法版本只接受 1 或 2，不可遞增）"; exit 1; }
+          CUR=$(grep -oP '規則版次：r\K[0-9]+' "$F" | head -1)
+          grep -qP '最後更新：\d{4}-\d{2}-\d{2} \d{2}:\d{2}' "$F" || { echo "::error::缺少「最後更新：YYYY-MM-DD HH:MM」註解"; exit 1; }
+          [[ -n "$CUR" ]] || { echo "::error::缺少「規則版次：rN」註解"; exit 1; }
+          if git cat-file -e HEAD^:"$F" 2>/dev/null && ! git diff --quiet HEAD^ HEAD -- "$F"; then
+            PREV=$(git show HEAD^:"$F" | grep -oP '規則版次：r\K[0-9]+' | head -1)
+            if [[ -n "$PREV" && "$CUR" -le "$PREV" ]]; then
+              echo "::error::firestore.rules 有修改但規則版次未遞增（上一版 r$PREV，本版 r$CUR）"; exit 1
+            fi
+            echo "規則版次 r${PREV:-?} → r$CUR"
+          else
+            echo "規則版次 r$CUR（本次未修改規則檔）"
+          fi
       - uses: actions/setup-node@v4
         with:
           node-version: 20
