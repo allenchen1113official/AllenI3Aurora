@@ -25,14 +25,31 @@
             padding: 9px 14px; border: 1px solid var(--border); background: var(--night-700); color: var(--text-1); transition: filter .15s; }
   .ad-btn:hover { filter: brightness(1.1); }
   .ad-btn.primary { background: var(--aurora-gradient); border-color: transparent; color: var(--text-on-accent); box-shadow: var(--glow-brand); }
+  .ad-btn:disabled { opacity: .5; cursor: not-allowed; }
   .ad-btn.danger  { background: transparent; border-color: var(--danger); color: var(--danger); }
   .ad-btn.ghost   { background: transparent; }
   label.ad-lbl { display: block; font-size: 11.5px; color: var(--text-3); margin: 0 0 5px; letter-spacing: .03em; font-weight: 600; }
+  /* 窄螢幕：左側導覽改為頂部橫向捲動 */
+  @media (max-width: 760px) {
+    .ad-shell { flex-direction: column !important; gap: 12px !important; padding: 14px 12px !important; }
+    .ad-nav { width: 100% !important; flex-direction: row !important; overflow-x: auto; position: static !important; padding-bottom: 4px; }
+    .ad-nav button { flex: none; white-space: nowrap; }
+    .ad-nav a { display: none !important; }
+    .ad-top { flex-wrap: wrap; padding: 12px !important; }
+  }
 </style>
+<!-- 排程監控共用邏輯（與監控代理同一份）：載入後掛到 window.AuroraMonitorCore -->
+<script type="module">
+  import * as core from "/AllenI3Aurora/scripts/monitor/core.mjs";
+  import * as registry from "/AllenI3Aurora/scripts/monitor/registry.mjs";
+  window.AuroraMonitorCore = { ...core, registry };
+  window.dispatchEvent(new Event("aurora-monitor-core"));
+</script>
 </head>
 <body class="aurora-bg">
 <div id="root"></div>
 <script type="text/babel" src="admin.jsx" data-presets="react"></script>
 <script type="text/babel" src="content-hub.jsx" data-presets="react"></script>
+<script type="text/babel" src="schedule-monitor.jsx" data-presets="react"></script>
 </body>
 </html>
