@@ -280,3 +280,24 @@ test("宣告 color-scheme dark、外框有 bgcolor、寬度 600、標籤成對",
   assert.equal((html.match(/<table/g) || []).length, (html.match(/<\/table>/g) || []).length);
 });
 test("每封信頁尾都有隱私權政策連結", () => assert.ok(sample().html.includes("privacy.html")));
+
+/* 後台實際存的是 b.t（NL_BLOCKS）——先前版型只認 b.type，正式信件內文會整段消失 */
+test("後台格式的區塊（b.t）也會出現在 HTML 與純文字版", () => {
+  const blocks = [{ t: "h2", text: "後台標題" }, { t: "lead", text: "後台段落" }, { t: "callout", title: "框", text: "重點" }];
+  const m = issueMail({ kind: "日報", no: "1", title: "t" }, blocks, "tok");
+  assert.ok(m.html.includes("後台標題") && m.html.includes("後台段落") && m.html.includes("重點"));
+  assert.ok(m.text.includes("【後台標題】") && m.text.includes("後台段落"));
+});
+test("YouTube 區塊：縮圖連到影片＋實色按鈕；無效網址略過；純文字附網址", () => {
+  const blocks = [
+    { t: "youtube", url: "https://youtu.be/dQw4w9WgXcQ", title: "EP01 <冰島>", text: "行前準備 11 件事" },
+    { t: "youtube", url: "不是影片", title: "壞的" },
+  ];
+  const m = issueMail({ kind: "週報", no: "30", title: "t" }, blocks, "tok");
+  assert.ok(m.html.includes("https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"));
+  assert.ok(m.html.includes('href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"'));
+  assert.ok(m.html.includes("EP01 &lt;冰島&gt;") && !m.html.includes("壞的"));
+  assert.ok(!/rgba\(/.test(m.html));
+  assert.ok(m.text.includes("▶ EP01 <冰島>：https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
+  assert.equal((m.html.match(/<table/g) || []).length, (m.html.match(/<\/table>/g) || []).length);
+});

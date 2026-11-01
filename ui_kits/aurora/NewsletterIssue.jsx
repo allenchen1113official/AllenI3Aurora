@@ -51,6 +51,29 @@
     );
   }
 
+  /* ---------- YouTube 影片（youtube-nocookie 內嵌；網址無效則不顯示） ---------- */
+  function YouTubeBlock({ url, title, text }) {
+    const v = String(url || "").trim();
+    const m = v.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([A-Za-z0-9_-]{11})/);
+    const id = m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(v) ? v : "");
+    if (!id) return null;
+    return (
+      <figure style={{ margin: "8px 0 28px" }}>
+        <div style={{ position: "relative", aspectRatio: "16 / 9", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--border)", background: "#000" }}>
+          <iframe title={title || "YouTube 影片"} src={"https://www.youtube-nocookie.com/embed/" + id + "?rel=0"} loading="lazy"
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }} />
+        </div>
+        {(title || text) ? (
+          <figcaption style={{ marginTop: 12 }}>
+            {title ? <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 17, color: "var(--text-1)", lineHeight: 1.45 }}>{title}</div> : null}
+            {text ? <div style={{ color: "var(--text-3)", fontSize: 14.5, lineHeight: 1.7, marginTop: 4, whiteSpace: "pre-wrap" }}>{text}</div> : null}
+          </figcaption>
+        ) : null}
+      </figure>
+    );
+  }
+
   /* ---------- 單一內容區塊 ---------- */
   function Block({ b }) {
     const I = window.Icons;
@@ -68,6 +91,7 @@
       case "quote": return <Quote>{b.text}</Quote>;
       case "note": return <Note>{b.text}</Note>;
       case "table": return <TableBlock head={b.head} rows={b.rows} note={b.note} />;
+      case "youtube": return <YouTubeBlock url={b.url || b.videoId} title={b.title} text={b.text} />;
       default: return b.text ? <Lead>{b.text}</Lead> : null;
     }
   }
