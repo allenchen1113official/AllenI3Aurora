@@ -77,6 +77,17 @@ export async function deployRules({ project, source, token, fetchImpl = fetch, l
   return { rulesetName, releaseName, created };
 }
 
+/* 403 診斷：testIamPermissions 不需任何權限即可呼叫，回報服務帳戶在專案上實際持有哪些 firebaserules 權限 */
+export async function diagnosePermissions({ project, token, fetchImpl = fetch }) {
+  const need = ["firebaserules.rulesets.create", "firebaserules.rulesets.test", "firebaserules.releases.get", "firebaserules.releases.create", "firebaserules.releases.update"];
+  const res = await fetchImpl(`https://cloudresourcemanager.googleapis.com/v1/projects/${project}:testIamPermissions`, {
+    method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ permissions: need }) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) return { ok: false, note: `testIamPermissions HTTP ${res.status}：${(data.error && data.error.message) || ""}（專案不存在、或服務帳戶在該專案完全沒有任何角色時會如此）` };
+  const has = data.permissions || [];
+  return { ok: true, has, missing: need.filter((x) => !has.includes(x)) };
+}
+
 /* 讀規則檔頭的版次註解，供 log */
 export function rulesVersionOf(source) {
   const m = source.match(/規則版次：r(\d+)/);
@@ -95,14 +106,23 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     if (!sa.client_email || !sa.private_key) throw new Error("FIREBASE_SERVICE_ACCOUNT 缺少 client_email／private_key");
     const source = await readFile(file, "utf8");
     if (!/^rules_version = '2';/.test(source)) throw new Error("規則檔首行必須是 rules_version = '2';");
-    console.log(`服務帳戶：${sa.client_email}｜專案：${project}｜規則版次：r${rulesVersionOf(source) ?? "?"}${dryRun ? "｜dry-run" : ""}`);
+    console.log(`::notice title=部署身分::服務帳戶 ${sa.client_email}（金鑰所屬專案 ${sa.project_id || "?"}）→ 目標專案 ${project}｜規則版次 r${rulesVersionOf(source) ?? "?"}${dryRun ? "｜dry-run" : ""}`);
+    if (sa.project_id && sa.project_id !== project) console.log(`::warning title=金鑰專案不符::Secret 金鑰屬於專案「${sa.project_id}」，但要部署到「${project}」；需在 ${project} 的 IAM 把 ${sa.client_email} 加為 Firebase Rules Admin，或改用 ${project} 內建立的服務帳戶金鑰。`);
     const token = await getAccessToken(sa);
-    const r = await deployRules({ project, source, token, dryRun, log: (m) => console.log(m) });
-    if (!dryRun) console.log(`✔ Firestore 規則已部署：${r.releaseName}`);
+    try {
+      const r = await deployRules({ project, source, token, dryRun, log: (m) => console.log(m) });
+      if (!dryRun) console.log(`✔ Firestore 規則已部署：${r.releaseName}`);
+    } catch (e) {
+      if (/HTTP 403/.test(String(e && e.message))) {
+        const d = await diagnosePermissions({ project, token }).catch((x) => ({ ok: false, note: String(x && x.message || x) }));
+        const detail = d.ok ? `已有 [${d.has.join(", ") || "無"}]；缺少 [${d.missing.join(", ")}]` : d.note;
+        throw new Error(`${e.message}\n診斷：${sa.client_email} 在專案 ${project} 的 firebaserules 權限 → ${detail}。請到 GCP Console → IAM（專案 ${project}）為此服務帳戶加授「Firebase Rules Admin」（roles/firebaserules.admin），或確認 Secret 貼的是該帳戶的金鑰。`);
+      }
+      throw e;
+    }
   } catch (e) {
     const msg = String(e && e.message || e);
-    const hint = /403|PERMISSION_DENIED/.test(msg) ? "（服務帳戶需在 GCP 專案具「Firebase Rules Admin」角色，且 Secret 金鑰須屬於該帳戶；見 firebase/SETUP_SOP.md 方式 C）" : "";
-    console.error(`::error title=Firestore 規則部署失敗::${msg.replace(/\n/g, " ")}${hint}`);
+    console.error(`::error title=Firestore 規則部署失敗::${msg.replace(/\n/g, " ")}`);
     process.exit(1);
   }
 }
