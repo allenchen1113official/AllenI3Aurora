@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { generateKeyPairSync } from "node:crypto";
-import { deployRules, getAccessToken, rulesVersionOf } from "./deploy-rules.mjs";
+import { deployRules, getAccessToken, rulesVersionOf, diagnosePermissions } from "./deploy-rules.mjs";
 
 const json = (status, body) => ({ ok: status >= 200 && status < 300, status, json: async () => body });
 const mockFetch = (routes) => {
@@ -82,4 +82,15 @@ test("getAccessToken：以服務帳戶金鑰自簽 JWT 換 token，宣告正確"
 test("rulesVersionOf 讀檔頭版次", () => {
   assert.equal(rulesVersionOf("// 規則版次：r12\n"), 12);
   assert.equal(rulesVersionOf("nothing"), null);
+});
+
+test("diagnosePermissions：列出已有與缺少的 firebaserules 權限", async () => {
+  const f = mockFetch([[/testIamPermissions$/, json(200, { permissions: ["firebaserules.releases.get"] })]]);
+  const d = await diagnosePermissions({ project: "alleni3aurora", token: "T", fetchImpl: f });
+  assert.equal(d.ok, true); assert.deepEqual(d.has, ["firebaserules.releases.get"]);
+  assert.ok(d.missing.includes("firebaserules.rulesets.create"));
+  assert.equal(f.calls[0].body.permissions.length, 5);
+  const g = mockFetch([[/testIamPermissions$/, json(403, { error: { message: "nope" } })]]);
+  const e = await diagnosePermissions({ project: "alleni3aurora", token: "T", fetchImpl: g });
+  assert.equal(e.ok, false); assert.match(e.note, /HTTP 403/);
 });
