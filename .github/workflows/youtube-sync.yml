@@ -1,0 +1,72 @@
+name: YouTube 頻道同步（影片清單＋統計）
+
+# 每日兩次讀取官方 YouTube 頻道：訂閱／觀看／影片數與最新 50 支影片，
+# 更新 data/youtube.json（有變動才提交）、Firestore aurora_youtube 與首頁統計卡
+# aurora_stats/youtube_subscribers。邏輯見 scripts/youtube/core.mjs；設定見 docs/YOUTUBE_SOP.md。
+# 註：GitHub 排程以 UTC 計；台北 = UTC+8。
+#
+# Repo Secrets（擇一組即可；都有時優先 OAuth，可看到私人／排程中影片）：
+#   YT_API_KEY＋YT_CHANNEL_ID                         只讀公開資料
+#   YT_CLIENT_ID＋YT_CLIENT_SECRET＋YT_REFRESH_TOKEN  官方管理者帳號 OAuth（與 PilotOne YouTube 頻道共用，youtube-auth.mjs 取得）
+#   FIREBASE_SERVICE_ACCOUNT                          （選用）寫入 Firestore；未設定只更新 data/youtube.json
+on:
+  schedule:
+    - cron: "23 22 * * *"   # 台北每日 06:23（UTC 前一日 22:23）
+    - cron: "23 10 * * *"   # 台北每日 18:23（UTC 10:23）
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/youtube-sync.yml"
+      - "scripts/youtube/core.mjs"
+      - "scripts/youtube/client.mjs"
+      - "scripts/youtube/sync-channel.mjs"
+      - "scripts/youtube/channel.test.mjs"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只列出結果（不寫檔、不寫 Firestore）"
+        type: boolean
+        default: false
+
+concurrency:
+  group: youtube-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 行為測試
+        run: node --test scripts/youtube/channel.test.mjs
+      - name: 安裝 firebase-admin
+        run: npm install --no-save --no-audit --no-fund firebase-admin@13
+      - name: 同步頻道
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          YT_CHANNEL_ID: ${{ secrets.YT_CHANNEL_ID }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          YT_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
+        run: node scripts/youtube/sync-channel.mjs
+      - name: 有變動才提交
+        run: |
+          if [[ -n "$(git status --porcelain data/youtube.json)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/youtube.json
+            git commit -m "chore(youtube): 同步頻道影片與統計 [skip ci]"
+            git pull --rebase --autostash origin main || true
+            git push
+          else
+            echo "data/youtube.json 無變動，略過提交。"
+          fi

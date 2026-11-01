@@ -540,6 +540,7 @@ const NL_BLOCKS = {
   callout: { label: "重點框 Callout", fields: [{ k: "tone", t: "tone" }, { k: "title", t: "text", ph: "例：本週智慧 Intelligence" }, { k: "text", t: "area", ph: "重點一句話…" }] },
   quote:   { label: "引言 Quote", fields: [{ k: "text", t: "area", ph: "「一句想被記住的話。」" }] },
   note:    { label: "小字附註", fields: [{ k: "text", t: "area", ph: "※ 免責聲明或資料來源…" }] },
+  youtube: { label: "YouTube 影片", fields: [{ k: "url", t: "text", ph: "影片網址或 ID（可用下方選單從頻道挑選）" }, { k: "title", t: "text", ph: "影片標題" }, { k: "text", t: "area", ph: "一句導讀（選填）" }] },
   table:   { label: "行情小表格", fields: [{ k: "head", t: "text", ph: "標的,收盤,漲跌" }, { k: "rows", t: "json", ph: '[["台積電 2330","1,085","+2.4%",true]]' }, { k: "note", t: "text", ph: "※ 台股慣例 紅漲綠跌…" }] },
 };
 
@@ -569,6 +570,27 @@ async function nlShare(issue, setToast) {
   nlCopy(url, "已複製分享連結", setToast);
 }
 
+/* ---------- YouTube 區塊：從頻道同步的影片清單挑選（aurora_youtube/videos，youtube-sync 每日更新） ---------- */
+const nlYtId = (s) => { const v = String(s || "").trim(); const m = v.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([A-Za-z0-9_-]{11})/); return m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(v) ? v : ""); };
+let nlYtCache = null;
+function NlYtPicker({ onPick }) {
+  const [vids, setVids] = useState(nlYtCache);
+  useEffect(() => {
+    if (nlYtCache) return;
+    db.collection("aurora_youtube").doc("videos").get()
+      .then((d) => { nlYtCache = ((d.exists && d.data().items) || []).filter((v) => v.privacy === "public" || v.publishAt); setVids(nlYtCache); })
+      .catch(() => setVids([]));
+  }, []);
+  if (!vids) return <div style={{ color: "var(--text-4)", fontSize: 12, marginBottom: 8 }}>載入頻道影片…</div>;
+  if (!vids.length) return <div style={{ color: "var(--text-4)", fontSize: 12, marginBottom: 8 }}>尚無同步的頻道影片（youtube-sync 執行後出現），可直接貼網址。</div>;
+  return (
+    <select className="ad-in" style={{ marginBottom: 8 }} value="" onChange={(e) => { const v = vids.find((x) => x.id === e.target.value); if (v) onPick(v); }}>
+      <option value="">從頻道挑選影片…（{vids.length} 支）</option>
+      {vids.map((v) => <option key={v.id} value={v.id}>{(v.publishedAt || "").slice(0, 10)} · {v.isShort ? "[Shorts] " : ""}{v.privacy !== "public" ? "[排程] " : ""}{v.title}</option>)}
+    </select>
+  );
+}
+
 /* ---------- 內文區塊編輯（單塊） ---------- */
 function BlockRow({ block, idx, total, onChange, onMove, onDel }) {
   const def = NL_BLOCKS[block.t] || NL_BLOCKS.lead;
@@ -585,6 +607,7 @@ function BlockRow({ block, idx, total, onChange, onMove, onDel }) {
         <button className="ad-btn ghost" style={{ padding: "5px 9px" }} disabled={idx === total - 1} onClick={() => onMove(idx, 1)} title="下移">↓</button>
         <button className="ad-btn danger" style={{ padding: "5px 9px" }} onClick={() => onDel(idx)} title="刪除">✕</button>
       </div>
+      {block.t === "youtube" ? <NlYtPicker onPick={(v) => onChange({ ...block, url: v.url, title: block.title || v.title, videoId: v.id })} /> : null}
       <div style={{ display: "grid", gap: 8 }}>
         {def.fields.map((f) => {
           const val = block[f.k];
@@ -648,6 +671,18 @@ function NLPreview({ issue }) {
     );
     if (b.t === "quote") return <blockquote key={i} style={{ margin: "24px 0", padding: "4px 0 4px 22px", borderLeft: "3px solid var(--illumination)", fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 22, lineHeight: 1.45, color: "var(--text-1)", whiteSpace: "pre-wrap" }}>{b.text}</blockquote>;
     if (b.t === "note") return <div key={i} style={{ fontSize: 12.5, color: "var(--text-4)", marginBottom: 24, whiteSpace: "pre-wrap" }}>{b.text}</div>;
+    if (b.t === "youtube") {
+      const id = nlYtId(b.url || b.videoId);
+      if (!id) return <div key={i} style={{ color: "var(--danger)", fontSize: 12.5, margin: "0 0 16px" }}>YouTube 區塊：影片網址無效</div>;
+      return (
+        <figure key={i} style={{ margin: "20px 0 24px" }}>
+          <div style={{ aspectRatio: "16/9", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--border)", background: "#000" }}>
+            <iframe title={b.title || "YouTube"} src={"https://www.youtube-nocookie.com/embed/" + id} style={{ width: "100%", height: "100%", border: 0 }} allowFullScreen loading="lazy" />
+          </div>
+          {(b.title || b.text) ? <figcaption style={{ marginTop: 10 }}>{b.title ? <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, color: "var(--text-1)", fontSize: 16 }}>{b.title}</div> : null}{b.text ? <div style={{ color: "var(--text-3)", fontSize: 14, whiteSpace: "pre-wrap", marginTop: 4 }}>{b.text}</div> : null}</figcaption> : null}
+        </figure>
+      );
+    }
     if (b.t === "table") {
       const head = normHead(b.head); const rows = Array.isArray(b.rows) ? b.rows : [];
       return (
@@ -2216,12 +2251,13 @@ function SocialPanel() {
 const HUB_NAV = "__hub"; // 內容中控台（admin/content-hub.jsx）
 const MON_NAV = "__monitor"; // 排程監控（admin/schedule-monitor.jsx）
 const VLOG_NAV = "__vlog"; // Vlog 影片系列（admin/vlog.jsx）
+const YT_NAV = "__youtube"; // YouTube 頻道（admin/youtube.jsx）
 function Console({ user }) {
-  const [active, setActive] = useState(() => (location.hash === "#monitor" ? MON_NAV : location.hash === "#vlog" ? VLOG_NAV : NL_NAV));
+  const [active, setActive] = useState(() => (location.hash === "#monitor" ? MON_NAV : location.hash === "#vlog" ? VLOG_NAV : location.hash === "#youtube" ? YT_NAV : NL_NAV));
   const sec = SECTIONS.find((s) => s.id === active);
   const HubPanel = window.ContentHubPanel; // admin/content-hub.jsx 於本檔之後載入
   const MonPanel = window.ScheduleMonitorPanel; // admin/schedule-monitor.jsx 於本檔之後載入
-  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: HUB_NAV, label: "PilotOne 中控台" }, { id: SOC_NAV, label: "PilotOne 審核" }, { id: PC_NAV, label: "Podcast 節目" }, { id: VLOG_NAV, label: "Vlog 影片系列" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, { id: MON_NAV, label: "排程監控" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
+  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: HUB_NAV, label: "PilotOne 中控台" }, { id: SOC_NAV, label: "PilotOne 審核" }, { id: PC_NAV, label: "Podcast 節目" }, { id: VLOG_NAV, label: "Vlog 影片系列" }, { id: YT_NAV, label: "YouTube 頻道" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, { id: MON_NAV, label: "排程監控" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
       <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
@@ -2240,7 +2276,7 @@ function Console({ user }) {
           {NAV.map((s) => {
             const on = s.id === active;
             return (
-              <button key={s.id} onClick={() => { setActive(s.id); try { history.replaceState(null, "", s.id === MON_NAV ? "#monitor" : s.id === VLOG_NAV ? "#vlog" : location.pathname); } catch {} }}
+              <button key={s.id} onClick={() => { setActive(s.id); try { history.replaceState(null, "", s.id === MON_NAV ? "#monitor" : s.id === VLOG_NAV ? "#vlog" : s.id === YT_NAV ? "#youtube" : location.pathname); } catch {} }}
                 style={{ textAlign: "left", cursor: "pointer", padding: "10px 12px", borderRadius: "var(--radius-md)", fontSize: 14, fontFamily: "var(--font-display)", fontWeight: 700,
                   border: "1px solid " + (on ? "var(--border-aurora)" : "transparent"), background: on ? "var(--brand-soft)" : "transparent", color: on ? "var(--text-1)" : "var(--text-3)" }}>
                 {s.label}
@@ -2259,6 +2295,7 @@ function Console({ user }) {
             : active === SOC_NAV ? <SocialPanel />
             : active === PC_NAV ? <PodcastPanel />
             : active === VLOG_NAV ? (window.VlogPanel ? <window.VlogPanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)
+            : active === YT_NAV ? (window.YouTubePanel ? <window.YouTubePanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)
             : active === SUB_NAV ? <SubscribersPanel />
             : active === CAMP_NAV ? <CampaignsPanel />
             : active === WEALTH_NAV ? <WealthPanel />

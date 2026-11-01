@@ -517,7 +517,8 @@ function VlogPanel() {
           <div style={box}>
             <div style={{ color: "var(--text-2)", fontSize: 14, fontWeight: 700, fontFamily: "var(--font-display)", marginBottom: 8 }}>YouTube 上傳順序</div>
             <ol style={{ color: "var(--text-3)", fontSize: 13, lineHeight: 1.8, margin: 0, paddingLeft: 20 }}>
-              <li>YouTube Studio 上傳 Drive 的 <code>{sel.media.fullVideo || "正片"}</code>，標題／說明欄／標籤用上方「⧉ 複製」貼上。</li>
+              <li><b>經 PilotOne：</b>按「▶ 建立 YouTube 上傳排程（PilotOne）」（影片網址取自「素材與影音」的可下載網址或正片 Drive 檔案 ID）→「PilotOne 審核」選公開時間核准；公開影片會先私人上傳、由 YouTube 定時公開。</li>
+              <li><b>手動：</b>YouTube Studio 上傳 Drive 的 <code>{sel.media.fullVideo || "正片"}</code>，標題／說明欄／標籤用上方「⧉ 複製」貼上。</li>
               <li>「字幕」頁匯入 <code>{`EP${String(sel.ep).padStart(2, "0")}_正片_字幕.srt`}</code>（語言：中文（台灣））。</li>
               <li>縮圖上傳 <code>{sel.media.thumbnail || "縮圖"}</code>；發布後貼上置頂留言。</li>
               <li>回到這裡填影片 ID → 勾完清單 → 「標記已發布」 → 「建立 PilotOne 貼文草稿」到審核面板排程。</li>

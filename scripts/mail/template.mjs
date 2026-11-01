@@ -192,11 +192,21 @@ function parseRows(rows) {
   return Array.isArray(rows) ? rows : [];
 }
 const br = (s) => esc(s).replace(/\n/g, "<br>");
+/* 區塊型別：後台與前台儲存為 b.t（NL_BLOCKS），舊測試資料用 b.type —— 兩者都接受。
+   （先前只認 b.type，後台寫入的 b.t 區塊在正式信件中會被整段略過。） */
+const typeOf = (b) => (b && (b.t || b.type)) || "";
+/* YouTube 影片 ID：接受 ID 或各種網址（與 scripts/youtube/core.mjs ytId 相同規則） */
+export function ytIdOf(s) {
+  const v = String(s || "").trim();
+  const m = v.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([A-Za-z0-9_-]{11})/);
+  if (m) return m[1];
+  return /^[A-Za-z0-9_-]{11}$/.test(v) ? v : "";
+}
 
 export function renderBlocks(blocks) {
   const out = [];
   for (const b of blocks || []) {
-    const type = b && b.type;
+    const type = typeOf(b);
     if (type === "rule") {
       out.push(`<div style="margin:30px 0 18px;border-top:1px solid ${C.line};padding-top:16px;font-family:${FONT};font-weight:800;font-size:11.5px;letter-spacing:.12em;color:${C.insight};">${esc(b.label || "")}</div>`);
     } else if (type === "h2") {
@@ -231,6 +241,22 @@ export function renderBlocks(blocks) {
       out.push(`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0;border-collapse:collapse;"><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table>`);
       if (b.note) out.push(`<p style="margin:-8px 0 16px;font-family:${FONT_BODY};font-size:11.5px;color:${C.text4};">${esc(b.note)}</p>`);
     }
+    else if (type === "youtube") {
+      // 信件無法內嵌播放器：縮圖（連到 YouTube）＋實色「觀看影片」按鈕
+      const id = ytIdOf(b.url || b.videoId);
+      if (id) {
+        const href = esc("https://www.youtube.com/watch?v=" + id);
+        out.push(`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;"><tr>
+        <td bgcolor="${C.wash}" style="background-color:${C.wash};border:1px solid ${C.line};border-radius:12px;padding:0;overflow:hidden;">
+          <a href="${href}" style="display:block;text-decoration:none;"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" width="100%" alt="${esc(b.title || "YouTube 影片")}" style="display:block;width:100%;max-width:100%;height:auto;border:0;border-radius:12px 12px 0 0;"></a>
+          <div style="padding:14px 18px 16px;">
+            ${b.title ? `<div style="font-family:${FONT};font-weight:800;font-size:15.5px;line-height:1.45;color:${C.text1};margin-bottom:6px;">${esc(b.title)}</div>` : ""}
+            ${b.text ? `<div style="font-family:${FONT_BODY};font-size:14px;line-height:1.7;color:${C.text2};margin-bottom:12px;">${br(b.text)}</div>` : ""}
+            <a href="${href}" style="display:inline-block;background-color:#E62117;color:#FFFFFF;font-family:${FONT};font-weight:800;font-size:13.5px;text-decoration:none;padding:9px 16px;border-radius:999px;">&#9654; 在 YouTube 觀看</a>
+          </div>
+        </td></tr></table>`);
+      }
+    }
     // 未知型別：安靜略過，不讓整封信爆掉
   }
   return out.join("\n");
@@ -240,7 +266,8 @@ export function renderBlocks(blocks) {
 export function renderText(issue, blocks, mgUrl) {
   const lines = [`艾倫報報 · ${issue.kind} 第 ${issue.no} 期`, issue.date || "", "", issue.title || "", ""];
   if (issue.subtitle) lines.push(issue.subtitle, "");
-  for (const b of blocks || []) {
+  for (const raw of blocks || []) {
+    const b = { ...raw, type: typeOf(raw) };
     if (b.type === "rule") lines.push("", "── " + (b.label || "") + " ──");
     else if (b.type === "h2") lines.push("", "【" + (b.text || "") + "】");
     else if (b.type === "lead" || b.type === "note") lines.push(b.text || "");
@@ -257,6 +284,9 @@ export function renderText(issue, blocks, mgUrl) {
         lines.push(cols.join(" | "));
       }
       if (b.note) lines.push(b.note);
+    } else if (b.type === "youtube") {
+      const id = ytIdOf(b.url || b.videoId);
+      if (id) lines.push("", "▶ " + (b.title || "YouTube 影片") + "：https://www.youtube.com/watch?v=" + id, ...(b.text ? [b.text] : []));
     }
   }
   lines.push("", "線上閱讀：" + issueUrl(issue.no), "調整節奏或退訂：" + mgUrl, "", "艾倫報報 " + SITE);
