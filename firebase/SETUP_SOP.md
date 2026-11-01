@@ -145,19 +145,16 @@ firebase deploy --only firestore:rules
 1. [Google Cloud Console](https://console.cloud.google.com/) → 頂端專案選單切到 **alleni3aurora**
    （注意：是 Firebase 的專案，**不是** `alleni3aurora-drive`；Drive 那把金鑰沒有部署權限）。
 2. **IAM 與管理 → 服務帳戶 → 建立服務帳戶**，名稱例如 `rules-deployer`。
-3. 角色授予下列 **4 個**（`firebase deploy` 執行前會先做 IAM 預檢，少任何一個都會
-   `Authorization failed. This account is missing the following required permissions`）：
-
-   | 角色（中文介面名稱） | Role ID | 用途 |
-   |---|---|---|
-   | Firebase Rules Admin（Firebase 規則管理員） | `roles/firebaserules.admin` | 建立／發布規則 |
-   | Firebase 檢視者 | `roles/firebase.viewer` | 預檢 `firebase.projects.get` |
-   | Cloud Datastore 索引管理員 | `roles/datastore.indexAdmin` | 預檢 `datastore.indexes.*`、讀取資料庫資訊 |
-   | 服務使用情形消費者（Service Usage Consumer） | `roles/serviceusage.serviceUsageConsumer` | 確認 Firestore API 已啟用 |
+3. 角色只需 **1 個**：**Firebase Rules Admin（Firebase 規則管理員，`roles/firebaserules.admin`）**。
+   部署腳本 `scripts/firebase/deploy-rules.mjs` 直接呼叫 Firebase Rules REST API（建立 ruleset →
+   把 `cloud.firestore` release 指向它），不經 firebase-tools，因此不需要 Firebase 檢視者／
+   Datastore 索引管理員／Service Usage 消費者這些 IAM 預檢角色（舊版 SOP 曾要求 4 個；多給無妨）。
 
    > 已建立過服務帳戶、只差角色時：**IAM 與管理 → IAM** → 找到 `rules-deployer@…` →
-   > 鉛筆圖示 → 新增其他角色 → 儲存，**不需重新產生金鑰或更新 GitHub Secret**。
+   > 鉛筆圖示 → 新增角色 → 儲存，**不需重新產生金鑰或更新 GitHub Secret**。
    > 若同時跑社群發文排程，另需 `roles/datastore.user`（見 docs/SOCIAL_SOP.md 第三節）。
+   > 失敗時 Actions run 頂端會有「Firestore 規則部署失敗」annotation：HTTP 403 → 金鑰所屬帳戶沒有
+   > Rules Admin（或 Secret 貼的是別把金鑰）；HTTP 400 → 規則語法錯誤，訊息附行號。
 4. 點該服務帳戶 → **金鑰(KEYS) → 新增金鑰 → JSON**，下載金鑰檔。
 5. GitHub Repo → **Settings → Secrets and variables → Actions → New repository secret**：
    - Name：`FIREBASE_SERVICE_ACCOUNT`（一字不差）
