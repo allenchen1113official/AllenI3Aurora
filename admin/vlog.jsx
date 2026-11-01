@@ -34,6 +34,50 @@ const vlYtId = (s) => {
   return m ? m[1] : (/^[A-Za-z0-9_-]{6,}$/.test(v) ? v : "");
 };
 const vlYtUrl = (id) => (id ? "https://www.youtube.com/watch?v=" + id : "");
+/* Google Drive 檔案 ID：接受純 ID 或 file/d/<id>、open?id=、uc?id= 等連結 */
+const vlDriveId = (s) => { const v = String(s || "").trim(); const m = v.match(/\/d\/([A-Za-z0-9_-]{20,})/) || v.match(/[?&]id=([A-Za-z0-9_-]{20,})/); return m ? m[1] : (/^[A-Za-z0-9_-]{20,}$/.test(v) ? v : ""); };
+const vlDrivePreview = (id) => (id ? `https://drive.google.com/file/d/${id}/preview` : "");
+const vlDriveDownload = (id) => (id ? `https://drive.google.com/uc?export=download&id=${id}` : "");
+/* SRT → WebVTT（本機影片預覽的字幕軌） */
+const srtToVtt = (cues) => "WEBVTT\n\n" + cues.map((c, i) => { const f = (t) => { const h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = (t % 60).toFixed(3).padStart(6, "0"); return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${s}`; }; return `${i + 1}\n${f(c.a)} --> ${f(c.b)}\n${c.text}\n`; }).join("\n");
+const chapSec = (t) => { const m = String(t || "").match(/^(\d+):(\d\d)(?::(\d\d))?$/); return !m ? null : m[3] != null ? (+m[1]) * 3600 + (+m[2]) * 60 + (+m[3]) : (+m[1]) * 60 + (+m[2]); };
+
+/* 本機影片預覽：HTML5 播放器＋SRT 字幕軌＋章節跳轉＋逐句字幕（點擊跳轉、目前句高亮）。檔案不上傳，只在瀏覽器播放。 */
+function VlLocalPlayer({ file, cues, chapters }) {
+  const videoRef = React.useRef(null);
+  const [t, setT] = useState(0);
+  const src = useMemo(() => (file ? URL.createObjectURL(file) : ""), [file]);
+  const vtt = useMemo(() => (cues.length ? URL.createObjectURL(new Blob([srtToVtt(cues)], { type: "text/vtt" })) : ""), [cues]);
+  useEffect(() => () => { if (src) URL.revokeObjectURL(src); }, [src]);
+  useEffect(() => () => { if (vtt) URL.revokeObjectURL(vtt); }, [vtt]);
+  const seek = (sec) => { const v = videoRef.current; if (v && sec != null) { v.currentTime = sec; v.play().catch(() => {}); } };
+  const curIdx = cues.findIndex((c) => t >= c.a && t < c.b);
+  useEffect(() => { const el = document.getElementById("vl-cue-" + curIdx); if (el && el.scrollIntoView) el.scrollIntoView({ block: "nearest" }); }, [curIdx]);
+  if (!file) return null;
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 2fr) minmax(220px, 1fr)", gap: 14 }}>
+      <div>
+        <video ref={videoRef} src={src} controls crossOrigin="anonymous" style={{ width: "100%", borderRadius: "var(--radius-md)", background: "#000" }} onTimeUpdate={(e) => setT(e.currentTarget.currentTime)}>
+          {vtt && <track default kind="subtitles" srcLang="zh-Hant" label="中文字幕" src={vtt} />}
+        </video>
+        <div style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 6 }}>{file.name} · {(file.size / 1e6).toFixed(0)} MB · 現在 {fmtT(t)}{curIdx >= 0 ? " · 第 " + (curIdx + 1) + " 句" : ""}（字幕軌由本集 SRT 即時產生；畫面已燒錄字幕時可在播放器關閉 CC）</div>
+        {chapters.length > 0 && (
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 10 }}>
+            {chapters.map((c, i) => { const sec = chapSec(c.t); const on = sec != null && t >= sec && (i === chapters.length - 1 || t < (chapSec(chapters[i + 1].t) ?? Infinity)); return (
+              <button key={i} className="ad-btn ghost" style={{ padding: "5px 10px", fontSize: 12, borderColor: on ? "var(--border-aurora)" : "var(--border)", background: on ? "var(--brand-soft)" : "transparent" }} disabled={sec == null} onClick={() => seek(sec)}><span style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)", marginRight: 6 }}>{c.t}</span>{c.name}</button>); })}
+          </div>
+        )}
+      </div>
+      <div style={{ maxHeight: 520, overflow: "auto", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", background: "var(--night-850)" }}>
+        {cues.length === 0 ? <div style={{ padding: 12, color: "var(--text-4)", fontSize: 12 }}>本集尚無字幕。</div> : cues.map((c, i) => (
+          <div key={i} id={"vl-cue-" + i} onClick={() => seek(c.a)} style={{ padding: "6px 10px", cursor: "pointer", fontSize: 12.5, lineHeight: 1.5, borderBottom: "1px solid var(--border-subtle, var(--border))", background: i === curIdx ? "var(--brand-soft)" : "transparent", color: i === curIdx ? "var(--text-1)" : "var(--text-3)" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-4)", marginRight: 8 }}>{fmtT(c.a)}</span>{c.text.replace(/\n/g, " ")}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /* SRT 解析／組裝（供驗證、平移、統計） */
 function srtParse(text) {
@@ -59,7 +103,7 @@ const fmtT = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Mat
 function vlBlank(maxSort) {
   return { __new: true, series: "", seriesId: "", ep: (maxSort || 0) + 1, sort: (maxSort || 0) + 1, day: "", title: "", altTitles: ["", ""],
     thumbnailText: "", tags: "", description: "", pinnedComment: "", chapters: [{ t: "00:00", name: "冷開場" }], script: "", srt: "", srtShort: "",
-    media: { youtubeId: "", youtubeUrl: "", driveFolder: "", fullVideo: "", trailer: "", thumbnail: "", duration: "", loudness: "", voice: "", music: "" },
+    media: { youtubeId: "", youtubeUrl: "", driveFolder: "", driveFileId: "", driveTrailerId: "", videoUrl: "", fullVideo: "", trailer: "", thumbnail: "", duration: "", loudness: "", voice: "", music: "" },
     assets: { photos: [], photoCount: 0 }, checklist: {}, status: "draft", notes: "" };
 }
 function vlNormalize(r) {
@@ -108,6 +152,10 @@ function VlogPanel() {
   const [seriesFilter, setSeriesFilter] = useState("全部");
   const [importOverwrite, setImportOverwrite] = useState(false);
   const [shift, setShift] = useState("0");
+  const [pvSrc, setPvSrc] = useState("local");      // local | drive | youtube
+  const [pvWhich, setPvWhich] = useState("full");   // full | trailer
+  const [pvFile, setPvFile] = useState(null);
+  const [ytPrivacy, setYtPrivacy] = useState("public");
 
   const load = useCallback(async () => {
     setErr("");
@@ -182,6 +230,29 @@ function VlogPanel() {
       });
       setToast("已建立 PilotOne 貼文草稿 ✓（" + ref.id.slice(0, 6) + "…）到「PilotOne 審核」核准排程"); setTimeout(() => setToast(""), 5000);
     } catch (ex) { setErr("建立貼文失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+
+  /* 建立 YouTube 上傳排程：寫入 aurora_social_posts（yt 頻道），由 social-publish.yml 下載 videoUrl 後可續傳上傳 */
+  const createYtUpload = async () => {
+    const videoUrl = (sel.media.videoUrl || vlDriveDownload(vlDriveId(sel.media.driveFileId))).trim();
+    if (!videoUrl) { setErr("請先在「素材與影音」填可直接下載的影片網址，或正片 Drive 檔案 ID（Drive 檔案需設為「知道連結的人可查看」）。"); return; }
+    if (!window.confirm(`建立 YouTube 上傳排程？\n標題：${sel.title}\n來源：${videoUrl}\n可見度：${ytPrivacy}\n\n建立後到「PilotOne 審核」核准（可指定台北時間定時公開）。`)) return;
+    const tags = sel.tags.split(",").map((x) => x.trim()).filter(Boolean).slice(0, 50);
+    const now = new Date().toISOString();
+    setBusy(true);
+    try {
+      const ref = await db.collection(SOC_COLL).add({
+        title: `YouTube · EP${String(sel.ep).padStart(2, "0")} ${sel.title}`.slice(0, 120), imageUrl: "", scheduledAt: "", queueState: "draft", note: "由 Vlog 影片系列建立（YouTube 上傳）",
+        source: { type: "vlog", episodeId: sel.id, series: sel.seriesId || "", ep: Number(sel.ep) || 0 },
+        fb: { enabled: false, caption: "", link: "", state: "skipped", attempts: 0, error: null, postId: null },
+        ig: { enabled: false, state: "skipped" }, th: { enabled: false, state: "skipped" },
+        yt: { enabled: true, title: sel.title.slice(0, 100), caption: descWithChapters(sel.description, sel.chapters).slice(0, 5000), tags, privacy: ytPrivacy, videoUrl, state: "draft", attempts: 0, error: null, videoId: null, uploadUri: null },
+        hub: { stage: "draft", body: sel.description, hashtags: "", category: "生活", platforms: { fb: false, ig: false, th: false, yt: true, pc: false }, variants: { fb: "", ig: "", th: "", yt: "", pc: "" } },
+        lock: { by: null, at: null }, createdAt: now, updatedAt: now,
+      });
+      setToast("已建立 YouTube 上傳排程 ✓（" + ref.id.slice(0, 6) + "…）到「PilotOne 審核」核准；上傳完成後回來填影片 ID"); setTimeout(() => setToast(""), 6000);
+    } catch (ex) { setErr("建立失敗：" + errText(ex)); }
     setBusy(false);
   };
 
@@ -268,7 +339,7 @@ function VlogPanel() {
       {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
       {toast && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{toast}</div>}
       <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-        {tabBtn("seo", "標題與 SEO 文案")}{tabBtn("chapters", "章節與腳本")}{tabBtn("srt", `字幕 SRT（${cues.length}）`)}{tabBtn("media", "素材與影音")}{tabBtn("publish", "檢查與發布")}
+        {tabBtn("seo", "標題與 SEO 文案")}{tabBtn("chapters", "章節與腳本")}{tabBtn("srt", `字幕 SRT（${cues.length}）`)}{tabBtn("media", "素材與影音")}{tabBtn("preview", "影片預覽")}{tabBtn("publish", "檢查與發布")}
       </div>
 
       {tab === "seo" && (
@@ -382,6 +453,9 @@ function VlogPanel() {
             <div style={{ color: "var(--text-2)", fontSize: 14, fontWeight: 700, fontFamily: "var(--font-display)", marginBottom: 8 }}>Google Drive 成片與素材（檔案不進 repo）</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
               <div><label className="ad-lbl">Drive 資料夾</label><input className="ad-in" value={sel.media.driveFolder} onChange={(e) => setM("driveFolder", e.target.value)} /></div>
+              <div><label className="ad-lbl">正片 Drive 檔案 ID／分享連結（預覽用）</label><input className="ad-in" value={sel.media.driveFileId} onChange={(e) => setM("driveFileId", e.target.value)} placeholder="https://drive.google.com/file/d/…/view" /></div>
+              <div><label className="ad-lbl">短版預告 Drive 檔案 ID／連結</label><input className="ad-in" value={sel.media.driveTrailerId} onChange={(e) => setM("driveTrailerId", e.target.value)} /></div>
+              <div><label className="ad-lbl">可直接下載的影片網址（PilotOne 上傳 YouTube 用）</label><input className="ad-in" value={sel.media.videoUrl} onChange={(e) => setM("videoUrl", e.target.value)} placeholder={vlDriveDownload(vlDriveId(sel.media.driveFileId)) || "https://…/EPxx.mp4"} /></div>
               <div><label className="ad-lbl">正片檔名</label><input className="ad-in" value={sel.media.fullVideo} onChange={(e) => setM("fullVideo", e.target.value)} /></div>
               <div><label className="ad-lbl">短版預告檔名</label><input className="ad-in" value={sel.media.trailer} onChange={(e) => setM("trailer", e.target.value)} /></div>
               <div><label className="ad-lbl">縮圖檔名／網址</label><input className="ad-in" value={sel.media.thumbnail} onChange={(e) => setM("thumbnail", e.target.value)} /></div>
@@ -398,6 +472,36 @@ function VlogPanel() {
           </div>
         </div>
       )}
+
+      {tab === "preview" && (() => {
+        const dId = vlDriveId(pvWhich === "trailer" ? sel.media.driveTrailerId : sel.media.driveFileId);
+        const pvCues = pvWhich === "trailer" ? cuesShort : cues;
+        return (
+          <div>
+            <div style={box}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 12 }}>
+                {[["local", "本機檔案"], ["drive", "Google Drive"], ["youtube", "YouTube"]].map(([k, l]) => <button key={k} className={"ad-btn" + (pvSrc === k ? " primary" : " ghost")} style={{ padding: "6px 12px" }} onClick={() => setPvSrc(k)}>{l}</button>)}
+                <span style={{ width: 1, height: 22, background: "var(--border)" }} />
+                {[["full", "正片 18 分鐘"], ["trailer", "短版預告"]].map(([k, l]) => <button key={k} className={"ad-btn" + (pvWhich === k ? " primary" : " ghost")} style={{ padding: "6px 12px" }} onClick={() => { setPvWhich(k); setPvFile(null); }}>{l}</button>)}
+              </div>
+              {pvSrc === "local" && (
+                <div>
+                  <div style={{ color: "var(--text-3)", fontSize: 12.5, marginBottom: 10 }}>從電腦（或 Drive 桌面同步資料夾）選擇 <code>{pvWhich === "trailer" ? sel.media.trailer || "短版預告.mp4" : sel.media.fullVideo || "正片.mp4"}</code>。檔案只在瀏覽器播放、不會上傳；自動掛上本集 SRT 字幕軌，可按章節跳轉、點字幕句跳到該秒數，用來校對字幕與畫面。</div>
+                  <input type="file" accept="video/mp4,video/*" className="ad-in" style={{ padding: 8 }} onChange={(e) => setPvFile(e.target.files && e.target.files[0] ? e.target.files[0] : null)} />
+                  <div style={{ marginTop: 12 }}><VlLocalPlayer file={pvFile} cues={pvCues} chapters={pvWhich === "trailer" ? [] : sel.chapters} /></div>
+                </div>
+              )}
+              {pvSrc === "drive" && (dId
+                ? <div><div style={{ aspectRatio: "16/9", maxWidth: 960 }}><iframe title="drive" src={vlDrivePreview(dId)} allow="autoplay" allowFullScreen style={{ width: "100%", height: "100%", border: 0, borderRadius: "var(--radius-md)" }} /></div>
+                    <div style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 6 }}>Drive 播放器以你目前登入的 Google 帳號讀取，不必開放分享；字幕為成片燒錄版。<a href={`https://drive.google.com/file/d/${dId}/view`} target="_blank" rel="noopener" style={{ color: "var(--brand)", marginLeft: 8 }}>在 Drive 開啟 ↗</a></div></div>
+                : <div style={{ color: "var(--text-3)", fontSize: 12.5 }}>到「素材與影音」填入{pvWhich === "trailer" ? "短版預告" : "正片"}的 Drive 檔案 ID 或分享連結（Drive 右鍵「取得連結」）。</div>)}
+              {pvSrc === "youtube" && (ytId
+                ? <div style={{ aspectRatio: "16/9", maxWidth: 960 }}><iframe title="yt" src={`https://www.youtube-nocookie.com/embed/${ytId}`} style={{ width: "100%", height: "100%", border: 0, borderRadius: "var(--radius-md)" }} allowFullScreen /></div>
+                : <div style={{ color: "var(--text-3)", fontSize: 12.5 }}>尚未填 YouTube 影片 ID。</div>)}
+            </div>
+          </div>
+        );
+      })()}
 
       {tab === "publish" && (
         <div>
@@ -422,7 +526,10 @@ function VlogPanel() {
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button className="ad-btn" onClick={exportMeta}>⬇ 匯出上傳文案 .txt</button>
             <button className="ad-btn" onClick={() => dl(`${sel.id || "episode"}.json`, JSON.stringify(vlPayload(sel), null, 2), "application/json")}>⬇ 匯出本集 JSON</button>
-            <button className="ad-btn primary" onClick={createSocialDraft} disabled={busy}>✈ 建立 PilotOne 貼文草稿</button>
+            <button className="ad-btn primary" onClick={createSocialDraft} disabled={busy}>✈ 建立 PilotOne 貼文草稿（FB）</button>
+            <span style={{ width: 1, height: 28, background: "var(--border)" }} />
+            <select className="ad-in" style={{ width: 130 }} value={ytPrivacy} onChange={(e) => setYtPrivacy(e.target.value)}><option value="public">公開</option><option value="unlisted">不公開列出</option><option value="private">私人</option></select>
+            <button className="ad-btn" onClick={createYtUpload} disabled={busy} title="由 PilotOne 排程器下載影片網址並上傳到 YouTube 頻道（可續傳）；公開影片可在審核面板指定定時公開">▶ 建立 YouTube 上傳排程（PilotOne）</button>
           </div>
         </div>
       )}
