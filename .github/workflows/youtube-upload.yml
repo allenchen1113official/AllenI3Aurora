@@ -1,0 +1,57 @@
+name: YouTube 上傳排程
+
+# 每 15 分鐘掃描 Firestore aurora_youtube_uploads（後台「YouTube 頻道 → 上傳排程」核准的工作）：
+#   Google Drive 取成片 → resumable 分段上傳（中斷可續傳、不重複）→ 等 YouTube 處理 →
+#   縮圖＋字幕 → 預定時間在 15 分鐘後者交給 YouTube publishAt 原生排程公開。
+# 每輪最多上傳一支影片；狀態機見 scripts/youtube/core.mjs，設定見 docs/YOUTUBE_SOP.md。
+#
+# Repo Secrets：
+#   FIREBASE_SERVICE_ACCOUNT  服務帳戶 JSON（需「Cloud Datastore 使用者」角色）
+#   YT_CLIENT_ID／YT_CLIENT_SECRET／YT_REFRESH_TOKEN
+#                             官方管理者帳號 OAuth（youtube.upload、youtube.force-ssl、drive.readonly）
+# 未設定時只印出警告並略過，不會失敗。
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"   # 每 15 分鐘（台北／UTC 相同，避開整點尖峰）
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/youtube-upload.yml"
+      - "scripts/youtube/core.mjs"
+      - "scripts/youtube/client.mjs"
+      - "scripts/youtube/publish-uploads.mjs"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只列出將執行的動作（不上傳、不改資料）"
+        type: boolean
+        default: false
+
+concurrency:
+  group: youtube-upload
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 行為測試
+        run: node --test scripts/youtube/youtube.test.mjs
+      - name: 安裝 firebase-admin
+        run: npm install --no-save --no-audit --no-fund firebase-admin@13
+      - name: 執行上傳排程
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          YT_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
+        run: node scripts/youtube/publish-uploads.mjs

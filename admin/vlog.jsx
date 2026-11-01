@@ -185,6 +185,28 @@ function VlogPanel() {
     setBusy(false);
   };
 
+  /* 排入 YouTube 上傳：以本集文案／Drive 成片／字幕建立上傳工作草稿，到「YouTube 頻道 → 上傳排程」核准 */
+  const createUploadJob = async () => {
+    if (!sel.media.fullVideo) { setErr("請先在「素材與影音」填 Drive 正片檔名。"); return; }
+    if (!window.confirm("先儲存本集，再以目前的標題／說明欄／標籤／Drive 檔名／字幕建立 YouTube 上傳工作（草稿）？")) return;
+    if (!(await save(undefined, "已儲存"))) return;
+    const now = new Date().toISOString();
+    setBusy(true);
+    try {
+      await db.collection("aurora_youtube_uploads").add({
+        title: sel.title || "", description: sel.description || "", tags: sel.tags || "", privacy: "public", categoryId: "19", madeForKids: false, language: "zh-TW",
+        scheduledAt: "", note: "由 Vlog 影片系列建立",
+        drive: { folder: sel.media.driveFolder || "", file: sel.media.fullVideo || "", thumbnail: sel.media.thumbnail || "" },
+        captions: { srt: sel.srt || "", lang: "zh-TW", name: "中文（台灣）" },
+        source: { type: "vlog", episodeId: sel.id, series: sel.seriesId || "", ep: Number(sel.ep) || 0 },
+        state: "draft", attempts: 0, error: null, videoId: null, uploadUrl: null, uploadedBytes: 0, totalBytes: 0, extras: {},
+        lock: { by: null, at: null }, createdAt: now, updatedAt: now,
+      });
+      setToast("已建立 YouTube 上傳工作 ✓ 到「YouTube 頻道 → 上傳排程」設定公開時間並核准"); setTimeout(() => setToast(""), 6000);
+    } catch (ex) { setErr("建立上傳工作失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+
   const box = { background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 16, marginBottom: 14 };
   const tabBtn = (id, label) => <button className={"ad-btn" + (tab === id ? " primary" : " ghost")} onClick={() => setTab(id)} style={{ padding: "8px 14px" }}>{label}</button>;
   const Counter = ({ n, max }) => <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: n > max ? "var(--danger)" : "var(--text-4)" }}>{n}／{max}</span>;
@@ -413,7 +435,8 @@ function VlogPanel() {
           <div style={box}>
             <div style={{ color: "var(--text-2)", fontSize: 14, fontWeight: 700, fontFamily: "var(--font-display)", marginBottom: 8 }}>YouTube 上傳順序</div>
             <ol style={{ color: "var(--text-3)", fontSize: 13, lineHeight: 1.8, margin: 0, paddingLeft: 20 }}>
-              <li>YouTube Studio 上傳 Drive 的 <code>{sel.media.fullVideo || "正片"}</code>，標題／說明欄／標籤用上方「⧉ 複製」貼上。</li>
+              <li><b>自動：</b>按「▶ 排入 YouTube 上傳」→ 到「YouTube 頻道 → 上傳排程」選公開時間核准；排程器會從 Drive 上傳正片、設縮圖、上傳字幕並回填影片 ID，公開後自動標記已發布。</li>
+              <li><b>手動：</b>YouTube Studio 上傳 Drive 的 <code>{sel.media.fullVideo || "正片"}</code>，標題／說明欄／標籤用上方「⧉ 複製」貼上。</li>
               <li>「字幕」頁匯入 <code>{`EP${String(sel.ep).padStart(2, "0")}_正片_字幕.srt`}</code>（語言：中文（台灣））。</li>
               <li>縮圖上傳 <code>{sel.media.thumbnail || "縮圖"}</code>；發布後貼上置頂留言。</li>
               <li>回到這裡填影片 ID → 勾完清單 → 「標記已發布」 → 「建立 PilotOne 貼文草稿」到審核面板排程。</li>
@@ -422,6 +445,7 @@ function VlogPanel() {
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button className="ad-btn" onClick={exportMeta}>⬇ 匯出上傳文案 .txt</button>
             <button className="ad-btn" onClick={() => dl(`${sel.id || "episode"}.json`, JSON.stringify(vlPayload(sel), null, 2), "application/json")}>⬇ 匯出本集 JSON</button>
+            <button className="ad-btn primary" onClick={createUploadJob} disabled={busy || sel.__new}>▶ 排入 YouTube 上傳</button>
             <button className="ad-btn primary" onClick={createSocialDraft} disabled={busy}>✈ 建立 PilotOne 貼文草稿</button>
           </div>
         </div>
