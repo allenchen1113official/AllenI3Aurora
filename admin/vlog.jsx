@@ -185,6 +185,34 @@ function VlogPanel() {
     setBusy(false);
   };
 
+  /* 建立 PilotOne 的 YouTube 上傳草稿（yt 頻道）：帶入本集標題／說明欄／標籤；
+     影片網址需為可直接下載的 https 網址，到「PilotOne 中控台 → YouTube 分頁」填入後核准（見 docs/SOCIAL_SOP.md 二之三） */
+  const createYtDraft = async () => {
+    if (!window.confirm("先儲存本集，再以目前的標題／說明欄／標籤建立 PilotOne 的 YouTube 上傳草稿？")) return;
+    if (!(await save(undefined, "已儲存"))) return;
+    const tags = String(sel.tags || "").split(/[,，\n]/).map((t) => t.trim()).filter(Boolean);
+    const hashtags = tags.map((t) => "#" + t.replace(/\s+/g, "")).join(" ");
+    const url = /^https:\/\//i.test(sel.media.fullVideo || "") ? sel.media.fullVideo.trim() : "";
+    const now = new Date().toISOString();
+    setBusy(true);
+    try {
+      const ref = await db.collection(SOC_COLL).add({
+        title: `Vlog ${sel.series || ""} EP${String(sel.ep).padStart(2, "0")} · ${sel.title}`.trim(), imageUrl: "", scheduledAt: "", queueState: "draft",
+        note: "由 Vlog 影片系列建立" + (url ? "" : `；成片：${[sel.media.driveFolder, sel.media.fullVideo].filter(Boolean).join("/")}（請在 YouTube 分頁填入可直接下載的影片網址）`),
+        source: { type: "vlog", episodeId: sel.id, series: sel.seriesId || "", ep: Number(sel.ep) || 0 },
+        fb: { enabled: false, caption: "", link: "", state: "skipped", attempts: 0, error: null, postId: null },
+        ig: { enabled: false, state: "skipped" }, th: { enabled: false, state: "skipped" },
+        yt: { enabled: true, caption: sel.description || "", title: String(sel.title || "").slice(0, 100), videoUrl: url, privacy: "public", tags: tags.map((t) => t.replace(/\s+/g, "")).slice(0, 50),
+              state: "draft", attempts: 0, error: null, videoId: null },
+        hub: { stage: "draft", body: sel.description || "", hashtags, category: "生活",
+               platforms: { fb: false, ig: false, th: false, yt: true, pc: false }, variants: { fb: "", ig: "", th: "", yt: "", pc: "" } },
+        lock: { by: null, at: null }, createdAt: now, updatedAt: now,
+      });
+      setToast("已建立 YouTube 上傳草稿 ✓（" + ref.id.slice(0, 6) + "…）到「PilotOne 中控台」填影片網址、選公開時間後核准"); setTimeout(() => setToast(""), 6000);
+    } catch (ex) { setErr("建立 YouTube 草稿失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+
   const box = { background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 16, marginBottom: 14 };
   const tabBtn = (id, label) => <button className={"ad-btn" + (tab === id ? " primary" : " ghost")} onClick={() => setTab(id)} style={{ padding: "8px 14px" }}>{label}</button>;
   const Counter = ({ n, max }) => <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: n > max ? "var(--danger)" : "var(--text-4)" }}>{n}／{max}</span>;
@@ -413,7 +441,8 @@ function VlogPanel() {
           <div style={box}>
             <div style={{ color: "var(--text-2)", fontSize: 14, fontWeight: 700, fontFamily: "var(--font-display)", marginBottom: 8 }}>YouTube 上傳順序</div>
             <ol style={{ color: "var(--text-3)", fontSize: 13, lineHeight: 1.8, margin: 0, paddingLeft: 20 }}>
-              <li>YouTube Studio 上傳 Drive 的 <code>{sel.media.fullVideo || "正片"}</code>，標題／說明欄／標籤用上方「⧉ 複製」貼上。</li>
+              <li><b>經 PilotOne：</b>按「▶ 建立 YouTube 上傳草稿」→「PilotOne 中控台」YouTube 分頁填可直接下載的影片網址、選公開時間核准；公開影片會先私人上傳、由 YouTube 定時公開。</li>
+              <li><b>手動：</b>YouTube Studio 上傳 Drive 的 <code>{sel.media.fullVideo || "正片"}</code>，標題／說明欄／標籤用上方「⧉ 複製」貼上。</li>
               <li>「字幕」頁匯入 <code>{`EP${String(sel.ep).padStart(2, "0")}_正片_字幕.srt`}</code>（語言：中文（台灣））。</li>
               <li>縮圖上傳 <code>{sel.media.thumbnail || "縮圖"}</code>；發布後貼上置頂留言。</li>
               <li>回到這裡填影片 ID → 勾完清單 → 「標記已發布」 → 「建立 PilotOne 貼文草稿」到審核面板排程。</li>
@@ -422,6 +451,7 @@ function VlogPanel() {
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button className="ad-btn" onClick={exportMeta}>⬇ 匯出上傳文案 .txt</button>
             <button className="ad-btn" onClick={() => dl(`${sel.id || "episode"}.json`, JSON.stringify(vlPayload(sel), null, 2), "application/json")}>⬇ 匯出本集 JSON</button>
+            <button className="ad-btn primary" onClick={createYtDraft} disabled={busy || sel.__new}>▶ 建立 YouTube 上傳草稿</button>
             <button className="ad-btn primary" onClick={createSocialDraft} disabled={busy}>✈ 建立 PilotOne 貼文草稿</button>
           </div>
         </div>

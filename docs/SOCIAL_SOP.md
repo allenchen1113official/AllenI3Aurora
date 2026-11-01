@@ -117,6 +117,10 @@ YouTube 走 Google OAuth（不是 Meta）。排程器用 **refresh token** 換 a
 
 **配額**：YouTube Data API 每日 10,000 單位（太平洋時間午夜重置＝台北 15:00／16:00），上傳一支影片約 1,600 單位，一天最多約 6 支；超過配額的上傳會自動延到下一輪重試。標題上限 100 字（不可含 `<` `>`），說明 5,000 字，標籤取自主稿 Hashtag。
 
+**未通過 YouTube API 稽核的限制**：未經 YouTube「API 服務稽核」的 Cloud 專案，用 API 上傳的影片會被鎖為**私人**（上傳成功、有影片 ID，但別人看不到，`publishAt` 也不會生效）。上線前先用一支短片測試；若被鎖，短期到 YouTube Studio 手動公開，長期向 Google 申請 YouTube API Services Audit（用途：個人頻道排程上傳）。配額單位成本以 Cloud Console「配額」頁為準。
+
+**同一組 OAuth 也供頻道同步使用**：`youtube-sync.yml`（影片清單、訂閱統計、首頁統計卡）會沿用這三個 Secrets（scope 中的 `youtube.readonly`），見 `docs/YOUTUBE_SOP.md`。
+
 ## 三、服務帳戶加授 Firestore 權限
 
 排程器沿用既有的 `FIREBASE_SERVICE_ACCOUNT`（原本只用來部署 Firestore 規則，只有「Firebase Rules Admin」角色）。需要再加一個角色才能讀寫貼文佇列：
