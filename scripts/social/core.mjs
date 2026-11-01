@@ -18,7 +18,12 @@
      建立容器 → 確認 status 為 FINISHED → 發布（creation_id 冪等）。
      ig.state / th.state  'draft' | 'approved' | 'processing' | 'publishing'
                           | 'cancel_requested' | 'published' | 'failed' | 'skipped'
-   同一筆貼文各頻道共用一把鎖，依 fb → ig → th 順序處理，互不影響。
+   同一筆貼文各頻道共用一把鎖，依 fb → ig → th → yt 順序處理，互不影響。
+
+   YouTube（yt）比照 FB 的「原生排程頻道」：privacy=public 且預定時間在
+   20 分鐘以後 → 立即上傳並帶 publishAt（影片先 private，YouTube 到時自動公開）；
+   已到期或 unlisted／private → 到期時直接上傳。上傳可續傳（yt.uploadUri）。
+     yt.state 與 fb.state 相同集合。
    ===================================================================== */
 
 export const FB_NATIVE_MIN_LEAD_MS = 20 * 60 * 1000;          // Meta 要求至少 10 分鐘後；留 buffer
@@ -29,9 +34,12 @@ export const OVERDUE_MS = 24 * 60 * 60 * 1000;
 export const CONTAINER_LEAD_MS = 5 * 60 * 1000;          // 容器頻道：到期前 5 分鐘內送出
 export const CONTAINER_TTL_MS = 23 * 60 * 60 * 1000;     // 容器 24 小時後失效，留 1 小時 buffer
 
-export const CHANNELS = ["fb", "ig", "th"];
+export const YT_NATIVE_MAX_LEAD_MS = 365 * 24 * 60 * 60 * 1000; // YouTube publishAt 沒有明文上限，保守取一年
+
+export const CHANNELS = ["fb", "ig", "th", "yt"];
 export const CONTAINER_CHANNELS = ["ig", "th"];
-export const CHANNEL_LABEL = { fb: "Facebook 粉專", ig: "Instagram", th: "Threads" };
+export const NATIVE_CHANNELS = ["fb", "yt"];
+export const CHANNEL_LABEL = { fb: "Facebook 粉專", ig: "Instagram", th: "Threads", yt: "YouTube" };
 
 const iso = (ms) => new Date(ms).toISOString();
 const parseTime = (v) => {
@@ -49,10 +57,11 @@ export class GraphError extends Error {
     this.code = code; this.subcode = subcode; this.status = status; this.type = type;
   }
 }
-// 190 = Token 失效／過期；10、200–299 = 權限不足 → 人工處理，不重試
-export const isAuthError = (e) => e instanceof GraphError && (e.code === 190 || e.code === 10 || (e.code >= 200 && e.code < 300));
-// 1、2 = 暫時性；4、17、32、613 = 頻率限制；5xx 與網路錯誤 → 可重試
+// 190 = Token 失效／過期；10、200–299 = 權限不足 → 人工處理，不重試；e.auth 為其他 API（YouTube）自行標記
+export const isAuthError = (e) => !!(e && e.auth) || (e instanceof GraphError && (e.code === 190 || e.code === 10 || (e.code >= 200 && e.code < 300)));
+// 1、2 = 暫時性；4、17、32、613 = 頻率限制；5xx 與網路錯誤 → 可重試；e.retryable 明確標記者優先
 export const isRetryable = (e) => {
+  if (e && typeof e.retryable === "boolean") return e.retryable && !isAuthError(e);
   if (!(e instanceof GraphError)) return true; // fetch 失敗等網路層錯誤
   if (isAuthError(e)) return false;
   return [1, 2, 4, 17, 32, 341, 613].includes(e.code) || (e.status >= 500 && e.status < 600);
@@ -175,17 +184,20 @@ function fbOf(post) { return post.fb || {}; }
 const chOf = (post, ch) => post[ch] || {};
 const lockFresh = (post, now) => { const t = parseTime(post.lock && post.lock.at); return isFinite(t) && now - t < LOCK_STALE_MS; };
 
-/* 依目前狀態決定 FB 下一步；回傳動作名稱（純函式，便於測試） */
-export function planFb(post, now) {
-  const fb = fbOf(post);
-  if (!fb.enabled) return "skip";
+/* 依目前狀態決定原生排程頻道（fb／yt）的下一步；回傳動作名稱（純函式，便於測試）
+   YouTube 只有 public 影片能定時公開（publishAt）；unlisted／private 到期時直接上傳。 */
+export function planNative(post, ch, now) {
+  const c = chOf(post, ch);
+  if (!c.enabled) return "skip";
   const due = parseTime(post.scheduledAt);
-  switch (fb.state) {
+  const maxLead = ch === "yt" ? YT_NATIVE_MAX_LEAD_MS : FB_NATIVE_MAX_LEAD_MS;
+  const canNative = ch !== "yt" || (c.privacy || "public") === "public";
+  switch (c.state) {
     case "approved": {
       if (isFinite(due) && now - due > OVERDUE_MS) return "overdue"; // 排程器停擺多時，過時內容不自動發
       if (!isFinite(due) || due - now <= FB_NATIVE_MIN_LEAD_MS) return "publish_now";
-      if (due - now <= FB_NATIVE_MAX_LEAD_MS) return "schedule_native";
-      return "wait"; // 超過 Meta 原生排程上限，等進入窗口再交付
+      if (canNative && due - now <= maxLead) return "schedule_native";
+      return "wait"; // 超過原生排程上限（或 YouTube 非公開影片），等到期再交付
     }
     case "scheduled":
       return isFinite(due) && now >= due ? "reconcile" : "wait";
@@ -198,6 +210,8 @@ export function planFb(post, now) {
       return "noop"; // draft / published / failed / skipped
   }
 }
+export const planFb = (post, now) => planNative(post, "fb", now);
+export const planYt = (post, now) => planNative(post, "yt", now);
 
 /* 容器頻道（ig / th）下一步 */
 export function planContainer(post, ch, now) {
@@ -222,11 +236,15 @@ export function planContainer(post, ch, now) {
 
 const IDLE = ["wait", "noop", "skip"];
 const NEEDS_GRAPH = ["create", "check", "recover"];
+const NATIVE_NEEDS_GRAPH = ["publish_now", "schedule_native", "reconcile"];
 
-/* 整筆貼文各頻道的動作；graphs（{ fb, ig, th }）缺該頻道 → unconfigured，paused 內的頻道（Token 檢查失敗）→ wait */
+/* 整筆貼文各頻道的動作；graphs（{ fb, ig, th, yt }）缺該頻道 → unconfigured，paused 內的頻道（Token 檢查失敗）→ wait */
 export function planPost(post, now, { graphs = {}, paused = [] } = {}) {
-  const plan = { fb: planFb(post, now) };
-  if (["publish_now", "schedule_native", "reconcile"].includes(plan.fb) && !graphs.fb) plan.fb = "unconfigured";
+  const plan = {};
+  for (const ch of NATIVE_CHANNELS) {
+    plan[ch] = planNative(post, ch, now);
+    if (NATIVE_NEEDS_GRAPH.includes(plan[ch]) && !graphs[ch]) plan[ch] = "unconfigured";
+  }
   for (const ch of CONTAINER_CHANNELS) {
     let a = planContainer(post, ch, now);
     if (NEEDS_GRAPH.includes(a) && !graphs[ch]) a = "unconfigured";
@@ -242,6 +260,7 @@ const ACTIVE = {
   fb: ["approved", "publishing", "scheduled", "cancel_requested"],
   ig: ["approved", "processing", "publishing", "cancel_requested"],
   th: ["approved", "processing", "publishing", "cancel_requested"],
+  yt: ["approved", "publishing", "scheduled", "cancel_requested"],
 };
 export function nextQueueState(post) {
   const en = CHANNELS.filter((ch) => chOf(post, ch).enabled);
@@ -294,6 +313,67 @@ async function runFb(act, cur, { graph, save, now, log, tag }) {
   }
   if (act === "uncertain") {
     await save("fb", { state: "failed", error: "上一輪發布送出後未收到回應，結果不明。請先到粉專確認是否已發出，未發出再按「重試」。" });
+    return {};
+  }
+  return {};
+}
+
+/* YouTube：上傳（可續傳）→ 立即公開或 publishAt 定時公開 → 到期對帳 */
+async function runYt(act, cur, { graphs, save, now, log, tag }) {
+  const g = graphs.yt;
+  const yt = chOf(cur, "yt");
+  if (act === "publish_now" || act === "schedule_native") {
+    await save("yt", { state: "publishing" });
+    const publishAt = act === "schedule_native" ? iso(parseTime(cur.scheduledAt)) : null;
+    let r;
+    try {
+      r = await g.upload({
+        title: yt.title || cur.title || "", description: yt.caption || "", tags: Array.isArray(yt.tags) ? yt.tags : [],
+        privacy: yt.privacy || "public", videoUrl: yt.videoUrl || "", publishAt, uploadUri: yt.uploadUri || null,
+        onSession: (uri) => save("yt", { uploadUri: uri, uploadAt: iso(now) }),
+      });
+    } catch (e) {
+      // 續傳中斷：保留 session 回到 approved，下一輪接續；其餘交給外層依 retryable 判斷
+      if (e && e.keepSession) { await save("yt", { state: "approved" }); throw Object.assign(e, { keepState: true }); }
+      throw e;
+    }
+    if (publishAt) {
+      await save("yt", { state: "scheduled", videoId: r.videoId, url: r.url, error: null, uploadUri: null, nativeScheduledAt: iso(now) });
+      log(`${tag} YouTube 已上傳並設定 ${publishAt} 公開 → ${r.videoId}`);
+    } else {
+      await save("yt", { state: "published", videoId: r.videoId, url: r.url, error: null, uploadUri: null, publishedAt: iso(now) });
+      log(`${tag} YouTube 已發布 → ${r.videoId}`);
+    }
+    return { postId: r.videoId };
+  }
+  if (act === "reconcile") {
+    const s = await g.status(yt.videoId);
+    if (s.missing) { await save("yt", { state: "failed", error: "影片已不存在（可能在 YouTube 後台被刪除）。" }); return {}; }
+    if (s.failureReason) { await save("yt", { state: "failed", error: `YouTube 處理失敗：${s.failureReason}` }); return {}; }
+    if (s.privacyStatus === "public" || (s.uploadStatus === "processed" && !s.publishAt)) {
+      await save("yt", { state: "published", publishedAt: yt.publishedAt || iso(now) });
+      log(`${tag} YouTube 定時公開已生效`);
+      return { published: true };
+    }
+    log(`${tag} YouTube 尚未公開（${s.uploadStatus || "?"} / ${s.privacyStatus || "?"}），下輪再查`);
+    return { published: false };
+  }
+  if (act === "cancel") {
+    if (yt.videoId) await g.remove(yt.videoId);
+    await save("yt", { state: "draft", videoId: null, url: null, uploadUri: null, error: null }, { "review.approvedAt": null });
+    log(`${tag} YouTube 已刪除排定影片，退回草稿`);
+    return {};
+  }
+  if (act === "unconfigured") {
+    await save("yt", { state: "failed", error: "排程器尚未設定 YouTube（缺少 YT_CLIENT_ID／YT_CLIENT_SECRET／YT_REFRESH_TOKEN），未上傳。設定方式見 docs/SOCIAL_SOP.md，設定後重新核准。" });
+    return {};
+  }
+  if (act === "overdue") {
+    await save("yt", { state: "failed", error: "預定時間已逾期超過 24 小時，為避免發出過時內容未自動上傳。請確認後重設時間再核准。" });
+    return {};
+  }
+  if (act === "uncertain") {
+    await save("yt", { state: "failed", error: "上一輪上傳送出後未收到回應，結果不明。請先到 YouTube 工作室確認是否已有影片，未上傳再按「重試」。" });
     return {};
   }
   return {};
@@ -380,14 +460,14 @@ async function runContainer(ch, act, cur, { graphs, save, now, log, tag }) {
  * 處理一筆貼文。store 需提供：
  *   claim(id, now) → Promise<post|null>   以 transaction 取得鎖，失敗回 null
  *   update(id, patch) → Promise            合併寫入（支援 'fb.state' 這類路徑）
- * graph 為 FB 客戶端；graphs = { ig, th } 為容器頻道客戶端（未設定者缺省）；
+ * graph 為 FB 客戶端；graphs = { ig, th, yt } 為其他頻道客戶端（未設定者缺省）；
  * paused 為本輪 Token 檢查失敗、暫不處理的頻道。
  */
 export async function processPost(post, { store, graph, graphs = {}, paused = [], now = Date.now(), dryRun = false, log = () => {} }) {
   const tag = `[${post.id}]`;
   const all = { ...graphs, fb: graph };
   const plan = planPost(post, now, { graphs: all, paused });
-  const primary = (p) => (p.fb !== "skip" ? p.fb : CONTAINER_CHANNELS.map((ch) => p[ch]).find((a) => a !== "skip") || "skip");
+  const primary = (p) => (p.fb !== "skip" ? p.fb : ["ig", "th", "yt"].map((ch) => p[ch]).find((a) => a !== "skip") || "skip");
   const busy = CHANNELS.filter((ch) => !IDLE.includes(plan[ch]));
 
   if (!busy.length) {
@@ -423,13 +503,13 @@ export async function processPost(post, { store, graph, graphs = {}, paused = []
     if (IDLE.includes(act)) continue;
     const ctx = { graph, graphs, save, now, log, tag };
     try {
-      results[ch] = { action: act, ...(ch === "fb" ? await runFb(act, cur, ctx) : await runContainer(ch, act, cur, ctx)) };
+      results[ch] = { action: act, ...(ch === "fb" ? await runFb(act, cur, ctx) : ch === "yt" ? await runYt(act, cur, ctx) : await runContainer(ch, act, cur, ctx)) };
     } catch (e) {
       const c = chOf(cur, ch);
       const attempts = (c.attempts || 0) + 1;
       const msg = (e && e.message) || String(e);
       let state, retry;
-      if (ch === "fb") {
+      if (NATIVE_CHANNELS.includes(ch)) {
         retry = isRetryable(e) && attempts < MAX_ATTEMPTS && act !== "cancel";
         // 取消失敗時維持 cancel_requested，下一輪再試；其餘依可否重試回到 approved 或 failed
         state = act === "cancel" ? "cancel_requested" : retry ? "approved" : "failed";

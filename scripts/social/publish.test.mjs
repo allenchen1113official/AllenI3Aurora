@@ -464,3 +464,113 @@ test("Threads Token 續期：回傳新 Token 與到期時間", async () => {
   assert.equal(r.token, "NEW");
   assert.equal(r.expiresAt, new Date(T0 + 60 * DAY).toISOString());
 });
+
+/* ---------- YouTube（原生排程頻道：上傳＋publishAt） ---------- */
+function fakeYt(overrides = {}) {
+  const calls = [];
+  let n = 0;
+  return {
+    calls,
+    async upload(a) { calls.push(["upload", a]); if (overrides.upload) return overrides.upload(a); n++; return { videoId: `vid_${n}`, url: `https://youtu.be/vid_${n}` }; },
+    async status(id) { calls.push(["status", id]); return overrides.status ? overrides.status(id) : { privacyStatus: "public", uploadStatus: "processed", publishAt: null }; },
+    async remove(id) { calls.push(["remove", id]); return {}; },
+  };
+}
+const ytPost = (id, yt, extra = {}) => ({
+  id, title: "影片標題", queueState: "pending", scheduledAt: new Date(T0).toISOString(), imageUrl: "", lock: { by: null, at: null },
+  fb: { enabled: false, state: "draft" },
+  yt: { enabled: true, title: "YT 標題", caption: "說明", tags: ["a", "b"], privacy: "public", videoUrl: "https://example.com/v.mp4", state: "approved", attempts: 0, ...yt }, ...extra,
+});
+
+test("YouTube：到期影片立即上傳並公開，回寫 videoId 與連結", async () => {
+  const store = memStore([ytPost("y", {})]);
+  const yt = fakeYt();
+  const s = await runOnce({ store, graphs: { yt }, now: T0, log: quiet });
+  const d = store.db.get("y");
+  assert.equal(d.yt.state, "published");
+  assert.equal(d.yt.videoId, "vid_1");
+  assert.equal(d.yt.url, "https://youtu.be/vid_1");
+  assert.equal(d.queueState, "done");
+  assert.equal(yt.calls[0][1].publishAt, null);
+  assert.equal(yt.calls[0][1].title, "YT 標題");
+  assert.equal(s.results[0].action, "publish_now");
+});
+
+test("YouTube：未來 2 小時的公開影片先上傳並帶 publishAt，到期後對帳為 published", async () => {
+  const due = T0 + 2 * HOUR;
+  const store = memStore([ytPost("y", {}, { scheduledAt: new Date(due).toISOString() })]);
+  const yt = fakeYt({ status: () => ({ privacyStatus: "private", uploadStatus: "processed", publishAt: new Date(due).toISOString() }) });
+  await runOnce({ store, graphs: { yt }, now: T0, log: quiet });
+  let d = store.db.get("y");
+  assert.equal(d.yt.state, "scheduled");
+  assert.equal(yt.calls[0][1].publishAt, new Date(due).toISOString());
+  assert.equal(d.queueState, "pending");
+  await runOnce({ store, graphs: { yt }, now: due + 5 * MIN, log: quiet }); // 尚未公開
+  assert.equal(store.db.get("y").yt.state, "scheduled");
+  yt.status = async () => ({ privacyStatus: "public", uploadStatus: "processed", publishAt: new Date(due).toISOString() });
+  await runOnce({ store, graphs: { yt }, now: due + 15 * MIN, log: quiet });
+  d = store.db.get("y");
+  assert.equal(d.yt.state, "published");
+  assert.equal(d.queueState, "done");
+  assert.equal(yt.calls.filter((c) => c[0] === "upload").length, 1, "只上傳一次");
+});
+
+test("YouTube：unlisted 影片不能定時公開，等到期才上傳", async () => {
+  const store = memStore([ytPost("y", { privacy: "unlisted" }, { scheduledAt: new Date(T0 + 2 * HOUR).toISOString() })]);
+  const yt = fakeYt();
+  await runOnce({ store, graphs: { yt }, now: T0, log: quiet });
+  assert.equal(yt.calls.length, 0);
+  assert.equal(store.db.get("y").yt.state, "approved");
+  await runOnce({ store, graphs: { yt }, now: T0 + 2 * HOUR, log: quiet });
+  assert.equal(yt.calls[0][1].privacy, "unlisted");
+  assert.equal(yt.calls[0][1].publishAt, null);
+  assert.equal(store.db.get("y").yt.state, "published");
+});
+
+test("YouTube：未設定 Secrets → failed 並說明；不影響同筆 FB", async () => {
+  const store = memStore([ytPost("y", {}, { fb: { enabled: true, caption: "fb 文", state: "approved", attempts: 0 } })]);
+  const g = fakeGraph();
+  await runOnce({ store, graph: g, now: T0, log: quiet });
+  const d = store.db.get("y");
+  assert.equal(d.fb.state, "published");
+  assert.equal(d.yt.state, "failed");
+  assert.match(d.yt.error, /YT_CLIENT_ID/);
+});
+
+test("YouTube：上傳中斷（可續傳）保留 uploadUri 回到 approved，下一輪帶 uploadUri 續傳", async () => {
+  const store = memStore([ytPost("y", {})]);
+  let first = true;
+  const yt = fakeYt({ upload: async (a) => {
+    if (first) { first = false; await a.onSession("https://upload/session/1"); throw Object.assign(new Error("中斷"), { retryable: true, keepSession: true }); }
+    return { videoId: "vid_r", url: "https://youtu.be/vid_r" };
+  } });
+  await runOnce({ store, graphs: { yt }, now: T0, log: quiet });
+  let d = store.db.get("y");
+  assert.equal(d.yt.state, "approved");
+  assert.equal(d.yt.uploadUri, "https://upload/session/1");
+  assert.equal(d.queueState, "pending");
+  await runOnce({ store, graphs: { yt }, now: T0 + 10 * MIN, log: quiet });
+  d = store.db.get("y");
+  assert.equal(yt.calls[1][1].uploadUri, "https://upload/session/1");
+  assert.equal(d.yt.state, "published");
+  assert.equal(d.yt.uploadUri, null);
+});
+
+test("YouTube：授權失效（auth）不重試，直接 failed 並回報 authChannels", async () => {
+  const store = memStore([ytPost("y", {})]);
+  const yt = fakeYt({ upload: () => { throw Object.assign(new GraphError("YouTube：invalid_grant", { status: 401 }), { auth: true, retryable: false }); } });
+  const s = await runOnce({ store, graphs: { yt }, now: T0, log: quiet });
+  assert.equal(store.db.get("y").yt.state, "failed");
+  assert.deepEqual(s.authChannels, ["yt"]);
+});
+
+test("YouTube：取消已排定影片 → 刪除影片退回草稿", async () => {
+  const store = memStore([ytPost("y", { state: "cancel_requested", videoId: "vid_9" })]);
+  const yt = fakeYt();
+  await runOnce({ store, graphs: { yt }, now: T0, log: quiet });
+  const d = store.db.get("y");
+  assert.deepEqual(yt.calls[0], ["remove", "vid_9"]);
+  assert.equal(d.yt.state, "draft");
+  assert.equal(d.yt.videoId, null);
+  assert.equal(d.queueState, "draft");
+});
