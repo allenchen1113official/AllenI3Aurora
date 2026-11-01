@@ -1,4 +1,4 @@
-# PilotOne · 社群自動發文 SOP（Facebook 粉專／Instagram／Threads）
+# PilotOne · 社群自動發文 SOP（Facebook 粉專／Instagram／Threads／YouTube）
 
 **產品名：PilotOne（社群發文中控）** — 一次製作 · 一鍵起飛。品牌隸屬「艾倫報報 ALLEN I³ AURORA」，視覺沿用 Aurora tokens（夜空底＋極光漸層），標誌為 `assets/pilotone/pilotone-mark.svg`（極光航線環＋「1」）。
 
@@ -94,6 +94,29 @@ Threads 用的是獨立的 API 與 Token（不能沿用 Meta 粉專 Token）。
 
 限制：文字上限 500 字；可附一張圖片。
 
+## 二之三、YouTube 設定（選用）
+
+YouTube 走 Google OAuth（不是 Meta）。排程器用 **refresh token** 換 access token 後呼叫 YouTube Data API v3 上傳影片。
+
+1. Google Cloud Console → 建立（或沿用）專案 → **API 和服務 → 程式庫** 啟用「YouTube Data API v3」。
+2. **OAuth 同意畫面**：使用者類型「外部」，App 名稱自訂，範圍加入 `…/auth/youtube.upload` 與 `…/auth/youtube.readonly`，測試使用者加入自己的帳號。
+   完成後把**發布狀態改為「正式」**（僅自用不需送審，會出現「未經驗證」提醒但可繼續）；停在「測試」狀態的 refresh token **7 天就失效**。
+3. **憑證 → 建立憑證 → OAuth 用戶端 ID**，類型選「**桌面應用程式**」，記下用戶端 ID 與密鑰。
+4. 在本機取得 refresh token（會開本機 8765 埠接收回呼）：
+   ```bash
+   YT_CLIENT_ID=<用戶端ID> YT_CLIENT_SECRET=<密鑰> node scripts/social/youtube-auth.mjs
+   ```
+   依指示在瀏覽器登入**擁有頻道的 Google 帳號**並同意，終端機會印出 `YT_REFRESH_TOKEN` 與頻道名稱（若顯示沒有頻道，表示登入錯帳號）。
+5. 把三個值存入 GitHub Secrets（第四節）。驗證：Actions → 社群自動發文 → Run workflow（dry_run）→ log 應顯示「YouTube: ● 正常 <頻道名稱>」。
+
+**影片來源**：內容中控台 YouTube 分頁的「影片網址」必須是**可直接下載的 https 網址**（回應 `Content-Type: video/*`）。排程器會先把整支影片下載到 runner 暫存區再上傳（可續傳；runner 磁碟約 14 GB、本輪上限 30 分鐘，太大的檔案請先壓縮或分段）。
+- Google Drive：檔案設「知道連結的使用者可檢視」，網址用 `https://drive.usercontent.google.com/download?id=<檔案ID>&export=download&confirm=t`（一般分享連結回傳的是網頁，會被拒）。
+- Firebase Storage：用主控台的「下載網址」（含 `alt=media&token=`）。
+
+**排程方式**：可見度「公開」的影片在核准後即上傳（先為私人）並帶 `publishAt`，由 YouTube 到時自動公開（分鐘級準時，`yt.state` 為「平台端已排程」）；「不公開」「私人」無法定時公開，到預定時間才由排程器上傳。取消排程會**刪除**已上傳的私人影片。
+
+**配額**：YouTube Data API 每日 10,000 單位（太平洋時間午夜重置＝台北 15:00／16:00），上傳一支影片約 1,600 單位，一天最多約 6 支；超過配額的上傳會自動延到下一輪重試。標題上限 100 字（不可含 `<` `>`），說明 5,000 字，標籤取自主稿 Hashtag。
+
 ## 三、服務帳戶加授 Firestore 權限
 
 排程器沿用既有的 `FIREBASE_SERVICE_ACCOUNT`（原本只用來部署 Firestore 規則，只有「Firebase Rules Admin」角色）。需要再加一個角色才能讀寫貼文佇列：
@@ -112,6 +135,9 @@ Repo → Settings → Secrets and variables → Actions：
 | `META_IG_USER_ID` | Secret（選用） | 第二之一節的 IG 商業帳號 ID |
 | `THREADS_USER_ID` | Secret（選用） | 第二之二節的 Threads 使用者 ID |
 | `THREADS_TOKEN` | Secret（選用） | 第二之二節的 Threads 長效 Token |
+| `YT_CLIENT_ID` | Secret（選用） | 第二之三節的 OAuth 用戶端 ID |
+| `YT_CLIENT_SECRET` | Secret（選用） | 第二之三節的 OAuth 用戶端密鑰 |
+| `YT_REFRESH_TOKEN` | Secret（選用） | 第二之三節 `youtube-auth.mjs` 印出的 refresh token |
 | `META_GRAPH_VERSION` | Variable（選用） | 預設 `v25.0`；Meta 淘汰舊版前改成新版即可 |
 
 所有平台都未設定時，排程器只印警告並略過，不會讓 workflow 失敗。某平台 Token 失效時，只暫停該平台（貼文保持排程中），workflow 會失敗讓 GitHub 寄信通知。
@@ -148,6 +174,8 @@ IG／Threads（`ig.state`、`th.state`）：
 | `published` | 已發布 | 附貼文連結 |
 | `failed` | 失敗 | 看錯誤訊息，修正後重新核准 |
 
+YouTube（`yt.state`）與 FB 相同集合：`approved` → 上傳中 `publishing` → 公開影片 `scheduled`（已上傳、等 YouTube 定時公開，到期後對帳）或直接 `published`；上傳中斷時保留 `yt.uploadUri` 回到 `approved`，下一輪從中斷點續傳；`cancel_requested` 會刪除已上傳影片退回草稿。
+
 `queueState` 是排程器唯一查詢的欄位（單欄位查詢，不需複合索引）：`pending` 表示需要排程器處理；`draft`／`rejected`／`done` 都不處理。
 
 ## 七、安全設計
@@ -166,6 +194,9 @@ IG／Threads（`ig.state`、`th.state`）：
 | 100 | 參數錯誤（常見：圖片網址抓不到） | 確認圖片為公開 https 網址、可直接在瀏覽器開啟 |
 | 4、17、32、613 | 頻率限制 | 自動重試；持續發生就拉長發文間隔 |
 | 368 | 被判定為垃圾內容 | 調整內文（減少重複連結、hashtag） |
+| YouTube `invalid_grant` | refresh token 失效（同意畫面停在測試狀態 7 天到期、或使用者撤銷） | 重跑 `youtube-auth.mjs`，更新 `YT_REFRESH_TOKEN` |
+| YouTube `quotaExceeded` | 當日配額用完 | 自動重試；隔日（台北 15:00／16:00）配額重置 |
+| YouTube `uploadLimitExceeded` | 頻道上傳數量上限（新頻道較嚴） | 到 YouTube 工作室完成頻道驗證，或減少當日上傳 |
 
 ## 九、已知限制
 
@@ -201,6 +232,9 @@ IG／Threads（`ig.state`、`th.state`）：
 - 手動執行：Actions →「社群成效同步」→ Run workflow（可勾 dry_run 只看數字不寫入）。
 
 ## 十、測試
+
+YouTube 客戶端（token 換發、可續傳上傳、錯誤分類）：`node --test scripts/social/youtube.test.mjs`。
+
 
 ```bash
 node --test scripts/social/publish.test.mjs   # 39 項行為測試（FB 22＋IG／Threads 17），不連外部服務

@@ -3,7 +3,7 @@
 
    讀 Firestore aurora_social_posts 中 queueState == 'pending' 的貼文，
    依 core.mjs 狀態機處理 Facebook 粉專（發文／原生排程／撤銷／對帳）、
-   Instagram 與 Threads（容器兩段式發布）。
+   Instagram 與 Threads（容器兩段式發布）、YouTube（上傳＋publishAt 定時公開）。
    執行摘要寫入 aurora_social_meta/runner，後台「社群發文／內容中控台」會顯示。
 
    環境變數（皆由 GitHub Secrets / Variables 提供；未設定的平台自動停用）：
@@ -14,11 +14,15 @@
      THREADS_USER_ID           Threads 使用者 ID
      THREADS_TOKEN             Threads 長效 Token（排程器每日自動續期，續期後存於
                                aurora_social_secrets/threads，前端規則禁止讀取）
+     YT_CLIENT_ID / YT_CLIENT_SECRET / YT_REFRESH_TOKEN
+                               YouTube Data API 的 OAuth 用戶端與 refresh token
+                               （以 scripts/social/youtube-auth.mjs 取得）
      META_GRAPH_VERSION        選填，預設 v25.0
      SOCIAL_DRY_RUN            '1' 時只列出將執行的動作，不呼叫發文 API、不改資料
    ===================================================================== */
 import { runOnce, createFbGraph, createIgGraph, createThreadsGraph, LOCK_STALE_MS, isAuthError, CHANNEL_LABEL } from "./core.mjs";
 import { threadsToken } from "./threads-token.mjs";
+import { createYouTubeClient } from "./youtube.mjs";
 
 const COLL = "aurora_social_posts";
 const META_DOC = "aurora_social_meta/runner";
@@ -32,13 +36,14 @@ async function main() {
   const metaToken = env("META_PAGE_TOKEN"), pageId = env("META_PAGE_ID"), igUserId = env("META_IG_USER_ID");
   const thUserId = env("THREADS_USER_ID"), thSeed = env("THREADS_TOKEN");
   const version = env("META_GRAPH_VERSION") || "v25.0";
-  const configured = { fb: !!(metaToken && pageId), ig: !!(metaToken && igUserId), th: !!(thUserId && thSeed) };
+  const yt = { clientId: env("YT_CLIENT_ID"), clientSecret: env("YT_CLIENT_SECRET"), refreshToken: env("YT_REFRESH_TOKEN") };
+  const configured = { fb: !!(metaToken && pageId), ig: !!(metaToken && igUserId), th: !!(thUserId && thSeed), yt: !!(yt.clientId && yt.clientSecret && yt.refreshToken) };
   if (!sa) {
     console.log("::warning::未設定 FIREBASE_SERVICE_ACCOUNT，略過本輪。設定方式見 docs/SOCIAL_SOP.md。");
     return;
   }
-  if (!configured.fb && !configured.ig && !configured.th) {
-    console.log("::warning::尚未設定任何社群平台的 Secrets（Meta 或 Threads），略過本輪。見 docs/SOCIAL_SOP.md。");
+  if (!configured.fb && !configured.ig && !configured.th && !configured.yt) {
+    console.log("::warning::尚未設定任何社群平台的 Secrets（Meta、Threads 或 YouTube），略過本輪。見 docs/SOCIAL_SOP.md。");
     return;
   }
 
@@ -80,6 +85,7 @@ async function main() {
     thToken = await threadsToken(db, thSeed, { refresh: !dryRun });
     clients.th = createThreadsGraph({ token: thToken.token, userId: thUserId });
   }
+  if (configured.yt) clients.yt = createYouTubeClient(yt);
   for (const ch of Object.keys(clients)) {
     try { health[ch] = { ok: true, name: (await clients[ch].checkToken()).name || null, error: null }; }
     catch (e) { health[ch] = { ok: false, name: null, error: e.message }; }
@@ -105,6 +111,7 @@ async function main() {
         fb: chMeta("fb"),
         ig: chMeta("ig"),
         th: { ...chMeta("th"), expiresAt: thToken ? thToken.expiresAt : null, refreshError: thToken ? thToken.refreshError : null },
+        yt: chMeta("yt"),
       },
       processed: summary.total,
       actions: summary.results.map((r) => `${r.id}:${r.action}${r.error ? "!" : ""}`).slice(0, 50),
