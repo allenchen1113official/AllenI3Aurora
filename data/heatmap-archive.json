@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261030",
+    "kind": "熱力圖",
+    "date": "2026.10.30",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.10.30",
+    "cover": "https://drive.google.com/thumbnail?id=1pAQV0zgyW045Po7hCbKBZPO6ZM1VjDRi&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1pAQV0zgyW045Po7hCbKBZPO6ZM1VjDRi&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1pAQV0zgyW045Po7hCbKBZPO6ZM1VjDRi&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=13-k51OQQLkISxpmWKiieYk3EcGEheFkU&sz=w1600",
+    "summary": "加權指數收 45,211.83 點、重挫 1,156.5 點（-2.49%），單日成交約 8,877 億元，10 月累計下跌 2,728 點。電子權值股全面走弱，航運成為少數亮點。，焦點個股：台積電 -1.86%、聯發科 -3.21%、台達電 -9…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261029",
     "kind": "熱力圖",
     "date": "2026.10.29",
