@@ -100,15 +100,198 @@ function srtBuild(cues) {
 }
 const fmtT = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
+/* ---------- 素材庫：照片＋短影片（assets.items）預覽與編修 ----------
+   每筆 { kind: photo|clip, file, caption, narration, driveId, url, start, end, note }
+   預覽來源優先序：本機檔案（選資料夾後依檔名對應，不上傳）→ Drive 縮圖 → 直接網址。
+   舊資料只有 assets.photos（檔名陣列）時自動轉成 items；儲存時 photos 仍同步寫回以相容。 */
+const VL_VID_EXT = /\.(mov|mp4|m4v|webm|avi)$/i;
+const vlKindOf = (name) => (VL_VID_EXT.test(String(name || "")) ? "clip" : "photo");
+const vlItem = (o) => ({ kind: o.kind === "clip" || o.kind === "photo" ? o.kind : vlKindOf(o.file || o.url || ""), file: o.file || "", caption: o.caption || "", narration: o.narration || "",
+  driveId: o.driveId || "", url: o.url || "", start: o.start == null ? "" : String(o.start), end: o.end == null ? "" : String(o.end), note: o.note || "" });
+const vlItemsFrom = (assets) => (Array.isArray(assets && assets.items) && assets.items.length ? assets.items : (assets && assets.photos || []).map((f) => ({ file: f }))).map(vlItem);
+const vlDriveThumb = (id, w) => (id ? `https://drive.google.com/thumbnail?id=${id}&sz=w${w || 480}` : "");
+const vlBase = (p) => String(p || "").split(/[\\/]/).pop().toLowerCase();
+const vlItemName = (it) => it.file || (it.driveId ? "Drive:" + it.driveId.slice(0, 8) + "…" : (it.url || "").split("/").pop() || "（未命名）");
+
+/* 縮圖：本機 File → object URL；否則 Drive 縮圖／直接網址；都沒有或載入失敗 → 檔名占位 */
+function VlThumb({ item, file, onClick, big }) {
+  const [src, setSrc] = useState("");
+  const [bad, setBad] = useState(false);
+  useEffect(() => { setBad(false); if (!file) { setSrc(""); return; } const u = URL.createObjectURL(file); setSrc(u); return () => URL.revokeObjectURL(u); }, [file]);
+  const remote = !file && (item.driveId ? vlDriveThumb(item.driveId, big ? 1600 : 480) : (/^https?:/.test(item.url) ? item.url : ""));
+  const s = src || remote;
+  const base = { width: "100%", height: "100%", objectFit: big ? "contain" : "cover", display: "block", background: "#0b0d12", cursor: onClick ? "zoom-in" : "default" };
+  if (s && !bad) {
+    if (file && item.kind === "clip") return <video src={src} muted preload="metadata" playsInline onClick={onClick} style={base} onError={() => setBad(true)} />;
+    if (!file && item.kind === "clip" && !item.driveId) return <video src={s} muted preload="metadata" playsInline controls={big} onClick={onClick} style={base} onError={() => setBad(true)} />;
+    return <img src={s} alt="" loading="lazy" decoding="async" onClick={onClick} style={base} onError={() => setBad(true)} />;
+  }
+  return <div onClick={onClick} style={{ ...base, display: "grid", placeItems: "center", color: "var(--text-4)", fontSize: 11, padding: 8, textAlign: "center", wordBreak: "break-all", cursor: onClick ? "pointer" : "default" }}>
+    <div><div style={{ fontSize: big ? 40 : 22, marginBottom: 4 }}>{item.kind === "clip" ? "🎬" : "🖼"}</div>{vlItemName(item)}<div style={{ marginTop: 4 }}>{bad ? (file ? "瀏覽器無法解碼此格式（HEIC 請先轉 JPG）" : "縮圖載入失敗：Drive 檔案需可檢視，或改選本機資料夾") : "選擇本機素材資料夾或填 Drive 連結後可預覽"}</div></div>
+  </div>;
+}
+
+/* 放大檢視＋編修：左側媒體、右側字幕／旁白／備註；短影片可設取用起訖秒數 */
+function VlLightbox({ items, idx, files, onClose, onNav, onChange, onRemove }) {
+  const it = vlItem(items[idx] || {}); const vref = React.useRef(null);
+  const [t, setT] = useState(0); const [dur, setDur] = useState(0);
+  const file = files.get(vlBase(it.file));
+  const fileUrl = useMemo(() => (file ? URL.createObjectURL(file) : ""), [file]);
+  useEffect(() => () => { if (fileUrl) URL.revokeObjectURL(fileUrl); }, [fileUrl]);
+  useEffect(() => { const h = (e) => { if (e.key === "Escape") onClose(); if (e.key === "ArrowLeft") onNav(-1); if (e.key === "ArrowRight") onNav(1); }; window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h); }, [onClose, onNav]);
+  const set = (k, v) => onChange(idx, { ...it, [k]: v });
+  const sec = (v) => { const n = Number(v); return Number.isFinite(n) ? n : null; };
+  const trimLen = sec(it.start) != null && sec(it.end) != null ? Math.max(0, sec(it.end) - sec(it.start)) : null;
+  const field = { fontSize: 12.5 };
+  const media = (() => {
+    if (it.kind === "clip") {
+      if (file) { return <video ref={vref} src={fileUrl} controls playsInline style={{ width: "100%", maxHeight: "70vh", background: "#000", borderRadius: "var(--radius-md)" }} onTimeUpdate={(e) => setT(e.currentTarget.currentTime)} onLoadedMetadata={(e) => { setDur(e.currentTarget.duration); const s0 = sec(it.start); if (s0) e.currentTarget.currentTime = s0; }} />; }
+      if (it.driveId) return <div style={{ aspectRatio: "16/9" }}><iframe title="drive" src={vlDrivePreview(it.driveId)} allow="autoplay" allowFullScreen style={{ width: "100%", height: "100%", border: 0, borderRadius: "var(--radius-md)" }} /></div>;
+      if (/^https?:/.test(it.url)) return <video ref={vref} src={it.url} controls playsInline style={{ width: "100%", maxHeight: "70vh", background: "#000", borderRadius: "var(--radius-md)" }} onTimeUpdate={(e) => setT(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setDur(e.currentTarget.duration)} />;
+    }
+    return <div style={{ height: "70vh" }}><VlThumb item={it} file={file} big /></div>;
+  })();
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(5,7,12,.86)", display: "grid", placeItems: "center", padding: 18 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: "min(1240px, 100%)", maxHeight: "94vh", overflow: "auto", background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 16, display: "grid", gridTemplateColumns: "minmax(0, 3fr) minmax(280px, 1.4fr)", gap: 16 }}>
+        <div>
+          {media}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+            <button className="ad-btn ghost" style={{ padding: "5px 10px" }} onClick={() => onNav(-1)} disabled={idx === 0}>← 上一張</button>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-3)" }}>{idx + 1}／{items.length}</span>
+            <button className="ad-btn ghost" style={{ padding: "5px 10px" }} onClick={() => onNav(1)} disabled={idx === items.length - 1}>下一張 →</button>
+            <span style={{ flex: 1 }} />
+            <span style={{ fontSize: 12, color: "var(--text-4)", wordBreak: "break-all" }}>{vlItemName(it)}{file ? ` · ${(file.size / 1e6).toFixed(1)} MB` : ""}{it.kind === "clip" && dur ? ` · ${dur.toFixed(1)} 秒` : ""}</span>
+          </div>
+        </div>
+        <div style={{ display: "grid", gap: 10, alignContent: "start" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <select className="ad-in" style={{ width: "auto", ...field }} value={it.kind} onChange={(e) => set("kind", e.target.value)}><option value="photo">照片</option><option value="clip">短影片</option></select>
+            <span style={{ flex: 1 }} />
+            <button className="ad-btn ghost" style={{ padding: "5px 10px", color: "var(--danger)" }} onClick={() => { if (window.confirm("從本集素材清單移除這筆？（檔案本身不會刪除）")) onRemove(idx); }}>✕ 移除</button>
+            <button className="ad-btn ghost" style={{ padding: "5px 10px" }} onClick={onClose}>關閉 Esc</button>
+          </div>
+          <div><label className="ad-lbl">檔名 <span style={{ color: "var(--text-4)", fontWeight: 400 }}>（對應本機／Drive 資料夾內的檔案）</span></label><input className="ad-in" style={field} value={it.file} onChange={(e) => set("file", e.target.value)} /></div>
+          <div><label className="ad-lbl">畫面字幕 <span style={{ fontFamily: "var(--font-mono)", fontWeight: 400, color: it.caption.length > 18 ? "var(--danger)" : "var(--text-4)" }}>{it.caption.length}／18 字</span></label><input className="ad-in" style={field} value={it.caption} onChange={(e) => set("caption", e.target.value)} placeholder="與畫面相符的一句話（≤18 字）" /></div>
+          <div><label className="ad-lbl">旁白</label><textarea className="ad-in" style={{ ...field, minHeight: 96, fontFamily: "var(--font-body)" }} value={it.narration} onChange={(e) => set("narration", e.target.value)} placeholder="這張畫面出現時要說的話（可留白，沿用章節旁白）" /></div>
+          {it.kind === "clip" && (
+            <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-md)", padding: 10, display: "grid", gap: 8 }}>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--text-2)" }}>取用片段（秒）{trimLen != null ? <span style={{ fontWeight: 400, color: "var(--text-4)", marginLeft: 8 }}>長度 {trimLen.toFixed(1)} 秒</span> : null}</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr auto", gap: 6, alignItems: "center" }}>
+                <input className="ad-in" style={field} type="number" step="0.1" min="0" value={it.start} onChange={(e) => set("start", e.target.value)} placeholder="起點" />
+                <button className="ad-btn ghost" style={{ padding: "4px 8px", fontSize: 11.5 }} onClick={() => set("start", t.toFixed(1))} disabled={!vref.current}>⏱ 起點</button>
+                <input className="ad-in" style={field} type="number" step="0.1" min="0" value={it.end} onChange={(e) => set("end", e.target.value)} placeholder="終點" />
+                <button className="ad-btn ghost" style={{ padding: "4px 8px", fontSize: 11.5 }} onClick={() => set("end", t.toFixed(1))} disabled={!vref.current}>⏱ 終點</button>
+              </div>
+              <div style={{ fontSize: 11.5, color: "var(--text-4)" }}>播放到想要的位置按「⏱」即填入目前秒數（現在 {t.toFixed(1)} 秒）；留白＝整段使用（成片剪輯時 4–16 秒）。</div>
+            </div>
+          )}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <div><label className="ad-lbl">Drive 檔案連結／ID</label><input className="ad-in" style={field} value={it.driveId} onChange={(e) => set("driveId", vlDriveId(e.target.value) || e.target.value)} placeholder="file/d/…" /></div>
+            <div><label className="ad-lbl">直接網址</label><input className="ad-in" style={field} value={it.url} onChange={(e) => set("url", e.target.value)} placeholder="https://…/x.jpg" /></div>
+          </div>
+          <div><label className="ad-lbl">備註</label><input className="ad-in" style={field} value={it.note} onChange={(e) => set("note", e.target.value)} placeholder="需遮蔽車牌、重剪時換掉…" /></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 素材庫面板：工具列（選本機資料夾／新增檔案／Drive 連結）＋格狀縮圖（拖曳排序、字幕即時編輯）＋純文字模式 */
+function VlAssetLibrary({ items: rawItems, onChange, files, setFiles }) {
+  const items = useMemo(() => (rawItems || []).map(vlItem), [rawItems]);
+  const [filter, setFilter] = useState("all");
+  const [view, setView] = useState("grid");
+  const [lb, setLb] = useState(null);
+  const [drag, setDrag] = useState(null);
+  const [add, setAdd] = useState({ url: "", kind: "photo" });
+  const [size, setSize] = useState(150);
+  const matched = items.filter((it) => files.has(vlBase(it.file))).length;
+  const nPhoto = items.filter((it) => it.kind === "photo").length, nClip = items.length - nPhoto;
+  const shown = items.map((it, i) => [it, i]).filter(([it]) => filter === "all" || it.kind === filter);
+  const upd = (i, it) => onChange(items.map((x, k) => (k === i ? vlItem(it) : x)));
+  const remove = (i) => { onChange(items.filter((_, k) => k !== i)); setLb(null); };
+  const move = (i, d) => { const j = i + d; if (j < 0 || j >= items.length) return; const a = [...items]; [a[i], a[j]] = [a[j], a[i]]; onChange(a); };
+  const drop = (to) => { if (drag == null || drag === to) { setDrag(null); return; } const a = [...items]; const [m] = a.splice(drag, 1); a.splice(to, 0, m); onChange(a); setDrag(null); };
+  const pickFolder = (list) => { const m = new Map(files); for (const f of list) if (/^(image|video)\//.test(f.type) || /\.(jpe?g|png|webp|heic|heif|mov|mp4|m4v)$/i.test(f.name)) m.set(vlBase(f.name), f); setFiles(m); };
+  const addFiles = (list) => {
+    const m = new Map(files); const have = new Set(items.map((it) => vlBase(it.file))); const added = [];
+    for (const f of list) { m.set(vlBase(f.name), f); if (!have.has(vlBase(f.name))) { added.push(vlItem({ file: f.name })); have.add(vlBase(f.name)); } }
+    setFiles(m); if (added.length) onChange([...items, ...added]);
+  };
+  const addUrl = () => {
+    const v = add.url.trim(); if (!v) return;
+    const id = vlDriveId(v);
+    onChange([...items, vlItem({ kind: add.kind, driveId: id, url: id ? "" : v, file: id ? "" : v.split("/").pop().split("?")[0] })]); setAdd({ url: "", kind: add.kind });
+  };
+  const textValue = items.map((it) => [it.file || (it.driveId ? "drive:" + it.driveId : it.url), it.caption].filter(Boolean).join(" | ")).join("\n");
+  const fromText = (txt) => onChange(txt.split("\n").map((l) => l.trim()).filter(Boolean).map((l) => {
+    const [a, ...rest] = l.split("|").map((x) => x.trim()); const old = items.find((it) => (it.file || "drive:" + it.driveId || it.url) === a) || {};
+    const dv = /^drive:/.test(a) ? a.slice(6) : ""; return vlItem({ ...old, file: dv ? "" : (/^https?:/.test(a) ? old.file || "" : a), driveId: dv || old.driveId || "", url: /^https?:/.test(a) ? a : old.url || "", caption: rest.join(" | ") || old.caption || "" });
+  }));
+  const btn = (on, label, fn, extra) => <button className={"ad-btn" + (on ? " primary" : " ghost")} style={{ padding: "5px 11px", fontSize: 12, ...(extra || {}) }} onClick={fn}>{label}</button>;
+  const fileBtn = (label, props, handler) => <label className="ad-btn ghost" style={{ padding: "5px 11px", fontSize: 12, cursor: "pointer" }}>{label}<input type="file" style={{ display: "none" }} {...props} onChange={(e) => { handler(Array.from(e.target.files || [])); e.target.value = ""; }} /></label>;
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 10 }}>
+        {fileBtn("📁 選擇本機素材資料夾（預覽用）", { webkitdirectory: "", directory: "", multiple: true }, pickFolder)}
+        {fileBtn("＋ 新增照片／短影片", { multiple: true, accept: "image/*,video/*,.heic,.mov" }, addFiles)}
+        <span style={{ fontSize: 12, color: "var(--text-4)" }}>{files.size ? `已對應 ${matched}／${items.length} 筆（資料夾內 ${files.size} 個檔案，不上傳、只在瀏覽器預覽）` : "尚未選擇資料夾：請選 Drive 桌面同步的「旅行照片」資料夾，縮圖依檔名自動對應"}</span>
+      </div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 12 }}>
+        <input className="ad-in" style={{ flex: "1 1 260px", fontSize: 12.5 }} value={add.url} onChange={(e) => setAdd({ ...add, url: e.target.value })} placeholder="以 Google Drive 分享連結或圖片／影片網址新增素材" onKeyDown={(e) => e.key === "Enter" && addUrl()} />
+        <select className="ad-in" style={{ width: "auto", fontSize: 12.5 }} value={add.kind} onChange={(e) => setAdd({ ...add, kind: e.target.value })}><option value="photo">照片</option><option value="clip">短影片</option></select>
+        {btn(false, "加入", addUrl)}
+      </div>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", marginBottom: 10 }}>
+        {btn(filter === "all", `全部 ${items.length}`, () => setFilter("all"))}{btn(filter === "photo", `🖼 照片 ${nPhoto}`, () => setFilter("photo"))}{btn(filter === "clip", `🎬 短影片 ${nClip}`, () => setFilter("clip"))}
+        <span style={{ width: 1, height: 20, background: "var(--border)", margin: "0 4px" }} />
+        {btn(view === "grid", "格狀", () => setView("grid"))}{btn(view === "text", "純文字", () => setView("text"))}
+        {view === "grid" && <label style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--text-4)", marginLeft: 6 }}>縮圖<input type="range" min="100" max="260" step="10" value={size} onChange={(e) => setSize(+e.target.value)} /></label>}
+        <span style={{ flex: 1 }} />
+        <span style={{ fontSize: 11.5, color: "var(--text-4)" }}>拖曳縮圖可排序 · 點縮圖放大並編修字幕／旁白 · 短影片可設取用秒數</span>
+      </div>
+      {view === "text" ? (
+        <div><textarea className="ad-in" style={{ minHeight: 200, fontSize: 12, fontFamily: "var(--font-mono)" }} defaultValue={textValue} key={items.length + ":" + filter} onBlur={(e) => fromText(e.target.value)} />
+          <div style={{ fontSize: 11.5, color: "var(--text-4)", marginTop: 4 }}>每行一筆：<code>檔名 | 字幕</code>（Drive 用 <code>drive:檔案ID</code>）；離開欄位即套用，順序＝播放順序。</div></div>
+      ) : shown.length === 0 ? <div style={{ color: "var(--text-4)", fontSize: 12.5, padding: "20px 0" }}>本集尚無素材。用上方「＋ 新增照片／短影片」從電腦加入，或貼 Drive 連結。</div> : (
+        <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${size}px, 1fr))`, gap: 10 }}>
+          {shown.map(([it, i]) => (
+            <div key={i} draggable onDragStart={() => setDrag(i)} onDragOver={(e) => e.preventDefault()} onDrop={() => drop(i)}
+              style={{ border: "1px solid " + (drag === i ? "var(--border-aurora)" : "var(--border)"), borderRadius: "var(--radius-md)", overflow: "hidden", background: "var(--night-850)", opacity: drag === i ? .5 : 1 }}>
+              <div style={{ position: "relative", aspectRatio: "4/3" }}>
+                <VlThumb item={it} file={files.get(vlBase(it.file))} onClick={() => setLb(i)} />
+                <span style={{ position: "absolute", top: 5, left: 6, fontFamily: "var(--font-mono)", fontSize: 10.5, padding: "1px 6px", borderRadius: 999, background: "rgba(0,0,0,.6)", color: "#fff" }}>{i + 1}</span>
+                <span style={{ position: "absolute", top: 5, right: 6, fontSize: 10.5, padding: "1px 6px", borderRadius: 999, background: it.kind === "clip" ? "var(--intelligence)" : "rgba(0,0,0,.6)", color: "#fff" }}>{it.kind === "clip" ? "🎬 " + (it.start !== "" && it.end !== "" ? `${(Number(it.end) - Number(it.start)).toFixed(0)}s` : "短片") : "照片"}</span>
+                {it.narration && <span title={it.narration} style={{ position: "absolute", bottom: 5, right: 6, fontSize: 10.5, padding: "1px 6px", borderRadius: 999, background: "rgba(0,0,0,.6)", color: "#fff" }}>🎙</span>}
+              </div>
+              <div style={{ padding: "6px 7px 7px" }}>
+                <input className="ad-in" style={{ fontSize: 11.5, padding: "4px 6px" }} value={it.caption} onChange={(e) => upd(i, { ...it, caption: e.target.value })} placeholder="字幕（≤18 字）" />
+                <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 4 }}>
+                  <span title={vlItemName(it)} style={{ flex: 1, fontSize: 10.5, color: "var(--text-4)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{vlItemName(it)}</span>
+                  <button className="ad-btn ghost" style={{ padding: "1px 6px", fontSize: 11 }} onClick={() => move(i, -1)} disabled={i === 0} title="往前">↑</button>
+                  <button className="ad-btn ghost" style={{ padding: "1px 6px", fontSize: 11 }} onClick={() => move(i, 1)} disabled={i === items.length - 1} title="往後">↓</button>
+                  <button className="ad-btn ghost" style={{ padding: "1px 6px", fontSize: 11, color: "var(--danger)" }} onClick={() => remove(i)} title="移除">✕</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {lb != null && items[lb] && <VlLightbox items={items} idx={lb} files={files} onClose={() => setLb(null)} onNav={(d) => setLb((k) => Math.min(items.length - 1, Math.max(0, k + d)))} onChange={upd} onRemove={remove} />}
+    </div>
+  );
+}
+
 function vlBlank(maxSort) {
   return { __new: true, series: "", seriesId: "", ep: (maxSort || 0) + 1, sort: (maxSort || 0) + 1, day: "", title: "", altTitles: ["", ""],
     thumbnailText: "", tags: "", description: "", pinnedComment: "", chapters: [{ t: "00:00", name: "冷開場" }], script: "", srt: "", srtShort: "",
     media: { youtubeId: "", youtubeUrl: "", driveFolder: "", driveFileId: "", driveTrailerId: "", videoUrl: "", fullVideo: "", trailer: "", thumbnail: "", duration: "", loudness: "", voice: "", music: "" },
-    assets: { photos: [], photoCount: 0 }, checklist: {}, status: "draft", notes: "" };
+    assets: { items: [], photos: [], photoCount: 0, clipCount: 0 }, checklist: {}, status: "draft", notes: "" };
 }
 function vlNormalize(r) {
   return { ...vlBlank(0), __new: false, ...r, altTitles: Array.isArray(r.altTitles) ? r.altTitles : [], chapters: Array.isArray(r.chapters) ? r.chapters : [],
-    media: { ...vlBlank(0).media, ...(r.media || {}) }, assets: { photos: Array.isArray(r.assets && r.assets.photos) ? r.assets.photos : [], photoCount: (r.assets && r.assets.photoCount) || 0 }, checklist: r.checklist || {} };
+    media: { ...vlBlank(0).media, ...(r.media || {}) }, assets: (() => { const items = vlItemsFrom(r.assets); return { items, photos: items.map((it) => it.file).filter(Boolean), photoCount: items.filter((it) => it.kind === "photo").length, clipCount: items.filter((it) => it.kind === "clip").length }; })(), checklist: r.checklist || {} };
 }
 function vlPayload(s) {
   const ytId = vlYtId(s.media.youtubeId || s.media.youtubeUrl);
@@ -119,7 +302,7 @@ function vlPayload(s) {
     chapters: (s.chapters || []).map((c) => ({ t: c.t || "", name: c.name || "" })),
     script: s.script || "", srt: s.srt || "", srtShort: s.srtShort || "",
     media: { ...s.media, youtubeId: ytId, youtubeUrl: ytId ? vlYtUrl(ytId) : (s.media.youtubeUrl || "") },
-    assets: { photos: s.assets.photos || [], photoCount: (s.assets.photos || []).length },
+    assets: (() => { const items = (s.assets.items || []).map(vlItem); return { items, photos: items.map((it) => it.file).filter(Boolean), photoCount: items.filter((it) => it.kind === "photo").length, clipCount: items.filter((it) => it.kind === "clip").length }; })(),
     checklist: s.checklist || {}, status: s.status || "draft", notes: s.notes || "",
     updatedAt: new Date().toISOString(),
   };
@@ -156,6 +339,7 @@ function VlogPanel() {
   const [pvWhich, setPvWhich] = useState("full");   // full | trailer
   const [pvFile, setPvFile] = useState(null);
   const [ytPrivacy, setYtPrivacy] = useState("public");
+  const [vlFiles, setVlFiles] = useState(() => new Map());   // 本機素材檔名 → File（只供預覽，不上傳、不存檔）
 
   const load = useCallback(async () => {
     setErr("");
@@ -463,8 +647,9 @@ function VlogPanel() {
             {/^https?:/.test(sel.media.thumbnail || "") && <img src={sel.media.thumbnail} alt="" style={{ marginTop: 12, maxWidth: 320, borderRadius: "var(--radius-md)" }} />}
           </div>
           <div style={box}>
-            <label className="ad-lbl">使用照片清單 assets.photos（每行一個檔名，{sel.assets.photos.length} 張；Canon 273A＝當日、iPhone IMG＝依 EXIF）</label>
-            <textarea className="ad-in" style={{ minHeight: 160, fontSize: 12 }} value={sel.assets.photos.join("\n")} onChange={(e) => setSel((s) => ({ ...s, assets: { ...s.assets, photos: e.target.value.split("\n").map((x) => x.trim()).filter(Boolean) } }))} />
+            <div style={{ color: "var(--text-2)", fontSize: 14, fontWeight: 700, fontFamily: "var(--font-display)", marginBottom: 4 }}>素材庫：照片與短影片（assets.items，{sel.assets.items.length} 筆）</div>
+            <div style={{ color: "var(--text-4)", fontSize: 12, marginBottom: 10 }}>順序＝成片播放順序；每筆可寫畫面字幕與旁白，短影片可設取用秒數。Canon 273A＝當日、iPhone IMG＝依 EXIF。檔案留在 Drive／電腦，這裡只存檔名與文字。</div>
+            <VlAssetLibrary items={sel.assets.items} files={vlFiles} setFiles={setVlFiles} onChange={(items) => setSel((s) => ({ ...s, assets: { ...s.assets, items } }))} />
           </div>
           <div style={box}>
             <label className="ad-lbl">製作備註 notes</label>
