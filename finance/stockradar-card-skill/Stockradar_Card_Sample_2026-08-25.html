@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台股選股雷達 TOP 10 圖卡 — HTML 重繪版（stockradar-card skill 示範產出）</title>
+<style>
+  body { margin: 0; padding: 24px; background: #05070f; font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; color: #96a0ac; }
+  .note { max-width: 980px; margin: 0 auto 18px; font-size: 14px; line-height: 1.7; }
+  .note b { color: #f3f6fa; }
+  .card { max-width: 980px; margin: 0 auto; border-radius: 8px; overflow: hidden; padding: 28px 44px 24px;
+    background: linear-gradient(180deg, #052924 0%, #0a0f17 100%); box-sizing: border-box; }
+  .hd { display: flex; align-items: center; gap: 14px; }
+  .logo { width: 48px; height: 48px; border-radius: 10px; background: #6BBEC6; color: #071017;
+    display: grid; place-items: center; font-weight: 900; font-size: 15px; flex: none; }
+  .bwrap { line-height: 1.15; }
+  .bname { color: #C4A05C; font-weight: 900; font-size: 24px; }
+  .ben { color: #9B844F; font-weight: 700; font-size: 11.5px; letter-spacing: .04em; }
+  .top10 { font-weight: 700; font-size: 42px; color: #f3f6fa; font-stretch: condensed; margin-left: 14px; letter-spacing: .01em; }
+  .sub { color: #f3f6fa; font-size: 18px; margin-left: 18px; }
+  .date { margin-left: auto; color: #96a0ac; font-size: 16px; }
+  .rule { height: 2px; background: #9B844F; margin: 14px 0 10px; }
+  .sig { color: #6E7884; font-size: 13px; display: flex; gap: 40px; border-bottom: 1px solid rgba(255,255,255,.09); padding-bottom: 8px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px; position: relative; margin-top: 6px; }
+  .grid::before { content: ""; position: absolute; left: 50%; top: 8px; bottom: 8px; width: 1px; background: #5E523A; }
+  .e { display: flex; gap: 14px; padding: 16px 0 12px; border-bottom: 1px solid rgba(255,255,255,.06); min-height: 74px; }
+  .col > .e:last-child { border-bottom: none; }
+  .rk { font-size: 40px; font-weight: 700; color: #f3f6fa; font-stretch: condensed; width: 62px; flex: none; line-height: 1.1; }
+  .mid { flex: 1; min-width: 0; }
+  .nm { color: #f3f6fa; font-weight: 800; font-size: 21px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pills i { font-style: normal; color: #C4A05C; border: 1px solid #C4A05C; border-radius: 5px; font-size: 12px; padding: 2px 8px; white-space: nowrap; }
+  .none { color: #6E7884; font-size: 13px; margin-top: 10px; }
+  .pr { text-align: right; flex: none; }
+  .pr b { display: block; color: #f3f6fa; font-family: ui-monospace, "JetBrains Mono", Consolas, monospace; font-weight: 800; font-size: 23px; }
+  .pr span { font-family: ui-monospace, "JetBrains Mono", Consolas, monospace; font-weight: 700; font-size: 15px; }
+  .up { color: #FF5C6E; } .dn { color: #39E095; }
+  .ft { display: flex; align-items: center; gap: 12px; border-top: 2px solid #9B844F; margin-top: 6px; padding-top: 16px; }
+  .ft .logo { width: 38px; height: 38px; font-size: 12px; }
+  .ft .fb { color: #C4A05C; font-weight: 900; font-size: 22px; }
+  .ft .disc { margin-left: auto; color: #96a0ac; font-size: 13.5px; }
+</style>
+</head>
+<body>
+<div class="note">
+  <b>stockradar-card skill 示範產出 — HTML 重繪版</b>（樣本資料：2026-08-07）<br>
+  正式產出為 PNG 兩張（<code>render_stockradar_card.py</code>：FB 1200×630、IG 1080×1080，Pillow 繪製、
+  星點固定亂數種子可重現，視覺復刻艾倫報報既有選股雷達成品）。依備份鐵則 PNG 不經 base64 上傳雲端，
+  本頁以純文字 HTML/CSS 重繪相同視覺供 Drive 端直接檢視；站內備援圖在 repo <code>assets/stockradar/</code>。
+</div>
+<div class="card">
+  <div class="hd">
+    <span class="logo">AI³A</span>
+    <span class="bwrap"><span class="bname">艾倫報報</span><br><span class="ben">ALLEN I³AURORA</span></span>
+    <span class="top10">TOP 10</span>
+    <span class="sub">台股每日分析報表</span>
+    <span class="date">2026-08-07 ・ 星期五</span>
+  </div>
+  <div class="rule"></div>
+  <div class="sig"><span>訊號說明　僅顯示達標訊號（金色標籤，最多5項，未達標不顯示）</span><span>均線多頭：月&gt;季&gt;半年&gt;年多頭排列</span></div>
+  <div class="grid">
+    <div class="col">
+      <div class="e"><span class="rk">01</span><div class="mid"><div class="nm">2395 研華</div><div class="pills"><i>均線多頭</i><i>營益率&gt;10%</i><i>EPS年增&gt;10%</i></div></div><div class="pr"><b>634.00</b><span class="up">▲1.93%</span></div></div>
+      <div class="e"><span class="rk">02</span><div class="mid"><div class="nm">3416 融程電</div><div class="pills"><i>營益率&gt;10%</i><i>營收年增&gt;20%</i><i>EPS年增&gt;10%</i></div></div><div class="pr"><b>191.00</b><span class="up">▲2.41%</span></div></div>
+      <div class="e"><span class="rk">03</span><div class="mid"><div class="nm">1303 南亞</div><div class="pills"><i>均線多頭</i><i>EPS年增&gt;10%</i></div></div><div class="pr"><b>188.00</b><span class="up">▲5.32%</span></div></div>
+      <div class="e"><span class="rk">04</span><div class="mid"><div class="nm">3653 健策</div><div class="pills"><i>營益率&gt;10%</i><i>EPS年增&gt;10%</i></div></div><div class="pr"><b>4380.00</b><span class="dn">▼1.57%</span></div></div>
+      <div class="e"><span class="rk">05</span><div class="mid"><div class="nm">6589 台康生技</div><div class="none">本期無符合訊號</div></div><div class="pr"><b>48.20</b><span class="up">▲0.42%</span></div></div>
+    </div>
+    <div class="col">
+      <div class="e"><span class="rk">06</span><div class="mid"><div class="nm">9939 宏全</div><div class="pills"><i>均線多頭</i><i>營益率&gt;10%</i></div></div><div class="pr"><b>144.50</b><span class="up">▲1.40%</span></div></div>
+      <div class="e"><span class="rk">07</span><div class="mid"><div class="nm">2027 大成鋼</div><div class="pills"><i>營益率&gt;10%</i><i>EPS年增&gt;10%</i></div></div><div class="pr"><b>46.60</b><span class="up">▲1.08%</span></div></div>
+      <div class="e"><span class="rk">08</span><div class="mid"><div class="nm">2301 光寶科</div><div class="pills"><i>營益率&gt;10%</i><i>EPS年增&gt;10%</i></div></div><div class="pr"><b>247.00</b><span class="dn">▼2.18%</span></div></div>
+      <div class="e"><span class="rk">09</span><div class="mid"><div class="nm">2344 華邦電</div><div class="pills"><i>營益率&gt;10%</i><i>營收年增&gt;20%</i><i>EPS年增&gt;10%</i></div></div><div class="pr"><b>163.50</b><span class="dn">▼4.39%</span></div></div>
+      <div class="e"><span class="rk">10</span><div class="mid"><div class="nm">3034 聯詠</div><div class="pills"><i>營益率&gt;10%</i></div></div><div class="pr"><b>542.00</b><span class="dn">▼0.18%</span></div></div>
+    </div>
+  </div>
+  <div class="ft">
+    <span class="logo">AI³A</span>
+    <span class="fb">艾倫報報 ALLEN I³ AURORA</span>
+    <span class="disc">資料來源：TWSE / TPEx / Goodinfo! 台灣股市資訊網 ・ 僅供研究參考，非投資建議</span>
+  </div>
+</div>
+</body>
+</html>

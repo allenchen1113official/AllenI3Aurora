@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>prebrief-card skill 測試檢視 — 2026-08-25</title>
+<style>
+  body { margin: 0; padding: 28px 20px 60px; background: #0b1020; color: #a8b2cc;
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; line-height: 1.7; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  h1 { color: #eef2fc; font-size: 26px; margin: 0 0 4px; }
+  .meta { color: #7884a0; font-size: 13.5px; margin-bottom: 26px; }
+  h2 { color: #eef2fc; font-size: 19px; margin: 34px 0 10px; border-left: 4px solid #2DD4BF; padding-left: 10px; }
+  .box { background: #121a30; border: 1px solid #26314f; border-radius: 14px; padding: 18px 20px; margin: 12px 0; }
+  .prompt { color: #cdd5e8; font-size: 14.5px; }
+  .prompt b { color: #78e2c0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #26314f; vertical-align: top; }
+  th { color: #7884a0; font-weight: 700; font-size: 12.5px; letter-spacing: .04em; }
+  .pass { color: #3DDC97; font-weight: 900; white-space: nowrap; }
+  .ev { color: #93a0be; font-size: 13px; }
+  .sum { background: #10243066; border: 1px solid #2DD4BF55; border-radius: 14px; padding: 16px 20px; color: #cdd5e8; font-size: 14.5px; }
+  code { background: #0b1020; border: 1px solid #26314f; border-radius: 6px; padding: 1px 6px; font-size: 12.5px; color: #9fd8ff; }
+  .note { color: #7884a0; font-size: 13px; margin-top: 26px; border-top: 1px solid #26314f; padding-top: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>prebrief-card skill 測試檢視</h1>
+  <div class="meta">iteration-1 · 2 案例 · 測試日 2026-08-25 · 產出：台股盤前速報品牌圖卡（1200×630 PNG）</div>
+
+  <div class="sum">
+    <b style="color:#3DDC97">總結：6/6 斷言全數通過。</b>
+    兩案例輸出位元組完全一致（209,274 bytes，星點固定亂數種子 20260824＝可重現）；
+    字型自動下載與非預設巢狀輸出路徑（含中文目錄名）皆正常。
+    圖卡視覺見同資料夾 <code>Prebrief_Card_Sample_2026-08-25.html</code>（HTML 重繪版）。
+  </div>
+
+  <h2>eval-0 · default-output（正常案例）</h2>
+  <div class="box">
+    <div class="prompt"><b>Prompt：</b>在乾淨目錄照 SKILL.md 步驟執行：複製 <code>scripts/render_prebrief_card.py</code> 後直接
+      <code>python3 render_prebrief_card.py</code>（不帶參數，沿用既有字型快取），產出台股盤前速報品牌圖卡。</div>
+    <table>
+      <tr><th>斷言</th><th>結果</th><th>證據</th></tr>
+      <tr><td>輸出檔為 <code>./prebrief-card.png</code>（預設輸出目前目錄，與 repo 解耦）</td><td class="pass">PASS</td>
+        <td class="ev">乾淨目錄 test-clean-1/ 直接執行後產出 prebrief-card.png（209,274 bytes），未依賴 repo 任何路徑。</td></tr>
+      <tr><td>PNG 可開啟且尺寸 1200×630</td><td class="pass">PASS</td>
+        <td class="ev">PIL Image.open 回報 (1200, 630)。</td></tr>
+      <tr><td>品牌列／膠囊／主標與漸層底線／副標／底部標語網址皆完整清晰，無亂碼、無重疊裁切</td><td class="pass">PASS</td>
+        <td class="ev">目視驗證：I³ 品牌方塊、艾倫報報 ALLEN I³ AURORA、盤前 · PRE-MARKET 膠囊、台股盤前速報主標＋綠→紫底線、兩行副標、洞察世界標語與網址皆正確呈現。</td></tr>
+    </table>
+  </div>
+
+  <h2>eval-1 · custom-path-fresh-fonts（壓力案例）</h2>
+  <div class="box">
+    <div class="prompt"><b>Prompt：</b>乾淨目錄＋全新 TMPDIR（無任何字型快取，強制走字型自動下載），執行
+      <code>python3 render_prebrief_card.py "out/社群/盤前圖卡_FB.png"</code>，
+      驗證非預設巢狀輸出路徑（含中文目錄名）與相依自動解決。</div>
+    <table>
+      <tr><th>斷言</th><th>結果</th><th>證據</th></tr>
+      <tr><td>自動下載 NotoSansCJKtc-Bold/Regular 到 <code>$TMPDIR/prebrief-fonts/</code></td><td class="pass">PASS</td>
+        <td class="ev">輸出「下載字型 NotoSansCJKtc-Bold.otf …」「下載字型 NotoSansCJKtc-Regular.otf …」，兩檔於 fresh-tmp/prebrief-fonts/ 皆存在。</td></tr>
+      <tr><td>自動建立中間目錄 out/社群/ 並輸出 盤前圖卡_FB.png，尺寸 1200×630</td><td class="pass">PASS</td>
+        <td class="ev">out/社群/盤前圖卡_FB.png 產出成功（含中文目錄名），PIL 回報 (1200, 630)。</td></tr>
+      <tr><td>輸出位元組數與正常案例完全一致（可重現性）</td><td class="pass">PASS</td>
+        <td class="ev">兩案例輸出皆 209,274 bytes。</td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    本頁為純文字版測試檢視（依備份鐵則，含 base64 內嵌圖之 generate_review 靜態頁不上傳雲端；
+    該完整版已於 2026-08-25 對話中以檔案卡片交付）。skill 檔案備份與還原方式見同資料夾
+    <code>README_如何還原skill檔.md</code>。
+  </div>
+</div>
+</body>
+</html>

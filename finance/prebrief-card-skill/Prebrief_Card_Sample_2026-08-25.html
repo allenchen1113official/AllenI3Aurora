@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台股盤前速報 品牌圖卡 — HTML 重繪版（prebrief-card skill 示範產出）</title>
+<style>
+  body { margin: 0; padding: 24px; background: #05070f; font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; color: #a8b2cc; }
+  .note { max-width: 900px; margin: 0 auto 18px; font-size: 14px; line-height: 1.7; }
+  .note b { color: #eef2fc; }
+  .stage { max-width: 900px; margin: 0 auto; }
+  /* 1200x630 圖卡等比重繪（以 aspect-ratio 縮放） */
+  .card { position: relative; width: 100%; aspect-ratio: 1200/630; border-radius: 8px; overflow: hidden;
+    background:
+      radial-gradient(46% 52% at 88% 8%, rgba(79,123,240,.50), transparent 70%),
+      radial-gradient(42% 50% at 100% 52%, rgba(124,58,237,.46), transparent 70%),
+      radial-gradient(46% 56% at 2% 88%, rgba(61,220,151,.40), transparent 70%),
+      radial-gradient(44% 46% at 38% 105%, rgba(45,212,191,.36), transparent 70%),
+      #0b1020; }
+  .card * { position: absolute; box-sizing: border-box; }
+  /* 星點 */
+  .stars i { position: absolute; width: .25%; aspect-ratio: 1; border-radius: 50%; background: rgba(255,255,255,.28); }
+  /* 品牌列 */
+  .mark { left: 5.3%; top: 8.9%; width: 7%; aspect-ratio: 1; border-radius: 18%;
+    background: linear-gradient(115deg, #3DDC97, #2DD4BF 38%, #4F7BF0 70%, #7C3AED);
+    display: grid; place-items: center; font-weight: 900; color: #0a0e1a; font-size: clamp(14px, 3vw, 30px); }
+  .bname { left: 14.3%; top: 9.5%; color: #eef2fc; font-weight: 900; font-size: clamp(11px, 2.4vw, 25px); }
+  .ben { left: 14.3%; top: 16.3%; color: #a8b2cc; font-weight: 700; letter-spacing: .04em; font-size: clamp(8px, 1.8vw, 19px); }
+  /* 標籤膠囊 */
+  .pill { right: 5.3%; top: 10.8%; padding: .9% 2.3%; border: 2px solid #5ed2b4; border-radius: 999px;
+    background: #142a34; color: #78e2c0; font-weight: 800; font-size: clamp(9px, 1.8vw, 19px); }
+  /* 主標與底線 */
+  .title { left: 5.3%; top: 33%; color: #eef2fc; font-weight: 900; letter-spacing: .01em; font-size: clamp(30px, 8.6vw, 88px); line-height: 1; }
+  .band { left: 5.7%; top: 54%; width: 43%; height: 1.6%; border-radius: 999px;
+    background: linear-gradient(90deg, #3DDC97, #2DD4BF 38%, #4F7BF0 70%, #7C3AED); }
+  /* 副標兩行 */
+  .sub1 { left: 5.3%; top: 62.5%; color: #a8b2cc; font-size: clamp(11px, 2.6vw, 27px); }
+  .sub2 { left: 5.3%; top: 71.5%; color: #78e2c0; font-size: clamp(11px, 2.6vw, 27px); }
+  /* 底部資訊列 */
+  .rule { left: 5.3%; right: 5.3%; top: 87%; height: 1px; background: #343e5c; }
+  .foot-l { left: 5.3%; top: 90.5%; color: #a8b2cc; font-weight: 700; font-size: clamp(9px, 2vw, 20px); }
+  .foot-r { right: 5.3%; top: 90.5%; color: #7884a0; font-size: clamp(8px, 1.9vw, 19px); }
+</style>
+</head>
+<body>
+<div class="note">
+  <b>prebrief-card skill 示範產出 — HTML 重繪版</b><br>
+  正式產出為 1200×630 PNG（<code>render_prebrief_card.py</code>，Pillow 繪製、星點固定亂數種子可重現），
+  正式檔在 GitHub repo <code>AllenI3Aurora/assets/prebrief/prebrief-card.png</code>，
+  作為盤前速報頁（prebrief.html）與歷期彙整卡片的站內備援圖及 og:image。
+  依備份鐵則，PNG 不經 base64 上傳雲端，本頁以純文字 HTML/CSS 重繪相同視覺供 Drive 端直接檢視。
+</div>
+<div class="stage">
+  <div class="card">
+    <span class="stars">
+      <i style="left:12%;top:24%"></i><i style="left:30%;top:12%"></i><i style="left:47%;top:7%"></i>
+      <i style="left:63%;top:20%"></i><i style="left:76%;top:33%"></i><i style="left:88%;top:26%"></i>
+      <i style="left:93%;top:58%"></i><i style="left:81%;top:74%"></i><i style="left:57%;top:86%"></i>
+      <i style="left:36%;top:79%"></i><i style="left:18%;top:64%"></i><i style="left:8%;top:44%"></i>
+      <i style="left:52%;top:47%;opacity:.5"></i><i style="left:70%;top:56%;opacity:.5"></i>
+    </span>
+    <span class="mark">I³</span>
+    <span class="bname">艾倫報報</span>
+    <span class="ben">ALLEN I³ AURORA</span>
+    <span class="pill">盤前 · PRE-MARKET</span>
+    <span class="title">台股盤前速報</span>
+    <span class="band"></span>
+    <span class="sub1">昨日收盤與三大法人 · 隔夜美股 · 類股輪動 · 今日觀察點</span>
+    <span class="sub2">開盤前三分鐘，掌握多空關鍵</span>
+    <span class="rule"></span>
+    <span class="foot-l">洞察世界 · 累積智慧 · 點亮未來</span>
+    <span class="foot-r">allenchen1113official.github.io/AllenI3Aurora</span>
+  </div>
+</div>
+</body>
+</html>

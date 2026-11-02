@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台股盤前速報</title>
+<style>
+:root{
+  --mint:#92E0BE; --blue:#4F8AD5; --ink:#12332B; --sage:#2F6152; --paper:#DEE7E2;
+  --up:#C9342F; --down:#0F7D62;
+  --line:rgba(18,51,43,.14); --muted:#5A6F68; --bg:#F7FAF8; --card:#FFFFFF;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Helvetica Neue",sans-serif;
+  line-height:1.72;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px 56px}
+
+/* ---------- 品牌頁首 ---------- */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(760px 420px at 12% -10%, rgba(146,224,190,.62), transparent 62%),
+    radial-gradient(680px 400px at 88% 6%, rgba(79,138,213,.42), transparent 64%),
+    linear-gradient(180deg,#F2F8F5 0%, #FBFDFC 100%);}
+.hero-inner{max-width:1000px;margin:0 auto;padding:30px 20px 26px}
+.brandbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.badge{width:54px;height:54px;flex:0 0 54px;border-radius:15px;
+  background:linear-gradient(135deg,var(--mint) 0%, var(--blue) 100%);
+  color:#0C2A22;font-weight:800;font-size:16px;letter-spacing:.4px;
+  display:flex;align-items:center;justify-content:center;white-space:nowrap;line-height:1;
+  box-shadow:0 6px 18px rgba(79,138,213,.28)}
+.badge sup{font-size:9px;line-height:1;vertical-align:super}
+.brandtext{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand-cn{font-size:20px;font-weight:800;letter-spacing:1.2px}
+.brand-div{width:1px;height:20px;background:var(--line)}
+.brand-en{font-size:11px;letter-spacing:1.6px;color:var(--muted);text-transform:uppercase}
+h1{margin:20px 0 6px;font-size:32px;letter-spacing:1px;font-weight:800}
+.sub{margin:0;font-size:14px;color:var(--sage);font-weight:600}
+.basis{margin-top:14px;padding:11px 14px;border-radius:10px;background:rgba(255,255,255,.72);
+  border:1px solid var(--line);font-size:12.5px;color:var(--sage);line-height:1.7}
+.basis b{color:var(--ink)}
+
+/* ---------- 區塊 ---------- */
+section{margin-top:34px}
+.sec-h{display:flex;align-items:center;gap:11px;margin:0 0 14px}
+.sec-n{width:27px;height:27px;flex:0 0 27px;border-radius:8px;
+  background:linear-gradient(135deg,var(--mint),var(--blue));color:#0C2A22;
+  font-size:12.5px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}
+.sec-h h2{margin:0;font-size:19px;font-weight:800;letter-spacing:.5px}
+
+.lead{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);
+  border-radius:12px;padding:18px 20px;font-size:15.5px;line-height:1.85}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.kpi .k{font-size:11.5px;color:var(--muted);letter-spacing:.4px}
+.kpi .v{font-size:22px;font-weight:800;margin-top:3px;letter-spacing:.3px}
+.kpi .d{font-size:12.5px;font-weight:700;margin-top:2px}
+.kpi .n{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.55}
+.up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--muted)}
+
+table{width:100%;border-collapse:collapse;font-size:13px;background:var(--card)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:rgba(146,224,190,.16);font-weight:700;font-size:12px;letter-spacing:.3px}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right}
+
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;
+  background:rgba(79,138,213,.13);color:#31608F;letter-spacing:.3px}
+.tag.mint{background:rgba(146,224,190,.3);color:#1E5544}
+.tag.warn{background:rgba(201,52,47,.1);color:var(--up)}
+
+.note{font-size:12px;color:var(--muted);line-height:1.72;margin-top:9px}
+.note b{color:var(--sage)}
+ul{margin:8px 0 0;padding-left:20px}
+li{margin:5px 0;font-size:14px}
+.theme{border-bottom:1px dashed var(--line);padding:11px 0}
+.theme:last-child{border-bottom:none}
+.theme .t{font-weight:800;font-size:14.5px}
+.theme .why{font-size:13.5px;margin-top:2px}
+.theme .st{font-size:12.5px;color:var(--sage);margin-top:3px}
+
+/* 漏斗 */
+.funnel{display:flex;flex-direction:column;gap:7px}
+.fn{display:flex;align-items:center;gap:12px}
+.fn .lb{flex:0 0 190px;font-size:12.5px;color:var(--sage);font-weight:600}
+.fn .bar{height:26px;border-radius:6px;background:linear-gradient(90deg,var(--mint),var(--blue));
+  display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#0C2A22;
+  font-size:12px;font-weight:800;min-width:34px}
+.fn .bar.zero{background:rgba(18,51,43,.16);color:var(--sage)}
+
+.empty{background:rgba(201,52,47,.06);border:1px solid rgba(201,52,47,.24);border-radius:12px;
+  padding:16px 18px;font-size:15px;font-weight:700;color:var(--up)}
+
+/* 色票 */
+.sw{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:12.5px}
+.chip{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);flex:0 0 30px}
+
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);text-align:center}
+footer .f1{font-size:12.5px;font-weight:700;letter-spacing:.8px;color:var(--sage)}
+footer .f2{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.6px}
+.disc{margin-top:22px;text-align:center;font-size:12px;color:var(--muted)}
+
+@media(max-width:720px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  h1{font-size:25px}
+  .fn .lb{flex:0 0 130px;font-size:11.5px}
+  .hero-inner{padding:24px 20px 22px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="brandbar">
+      <div class="badge">AI<sup>3</sup>A</div>
+      <div class="brandtext">
+        <span class="brand-cn">艾倫極光報報</span>
+        <span class="brand-div"></span>
+        <span class="brand-en">Allen I&sup3; Aurora Brief</span>
+      </div>
+    </div>
+    <h1>台股盤前速報</h1>
+    <p class="sub">2026 年 9 月 11 日（週五）· 台北時間 06:00 發布</p>
+    <div class="basis">
+      資料基準：<b>上一交易日 2026/09/10（週四）台股收盤</b> ＋ <b>美東 09/10 美股收盤</b>　·　今日（9/11，週五）為正常交易日，與上一交易日之間<b>無休市日</b>（9/10 為週四，次日即今日）。中央氣象署查無颱風警報，人事行政總處無停班公告。
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- 1 -->
+<section>
+  <div class="sec-h"><div class="sec-n">1</div><h2>一句話開盤觀點</h2></div>
+  <div class="lead">
+    上一交易日台股靠低檔買盤把盤中逾 600 點的跌勢收斂成 <b>242.87 點</b>、驚險守住 10 日線；但上一美股交易日<b>費半重挫 2.66%</b>、<b>油價雙雙站上 100 美元</b>、<b>10 年期美債殖利率升破 4.9%</b> 創 2023 年 10 月以來新高——今日最該盯的分歧，是<b>內資承接的韌性</b>能否再次頂住<b>外資期現貨雙賣＋國際評價壓縮</b>；而本日選股三條件交集為 0，資料本身就在提醒「盤面沒有量」。
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <div class="sec-h"><div class="sec-n">2</div><h2>上一交易日收盤回顧：大盤與三大法人</h2></div>
+
+  <div class="grid g4">
+    <div class="kpi">
+      <div class="k">加權指數 TAIEX（09/10 收盤）</div>
+      <div class="v">46,940.49</div>
+      <div class="d down">−242.87（−0.51%）</div>
+      <div class="n">開 47,130.96／最低 46,573.47<br>前一交易日（09/09）收 47,183.36</div>
+    </div>
+    <div class="kpi">
+      <div class="k">集中市場成交值</div>
+      <div class="v">7,139.72 <span style="font-size:13px">億元</span></div>
+      <div class="d flat">量能續縮</div>
+      <div class="n">來源分歧：另有 7,459.51 億（鉅亨盤後／新光證券）與 7,159.53 億（Newtalk），口徑未能確認</div>
+    </div>
+    <div class="kpi">
+      <div class="k">櫃買指數 OTC（09/10 收盤）</div>
+      <div class="v">405.24</div>
+      <div class="d down">−2.85（−0.70%）</div>
+      <div class="n">成交約 1,731 億元；另一來源為 405.13／−2.96／−0.73%／1,258.72 億。開盤價資料未取得</div>
+    </div>
+    <div class="kpi">
+      <div class="k">三大法人合計（集中市場）</div>
+      <div class="v down">−503.12 <span style="font-size:13px">億元</span></div>
+      <div class="d down">外資中斷連 4 買</div>
+      <div class="n">含櫃買賣超 112.22 億後，全市場合計賣超 615.34 億元</div>
+    </div>
+  </div>
+
+  <div class="tw" style="margin-top:14px">
+    <table>
+      <thead><tr><th>項目</th><th class="num">09/10 數值</th><th class="num">變化</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>外資及陸資（現貨）</td><td class="num down">−383.34 億元</td><td class="num">中斷連 4 買</td><td>集中市場；櫃買另賣超 117.09 億元</td></tr>
+        <tr><td>投信</td><td class="num up">+17.86 億元</td><td class="num">逆勢買超</td><td>唯一站在買方的法人</td></tr>
+        <tr><td>自營商</td><td class="num down">−137.64 億元</td><td class="num">—</td><td>自行買賣 −35.60 億／避險 −102.02 億</td></tr>
+        <tr><td><b>三大法人合計</b></td><td class="num down"><b>−503.12 億元</b></td><td class="num">—</td><td>集中市場口徑</td></tr>
+        <tr><td>外資台指期未平倉淨部位</td><td class="num down">淨空單 83,918 口</td><td class="num down">空單再增 2,852 口</td><td>三大法人合計淨空單 8,056 口（+1,433 口）</td></tr>
+        <tr><td>9 月台指期收盤</td><td class="num">46,870</td><td class="num down">−308</td><td>逆價差 70.49 點</td></tr>
+        <tr><td>融資餘額</td><td class="num">5,918.98 億元</td><td class="num up">+47.31 億元</td><td>指數收黑但融資逆勢增加</td></tr>
+        <tr><td>融券餘額</td><td class="num">197,447 張</td><td class="num down">−6,163 張</td><td>連 5 日大減</td></tr>
+        <tr><td>上漲／下跌家數</td><td class="num">500 漲／1,293 跌</td><td class="num">21 檔漲停、0 跌停</td><td>另一來源為 512 漲／1,361 跌</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">
+    <b>數字揭露：</b>①「上市個股（不含 ETF、權證）」的官方漲跌家數<b>資料未取得</b>——證交所／櫃買中心資料源在本環境失效；現有兩個來源（500／1,293 與 512／1,361）加總皆超過上市普通股檔數，研判為<b>上市＋上櫃合計</b>，且兩者對 ETF、受益證券是否納入的處理不同。②加權指數<b>盤中最高點</b>來源分歧（Newtalk 標 47,548.26；玩股網盤中快照顯示最高即開盤價 47,130.96），<b>暫列為待確認</b>，開盤價與最低點則多來源一致。③漲跌幅均以 (收盤−前一交易日收盤)/前一交易日收盤 自行計算並核對：TAIEX −0.515%、OTC −0.698%。
+  </p>
+</section>
+
+<!-- 3 -->
+<section>
+  <div class="sec-h"><div class="sec-n">3</div><h2>上一交易日類股輪動與題材</h2></div>
+
+  <div class="card">
+    <p style="margin:0 0 8px"><span class="tag warn">資料限制</span>　<b>上市類股指數 09/10 收盤精確漲跌幅：資料未取得。</b>玩股網類股行情頁快照落後至 09/09、Yahoo 類股頁為盤中快照、櫃買中心與 Goodinfo 於本環境皆遭封鎖。以下改以<b>多來源一致的方向性描述</b>呈現，並附兩組明確標示口徑的數字供對照。</p>
+    <div class="grid g2" style="margin-top:12px">
+      <div>
+        <p style="margin:0 0 4px"><span class="tag mint">相對強勢</span></p>
+        <ul>
+          <li><b>塑膠類</b>——逆勢走強，南亞（1303）+3.17%</li>
+          <li><b>被動元件／MLCC</b>——當日最強勢族群</li>
+          <li><b>專業晶圓代工、封測測試</b>——資金外溢承接</li>
+        </ul>
+      </div>
+      <div>
+        <p style="margin:0 0 4px"><span class="tag warn">相對弱勢</span></p>
+        <ul>
+          <li><b>紡織、機電、電纜、玻璃、營建、航運</b>——傳產全面失血</li>
+          <li><b>電子類</b>小幅收黑，權值股為主要拖累</li>
+          <li>台達電（2308）−6.69%、台積電（2330）−0.61%，兩檔合計壓低指數約 <b>225 點</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:12px">
+    <div class="tw">
+      <table>
+        <thead><tr><th colspan="2">09/10 盤中快照（<b>非收盤值</b>，僅供方向參考）</th></tr></thead>
+        <tbody>
+          <tr><td>電子通路</td><td class="num down">−2.41%</td></tr>
+          <tr><td>航運業</td><td class="num down">−2.39%</td></tr>
+          <tr><td>其他電子</td><td class="num down">−2.28%</td></tr>
+          <tr><td>油電燃氣</td><td class="num down">−2.20%</td></tr>
+          <tr><td>電子零組件</td><td class="num down">−2.19%</td></tr>
+          <tr><td>電機機械</td><td class="num down">−2.11%</td></tr>
+          <tr><td>通信網路</td><td class="num down">−2.07%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th colspan="2">對照組：<b>09/09 收盤</b>類股指數前 5／後 5</th></tr></thead>
+        <tbody>
+          <tr><td>油電燃氣類</td><td class="num up">+8.97%</td></tr>
+          <tr><td>光電業</td><td class="num up">+3.55%</td></tr>
+          <tr><td>航運類</td><td class="num up">+1.56%</td></tr>
+          <tr><td>通信網路業</td><td class="num up">+1.33%</td></tr>
+          <tr><td>電腦及週邊設備</td><td class="num up">+1.33%</td></tr>
+          <tr><td>運動休閒</td><td class="num down">−0.71%</td></tr>
+          <tr><td>金融類</td><td class="num down">−1.47%</td></tr>
+          <tr><td>化學生技</td><td class="num down">−1.55%</td></tr>
+          <tr><td>生技醫療業</td><td class="num down">−2.37%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <p style="margin:0 0 4px;font-weight:800;font-size:15px">當日發酵題材</p>
+    <div class="theme">
+      <div class="t">① 被動元件／MLCC 逆勢強攻</div>
+      <div class="why">漲價與缺料題材延續，在權值股殺盤時成為資金避風港，是當日唯一全族群走強的類別。</div>
+      <div class="st">代表個股：信昌電 6173（漲停 +9.87%）、光頡 3624（漲停）、華新科 2492（+4.54%）、國巨 2327（+1.24%）、禾伸堂 3026、日電貿 3090</div>
+    </div>
+    <div class="theme">
+      <div class="t">② 封測／測試族群補漲</div>
+      <div class="why">資金自大型權值股外溢至中小型半導體後段，屬典型的「權值失守、後段補位」輪動。</div>
+      <div class="st">代表個股：欣銓 3264（+3%）、台星科 3265、矽格 6257、精材 3374、力成 6239、京元電 2449</div>
+    </div>
+    <div class="theme">
+      <div class="t">③ IC 設計與晶圓代工個別表態</div>
+      <div class="why">聯發科逆勢走強貢獻大盤近 50 點，加上日月光投控、聯電、南亞、創意同步上攻，是指數能從 −600 點拉回的關鍵。</div>
+      <div class="st">代表個股：聯發科 2454（+2.05%，收 4,720 元）、日月光投控 3711（+1.56%）、創意 3443（+5.06%）、南亞 1303（+3.17%）、聯電 2303</div>
+    </div>
+    <div class="theme">
+      <div class="t">④ 油價破百 ＋ 美債殖利率飆升（利空型題材）</div>
+      <div class="why">美伊衝突延燒推升兩大原油基準雙雙破 100 美元、10 年期美債殖利率升破 4.9%，直接壓縮高評價電子股的估值。</div>
+      <div class="st">受衝擊個股：台達電 2308（−6.69%，收 1,675 元）、廣達 2382（−1.75%）、大立光 3008（−150 元）</div>
+    </div>
+    <div class="theme">
+      <div class="t">⑤ 日本升息預期升溫</div>
+      <div class="why">市場擔憂日銀轉鷹牽動全球利差交易，觀望氣氛濃厚，為當日量能萎縮的背景因素之一。</div>
+      <div class="st">大盤層級題材，無單一代表股</div>
+    </div>
+    <p class="note" style="margin-top:12px"><b>資金流出方向：</b>由 AI 伺服器／電源等大型權值股（台達電、廣達、大立光）流向<b>被動元件與封測</b>；傳產面則是紡織、機電、電纜、玻璃、營建、航運同步失血。外資在集中市場與櫃買市場<b>雙邊撤退</b>（合計賣超逾 500 億元），期貨端同步加碼空單。</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <div class="sec-h"><div class="sec-n">4</div><h2>上一美股交易日國際盤</h2></div>
+  <p class="note" style="margin:0 0 10px">以下為<b>美東時間 2026/09/10（週四）美股收盤</b>；該時點對應台北時間 09/11 凌晨 04:00。台股上一交易日與該美股交易日之間無時差以外的休市日。</p>
+
+  <div class="grid g4">
+    <div class="kpi"><div class="k">道瓊工業指數</div><div class="v">52,064.10</div><div class="d down">−316.56（−0.60%）</div><div class="n">連 4 黑</div></div>
+    <div class="kpi"><div class="k">S&amp;P 500</div><div class="v">7,591.70</div><div class="d down">−44.66（−0.58%）</div><div class="n">連 4 日走弱</div></div>
+    <div class="kpi"><div class="k">那斯達克綜合</div><div class="v">26,081.73</div><div class="d down">−171.61（−0.65%）</div><div class="n">科技股續弱</div></div>
+    <div class="kpi"><div class="k">費城半導體 SOX</div><div class="v down">11,614.17</div><div class="d down">−317.15（−2.66%）</div><div class="n">四大指數中跌幅最深，為今日台股半導體最大壓力來源</div></div>
+  </div>
+
+  <div class="tw" style="margin-top:14px">
+    <table>
+      <thead><tr><th>項目</th><th class="num">收盤／數值</th><th class="num">漲跌</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>台積電 ADR（TSM）</td><td class="num">428.03 美元</td><td class="num down">−7.33（−1.68%）</td><td>美東 09/10 收盤</td></tr>
+        <tr><td>美元兌新台幣</td><td class="num">31.548</td><td class="num down">貶值 4.3 分</td><td>台北 09/10 收盤，終止連 4 升，成交量 26.095 億美元</td></tr>
+        <tr><td>西德州原油 WTI</td><td class="num">102.48 美元/桶</td><td class="num up">+6.43（+6.69%）</td><td>站上百元</td></tr>
+        <tr><td>布蘭特原油 Brent</td><td class="num">107.63 美元/桶</td><td class="num up">+6.42（+6.34%）</td><td>美伊衝突延燒</td></tr>
+        <tr><td>美國 10 年期公債殖利率</td><td class="num">4.943%</td><td class="num up">升破 4.9%</td><td>2023 年 10 月以來最高；另一來源稱「升破 4.95%」</td></tr>
+        <tr><td>美國 2 年期公債殖利率</td><td class="num">4.55%</td><td class="num">—</td><td>10Y−2Y 利差約 +39 bp</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <p style="margin:0 0 6px;font-weight:800;font-size:14.5px">台積電 ADR 對 2330 的溢價／折價（算式）</p>
+    <p style="margin:0;font-size:13.5px;line-height:1.9">
+      1 單位 ADR ＝ 5 股 2330 普通股。<br>
+      ADR 折合台股價 ＝ 428.03 美元 × 31.548（USD/TWD）÷ 5 ＝ <b>2,700.70 元</b><br>
+      2330 於台北 09/10 收盤 ＝ <b>2,450 元</b><br>
+      溢價率 ＝ 2,700.70 ÷ 2,450 − 1 ＝ <b class="up">+10.23%（溢價）</b>
+    </p>
+    <p class="note"><b>口徑說明：</b>ADR 為美東 09/10 收盤價，匯率與 2330 為台北 09/10 收盤，兩者存在時差，屬市場慣用算法。溢價逾 10% 代表 ADR 端仍相對樂觀，但費半當日重挫 2.66%、ADR 亦跌 1.68%，溢價是<b>從更高水位收斂</b>而來，不宜單獨解讀為利多。</p>
+  </div>
+
+  <p class="note"><b>來源落差揭露：</b>10 年期美債殖利率有 4.943%（Investrade 收盤表）與「升破 4.95%」（自由財經）兩種說法，本報告採前者為數值、後者為描述並同時列出，不擇一為唯一真相。道瓊／S&amp;P／那斯達克三大指數的收盤點數已由兩個獨立來源交叉驗證一致。</p>
+</section>
+
+<!-- 5 -->
+<section>
+  <div class="sec-h"><div class="sec-n">5</div><h2>選股：均線多頭 ＋ 大戶增持 ＋ 量增</h2></div>
+
+  <div class="card">
+    <p style="margin:0 0 6px;font-size:13.5px">
+      <b>掃描範圍：</b>上市市值前 100 大 ＋ 上櫃市值前 50 大（依市值近似排序，實際掃描 152 檔）。<br>
+      <b>入選條件（三者同時成立）：</b>
+      ⓐ 均線多頭排列 MA5 &gt; MA20 &gt; MA60 &gt; MA240（日 K 收盤價）；
+      ⓑ 集保「400 張以上」大戶持股比例較前一期增加 &gt; 1 個百分點；
+      ⓒ 上一交易日成交量 ≥ 20 日均量 × 2。
+    </p>
+  </div>
+
+  <div class="empty" style="margin-top:14px">今日無符合條件之標的（上市 0 檔、上櫃 0 檔）。</div>
+
+  <div class="card" style="margin-top:14px">
+    <p style="margin:0 0 10px;font-weight:800;font-size:14.5px">篩選漏斗——一眼看出卡在哪一關</p>
+    <div class="funnel">
+      <div class="fn"><div class="lb">名單檔數</div><div class="bar" style="width:100%">152</div></div>
+      <div class="fn"><div class="lb">實際掃描檔數</div><div class="bar" style="width:100%">152</div></div>
+      <div class="fn"><div class="lb">頁面成功取得</div><div class="bar" style="width:98.7%">150</div></div>
+      <div class="fn"><div class="lb">有效資料（資料日＝09/10）</div><div class="bar" style="width:19.7%">30</div></div>
+      <div class="fn"><div class="lb">過條件 ⓒ 量增 2 倍</div><div class="bar zero" style="width:6%">0</div></div>
+      <div class="fn"><div class="lb">過條件 ⓐ 均線多頭</div><div class="bar" style="width:46.7%">14</div></div>
+      <div class="fn"><div class="lb">ⓐ ∩ ⓒ</div><div class="bar zero" style="width:6%">0</div></div>
+      <div class="fn"><div class="lb">三條件交集</div><div class="bar zero" style="width:6%">0</div></div>
+    </div>
+    <p class="note" style="margin-top:12px">
+      <b>卡關點在條件 ⓒ。</b>30 檔有效資料中，量能倍數最高僅 <b>2377 微星 1.20 倍</b>，其餘多落在 0.1～0.9 倍區間——上一交易日是<b>典型的量縮下跌</b>，全市場沒有任何一檔權值級標的出現「量增一倍」。條件 ⓐ 反而通過 14 檔，顯示均線結構尚未破壞，但<b>沒有量就沒有訊號</b>。因 ⓐ∩ⓒ 為空集合，條件 ⓑ 依流程<b>未觸發</b>，本日未使用任何集保週別資料。
+    </p>
+  </div>
+
+  <div class="tw" style="margin-top:14px">
+    <table>
+      <thead><tr><th>通過條件 ⓐ（均線多頭排列）之 14 檔</th><th class="num">收盤</th><th class="num">漲跌幅</th><th class="num">量能倍數</th><th class="num">MA5</th><th class="num">MA20</th><th class="num">MA60</th><th class="num">MA240</th></tr></thead>
+      <tbody>
+        <tr><td>2454 聯發科</td><td class="num">4,695.00</td><td class="num up">+1.51%</td><td class="num">0.67</td><td class="num">4,641.00</td><td class="num">4,141.75</td><td class="num">3,996.58</td><td class="num">2,476.44</td></tr>
+        <tr><td>2882 國泰金</td><td class="num">110.50</td><td class="num flat">0.00%</td><td class="num">0.60</td><td class="num">112.80</td><td class="num">105.73</td><td class="num">101.80</td><td class="num">80.72</td></tr>
+        <tr><td>3034 聯詠</td><td class="num">545.00</td><td class="num up">+0.37%</td><td class="num">0.73</td><td class="num">537.20</td><td class="num">535.60</td><td class="num">524.03</td><td class="num">437.74</td></tr>
+        <tr><td>5880 合庫金</td><td class="num">26.85</td><td class="num flat">0.00%</td><td class="num">0.61</td><td class="num">26.74</td><td class="num">25.60</td><td class="num">25.44</td><td class="num">24.17</td></tr>
+        <tr><td>1303 南亞</td><td class="num">244.00</td><td class="num up">+3.17%</td><td class="num">0.59</td><td class="num">234.30</td><td class="num">215.20</td><td class="num">189.60</td><td class="num">99.78</td></tr>
+        <tr><td>2377 微星</td><td class="num">149.00</td><td class="num down">−4.79%</td><td class="num"><b>1.20</b></td><td class="num">155.60</td><td class="num">150.05</td><td class="num">146.64</td><td class="num">115.06</td></tr>
+        <tr><td>2301 光寶科</td><td class="num">288.50</td><td class="num down">−1.37%</td><td class="num">0.49</td><td class="num">295.80</td><td class="num">290.63</td><td class="num">244.73</td><td class="num">191.63</td></tr>
+        <tr><td>2615 萬海</td><td class="num">110.50</td><td class="num down">−4.74%</td><td class="num">0.81</td><td class="num">113.60</td><td class="num">112.73</td><td class="num">92.39</td><td class="num">82.04</td></tr>
+        <tr><td>1101 台泥 <span class="tag warn">盤中快照</span></td><td class="num">24.85</td><td class="num up">+0.40%</td><td class="num">0.12</td><td class="num">24.56</td><td class="num">24.50</td><td class="num">24.12</td><td class="num">23.90</td></tr>
+        <tr><td>3017 奇鋐</td><td class="num">3,460.00</td><td class="num up">+2.37%</td><td class="num">0.69</td><td class="num">3,423.00</td><td class="num">3,229.25</td><td class="num">2,718.42</td><td class="num">1,996.75</td></tr>
+        <tr><td>2360 致茂</td><td class="num">2,180.00</td><td class="num down">−6.64%</td><td class="num">1.15</td><td class="num">2,208.00</td><td class="num">2,118.00</td><td class="num">2,075.83</td><td class="num">1,489.08</td></tr>
+        <tr><td>2474 可成</td><td class="num">204.00</td><td class="num down">−0.97%</td><td class="num">0.39</td><td class="num">206.60</td><td class="num">206.30</td><td class="num">198.78</td><td class="num">198.70</td></tr>
+        <tr><td>1560 中砂</td><td class="num">733.00</td><td class="num up">+0.41%</td><td class="num">0.40</td><td class="num">721.00</td><td class="num">706.50</td><td class="num">699.90</td><td class="num">508.46</td></tr>
+        <tr><td>2049 上銀</td><td class="num">363.00</td><td class="num down">−2.02%</td><td class="num">0.80</td><td class="num">362.20</td><td class="num">358.88</td><td class="num">341.95</td><td class="num">271.26</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">上表<b>僅代表通過條件 ⓐ</b>，並非入選名單——14 檔全數卡在條件 ⓒ，且未進行條件 ⓑ 的大戶籌碼查核。1101 台泥頁面時戳為 09:44 盤中，成交量為未收盤累計值，其量能倍數不具參考性，已標註。</p>
+
+  <div class="card" style="margin-top:12px">
+    <p style="margin:0 0 6px;font-weight:800;font-size:14.5px"><span class="tag warn">資料驗證限制（務必一併閱讀）</span></p>
+    <p style="margin:0;font-size:13.5px;line-height:1.85">
+      152 檔名單中，<b>僅 30 檔（19.7%）資料日確為上一交易日 09/10</b>，其餘 <b>120 檔（約 79%）</b>的資料源快照仍停留在 09/09 至 08/19 不等，依規則一律標記「資料未取得」，<b>未以舊資料替代</b>；另有 2 檔（2371 大同、6238）URL 無法解鎖或頁面為 JS 動態載入而抓取失敗。<br>
+      影響範圍：本日「無符合條件之標的」的結論，<b>嚴格說只對這 30 檔成立</b>；其餘 120 檔<b>無法驗證</b>。成因為資料源（玩股網個股技術分析頁）在本執行環境的快照更新不均，非個股停牌。<b>本報告不因此放寬任何條件，也不以未驗證資料湊數。</b>
+    </p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <div class="sec-h"><div class="sec-n">6</div><h2>今日盤前觀察重點與行事曆</h2></div>
+
+  <div class="card">
+    <p style="margin:0 0 6px;font-weight:800;font-size:14.5px">觀察重點</p>
+    <ul>
+      <li><b>半導體開盤壓力最直接。</b>費半 −2.66% 是四大指數中最弱者，台積電 ADR 收 428.03 美元（−1.68%），折合 2,700.70 元、較台北收盤 2,450 元溢價 10.23%——溢價仍在，但已從更高水位收斂，可留意 2330 開盤能否守住 2,450 元。</li>
+      <li><b>油價與殖利率是這波的真正變數。</b>WTI 102.48／Brent 107.63 雙雙破百，10 年期美債殖利率 4.943% 創 2023 年 10 月以來新高。高評價、長天期現金流的 AI／電源族群（台達電已先跌 6.69%）評價壓縮壓力持續；反之能源、塑化、航運的成本與運價傳導值得追蹤。</li>
+      <li><b>外資期現貨方向一致偏空，但散戶在承接。</b>現貨中斷連 4 買、反手賣 383.34 億元，台指期淨空單增至 83,918 口（+2,852 口），逆價差 70.49 點；同時融資餘額逆勢增加 47.31 億元、融券連 5 日大減。<b>籌碼結構呈現外資與散戶背向</b>，這種背離通常不會持續太久，方向由誰先鬆手決定。</li>
+      <li><b>量能是關鍵門檻。</b>成交值降至約 7,140 億元（另有 7,459 億元口徑），本報告 152 檔掃描中<b>沒有任何一檔達到量增一倍</b>——盤面缺乏主流領頭羊。指數已失守 47,000 與 5 日線、勉強守住 10 日線，若今日再縮量，觀望仍是資料指向的狀態。</li>
+      <li><b>事件風險集中在今晚與下週。</b>美國 8 月 CPI 依上一交易日報導預定於今日（9/11）公布，市場預期年增約 3.4%、核心約 2.4%（另有年度排程表列為 9/15，兩來源衝突，見下方行事曆）；下週為「超級央行週」，Fed、日銀、台灣央行接連登場，市場定價 Fed 升息 1 碼機率約 6～7 成。</li>
+    </ul>
+  </div>
+
+  <div class="tw" style="margin-top:12px">
+    <table>
+      <thead><tr><th>今日（2026/09/11，週五）行事曆</th><th>內容</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>法說會</td><td>東方風能（7786）09:00，於法國巴黎參加 JP Morgan 主辦場次</td><td>—</td></tr>
+        <tr><td>法說會</td><td>來源標示「愛之味 1560」14:30 自辦法說會（台北市敦化南路二段 97 號 16 樓）</td><td><span class="tag warn">股號存疑</span>1560 為中砂、愛之味為 1217，來源可能誤植，請以公開資訊觀測站為準</td></tr>
+        <tr><td>除權息</td><td>晶宏（3141，上櫃）現金股利 0.36 元，發放日 10/08</td><td>全市場今日僅此 1 檔</td></tr>
+        <tr><td>期貨／選擇權結算</td><td>今日<b>非</b>月選與台指期月結算日（月結算為 09/16 週三）</td><td>期交所已推出「週五到期臺指選擇權」，今日可能有週選結算，官方公告<b>資料未取得</b></td></tr>
+        <tr><td>經濟數據（國際）</td><td>美國 8 月 CPI——來源衝突：自由財經 09/10 報導稱<b>今日公布</b>（預期年增 3.4%、核心 2.4%）；元大期貨年度排程表列為 <b>09/15</b></td><td>兩者並列，未擇一；建議以 BLS 官方公告為準</td></tr>
+        <tr><td>經濟數據（台灣）</td><td>今日台灣重要數據<b>資料未取得</b>（8 月出口 824 億美元創新高已於 09/08 前後公布）</td><td>—</td></tr>
+        <tr><td>國際政經</td><td>美伊衝突已延續 7 個月，油價破百為當前主導變數；下週 Fed、日銀、台灣央行「超級央行週」</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 品牌識別 -->
+<section>
+  <div class="sec-h"><div class="sec-n">B</div><h2>品牌識別 · Brand</h2></div>
+  <div class="card">
+    <div class="grid g3">
+      <div>
+        <div class="sw"><div class="chip" style="background:#92E0BE"></div><div><b>MINT #92E0BE</b><br><span style="color:#5A6F68">主色／徽章漸層起點、章節編號</span></div></div>
+        <div class="sw"><div class="chip" style="background:#4F8AD5"></div><div><b>BLUE #4F8AD5</b><br><span style="color:#5A6F68">輔色／徽章漸層終點、重點邊線</span></div></div>
+      </div>
+      <div>
+        <div class="sw"><div class="chip" style="background:#12332B"></div><div><b>INK #12332B</b><br><span style="color:#5A6F68">主文字色</span></div></div>
+        <div class="sw"><div class="chip" style="background:#2F6152"></div><div><b>SAGE #2F6152</b><br><span style="color:#5A6F68">次要文字、註記</span></div></div>
+      </div>
+      <div>
+        <div class="sw"><div class="chip" style="background:#DEE7E2"></div><div><b>PAPER #DEE7E2</b><br><span style="color:#5A6F68">底色、分隔線</span></div></div>
+        <div class="sw"><div class="chip" style="background:linear-gradient(90deg,#C9342F 50%,#0F7D62 50%)"></div><div><b>#C9342F / #0F7D62</b><br><span style="color:#5A6F68">台股慣例：紅漲／綠跌（僅用於漲跌）</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="disc">本內容為資料彙整，非投資建議。</p>
+
+<footer>
+  <div class="f1">Allen I&sup3; Aurora Brief · 艾倫極光報報</div>
+  <div class="f2">Allen Chen · Est. 2026</div>
+</footer>
+
+</div>
+</body>
+</html>

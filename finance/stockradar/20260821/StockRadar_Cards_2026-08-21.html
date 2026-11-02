@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StockRadar TOP 10 圖卡 — 2026-08-21</title>
+<style>
+  :root{
+    --void-top:#06090e; --void-bot:#0b1018;
+    --gold:#c4a05c; --gold-dim:#5e523a;
+    --white:#f3f6fa; --gray:#818c9c; --gray-dim:#3a424e;
+    --up:#ff5c6e;
+    --down:#39e095;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#05070b;display:flex;justify-content:center;padding:28px 12px;
+       font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,sans-serif;}
+  .card{width:100%;max-width:1080px;background:linear-gradient(180deg,var(--void-top),var(--void-bot));
+        border:1px solid #1c232e;border-radius:8px;padding:34px 40px 26px;position:relative;overflow:hidden;}
+  .aurora{position:absolute;top:0;left:0;right:0;height:300px;pointer-events:none;
+          background:linear-gradient(180deg,rgba(0,227,155,.22),rgba(47,107,255,.10) 55%,transparent);
+          filter:blur(46px);}
+  .grid{position:absolute;inset:0;pointer-events:none;opacity:.5;
+        background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),
+                         linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
+        background-size:52px 52px;}
+  .inner{position:relative;z-index:1;}
+
+  header{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  .brandmark{display:flex;align-items:center;gap:11px;}
+  .bicon{width:44px;height:44px;border-radius:9px;flex:0 0 auto;
+         background:linear-gradient(135deg,#76cdb7,#60afd6);color:#103032;
+         display:flex;align-items:center;justify-content:center;
+         font:700 15px/1 "Outfit",system-ui,sans-serif;letter-spacing:.3px;}
+  .bicon sup{font-size:9px;vertical-align:super;}
+  .btext .cn{color:#3a8176;font-weight:700;font-size:20px;line-height:1.15;}
+  .btext .en{color:#89949c;font-size:9.5px;letter-spacing:2.2px;margin-top:1px;}
+  .title{color:var(--white);font-size:34px;font-weight:400;letter-spacing:1.5px;
+         font-family:"Big Shoulders Display","Oswald",Impact,sans-serif;}
+  .subtitle{color:#ced5de;font-size:13px;}
+  .date{color:var(--gold);font-size:13.5px;margin-left:auto;white-space:nowrap;}
+
+  .hr-gold{height:2px;background:var(--gold);opacity:.8;margin:14px 0 9px;}
+  .legend{color:var(--gray);font-size:11.5px;line-height:1.5;}
+  .hr-dim{height:1px;background:var(--gold-dim);opacity:.8;margin:9px 0 4px;}
+  .backfill{margin:10px 0 2px;padding:7px 11px;border-left:3px solid var(--gold);
+            background:rgba(196,160,92,.10);color:var(--gold);font-size:12.5px;border-radius:0 4px 4px 0;}
+
+  .row{display:flex;align-items:flex-start;gap:20px;padding:15px 0;
+       border-bottom:1px solid rgba(255,255,255,.06);}
+  .row:last-of-type{border-bottom:none;}
+  .rank{flex:0 0 84px;text-align:center;color:var(--white);font-size:50px;line-height:1;
+        font-family:"Big Shoulders Display","Oswald",Impact,sans-serif;font-weight:400;
+        border-right:2px solid var(--gold-dim);padding-right:14px;align-self:stretch;
+        display:flex;align-items:center;justify-content:center;}
+  .mid{flex:1 1 auto;min-width:0;border-right:2px solid var(--gold-dim);padding-right:18px;}
+  .label{color:var(--white);font-size:25px;font-weight:500;letter-spacing:.5px;margin-bottom:9px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{display:inline-block;border:2px solid var(--gold);background:rgba(196,160,92,.12);
+        color:var(--gold);border-radius:6px;padding:3px 11px;font-size:13px;white-space:nowrap;}
+  .nochip{color:var(--gray-dim);font-size:13px;padding:3px 0;}
+  .right{flex:0 0 190px;text-align:right;}
+  .price{color:var(--white);font-size:31px;font-weight:600;line-height:1.15;
+         font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;}
+  .chg{font-size:20px;margin-top:5px;font-weight:600;
+       font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;}
+  .up{color:var(--up);} .down{color:var(--down);} .flat{color:var(--gray);}
+
+  footer{margin-top:16px;padding-top:14px;border-top:2px solid var(--gold);
+         display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .fbrand{color:var(--gold);font-size:16px;font-weight:500;}
+  .src{color:var(--gray);font-size:11.5px;margin-left:auto;text-align:right;}
+
+  @media (max-width:640px){
+    .card{padding:22px 18px 18px;}
+    .row{gap:12px;}
+    .rank{flex-basis:52px;font-size:34px;padding-right:9px;}
+    .mid{padding-right:11px;}
+    .label{font-size:18px;}
+    .chip{font-size:11px;padding:2px 8px;}
+    .right{flex-basis:104px;}
+    .price{font-size:20px;} .chg{font-size:14px;}
+    .title{font-size:25px;}
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="aurora"></div>
+  <div class="grid"></div>
+  <div class="inner">
+
+    <header>
+      <div class="brandmark">
+        <div class="bicon">AI<sup>3</sup>A</div>
+        <div class="btext">
+          <div class="cn">艾倫報報</div>
+          <div class="en">ALLEN I³ AURORA</div>
+        </div>
+      </div>
+      <div class="title">TOP 10</div>
+      <div class="subtitle">台股每日分析報表</div>
+      <div class="date">2026-08-21 · 星期五</div>
+    </header>
+
+    <div class="hr-gold"></div>
+    <div class="legend">
+      訊號說明　僅顯示達標訊號（金色標籤，最多 5 項，未達標不顯示）　均線多頭：月&gt;季&gt;半年&gt;年多頭排列
+    </div>
+    <div class="hr-dim"></div>
+
+    <div class="row">
+      <div class="rank">01</div>
+      <div class="mid">
+        <div class="label">6213&nbsp;&nbsp;聯茂</div>
+        <div class="chips"><span class="chip">均線多頭</span><span class="chip">EPS年增&gt;10%</span></div>
+      </div>
+      <div class="right">
+        <div class="price">513.00</div>
+        <div class="chg up">▲ 0.59%</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="rank">02</div>
+      <div class="mid">
+        <div class="label">2344&nbsp;&nbsp;華邦電</div>
+        <div class="chips"><span class="chip">營益率&gt;10%</span><span class="chip">營收年增&gt;20%</span><span class="chip">EPS年增&gt;10%</span></div>
+      </div>
+      <div class="right">
+        <div class="price">181.00</div>
+        <div class="chg up">▲ 2.55%</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="rank">03</div>
+      <div class="mid">
+        <div class="label">3260&nbsp;&nbsp;威剛</div>
+        <div class="chips"><span class="chip">KD黃金交叉</span><span class="chip">營益率&gt;10%</span><span class="chip">營收年增&gt;20%</span><span class="chip">EPS年增&gt;10%</span></div>
+      </div>
+      <div class="right">
+        <div class="price">422.50</div>
+        <div class="chg up">▲ 5.36%</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="rank">04</div>
+      <div class="mid">
+        <div class="label">6505&nbsp;&nbsp;台塑化</div>
+        <div class="chips"><span class="chip">EPS年增&gt;10%</span></div>
+      </div>
+      <div class="right">
+        <div class="price">75.80</div>
+        <div class="chg up">▲ 3.84%</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="rank">05</div>
+      <div class="mid">
+        <div class="label">2520&nbsp;&nbsp;冠德</div>
+        <div class="chips"><span class="chip">營益率&gt;10%</span></div>
+      </div>
+      <div class="right">
+        <div class="price">36.80</div>
+        <div class="chg up">▲ 0.68%</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="rank">06</div>
+      <div class="mid">
+        <div class="label">2609&nbsp;&nbsp;陽明</div>
+        <div class="chips"><span class="nochip">本期無符合訊號</span></div>
+      </div>
+      <div class="right">
+        <div class="price">64.00</div>
+        <div class="chg up">▲ 6.14%</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="rank">07</div>
+      <div class="mid">
+        <div class="label">3034&nbsp;&nbsp;聯詠</div>
+        <div class="chips"><span class="chip">均線多頭</span><span class="chip">營益率&gt;10%</span></div>
+      </div>
+      <div class="right">
+        <div class="price">530.00</div>
+        <div class="chg up">▲ 0.57%</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="rank">08</div>
+      <div class="mid">
+        <div class="label">3653&nbsp;&nbsp;健策</div>
+        <div class="chips"><span class="chip">營益率&gt;10%</span><span class="chip">EPS年增&gt;10%</span></div>
+      </div>
+      <div class="right">
+        <div class="price">5395.00</div>
+        <div class="chg down">▼ 3.66%</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="rank">09</div>
+      <div class="mid">
+        <div class="label">4766&nbsp;&nbsp;南寶</div>
+        <div class="chips"><span class="chip">營益率&gt;10%</span></div>
+      </div>
+      <div class="right">
+        <div class="price">352.50</div>
+        <div class="chg up">▲ 1.44%</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="rank">10</div>
+      <div class="mid">
+        <div class="label">1303&nbsp;&nbsp;南亞</div>
+        <div class="chips"><span class="chip">均線多頭</span><span class="chip">EPS年增&gt;10%</span></div>
+      </div>
+      <div class="right">
+        <div class="price">192.00</div>
+        <div class="chg up">▲ 3.23%</div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="bicon" style="width:30px;height:30px;font-size:10px;border-radius:6px;">AI<sup>3</sup>A</div>
+      <div class="fbrand">艾倫報報 ALLEN I³ AURORA</div>
+      <div class="src">資料來源：TWSE / TPEx / Goodinfo! 台灣股市資訊網 · 僅供研究參考，非投資建議</div>
+    </footer>
+
+  </div>
+</div>
+</body>
+</html>

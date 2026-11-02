@@ -1,0 +1,17 @@
+{
+  "target_date": "2026-08-07",
+  "weekday": "星期五",
+  "is_backfill": true,
+  "stocks": [
+    {"rank": 1, "code": "2395", "name": "研華股份有限公司(研華)", "price": 634.00, "chg_pct": 1.93, "golden_cross": false, "ma_bull": true, "op_margin_ok": true, "rev_ok": false, "eps_ok": true},
+    {"rank": 2, "code": "3416", "name": "融程電腦股份有限公司(融程電)", "price": 191.00, "chg_pct": 2.41, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": true, "eps_ok": true},
+    {"rank": 3, "code": "1303", "name": "南亞塑膠工業股份有限公司(南亞)", "price": 188.00, "chg_pct": 5.32, "golden_cross": false, "ma_bull": true, "op_margin_ok": false, "rev_ok": false, "eps_ok": true},
+    {"rank": 4, "code": "3653", "name": "健策精密工業股份有限公司(健策)", "price": 4380.00, "chg_pct": -1.57, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": false, "eps_ok": true},
+    {"rank": 5, "code": "6589", "name": "台康生技股份有限公司(台康生技)", "price": 48.20, "chg_pct": 0.42, "golden_cross": false, "ma_bull": false, "op_margin_ok": false, "rev_ok": false, "eps_ok": false},
+    {"rank": 6, "code": "9939", "name": "宏全國際股份有限公司(宏全)", "price": 144.50, "chg_pct": 1.40, "golden_cross": false, "ma_bull": true, "op_margin_ok": true, "rev_ok": false, "eps_ok": false},
+    {"rank": 7, "code": "2027", "name": "大成鋼鐵工業股份有限公司(大成鋼)", "price": 46.60, "chg_pct": 1.08, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": false, "eps_ok": true},
+    {"rank": 8, "code": "2301", "name": "光寶科技股份有限公司(光寶科)", "price": 247.00, "chg_pct": -2.18, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": false, "eps_ok": true},
+    {"rank": 9, "code": "2344", "name": "華邦電子股份有限公司(華邦電)", "price": 163.50, "chg_pct": -4.39, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": true, "eps_ok": true},
+    {"rank": 10, "code": "3034", "name": "聯詠科技股份有限公司(聯詠)", "price": 542.00, "chg_pct": -0.18, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": false, "eps_ok": false}
+  ]
+}

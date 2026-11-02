@@ -1,0 +1,16 @@
+{
+  "date": "2026-08-07",
+  "weekday": "星期五",
+  "entries": [
+    {"code": "2395", "name": "研華", "price": "634.00", "changePct": "1.93", "up": true, "signals": ["ma", "om", "eps"]},
+    {"code": "3416", "name": "融程電", "price": "191.00", "changePct": "2.41", "up": true, "signals": ["om", "rev", "eps"]},
+    {"code": "1303", "name": "南亞", "price": "188.00", "changePct": "5.32", "up": true, "signals": ["ma", "eps"]},
+    {"code": "3653", "name": "健策", "price": "4380.00", "changePct": "1.57", "up": false, "signals": ["om", "eps"]},
+    {"code": "6589", "name": "台康生技", "price": "48.20", "changePct": "0.42", "up": true, "signals": []},
+    {"code": "9939", "name": "宏全", "price": "144.50", "changePct": "1.40", "up": true, "signals": ["ma", "om"]},
+    {"code": "2027", "name": "大成鋼", "price": "46.60", "changePct": "1.08", "up": true, "signals": ["om", "eps"]},
+    {"code": "2301", "name": "光寶科", "price": "247.00", "changePct": "2.18", "up": false, "signals": ["om", "eps"]},
+    {"code": "2344", "name": "華邦電", "price": "163.50", "changePct": "4.39", "up": false, "signals": ["om", "rev", "eps"]},
+    {"code": "3034", "name": "聯詠", "price": "542.00", "changePct": "0.18", "up": false, "signals": ["om"]}
+  ]
+}

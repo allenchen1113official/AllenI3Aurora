@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>taiex-heatmap skill 測試檢視頁（2026-08-23 iteration-1）</title>
+<style>
+  :root{
+    --bg:#0a0d11; --hdr:#161a20; --panel:#10141a; --border:#2c384c; --border-dim:#1e2838;
+    --t1:#eef2f6; --t2:#c7d0d9; --t3:#8b95a1; --accent:#ffb020; --blue:#4ea1ff; --ok:#3ddc97;
+    --up1:#d6786e; --up2:#c45a4e; --dn1:#6ebe8c; --dn2:#4eaa70;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#05070b;color:var(--t2);padding:28px 14px;display:flex;flex-direction:column;align-items:center;gap:22px;
+       font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,sans-serif;}
+  .wrap{width:100%;max-width:1000px;display:flex;flex-direction:column;gap:22px;}
+  h1{color:var(--t1);font-size:26px;}
+  h2{color:var(--t1);font-size:19px;margin-bottom:4px;}
+  .meta{color:var(--t3);font-size:13px;line-height:1.7;}
+  .warn{background:rgba(255,176,32,.10);border-left:3px solid var(--accent);color:var(--accent);
+        padding:9px 13px;border-radius:0 6px 6px 0;font-size:13px;margin-top:10px;line-height:1.6;}
+  .sec{background:var(--bg);border:1px solid var(--border-dim);border-radius:10px;padding:22px 26px;}
+  .prompt{background:var(--panel);border-left:3px solid var(--blue);padding:10px 14px;border-radius:0 8px 8px 0;
+          font-size:14px;margin:10px 0 14px;line-height:1.7;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px;}
+  th,td{border:1px solid var(--border-dim);padding:8px 10px;text-align:left;vertical-align:top;line-height:1.6;}
+  th{color:var(--t3);font-weight:700;background:var(--panel);}
+  .pass{color:var(--ok);font-weight:700;white-space:nowrap;}
+  /* --- 熱力圖示意重繪 --- */
+  .hm{border:1px solid var(--border-dim);border-radius:8px;overflow:hidden;margin-top:14px;background:var(--bg);}
+  .hm .top{height:4px;background:var(--accent);}
+  .hm .hd{background:var(--hdr);padding:10px 16px;}
+  .hm .t1r{display:flex;align-items:baseline;gap:12px;}
+  .hm .tt{color:#fff;font-weight:900;font-size:20px;flex:1;}
+  .hm .tx{color:var(--blue);font-weight:800;font-size:15px;}
+  .hm .sub{color:var(--t2);font-size:12.5px;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .sw{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;padding:8px;}
+  .cell{border-radius:3px;color:#fff;padding:10px 6px;text-align:center;min-height:56px;
+        display:flex;flex-direction:column;justify-content:center;}
+  .cell b{font-size:13.5px;} .cell span{font-size:11.5px;opacity:.95;}
+  .cell.big{grid-column:span 2;grid-row:span 2;} .cell.big b{font-size:18px;} .cell.big span{font-size:13px;}
+  .ft{background:var(--hdr);padding:8px 16px;color:var(--t3);font-size:11px;display:flex;align-items:center;gap:10px;}
+  .ft .brand{margin-left:auto;display:flex;align-items:center;gap:7px;}
+  .bicon{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#7ed9a8,#63ace2);
+         color:#0d2e30;display:flex;align-items:center;justify-content:center;font:800 8px/1 sans-serif;}
+  .bt{color:var(--t2);font-weight:800;font-size:11px;}
+  .note{color:var(--t3);font-size:12.5px;line-height:1.7;max-width:1000px;}
+  code{background:var(--panel);border:1px solid var(--border-dim);border-radius:4px;padding:1px 5px;
+       font-size:12px;color:var(--t2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sec">
+    <h1>taiex-heatmap · skill 測試檢視頁</h1>
+    <p class="meta">iteration-1 · 測試日 2026-08-23 · 依 CLAUDE.md「Skill 建立與測試流程」第 2–3 步執行：乾淨目錄照 SKILL.md 產出上市／上櫃各 FB（1200×630）＋IG（1080×1080）共四張，`TAIEX_TRADE_DATE=2026-08-22` 覆寫日期，全部斷言通過；並與 repo 既有正式產出（assets/heatmap/）逐一對照，版面一致。本頁為原始檢視頁（內嵌四張 PNG，逾 1MB）的<b style="color:var(--t1)">純文字 HTML 重繪雲端版</b>，下方熱力圖為代表性方塊示意、非完整 100／50 檔版面。</p>
+    <div class="warn">⚠ 本測試使用 taiex_data.py 中性預設值，僅驗證產圖機制與版面；漲跌數字非任何真實交易日行情，四張測試圖卡不可對外發布。正式使用仍須照 SKILL.md 第 2 步查證當日收盤。</div>
+  </div>
+
+  <div class="sec">
+    <h2>eval-0 · twse-market（上市 TWSE）✅ 5/5</h2>
+    <div class="prompt">乾淨目錄照 SKILL.md 步驟產出上市熱力圖 FB＋IG，並以 TAIEX_TRADE_DATE=2026-08-22 覆寫日期。</div>
+    <table>
+      <tr><th style="width:55%">斷言</th><th style="width:10%">結果</th><th>證據</th></tr>
+      <tr><td>輸出 1200×630 與 1080×1080 兩張 PNG、標示共 100 檔</td><td class="pass">PASS</td><td>render_one.py 輸出 stocks: 100，兩尺寸皆產出</td></tr>
+      <tr><td>TAIEX_TRADE_DATE 覆寫生效（標題顯示 08/22（六））</td><td class="pass">PASS</td><td>目視確認</td></tr>
+      <tr><td>紅漲綠跌、無大片中性灰</td><td class="pass">PASS</td><td>目視確認</td></tr>
+      <tr><td>右下角品牌圖卡、底部免責註腳</td><td class="pass">PASS</td><td>目視確認</td></tr>
+      <tr><td>版面與 repo 既有正式產出一致</td><td class="pass">PASS</td><td>對照 assets/heatmap/twse-heatmap-fb.png，頁首／區塊／註腳版式相同</td></tr>
+    </table>
+    <div class="hm">
+      <div class="top"></div>
+      <div class="hd">
+        <div class="t1r"><span class="tt">上市大型股熱力圖</span><span class="tx">TAIEX</span></div>
+        <div class="sub">台股上市(TWSE) 市值前100大代表股 · 08/22（六） · 共 100 檔
+          <span style="margin-left:auto"><span class="sw" style="background:#800a0a"></span> 上漲　<span class="sw" style="background:#08502c"></span> 下跌</span></div>
+      </div>
+      <div class="grid">
+        <div class="cell big" style="background:var(--up1)"><b>台積電</b><span>+0.69%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>聯發科</b><span>+1.32%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>台達電</b><span>+0.43%</span></div>
+        <div class="cell" style="background:var(--dn1)"><b>鴻海</b><span>-0.59%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>廣達</b><span>+0.33%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>富邦金</b><span>+0.84%*</span></div>
+        <div class="cell" style="background:var(--dn1)"><b>台灣大</b><span>-0.53%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>統一</b><span>+0.62%</span></div>
+        <div class="cell" style="background:var(--dn1)"><b>台泥</b><span>-0.67%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>和泰車</b><span>+0.80%</span></div>
+        <div class="cell" style="background:var(--dn1)"><b>遠傳</b><span>-0.40%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>世芯-KY</b><span>+1.34%</span></div>
+        <div class="cell" style="background:var(--dn1)"><b>亞泥</b><span>-0.71%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>中興電</b><span>+1.35%</span></div>
+      </div>
+      <div class="ft">中性示意資料 · 僅供版面測試，非投資建議<span class="brand"><span class="bicon">AI³A</span><span class="bt">艾倫報報 ALLEN I³ AURORA</span></span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>eval-1 · tpex-market（上櫃 TPEx）✅ 5/5</h2>
+    <div class="prompt">同流程產出上櫃熱力圖 FB＋IG（中性預設值、TAIEX_TRADE_DATE=2026-08-22）。</div>
+    <table>
+      <tr><th style="width:55%">斷言</th><th style="width:10%">結果</th><th>證據</th></tr>
+      <tr><td>輸出兩尺寸 PNG、標示共 50 檔</td><td class="pass">PASS</td><td>render_one.py 輸出 stocks: 50</td></tr>
+      <tr><td>權值股群聯(8299)在列（強制查證清單首位）</td><td class="pass">PASS</td><td>半導體/材料區塊可見「群聯」方塊</td></tr>
+      <tr><td>紅漲綠跌、文字未溢出方塊</td><td class="pass">PASS</td><td>目視確認</td></tr>
+      <tr><td>右下角品牌圖卡</td><td class="pass">PASS</td><td>目視確認</td></tr>
+      <tr><td>環境限制發現：沙盒無 NotoSansCJK/Poppins，需自 fonts.gstatic.com 補裝</td><td class="pass">PASS</td><td>補字型前 make_brand_asset.py 直接失敗；已補進 SKILL.md 已知環境限制（含補救指令）</td></tr>
+    </table>
+    <div class="hm">
+      <div class="top"></div>
+      <div class="hd">
+        <div class="t1r"><span class="tt">上櫃大型股熱力圖</span><span class="tx">TAIEX</span></div>
+        <div class="sub">台股上櫃(TPEx) 市值前50大代表股 · 08/22（六） · 共 50 檔
+          <span style="margin-left:auto"><span class="sw" style="background:#800a0a"></span> 上漲　<span class="sw" style="background:#08502c"></span> 下跌</span></div>
+      </div>
+      <div class="grid">
+        <div class="cell big" style="background:var(--dn1)"><b>中租-KY</b><span>-0.55%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>環球晶</b><span>+1.37%</span></div>
+        <div class="cell" style="background:var(--dn1)"><b>穩懋</b><span>-0.54%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>群聯</b><span>+0.84%</span></div>
+        <div class="cell" style="background:var(--dn1)"><b>世界</b><span>-0.58%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>中美晶</b><span>+0.41%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>頎邦</b><span>+1.22%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>精測</b><span>+0.99%</span></div>
+        <div class="cell" style="background:var(--dn1)"><b>新普</b><span>-0.20%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>信驊</b><span>+0.52%</span></div>
+        <div class="cell" style="background:var(--dn1)"><b>譜瑞-KY</b><span>-0.54%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>鈊象</b><span>+1.14%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>富邦媒</b><span>+0.44%</span></div>
+        <div class="cell" style="background:var(--up1)"><b>元太</b><span>+0.23%</span></div>
+      </div>
+      <div class="ft">中性示意資料 · 僅供版面測試，非投資建議<span class="brand"><span class="bicon">AI³A</span><span class="bt">艾倫報報 ALLEN I³ AURORA</span></span></div>
+    </div>
+  </div>
+
+  <p class="note">
+    測試產物：<code>taiex_heatmap_twse_facebook/instagram.png</code>、<code>taiex_heatmap_tpex_facebook/instagram.png</code>
+    於測試目錄與對話附件（原始檢視頁 HTML 亦在附件）。示意圖數字取自實際測試產出的中性預設值渲染結果；
+    「富邦金 +0.84%*」等未逐一列出者以同類股模擬值呈現。skill 本體（含 2026-08-23 更新的已知環境限制）備份見同資料夾；
+    相關：<code>AllenI3Aurora/podcast/podcast-cornell-card-skill/</code>（同流程之 Podcast 圖卡 skill 備份與測試檢視頁）。
+  </p>
+</div>
+</body>
+</html>

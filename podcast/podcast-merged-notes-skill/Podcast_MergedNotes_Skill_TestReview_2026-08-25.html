@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>podcast-merged-notes Skill 測試檢視 2026-08-25</title>
+<style>
+body{margin:0;background:#faf9f5;color:#141413;font:15px/1.7 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;padding:32px 16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:#8a8878;font-size:13px;margin-bottom:24px}
+h2{font-size:17px;margin:28px 0 10px;border-bottom:2px solid #e8e6dc;padding-bottom:6px}
+.card{background:#fff;border:1px solid #e8e6dc;border-radius:8px;padding:16px 18px;margin-bottom:14px}
+.prompt{background:#f3f1ea;border-radius:6px;padding:10px 12px;font-size:13.5px;margin-bottom:12px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{border:1px solid #e8e6dc;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#141413;color:#faf9f5;font-weight:600;font-size:12.5px}
+.pass{color:#788c5d;font-weight:700;white-space:nowrap}
+.ev{color:#8a8878;font-size:12px}
+code{background:#f3f1ea;border-radius:4px;padding:1px 5px;font-size:12.5px}
+ul{margin:6px 0;padding-left:22px}
+.badge{display:inline-block;background:#eef2e8;color:#788c5d;border-radius:99px;padding:2px 10px;font-size:12.5px;font-weight:700}
+.foot{color:#8a8878;font-size:12px;text-align:center;margin-top:28px}
+</style>
+</head>
+<body><div class="wrap">
+<h1>podcast-merged-notes Skill · 測試檢視</h1>
+<div class="sub">艾倫報報 Allen I³ Aurora ｜ v2（iteration-2）｜ 2026-08-25 ｜ <span class="badge">斷言 7/7 全數通過</span>（v1 iteration-1 亦 10/10 通過）</div>
+
+<div class="card">
+<b>Skill 摘要</b>：以 <code>scripts/build_merged_notes.py</code> 把「各集 Podcast 節目 JSON ＋ 常聽清單 shows.json」合併計算，產出四件：<code>merged.json</code>、<code>podcast_episodes.snippet.js</code>（貼回 kit.jsx / Firestore）、<code>podcasts.snippet.js</code>（常聽清單片段）、<code>merged_preview.html</code>（Aurora 風格預覽）。合併邏輯與前台 <code>Dashboard.jsx mergedPodcastList()</code> 完全一致。
+<br><b>v2 變更</b>：常聽清單擴充為 8 個實際節目（新增財經一路發、兆華與股惑仔、AI懶人報、游庭皓的財經皓角、Acquired，皆為查證過的官方 Spotify show 連結）；「| Podcast on …」平台後綴自動剝除再配對；未提供筆記及摘要的節目以連結卡呈現並以 [資訊] 友善列出（屬正常設計，非錯誤）；新增 <code>podcasts.snippet.js</code> 產出。
+</div>
+
+<h2>案例一 normal-eight-shows（正常範例）</h2>
+<div class="card">
+<div class="prompt">8 個實際常聽節目（含 5 個未提供筆記及摘要者：財經一路發／兆華與股惑仔／AI懶人報／游庭皓的財經皓角／Acquired）＋ 3 集範例（股癌 0821／曼報 0820／Lex Fridman 0818），產出四件產出。</div>
+<b>執行結果</b>：共 8 張卡——3 摘要卡在前（0821→0820→0818，股癌標「最新一集」）、5 連結卡殿後；[資訊] 逐一列出 5 個未提供筆記的節目。
+<table>
+<tr><th>斷言</th><th>結果</th></tr>
+<tr><td>3 摘要卡在前、排序與最新標記正確，5 連結卡殿後<div class="ev">kinds=[episode×3, link×5]；日期 2026.08.21→08.20→08.18；僅首張 is_latest</div></td><td class="pass">✓ PASS</td></tr>
+<tr><td>5 個未提供筆記節目與連結卡一致<div class="ev">連結卡=[財經一路發, 兆華與股惑仔, AI懶人報, 游庭皓的財經皓角, Acquired]</div></td><td class="pass">✓ PASS</td></tr>
+<tr><td>節目名無「| Podcast on …」平台後綴殘留<div class="ev">preview 與 podcasts.snippet.js 均無「Podcast on」字樣</div></td><td class="pass">✓ PASS</td></tr>
+<tr><td>podcasts.snippet.js 合法 JSON/JS、8 筆、sort 1..8、官方連結<div class="ev">titles 含清理後的 AI懶人報、Acquired；url 皆為 open.spotify.com/show 或官方頁</div></td><td class="pass">✓ PASS</td></tr>
+</table>
+</div>
+
+<h2>案例二 stress-edge-cases（壓力案例）</h2>
+<div class="card">
+<div class="prompt">沿用 v1 邊界（同節目兩集舊集淘汰／草稿過濾／超長內容／&lt;script&gt; 與引號跳脫／缺 date、summary、tone 不合法提醒／--outdir 非預設），新增平台後綴配對：清單「AI懶人報 | Podcast on Spotify」× 集數 show「AI懶人報」。</div>
+<b>執行結果</b>：共 4 張卡；AI懶人報成功配對為單一摘要卡；缺 date 集數排最後一張摘要卡；連結卡殿後；4 條 [提醒] 逐條輸出。
+<table>
+<tr><th>斷言</th><th>結果</th></tr>
+<tr><td>後綴配對成功：AI懶人報恰好一張摘要卡、無重複連結卡<div class="ev">AI懶人報 筆數=1（episode）</div></td><td class="pass">✓ PASS</td></tr>
+<tr><td>v1 邊界全數維持：舊集與草稿未出現、&lt;script&gt; 完整跳脫、缺 date 排最後、連結卡殿後<div class="ev">順序=[(股癌, episode), (AI懶人報, episode), (缺日期節目, episode), (沒有集數的常聽節目, link)]；preview 內原樣 &lt;script&gt; 出現 0 次</div></td><td class="pass">✓ PASS</td></tr>
+<tr><td>--outdir out 四件產出齊備<div class="ev">merged.json / podcast_episodes.snippet.js / merged_preview.html / podcasts.snippet.js 皆存在</div></td><td class="pass">✓ PASS</td></tr>
+</table>
+</div>
+
+<h2>v1（iteration-1，2026-08-24）回顧</h2>
+<div class="card">
+兩案例（3 節目正常範例＋壓力案例）10/10 斷言通過：排序與最新標記、同節目取最新、草稿過濾、HTML 跳脫、缺欄位提醒、snippet 合法且 sort 重編、康乃爾圖卡結構（線索 CUES／筆記 NOTES／總結 SUMMARY／品牌字樣）。v2 在此基礎上通過全部回歸。
+</div>
+
+<h2>備註</h2>
+<div class="card">
+<ul>
+<li>完整互動版檢視頁（generate_review.py 產出，含各檔產出內文與評分明細）已於對話中以檔案交付使用者；本頁為 Drive 封存用精簡版。</li>
+<li>示範產出見同資料夾 <code>Podcast_MergedNotes_Sample_2026-08-25.html</code>（8 節目合併預覽：3 摘要卡＋5 連結卡，康乃爾圖卡可展開）。</li>
+<li>Skill 檔案逐檔備份與還原方式見 <code>README_如何還原skill檔.md</code>。</li>
+</ul>
+</div>
+
+<div class="foot">艾倫報報 · Allen I³ Aurora — podcast-merged-notes skill 測試檢視（2026-08-25）</div>
+</div></body>
+</html>

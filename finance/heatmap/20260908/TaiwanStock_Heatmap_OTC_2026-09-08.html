@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><title>台股上櫃熱力圖 2026-09-08</title>
+<style>body{margin:0;background:#0b1118;color:#f3f6fa;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+h1{font-size:26px;margin:16px 20px 2px}.sub{margin:0 20px 10px;color:#aab4c0;font-size:13px}
+#m{position:relative;width:1080px;height:860px;margin:0 20px}
+.c{position:absolute;overflow:hidden;box-sizing:border-box;border:1px solid #0b1118;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;font-weight:700;line-height:1.15}
+.s{position:absolute;font-size:11px;color:#9aa;left:2px;top:1px;font-weight:400}
+.f{margin:12px 20px;color:#8a95a3;font-size:12px}.b{color:#7ed9a8;font-weight:700}</style></head><body>
+<h1>上櫃大型股熱力圖 <span style="font-size:14px;color:#aab4c0">台股上櫃(TPEx) 市值前50大代表股 · 2026/09/08（二）</span></h1>
+<div class="sub">紅漲綠跌（台股慣例）· 方塊大小≈市值權重（冪次壓縮）· 標「*」者為同類股平均模擬值，其餘為Yahoo奇摩股市收盤查證數字</div>
+<div id="m"></div>
+<div class="f">資料來源：Goodinfo!台灣股市資訊網、TWSE、TPEx、Yahoo奇摩股市 · 本圖僅為個人研究整理，非投資建議，投資請自負風險 · <span class="b">艾倫報報 ALLEN I³ AURORA</span></div>
+<script>
+const D=[["金融/證券","中租-KY","5871",4.5,2.22,1],["半導體/材料","環球晶","6488",5.43,-1.65,1],["半導體/材料","中美晶","5483",3.02,-1.91,1],["半導體/材料","世界","5347",4.21,-2.56,1],["半導體/材料","穩懋","3105",7.9,-2.0,1],["半導體/材料","群聯","8299",2.88,-0.48,1],["半導體/材料","頎邦","6147",2.35,-2.36,1],["半導體/材料","精測","6510",4,4.32,1],["半導體/材料","精材","3374",4,1.17,1],["半導體/材料","漢磊","3707",0.7,-1.96,1],["半導體/材料","鈺創","5351",1.5,-1.27,1],["半導體/材料","弘塑","3131",4,3.13,1],["半導體/材料","神盾","6462",1.5,-1.19,1],["半導體/材料","閎康","3587",1.5,-2.57,1],["半導體/材料","欣銓","3264",1.5,-0.88,1],["半導體/材料","台星科","3265",0.6,-5.4,1],["半導體/材料","均豪","5443",0.6,-4.58,1],["半導體/材料","力旺","3529",4,9.92,1],["半導體/材料","M31","6643",0.6,6.57,1],["半導體/材料","沛亨","6291",0.6,4.75,1],["半導體/材料","台燿","6274",0.75,-1.82,1],["半導體/材料","昇達科","3491",1.5,-1.32,1],["半導體/材料","崇越","5434",1.5,-1.66,1],["半導體/材料","天鈺","4961",0.6,7.25,1],["半導體/材料","敦泰","3545",0.6,0.2,1],["半導體/材料","由田","3455",0.6,-2.34,1],["半導體/材料","金居","8358",1.5,0.97,1],["半導體/材料","家登","3680",1.5,-1.51,1],["半導體/材料","富喬","1815",0.6,3.85,1],["半導體/材料","威剛","3260",1.5,0.49,1],["半導體/材料","原相","3227",0.85,-2.1,1],["生技醫療","高端疫苗","6547",0.9,0.95,1],["生技醫療","美時","1795",0.8,0.0,1],["生技醫療","保瑞","6472",1.2,-0.84,1],["生技醫療","藥華藥","6446",1.1,6.04,1],["生技醫療","中裕","4147",1.5,4.15,1],["生技醫療","三顧","6883",1.5,2.01,0],["生技醫療","大江","8436",1.5,-0.91,1],["生技醫療","泰福-KY","6541",1.5,0.63,1],["生技醫療","大學光","3218",1.5,0.0,1],["光電/被動元件","元太","8069",1.5,-2.33,1],["電子商務/內需/零售","富邦媒","8454",1.8,-1.03,1],["電子商務/內需/零售","寶雅","5904",1.0,0.0,1],["電子商務/內需/零售","大豐電","6184",1.5,-0.5,1],["遊戲/軟體","鈊象","3293",2.09,-0.28,1],["遊戲/軟體","威聯通","7805",1.5,-1.17,1],["電子代工/系統設備","新普","6121",3.49,-2.07,1],["電子代工/系統設備","信驊","5274",1.99,0.03,1],["電子代工/系統設備","譜瑞-KY","4966",3.27,-3.36,1],["電子代工/系統設備","雙鴻","3324",1.3,-6.94,1]];
+function sq(items,x,y,w,h){const out=[];let i=0;const tot=items.reduce((a,b)=>a+b.v,0);let cx=x,cy=y,cw=w,ch=h;
+while(i<items.length){const vert=cw>=ch;const side=vert?ch:cw;let row=[],sum=0,best=Infinity;
+for(let j=i;j<items.length;j++){const s2=sum+items[j].v;const r=row.concat(items[j]);const area=s2/tot*cw*ch;const len=area/side;
+const worst=Math.max(...r.map(o=>{const a=o.v/tot*cw*ch;const b=a/len;return Math.max(len/b,b/len)}));
+if(worst>best){break}best=worst;row=r;sum=s2}
+const area=sum/tot*cw*ch;const len=area/side;let off=0;
+for(const o of row){const a=o.v/tot*cw*ch;const b=a/len;if(vert){out.push({o,x:cx,y:cy+off,w:len,h:b})}else{out.push({o,x:cx+off,y:cy,w:b,h:len})}off+=b}
+if(vert){cx+=len;cw-=len}else{cy+=len;ch-=len}i+=row.length}return out}
+function col(p){const t=Math.min(1,Math.abs(p)/6);return p>=0?`rgb(${140+80*t},${60-30*t},${60-30*t})`:`rgb(${30-10*t},${110+70*t},${70+30*t})`}
+const secs={};D.forEach(r=>{(secs[r[0]]=secs[r[0]]||[]).push(r)});
+const S=Object.keys(secs).map(k=>({k,v:secs[k].reduce((a,r)=>a+Math.pow(r[3],0.62),0),rows:secs[k]})).sort((a,b)=>b.v-a.v);
+const m=document.getElementById('m');
+sq(S,0,0,1080,860).forEach(b=>{const it=b.o.rows.map(r=>({v:Math.pow(r[3],0.62),r})).sort((a,b)=>b.v-a.v);
+const lab=document.createElement('div');lab.className='s';lab.style.left=(b.x+3)+'px';lab.style.top=(b.y+1)+'px';lab.textContent=b.o.k;m.appendChild(lab);
+sq(it,b.x,b.y+14,b.w,b.h-14).forEach(c=>{const r=c.o.r;const e=document.createElement('div');e.className='c';
+e.style.cssText=`left:${c.x}px;top:${c.y}px;width:${c.w}px;height:${c.h}px;background:${col(r[4])};font-size:${Math.max(9,Math.min(26,Math.min(c.w,c.h)/3.2))}px`;
+e.innerHTML=`${r[1]}<br><span style="font-weight:400">${r[4]>0?'+':''}${r[4].toFixed(2)}%${r[5]?'':'*'}</span>`;e.title=`${r[1]}(${r[2]}) ${r[0]}`;m.appendChild(e)})});
+</script></body></html>

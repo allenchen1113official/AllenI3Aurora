@@ -1,0 +1,17 @@
+{
+  "target_date": "2026-08-07",
+  "weekday": "星期五",
+  "is_backfill": false,
+  "stocks": [
+    {"rank": 1, "code": "2395", "name": "研華(研華)", "price": 622, "chg_pct": -1.74, "golden_cross": false, "ma_bull": true, "op_margin_ok": true, "rev_ok": false, "eps_ok": true},
+    {"rank": 2, "code": "9939", "name": "宏全國際(宏全)", "price": 142.5, "chg_pct": 6.34, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": false, "eps_ok": false},
+    {"rank": 3, "code": "2301", "name": "光寶科技(光寶科)", "price": 252.5, "chg_pct": 1.41, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": false, "eps_ok": true},
+    {"rank": 4, "code": "3023", "name": "信邦電子(信邦)", "price": 323, "chg_pct": 1.57, "golden_cross": false, "ma_bull": false, "op_margin_ok": false, "rev_ok": false, "eps_ok": false},
+    {"rank": 5, "code": "6589", "name": "台康生技(台康生技)", "price": 48, "chg_pct": -1.34, "golden_cross": false, "ma_bull": false, "op_margin_ok": false, "rev_ok": false, "eps_ok": false},
+    {"rank": 6, "code": "3293", "name": "鈊象電子(鈊象)", "price": 784, "chg_pct": 0.90, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": false, "eps_ok": true},
+    {"rank": 7, "code": "4912", "name": "聯德控股-KY(聯德控股)", "price": 90.9, "chg_pct": 1.45, "golden_cross": false, "ma_bull": false, "op_margin_ok": false, "rev_ok": false, "eps_ok": false},
+    {"rank": 8, "code": "1785", "name": "光洋科技(光洋科)", "price": 115, "chg_pct": 3.14, "golden_cross": false, "ma_bull": false, "op_margin_ok": true, "rev_ok": true, "eps_ok": true},
+    {"rank": 9, "code": "2027", "name": "大成不銹鋼工業(大成鋼)", "price": 46.1, "chg_pct": 3.95, "golden_cross": false, "ma_bull": true, "op_margin_ok": true, "rev_ok": false, "eps_ok": true},
+    {"rank": 10, "code": "2408", "name": "南亞科技(南亞科)", "price": 459, "chg_pct": 3.15, "golden_cross": false, "ma_bull": true, "op_margin_ok": true, "rev_ok": true, "eps_ok": true}
+  ]
+}

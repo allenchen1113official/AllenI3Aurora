@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>台股盤前速報</title>
+
+<style>
+:root{--mint:#92E0BE;--blue:#4F8AD5;--ink:#12332B;--sage:#2F6152;--paper:#DEE7E2;--up:#C9342F;--down:#0F7D62;--bg:#F6F9F7;--card:#FFFFFF;--line:#D3DDD8;--muted:#5B726A;--text:#12332B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0E1A16;--card:#15241F;--line:#28403A;--muted:#9DB5AC;--text:#E4EEE9;--paper:#1B2D27;--up:#F06A63;--down:#3FBF97}}
+:root[data-theme="dark"]{--bg:#0E1A16;--card:#15241F;--line:#28403A;--muted:#9DB5AC;--text:#E4EEE9;--paper:#1B2D27;--up:#F06A63;--down:#3FBF97}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.65;font-size:15px}
+.wrap{max-width:920px;margin:0 auto;padding:0 16px 32px}
+header.hero{background:radial-gradient(ellipse at 15% 20%,rgba(146,224,190,.75),transparent 55%),radial-gradient(ellipse at 85% 10%,rgba(79,138,213,.6),transparent 55%),linear-gradient(135deg,#12332B,#2F6152);color:#fff;padding:24px 16px 20px;border-radius:0 0 18px 18px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:nowrap}
+.badge{width:54px;height:54px;flex:0 0 54px;border-radius:14px;background:linear-gradient(135deg,#92E0BE,#4F8AD5);display:flex;align-items:center;justify-content:center;white-space:nowrap;line-height:1;font-size:16px;font-weight:800;color:#12332B;letter-spacing:.3px}
+.badge sup{font-size:9px}
+.bname{font-size:20px;font-weight:700;white-space:nowrap}
+.bsep{width:1px;height:22px;background:rgba(255,255,255,.55)}
+.ben{font-size:12px;opacity:.85;white-space:nowrap}
+h1{margin:16px 0 4px;font-size:26px}
+.basis{font-size:13px;opacity:.92}
+h2{font-size:18px;margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+h2 .n{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--mint),var(--blue));color:#12332B;font-size:13px;font-weight:800}
+.lead{background:var(--card);border-left:5px solid var(--blue);border-radius:10px;padding:14px 16px;font-size:16px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card .k{font-size:12px;color:var(--muted)}
+.card .v{font-size:22px;font-weight:700}
+.card .s{font-size:13px}
+.up{color:var(--up)}.down{color:var(--down)}
+.tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:99px;background:var(--paper);color:var(--sage);margin-right:4px}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:10px;overflow:hidden;font-size:14px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--paper);color:var(--text);font-weight:600;font-size:13px}
+td.r,th.r{text-align:right;white-space:nowrap}
+.tbl{overflow-x:auto}
+.note{font-size:12px;color:var(--muted);margin-top:6px}
+.funnel{display:flex;flex-direction:column;gap:6px}
+.fstep{display:flex;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.fstep b{white-space:nowrap}
+.warn{background:var(--card);border:1px dashed var(--up);border-radius:10px;padding:12px 14px}
+ul{padding-left:20px;margin:6px 0}
+li{margin:4px 0}
+footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line);text-align:center;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="brand"><div class="badge">AI<sup>3</sup>A</div><div class="bname">艾倫極光報報</div><div class="bsep"></div><div class="ben">Allen I³ Aurora Brief</div></div>
+  <h1>台股盤前速報｜2026/09/22（週二）</h1>
+  <div class="basis">資料基準：上一交易日 2026/09/21（週一）台股收盤 ＋ 美東 09/21（週一）美股收盤　·　本週 9/25（五）中秋節、9/28（一）教師節休市，9/24（四）為連假前最後交易日</div>
+</header>
+
+<h2><span class="n">1</span>一句話開盤觀點</h2>
+<div class="lead">加權指數距歷史收盤高點不到 23 點，美股上一交易日科技股大漲（那指 +2.26%、台積電 ADR +2.41%，ADR 溢價約 14%），今日看點在「權值股挑戰新高」與「中小型股走弱、連假前調節」之間的拉鋸。</div>
+
+<h2><span class="n">2</span>上一交易日收盤回顧：大盤與三大法人（9/21 週一）</h2>
+<div class="grid">
+  <div class="card"><div class="k">加權指數 TAIEX</div><div class="v up">47,718.84</div><div class="s up">▲ +538.09（+1.14%）</div><div class="note">開 47,207.30／高 47,750.98／低 47,207.30　成交 8,202.15 億元</div></div>
+  <div class="card"><div class="k">櫃買指數 OTC</div><div class="v down">412.57</div><div class="s down">▼ −0.11（−0.03%）</div><div class="note">開 413.21／高 414.58／低 410.24　成交 2,117.14 億元</div></div>
+  <div class="card"><div class="k">上市三大法人合計</div><div class="v up">+470.37 億</div><div class="s">外資 +203.76 億｜投信 +39.32 億｜自營商 +227.29 億</div><div class="note">Yahoo／MoneyDJ 版為 +470.38 億，差異為四捨五入</div></div>
+  <div class="card"><div class="k">櫃買三大法人合計</div><div class="v down">−99.82 億</div><div class="s">上櫃法人賣超，與櫃買指數收黑一致</div></div>
+</div>
+<div class="tbl" style="margin-top:10px"><table>
+<tr><th>項目</th><th>上一交易日（9/21）</th><th>備註</th></tr>
+<tr><td>上市漲跌家數</td><td>上漲 497／下跌 504／平盤 107</td><td>中央社（經 Yahoo）口徑。聯合報寫「1,007 漲、860 跌」，應為上市櫃合計或含 ETF 等不同口徑，兩者並列揭露</td></tr>
+<tr><td>上櫃漲跌家數</td><td>上漲 438／下跌 344／平盤 94</td><td>櫃買盤後（Yahoo）</td></tr>
+<tr><td>外資台指期未平倉淨部位</td><td>9/21 資料未取得</td><td>最新取得為 9/18：淨空 76,110 口（較前日減少 2,564 口空單）。Newtalk 報導 9/21 外資「減少台指期空單」，但未給口數</td></tr>
+<tr><td>融資融券（上市）</td><td>9/21 資料未取得</td><td>最新取得為 9/18：融資餘額 5,940.39 億元（+46.42 億）；融券 222,965 張（+6,677 張）</td></tr>
+</table></div>
+<div class="note">重點個股：聯發科（2454）+6.37% 收 5,010 元、站上 5,000 元；台達電（2308）+8.07% 收 1,875 元；台積電（2330）+0.81% 收 2,480 元（上一交易日前收 2,460 元）；友達（2409）漲停 33.35 元、成交約 73～80 萬張（各家報導數字不一）。</div>
+
+<h2><span class="n">3</span>上一交易日類股輪動與題材（9/21）</h2>
+<div class="grid">
+<div class="card"><div class="k">強勢類股（上市類股指數）</div>
+<ul><li>電子零組件 <span class="up">+3.28%</span></li><li>油電燃氣 <span class="up">+2.02%</span></li><li>玻璃陶瓷 <span class="up">+2.00%</span></li><li>光電 <span class="up">+1.81%</span></li><li>電子類 <span class="up">+1.34%</span></li></ul></div>
+<div class="card"><div class="k">弱勢類股（上市類股指數）</div>
+<ul><li>生技醫療 <span class="down">−1.45%</span></li><li>營建 <span class="down">−1.38%</span></li><li>資訊服務 <span class="down">−1.22%</span></li><li>汽車 <span class="down">−1.17%</span></li><li>綠能環保 <span class="down">−0.99%</span></li></ul></div>
+</div>
+<div class="note">來源：玩股網上市類股指數（資料日 2026/09/21）。中央社口徑另列機電 +1.33%、金融 +0.82%、營建 −1.38%、食品 −0.63%、紡織 −0.57%，因分類口徑不同而排名有別。</div>
+<div class="tbl" style="margin-top:10px"><table>
+<tr><th>題材</th><th>原因</th><th>代表個股</th></tr>
+<tr><td><span class="tag">面板轉型</span>先進封裝</td><td>市場傳英特爾、台積電與友達洽談先進封裝合作，外資單日買超友達逾 23 萬張</td><td>友達 2409（漲停）、群創 3481（+4.46%）</td></tr>
+<tr><td><span class="tag">AI 權值</span>IC 設計／電源</td><td>聯發科突破 5,000 元，台達電大漲 8%；權值股合計貢獻約 480 點</td><td>聯發科 2454、台達電 2308、台積電 2330</td></tr>
+<tr><td><span class="tag">封測</span>CoWoS 外溢</td><td>先進封裝產能吃緊，委外封測受惠想像</td><td>日月光投控 3711、京元電子 2449</td></tr>
+<tr><td><span class="tag">太陽能</span></td><td>消息面：馬斯克發文看好太陽能前景，多檔亮燈漲停</td><td>元晶 6443</td></tr>
+<tr><td><span class="tag">PCB／載板</span></td><td>AI 先進封裝帶動 ABF 載板需求</td><td>欣興 3037（+7.54%，收 1,055 元）</td></tr>
+</table></div>
+<div class="note"><b>資金流出方向：</b>高價測試介面股賣壓沉重，穎崴（6515）跌停 5,795 元（較高點 11,490 元近乎腰斬），鴻勁（7769）同列跌幅前段；生技、營建、資訊服務類股走弱；上櫃法人賣超 99.82 億元，資金明顯往上市權值股集中。</div>
+
+<h2><span class="n">4</span>上一美股交易日國際盤（美東 9/21 週一）</h2>
+<div class="tbl"><table>
+<tr><th>指標</th><th class="r">收盤</th><th class="r">漲跌幅</th><th>備註</th></tr>
+<tr><td>道瓊工業</td><td class="r">52,048.83</td><td class="r up">+0.71%</td><td>TheStreet</td></tr>
+<tr><td>S&amp;P 500</td><td class="r">7,764.70</td><td class="r up">+1.49%</td><td>8 月初以來最佳單日表現</td></tr>
+<tr><td>那斯達克</td><td class="r">27,122.09</td><td class="r up">+2.26%</td><td>與前收 26,522.55 核對一致</td></tr>
+<tr><td>費城半導體 SOX</td><td class="r">資料未取得</td><td class="r">—</td><td>替代參考：半導體 ETF SOXX 約 +4.93%（24/7 Wall St.）；前收 11,921.69</td></tr>
+<tr><td>台積電 ADR（TSM）</td><td class="r">US$445.14</td><td class="r up">+2.41%</td><td>stockanalysis.com；24/7 Wall St. 盤中區間 440.92～445.16</td></tr>
+<tr><td>美元兌新台幣</td><td class="r">31.758</td><td class="r">新台幣升 5 分</td><td>台北 9/21 收盤</td></tr>
+<tr><td>WTI 原油</td><td class="r">US$97.79</td><td class="r down">−2.50%</td><td>Brent US$101.30（−2.49%）</td></tr>
+<tr><td>美債 10 年期</td><td class="r">4.951%</td><td class="r">約 −4.9 bp</td><td>前值 5.00%</td></tr>
+<tr><td>美債 2 年期</td><td class="r">4.751%</td><td class="r">約 −0.5 bp</td><td>前值 4.756%</td></tr>
+</table></div>
+<div class="note"><b>台積電 ADR 溢價算式：</b>445.14 ÷ 5（1 ADR＝5 股）× 31.758 ＝ 2,827.35 元；(2,827.35 ÷ 2,480 − 1) ＝ <b>+14.0% 溢價</b>。匯率採台北 9/21 收盤價，與美股收盤時點不同，屬近似值。<br>驅動：油價回落、中東外交降溫期待；英特爾 +12.17%、Meta +11.34%、AMD +9.95%（傳第四季調漲 10%，AMD 未證實）。<br>資料差異揭露：SOX 收盤值多個來源（Yahoo Finance、Investing.com）截至撰寫時仍停在 9/18，今日不採用任何未經確認數字。</div>
+
+<h2><span class="n">5</span>選股：均線多頭 ＋ 大戶增持 ＋ 量增</h2>
+<div class="warn"><b>今日選股掃描未能完成（不是「無符合條件之標的」）。</b>執行環境的 WebFetch 來源核可機制擋下玩股網個股頁：自行拼湊的 <code>/stock/&lt;股號&gt;/technical-chart</code>、<code>/major-investors/concentration</code> 路徑，除非該股網址先出現在搜尋結果中，否則一律回 <code>PROVENANCE_REQUIRED</code>（2330、2317 實測皆被擋）。唯一可讀的 2408 南亞科技術頁也未回傳 MA／均量數值。依規定不放寬條件、不以舊資料或臆測湊數。</div>
+<div class="funnel" style="margin-top:10px">
+<div class="fstep"><span>名單（上市前 100 ＋ 上櫃前 50）</span><b>約 149 檔（本次未建立）</b></div>
+<div class="fstep"><span>實際掃描</span><b>3 檔測試（2330、2317、2408）</b></div>
+<div class="fstep"><span>有效資料（資料日確為 9/21 且含均線）</span><b>0 檔</b></div>
+<div class="fstep"><span>過條件 c（量 ≥ 20 日均量 × 2）</span><b>無法判定</b></div>
+<div class="fstep"><span>過條件 a（5MA＞20MA＞60MA＞240MA）</span><b>無法判定</b></div>
+<div class="fstep"><span>a ∩ c</span><b>無法判定</b></div>
+<div class="fstep"><span>三條件交集（含集保 400 張大戶 +1pp）</span><b>無法判定　·　集保週別：9/18 週（未取得逐檔資料）</b></div>
+</div>
+<div class="note">影響範圍：149 檔中 100% 未能驗證。參考：南亞科（2408）集保頁可讀，400 張以上大戶持股 82.81%，但缺前期值，無法判斷增減。建議解法：若排程可預先核可 wantgoo.com 網域，或改接可程式化的行情 API，即可恢復本區塊。</div>
+
+<h2><span class="n">6</span>今日盤前觀察重點與行事曆</h2>
+<ul>
+<li><b>挑戰歷史高點：</b>加權指數距歷史收盤高點不到 23 點，美股科技股大漲、台積電 ADR 溢價約 14%，觀察台積電能否跟上 ADR 表現、推動指數改寫新高。</li>
+<li><b>指數強、個股分化：</b>加權 +1.14% 但櫃買 −0.03%，上市下跌家數（504）多於上漲家數（497），上櫃法人賣超近百億，漲勢集中在少數權值股。</li>
+<li><b>連假前籌碼：</b>本週只剩 9/22～9/24 三個交易日，9/25～9/28 休市四天，9/24 另有習近平訪美；融資餘額（9/18）已達 5,940 億元，留意連假前的調節賣壓。</li>
+<li><b>題材延續性：</b>友達先進封裝傳聞（未經公司證實）、AMD 漲價傳聞（未證實）與太陽能題材都靠消息面帶動，觀察今日量能是否延續。</li>
+<li><b>高價股修正：</b>穎崴、鴻勁等高價測試介面股修正幅度大，觀察是否止跌或持續拖累上櫃與電子次族群。</li>
+</ul>
+<div class="tbl" style="margin-top:10px"><table>
+<tr><th>日期</th><th>事件</th></tr>
+<tr><td>9/22（二）今日</td><td>法說會：國巨 2327（08:30 香港）、富世達 6805（08:00 香港）、可成 2474（14:00 線上）、雲品 2748（14:30）、弘憶股 3312（16:00）。美國：ADP 週度就業；Fed 官員 Williams、Jefferson、Barkin 談話</td></tr>
+<tr><td>9/23（三）</td><td>法說會：保瑞 6472、矽力-KY 6415、創意 3443、威強電 3022、永新-KY 4557、宏普 2536。台指週選擇權結算（週三）。全球 S&amp;P 製造業 PMI 初值；Fed Barr 談話</td></tr>
+<tr><td>9/24（四）</td><td>連假前最後交易日。法說會：英業達 2356、天鈺 4961、盛達 3027、洋基工程 6691。習近平對美國國事訪問；美國初領失業金；瑞士、瑞典、挪威、墨西哥央行利率決策</td></tr>
+<tr><td>9/25（五）～9/28（一）</td><td>台股休市（中秋節、週末、教師節），9/29（二）恢復交易。美國 9/25 公布 8 月耐久財訂單；中國 9/25 休市</td></tr>
+<tr><td>除權息</td><td>玩股網預告表未列 9/22～9/24 除權息標的，資料未取得完整名單</td></tr>
+</table></div>
+
+<div class="note" style="margin-top:18px"><b>資料來源：</b>經濟日報、聯合新聞網、Yahoo 奇摩股市（中央社稿）、Newtalk、工商時報、玩股網（類股指數、期貨未平倉、融資融券）、HiStock、證交所個股日成交資訊、TheStreet、stockanalysis.com、24/7 Wall St.、Yahoo Finance、Investing.com、Newsquawk。所有漲跌幅均以 (收盤−前收)/前收 自行驗算。</div>
+<p style="text-align:center;font-weight:600;margin-top:18px">本內容為資料彙整，非投資建議</p>
+<footer><div>Allen I³ Aurora Brief · 艾倫極光報報</div><div>Allen Chen · Est. 2026</div></footer>
+</div>
+</body>
+</html>

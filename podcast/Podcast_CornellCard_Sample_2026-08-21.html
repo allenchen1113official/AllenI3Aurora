@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podcast 康乃爾筆記圖卡（示範集）— 股癌 EP.整理盤心法</title>
+<style>
+  :root{
+    --bg:#070b14; --panel:#0d131f; --panel2:#121a29; --border:#2c384c; --border-dim:#1e2838;
+    --t1:#eaf2f8; --t2:#c7d1dc; --t3:#8994a0; --mint:#7ed9a8; --sky:#63ace2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#05070b;display:flex;flex-direction:column;align-items:center;gap:18px;
+       padding:28px 12px;
+       font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,sans-serif;}
+  .note{color:#818c9c;font-size:12.5px;max-width:1080px;line-height:1.7;}
+  .card{width:100%;max-width:1080px;background:var(--bg);border:1px solid var(--border-dim);
+        border-radius:10px;padding:38px 44px 30px;position:relative;overflow:hidden;}
+  .aurora{position:absolute;top:0;left:0;right:0;height:260px;pointer-events:none;
+          background:linear-gradient(120deg,rgba(16,68,54,.55),rgba(15,42,72,.45) 60%,transparent);
+          filter:blur(52px);}
+  .inner{position:relative;z-index:1;}
+  .kicker-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+  .kicker{color:var(--mint);font-weight:700;font-size:17px;letter-spacing:.06em;}
+  .meta{margin-left:auto;color:var(--t3);font-size:15px;
+        font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;}
+  h1{color:var(--t1);font-size:33px;font-weight:800;margin:12px 0 14px;line-height:1.25;}
+  .hr{height:1px;background:var(--border);margin-bottom:16px;}
+  .colhead{display:grid;grid-template-columns:0.9fr 1.8fr;gap:24px;color:var(--t3);
+           font-size:12px;letter-spacing:.08em;font-weight:700;padding-bottom:10px;}
+  .row{display:grid;grid-template-columns:0.9fr 1.8fr;gap:24px;padding:16px 0;
+       border-top:1px solid var(--border-dim);}
+  .cue{color:var(--mint);font-weight:800;font-size:20px;line-height:1.45;}
+  .noteTxt{color:var(--t2);font-size:18px;line-height:1.65;}
+  .summary{margin-top:22px;background:var(--panel);border:1px solid var(--border);
+           border-radius:12px;padding:16px 20px;position:relative;}
+  .summary::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:5px;
+                   background:var(--mint);border-radius:0 3px 3px 0;}
+  .sum-lb{color:var(--mint);font-size:13px;font-weight:700;letter-spacing:.08em;margin-bottom:8px;}
+  .sum-tx{color:var(--t1);font-size:18px;line-height:1.65;}
+  footer{margin-top:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .site{color:var(--t3);font-size:13.5px;}
+  .brand{margin-left:auto;display:flex;align-items:center;gap:11px;}
+  .bicon{width:52px;height:52px;border-radius:13px;flex:0 0 auto;
+         background:linear-gradient(135deg,var(--mint),var(--sky));color:#0d2e30;
+         display:flex;align-items:center;justify-content:center;
+         font:800 17px/1 "Poppins",system-ui,sans-serif;letter-spacing:.3px;}
+  .bicon sup{font-size:10px;vertical-align:super;}
+  .btext .cn{color:var(--t1);font-weight:800;font-size:21px;line-height:1.15;}
+  .btext .en{color:var(--t3);font-size:9.5px;letter-spacing:2.4px;margin-top:2px;}
+  @media (max-width:640px){
+    .card{padding:22px 18px 18px;}
+    h1{font-size:23px;}
+    .colhead,.row{grid-template-columns:1fr;gap:6px;}
+    .colhead span:last-child{display:none;}
+    .cue{font-size:17px;} .noteTxt{font-size:15.5px;} .sum-tx{font-size:15.5px;}
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="aurora"></div>
+  <div class="inner">
+    <div class="kicker-row">
+      <span class="kicker">CORNELL NOTES · 康乃爾筆記</span>
+      <span class="meta">2026.08.21 · 58m</span>
+    </div>
+    <h1>股癌 Gooaye — EP.整理盤心法</h1>
+    <div class="hr"></div>
+    <div class="colhead"><span>線索 CUES</span><span>筆記 NOTES</span></div>
+
+    <div class="row">
+      <div class="cue">整理盤定義</div>
+      <div class="noteTxt">指數量縮、區間震盪，多空皆難有趨勢行情；勝率低、盈虧比差，操作應降頻。</div>
+    </div>
+    <div class="row">
+      <div class="cue">部位控制</div>
+      <div class="noteTxt">資金分批進出、保留現金水位；不重倉猜底摸頭，等突破或帶量表態再加碼。</div>
+    </div>
+    <div class="row">
+      <div class="cue">AI 供應鏈</div>
+      <div class="noteTxt">近期修正屬籌碼換手、非基本面轉壞；留意法人回補與月營收確認趨勢。</div>
+    </div>
+    <div class="row">
+      <div class="cue">心態提醒</div>
+      <div class="noteTxt">無聊的盤做無聊的事：檢視持股邏輯、更新觀察清單，勝過頻繁交易。</div>
+    </div>
+
+    <div class="summary">
+      <div class="sum-lb">總結 SUMMARY</div>
+      <div class="sum-tx">整理盤的核心是「等」：控制部位、留住現金、降低交易頻率，把力氣花在檢視邏輯與觀察清單上，待趨勢表態再出手。</div>
+    </div>
+
+    <footer>
+      <span class="site">逐字稿 · 摘要 · 康乃爾筆記｜allenchen1113official.github.io/AllenI3Aurora</span>
+      <div class="brand">
+        <div class="bicon">AI<sup>3</sup>A</div>
+        <div class="btext">
+          <div class="cn">艾倫報報</div>
+          <div class="en">ALLEN I³ AURORA</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+<p class="note">
+  本檔為 Podcast 康乃爾筆記社群圖卡的<b>雲端可檢視版</b>（示範集：股癌 EP.整理盤心法，2026.08.21 產出）。
+  實際發布用的 PNG 原檔（Facebook 1200×630 / Instagram 1080×1080）保存於 GitHub repo
+  <code>assets/podcast/podcast-cornell-fb.png</code> 與 <code>podcast-cornell-ig.png</code>，
+  由 <code>scripts/podcast/render_social_card.py</code> 產生。
+</p>
+</body>
+</html>

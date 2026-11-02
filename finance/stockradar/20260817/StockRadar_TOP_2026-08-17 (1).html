@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台股每日分析報表 - TOP 10排行 (2026-08-17)</title>
+<style>
+  :root{
+    --up:#d92b2b;
+    --down:#0a8a3f;
+    --hdr:#1f7a3d;
+    --rank:#dff3e2;
+    --code:#dcecfb;
+    --line:#d5dbe2;
+  }
+  *{box-sizing:border-box}
+  body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+       margin:0;padding:24px;background:#f6f8fa;color:#1c2430;line-height:1.55}
+  .wrap{max-width:1600px;margin:0 auto;background:#fff;border:1px solid var(--line);
+        border-radius:10px;padding:24px 26px 30px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  h1{font-size:26px;margin:0 0 4px}
+  .sub{font-size:15px;color:#4a5666;margin:0 0 4px}
+  .notice{margin:14px 0 18px;padding:12px 14px;border-left:5px solid #e0a800;
+          background:#fff8e5;border-radius:4px;font-size:14px}
+  .notice b{color:#8a6100}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;margin-top:6px}
+  th,td{border:1px solid var(--line);padding:7px 8px;text-align:center;vertical-align:middle}
+  thead th{background:var(--hdr);color:#fff;font-weight:600;font-size:13px;line-height:1.35}
+  thead th small{display:block;font-weight:400;opacity:.85;font-size:11px}
+  td.rank{background:var(--rank);font-weight:700;font-size:16px}
+  td.code{background:var(--code);font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:600}
+  td.name{text-align:left;font-weight:600;white-space:nowrap}
+  td.ind{text-align:left;color:#4a5666}
+  td.num{font-family:ui-monospace,Menlo,Consolas,monospace;text-align:right}
+  .up{color:var(--up);font-weight:700}
+  .down{color:var(--down);font-weight:700}
+  .yes{color:#0a6b2f;font-weight:700}
+  .no{color:#9aa3ad}
+  .na{color:#b04a00;font-weight:600}
+  td.cmt{text-align:left;font-size:12.5px;color:#333c48;min-width:230px}
+  .src{font-size:11px;color:#7b8592;font-weight:400}
+  tbody tr:nth-child(even){background:#fafcfe}
+  h2{font-size:17px;margin:30px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--hdr)}
+  .meth{font-size:13px;color:#39424f}
+  .meth li{margin:5px 0}
+  .disc{margin-top:20px;padding:12px 14px;background:#f1f4f7;border-radius:6px;font-size:12.5px;color:#48525f}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>台股每日分析報表 — TOP 10排行</h1>
+  <p class="sub"><b>目標日期：2026-08-17（星期一）</b>　·　資料基準：TWSE 2026-08-17 盤後收盤　·　報表產出時間：2026-08-18 00:50 (UTC+8)</p>
+
+  <div class="notice">
+    <b>本次執行說明（請務必閱讀）</b><br>
+    1. 目標日期 2026-08-17 <b>即為執行當日</b>，並經 TWSE 每日交易資料確認為正常交易日（8月共11個交易日，含8/17），<b>非補產出資料</b>。<br>
+    2. Google 試算表「StockList / TOP」分頁<b>尚無 2026-08-17 該列資料</b>，最新一列為 <b>2026/8/14</b>。依排程規則，本報表之 TOP1~TOP10 名單改採試算表最新一列（<b>2026/8/14</b>）之排行，但所有股價、漲跌幅、KD 等技術指標<b>皆以目標日期 2026-08-17 收盤資料計算</b>。<br>
+    3. <b>資料不足說明：</b>本次執行時 Goodinfo! 之「單季經營績效」與「股東持股分級（週）」頁面持續造成瀏覽器渲染程序凍結、多次重試與換分頁後仍無法取得，故<b>「大戶/散戶連買週數」與「單季營益率 / 營收年增 / EPS年增 近4季達標判斷」三項欄位本期標示為「資料不足 (N/A)」</b>，對應布林欄位依規則保守設為 <code>false</code>，圖卡亦不顯示該三項訊號徽章。此為誠實標示，非數值為零，亦未以任何方式推估或杜撰。<br>
+    4. 「均線多頭排列」與股票名稱／產業已成功取得並完成查證。
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">日期</th>
+        <th rowspan="2">排名</th>
+        <th rowspan="2">股票代碼<small>TPE 格式</small></th>
+        <th rowspan="2">股票名稱<small>全名(簡稱)</small></th>
+        <th rowspan="2">產業</th>
+        <th rowspan="2">收盤價<small>元</small></th>
+        <th rowspan="2">漲跌幅<small>紅漲綠跌</small></th>
+        <th colspan="5">KD 指標 (9,3,3)</th>
+        <th colspan="2">籌碼面（週）</th>
+        <th rowspan="2">均線多頭<small>月&gt;季&gt;半年&gt;年</small></th>
+        <th colspan="3">基本面 近4季達標 (x/4 · true/false)</th>
+        <th rowspan="2">客觀短評<small>純技術面中性描述</small></th>
+      </tr>
+      <tr>
+        <th>K值</th><th>D值</th><th>K&gt;50</th><th>K&gt;D</th><th>KD黃金交叉</th>
+        <th>大戶連買<small>&gt;800張</small></th><th>散戶連買<small>≦50張</small></th>
+        <th>營益率&gt;10%</th><th>營收年增&gt;20%</th><th>EPS年增&gt;10%</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">1</td>
+        <td class="code">TPE:1303</td>
+        <td class="name">南亞塑膠工業(南亞)</td>
+        <td class="ind">塑膠工業</td>
+        <td class="num">200.50</td>
+        <td class="num down">▼ 3.37%</td>
+        <td class="num">79.99</td><td class="num">78.42</td>
+        <td class="yes">是</td><td class="yes">是</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="yes">是 (true)</td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">KD 位於高檔區（K 79.99），K 仍在 D 之上但兩線收斂，當日收黑 3.37%；短線高檔震盪，月/季/半年/年線維持多頭排列。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">2</td>
+        <td class="code">TPE:2059</td>
+        <td class="name">川湖科技(川湖)</td>
+        <td class="ind">電子零組件</td>
+        <td class="num">13750.00</td>
+        <td class="num up">▲ 10.00%</td>
+        <td class="num">95.69</td><td class="num">92.42</td>
+        <td class="yes">是</td><td class="yes">是</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="yes">是 (true)</td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">當日漲幅達 10.00%（觸及漲停幅度），KD 雙線壓在 90 以上極度高檔鈍化區，短線動能強但過熱風險同步升高；四條均線多頭排列。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">3</td>
+        <td class="code">TPE:2395</td>
+        <td class="name">研華(研華)</td>
+        <td class="ind">電腦及週邊設備</td>
+        <td class="num">674.00</td>
+        <td class="num down">▼ 1.32%</td>
+        <td class="num">79.58</td><td class="num">79.60</td>
+        <td class="yes">是</td><td class="no">否</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="yes">是 (true)</td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">K(79.58) 由上方下彎至極貼近 D(79.60)，形成高檔死亡交叉臨界；當日小跌 1.32%，惟均線仍為多頭排列，屬高檔整理型態。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">4</td>
+        <td class="code">TPE:6213</td>
+        <td class="name">聯茂電子(聯茂)</td>
+        <td class="ind">電子零組件</td>
+        <td class="num">481.00</td>
+        <td class="num up">▲ 0.21%</td>
+        <td class="num">93.83</td><td class="num">89.37</td>
+        <td class="yes">是</td><td class="yes">是</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="yes">是 (true)</td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">KD 雙線同步走高至 90 附近之高檔鈍化區，K 續高於 D；當日小紅 0.21%，價格與均線結構同向，多頭排列成立。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">5</td>
+        <td class="code">TPE:2344</td>
+        <td class="name">華邦電子(華邦電)</td>
+        <td class="ind">半導體業</td>
+        <td class="num">181.50</td>
+        <td class="num down">▼ 1.09%</td>
+        <td class="num">74.93</td><td class="num">77.34</td>
+        <td class="yes">是</td><td class="no">否</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="no">否 (false)<br><span class="src">月線160.2 &lt; 季線170.7</span></td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">K 已跌破 D（死亡交叉狀態），KD 自高檔回落；當日小跌 1.09%，且月線低於季線，均線多頭排列條件不成立。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">6</td>
+        <td class="code">TPE:6770</td>
+        <td class="name">力晶積成電子製造(力積電)</td>
+        <td class="ind">半導體業</td>
+        <td class="num">74.60</td>
+        <td class="num down">▼ 4.85%</td>
+        <td class="num">79.97</td><td class="num">81.81</td>
+        <td class="yes">是</td><td class="no">否</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="no">否 (false)<br><span class="src">月線64.1 &lt; 季線71.02</span></td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">當日下跌 4.85%為本期 TOP10 最大跌幅，K 快速下穿 D 呈死亡交叉；月線位於季線之下，短中期均線結構轉弱。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">7</td>
+        <td class="code">TPE:1301</td>
+        <td class="name">台灣塑膠工業(台塑)</td>
+        <td class="ind">塑膠工業</td>
+        <td class="num">59.10</td>
+        <td class="num down">▼ 1.50%</td>
+        <td class="num">66.50</td><td class="num">56.35</td>
+        <td class="yes">是</td><td class="yes">是</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="no">否 (false)<br><span class="src">均線值排序符合，惟月線方向為↘</span></td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">KD 位於中高檔（K 66.50 &gt; D 56.35），K/D 差距仍寬；當日回檔 1.50%，月線落點雖高於季線但方向向下（↘），未達四線全數向上之多頭排列標準。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">8</td>
+        <td class="code">TPE:6672</td>
+        <td class="name">騰輝電子-KY(騰輝-KY)</td>
+        <td class="ind">電子零組件</td>
+        <td class="num">283.00</td>
+        <td class="num up">▲ 4.81%</td>
+        <td class="num">88.83</td><td class="num">85.08</td>
+        <td class="yes">是</td><td class="yes">是</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="no">否 (false)<br><span class="src">月線230.6 &lt; 季線243.0</span></td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">當日大漲 4.81%，KD 同步走揚至 85~89 高檔區且 K 高於 D；惟月線仍低於季線，均線尚未完成多頭排列。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">9</td>
+        <td class="code">TPE:7788</td>
+        <td class="name">松川精密(松川)</td>
+        <td class="ind">電子零組件</td>
+        <td class="num">280.00</td>
+        <td class="num up">▲ 4.48%</td>
+        <td class="num">90.85</td><td class="num">84.10</td>
+        <td class="yes">是</td><td class="yes">是</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="na">資料不足 (false)<br><span class="src">2025/10/16 上市，尚無年線資料</span></td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">當日上漲 4.48%，K 值 90.85 進入高檔鈍化區且高於 D；因掛牌時間未滿一年，年線資料不足，均線多頭排列無法完整判定，依規則計為 false。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-17</td>
+        <td class="rank">10</td>
+        <td class="code">TPE:2454</td>
+        <td class="name">聯發科技(聯發科)</td>
+        <td class="ind">半導體業</td>
+        <td class="num">4050.00</td>
+        <td class="num down">▼ 3.80%</td>
+        <td class="num">65.92</td><td class="num">74.79</td>
+        <td class="yes">是</td><td class="no">否</td><td class="no">否</td>
+        <td class="na">資料不足</td><td class="na">資料不足</td>
+        <td class="no">否 (false)<br><span class="src">月線3808 &lt; 季線4042</span></td>
+        <td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td><td class="na">資料不足<br>(false)</td>
+        <td class="cmt">當日回檔 3.80%，K 由 78.54 急降至 65.92 並明顯跌破 D，呈高檔死亡交叉後的下彎；月線低於季線，短期均線結構偏弱。</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <h2>資料來源標示</h2>
+  <ul class="meth">
+    <li><b>TOP1~TOP10 排名名單</b>：Google 試算表 <code>StockList</code> / <code>TOP</code> 分頁（檔案ID 1iQryEb8JiK1o9GRBG0AVROdqNMge-R9ZtCGQMZJXxJM），採用列日期 <b>2026/8/14</b>（試算表尚無 2026/8/17 資料）。</li>
+    <li><b>股票名稱</b>：TWSE 每日成交資訊 API 回傳之官方證券簡稱；<b>公司全名／產業別</b>：公開資料查證（TWSE 上市公司資訊、各財經資訊網站公司簡介）。</li>
+    <li><b>收盤價、漲跌幅</b>：<span class="src">TWSE</span> 個股日成交資訊 API（<code>STOCK_DAY</code>，2026-08 月份，含 8/17 共 11 個交易日），漲跌幅由 8/17 收盤價對 8/14 收盤價自行計算。10 檔均為<b>上市（TWSE）</b>股票，無需查詢 TPEx。</li>
+    <li><b>KD (9,3,3)</b>：<span class="src">TWSE</span> 2026/06/01~2026/08/17 共 54 個交易日之開高低收資料，於本機以標準公式自行計算（初始 K=D=50）。</li>
+    <li><b>均線落點與方向（月/季/半年/年）</b>：<span class="src">Goodinfo! 台灣股市資訊網</span> 個股「股價行情概況」頁之「均線落點(08/17)」表格。</li>
+    <li><b>大戶/散戶連買週數</b>：<span class="src">Goodinfo!</span>「股東持股分級（週）」頁 — <b>本次取得失敗，標示為資料不足</b>。</li>
+    <li><b>單季營益率／營收年增／EPS年增</b>：<span class="src">Goodinfo!</span>「單季經營績效（合併報表）」頁 — <b>本次取得失敗，標示為資料不足</b>。</li>
+  </ul>
+
+  <h2>方法論與判定定義</h2>
+  <ul class="meth">
+    <li><b>KD 參數 (9,3,3)</b>：RSV = (今日收盤 − 近9日最低) ÷ (近9日最高 − 近9日最低) × 100；K = ⅔ × 前日K + ⅓ × RSV；D = ⅔ × 前日D + ⅓ × K。序列起始值 K = D = 50，自 2026/06/01 起連續遞推至 2026/08/17。</li>
+    <li><b>KD 黃金交叉</b>：前一交易日 K ≦ D，且目標日 K &gt; D（由死叉翻轉為金叉）。<b>本期 10 檔皆未出現黃金交叉</b>（多數個股 K/D 已在 65~96 之高檔區運行多日）。</li>
+    <li><b>均線多頭排列</b>：月線 &gt; 季線 &gt; 半年線 &gt; 年線，<b>且</b>四條均線之走勢箭頭皆為 ↗（向上）。任一條件不符即為「否」；若因掛牌時間過短而無半年線或年線資料，標示「資料不足」並計為 false。</li>
+    <li><b>大戶／散戶定義</b>：大戶比例 =（持股 &gt;800~≦1,000 張）+（持股 &gt;1,000 張）兩級加總；散戶比例 =（持股 ≦10 張）+（持股 &gt;10~≦50 張）兩級加總。連買週數 = 最近連續幾週該比例較前一週增加，本週較上週減少則計 0。</li>
+    <li><b>單季營益率條件</b>：該季營業利益率 &gt; 10%。<b>營收年增條件</b>：該季營業收入較去年同季成長 &gt; 20%。<b>EPS 年增條件</b>：該季稅後 EPS 較去年同季成長 &gt; 10%。三項各自統計最近 4 個「已公告」季度（排除數值為「-」之未公告季度）中的達標季數，記為 x/4；達標 ≧ 3 季者對應布林欄位設為 true。計算成長率時若去年同期基期為 0 或極小（如 EPS &lt; 0.1 元），會另加註「基期過小，數值參考性低」之提醒。</li>
+    <li><b>顏色慣例</b>：一律採台股慣例 —— <span class="up">上漲為紅色</span>、<span class="down">下跌為綠色</span>。</li>
+  </ul>
+
+  <div class="disc">
+    <b>免責聲明</b>：本報表由自動化排程程式產出，所有數值均取自上述公開資料來源並經程式計算，未經人工逐筆覆核，可能因來源網站改版、延遲或計算方式差異而與其他資訊平台顯示之數字略有出入。內容僅供個人研究與資料整理參考，<b>不構成任何投資建議、要約或推薦</b>。投資有風險，任何投資決策應由投資人自行判斷並自負盈虧。<br>
+    產出者：艾倫報報 ALLEN I³ AURORA · StockRadar 每日排行分析
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>stockradar-card skill 測試檢視 — 2026-08-25</title>
+<style>
+  body { margin: 0; padding: 28px 20px 60px; background: #0a0f17; color: #96a0ac;
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; line-height: 1.7; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  h1 { color: #f3f6fa; font-size: 26px; margin: 0 0 4px; }
+  .meta { color: #6E7884; font-size: 13.5px; margin-bottom: 26px; }
+  h2 { color: #f3f6fa; font-size: 19px; margin: 34px 0 10px; border-left: 4px solid #C4A05C; padding-left: 10px; }
+  .box { background: #101a24; border: 1px solid #23303d; border-radius: 14px; padding: 18px 20px; margin: 12px 0; }
+  .prompt { color: #cdd5e0; font-size: 14.5px; }
+  .prompt b { color: #C4A05C; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #23303d; vertical-align: top; }
+  th { color: #6E7884; font-weight: 700; font-size: 12.5px; letter-spacing: .04em; }
+  .pass { color: #39E095; font-weight: 900; white-space: nowrap; }
+  .ev { color: #8b98a8; font-size: 13px; }
+  .sum { background: #14201866; border: 1px solid #39E09555; border-radius: 14px; padding: 16px 20px; color: #cdd5e0; font-size: 14.5px; }
+  code { background: #0a0f17; border: 1px solid #23303d; border-radius: 6px; padding: 1px 6px; font-size: 12.5px; color: #9fd8ff; }
+  .note { color: #6E7884; font-size: 13px; margin-top: 26px; border-top: 1px solid #23303d; padding-top: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>stockradar-card skill 測試檢視</h1>
+  <div class="meta">iteration-1 · 2 案例 · 測試日 2026-08-25 · 產出：台股選股雷達 TOP 10 圖卡（FB 1200×630＋IG 1080×1080 PNG）</div>
+
+  <div class="sum">
+    <b style="color:#39E095">總結：6/6 斷言全數通過。</b>
+    以 2026-08-07 樣本資料產出的兩張圖與 repo 既有成品逐項目視比對一致（配色自成品取樣）；
+    壓力案例揭露「長股名與價格重疊」缺陷，已加入股名自動縮字防呆並複測通過；
+    IG 版連續兩次執行 md5 相同（可重現）。圖卡視覺見同資料夾
+    <code>Stockradar_Card_Sample_2026-08-25.html</code>（HTML 重繪版）。
+  </div>
+
+  <h2>eval-0 · sample-both-formats（正常案例）</h2>
+  <div class="box">
+    <div class="prompt"><b>Prompt：</b>在乾淨目錄照 SKILL.md 步驟執行：複製 <code>scripts/</code> 兩檔後直接
+      <code>python3 render_stockradar_card.py</code>（預設讀 stockradar.sample.json、輸出 FB＋IG，沿用既有字型快取），
+      以 2026-08-07 示範資料產圖，並與 repo 既有成品（assets/stockradar/*.png）目視比對版面一致性。</div>
+    <table>
+      <tr><th>斷言</th><th>結果</th><th>證據</th></tr>
+      <tr><td>輸出 FB（1200×630）與 IG（1080×1080）兩張到目前目錄</td><td class="pass">PASS</td>
+        <td class="ev">StockRadar_FB_2026-08-07.png（147,951 bytes）與 StockRadar_IG_2026-08-07.png（184,220 bytes）產出成功、尺寸正確。</td></tr>
+      <tr><td>版面與既有成品一致（表頭／雙欄各5檔／金色標籤／紅漲綠跌／無訊號說明／頁尾聲明）</td><td class="pass">PASS</td>
+        <td class="ev">與 assets/stockradar/stockradar-{fb,ig}.png 逐項比對：AI³A 標誌、金色艾倫報報、TOP 10、日期星期、標籤樣式、紅▲綠▼方向、05 台康生技「本期無符合訊號」皆一致。</td></tr>
+      <tr><td>重跑輸出位元組一致（可重現），無重疊、標籤不跨中線</td><td class="pass">PASS</td>
+        <td class="ev">IG 版兩次執行 md5 相同（996a5db4…）；02/09 三標籤列自動改自排名起排，未跨中央分隔線。</td></tr>
+    </table>
+  </div>
+
+  <h2>eval-1 · stress-longnames-fresh-fonts（壓力案例）</h2>
+  <div class="box">
+    <div class="prompt"><b>Prompt：</b>乾淨目錄＋全新 TMPDIR（強制四個字型全部自動下載），執行
+      <code>python3 render_stockradar_card.py stress.json both "out/雷達"</code>。stress.json 含：
+      六字長股名（緯穎科技服務）、五字股名（台灣大哥大）、-KY 股名、滿 5 項訊號 ×2 檔、無訊號 ×2 檔、
+      省略 weekday、自訂中文輸出目錄。</div>
+    <table>
+      <tr><th>斷言</th><th>結果</th><th>證據</th></tr>
+      <tr><td>四檔字型自動下載到 <code>$TMPDIR/stockradar-fonts/</code>，自動建立 out/雷達/ 並輸出 FB＋IG</td><td class="pass">PASS</td>
+        <td class="ev">印出四行「下載字型 …」（Noto CJK Bold/Regular、Oswald、JetBrainsMono-Bold），兩張圖輸出到 out/雷達/。</td></tr>
+      <tr><td>長股名不與價格重疊；滿 5 標籤不跨中線不出界；無訊號檔顯示「本期無符合訊號」</td><td class="pass">PASS</td>
+        <td class="ev">首版「緯穎科技服務／台灣大哥大」與價格重疊 → 加入股名逐級縮字防呆後複測通過；01/06 滿 5 標籤自動縮排縮字置於欄內；05/10 顯示灰字說明。防呆行為已寫入 SKILL.md 已知限制。</td></tr>
+      <tr><td>weekday 自動計算正確；紅▲綠▼與 up 欄位一致</td><td class="pass">PASS</td>
+        <td class="ev">未給 weekday，圖上正確顯示「2026-08-25 ・ 星期二」；up=false 者（矽力-KY、譜瑞-KY、豐泰）皆綠▼。</td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    本頁為純文字版測試檢視（依備份鐵則，含 base64 內嵌圖之 generate_review 靜態頁不上傳雲端；
+    該完整版已於 2026-08-25 對話中以檔案卡片交付）。skill 檔案備份與還原方式見同資料夾
+    <code>README_如何還原skill檔.md</code>。
+  </div>
+</div>
+</body>
+</html>

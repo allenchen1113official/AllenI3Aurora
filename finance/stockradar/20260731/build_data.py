@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import json
+
+TARGET_DATE = "2026-07-31"
+WEEKDAY = "星期五"
+IS_BACKFILL = True
+EXEC_DATE = "2026-08-01"
+BROWSER_USED = "Browser 1 (macOS, deviceId a86a7ec2-...)"
+
+stocks = [
+  dict(rank=1, code="3029", full="零壹股份有限公司", short="零壹", industry="資訊服務",
+       price=109.5, chg_pct=7.88, K=53.65, D=44.88, golden_cross=True,
+       big_pct=35.71, big_streak=0, small_pct=44.9, small_streak=0,
+       ma=dict(月=(103.4,"↗"), 季=(101.5,"↗"), 半年=(103.6,"↘"), 年=(110.1,"↘")), ma_bull=False,
+       op_str="0/4", op_ok=False, rev_str="2/4", rev_ok=False, eps_str="4/4", eps_ok=True,
+       base_small_note=False),
+  dict(rank=2, code="2347", full="聯強國際股份有限公司", short="聯強", industry="電子通路業",
+       price=93.7, chg_pct=8.83, K=64.45, D=58.56, golden_cross=True,
+       big_pct=86.63, big_streak=2, small_pct=6.79, small_streak=0,
+       ma=dict(月=(87.83,"↗"), 季=(88.06,"↗"), 半年=(81.78,"↗"), 年=(71.26,"↗")), ma_bull=False,
+       op_str="0/4", op_ok=False, rev_str="1/4", rev_ok=False, eps_str="2/4", eps_ok=False,
+       base_small_note=False),
+  dict(rank=3, code="2330", full="台灣積體電路製造股份有限公司", short="台積電", industry="半導體業",
+       price=2425, chg_pct=9.98, K=42.65, D=32.92, golden_cross=True,
+       big_pct=85.34, big_streak=0, small_pct=8.96, small_streak=6,
+       ma=dict(月=(2382,"↘"), 季=(2348,"↗"), 半年=(2143,"↗"), 年=(1778,"↗")), ma_bull=False,
+       op_str="4/4", op_ok=True, rev_str="4/4", rev_ok=True, eps_str="4/4", eps_ok=True,
+       base_small_note=False),
+  dict(rank=4, code="2603", full="長榮海運股份有限公司", short="長榮", industry="航運業",
+       price=204, chg_pct=1.49, K=52.36, D=57.79, golden_cross=False,
+       big_pct=68.68, big_streak=4, small_pct=21.07, small_streak=0,
+       ma=dict(月=(199,"↗"), 季=(205.7,"↘"), 半年=(203.6,"↗"), 年=(195.1,"↗")), ma_bull=False,
+       op_str="3/4", op_ok=True, rev_str="0/4", rev_ok=False, eps_str="0/4", eps_ok=False,
+       base_small_note=False),
+  dict(rank=5, code="3034", full="聯詠科技股份有限公司", short="聯詠", industry="半導體業",
+       price=519, chg_pct=5.7, K=70.15, D=65.16, golden_cross=False,
+       big_pct=61.83, big_streak=0, small_pct=15.55, small_streak=0,
+       ma=dict(月=(500.2,"↘"), 季=(499.5,"↗"), 半年=(445,"↗"), 年=(425.3,"↗")), ma_bull=False,
+       op_str="4/4", op_ok=True, rev_str="0/4", rev_ok=False, eps_str="0/4", eps_ok=False,
+       base_small_note=False),
+  dict(rank=6, code="6146", full="耕興股份有限公司", short="耕興", industry="電子零組件測試認證(上櫃)",
+       price=192.5, chg_pct=3.49, K=43.42, D=36.67, golden_cross=True,
+       big_pct=45.82, big_streak=0, small_pct=24.8, small_streak=1,
+       ma=dict(月=(193.2,"↗"), 季=(204.1,"↘"), 半年=(201.8,"↗"), 年=(186.2,"↗")), ma_bull=False,
+       op_str="4/4", op_ok=True, rev_str="0/4", rev_ok=False, eps_str="0/4", eps_ok=False,
+       base_small_note=False),
+  dict(rank=7, code="2317", full="鴻海精密工業股份有限公司", short="鴻海", industry="電子代工業",
+       price=250.5, chg_pct=9.15, K=46.89, D=48.77, golden_cross=False,
+       big_pct=66.94, big_streak=0, small_pct=23.18, small_streak=1,
+       ma=dict(月=(241.6,"↗"), 季=(255.2,"↘"), 半年=(235.1,"↗"), 年=(229.1,"↗")), ma_bull=False,
+       op_str="0/4", op_ok=False, rev_str="2/4", rev_ok=False, eps_str="3/4", eps_ok=True,
+       base_small_note=False),
+  dict(rank=8, code="2618", full="長榮航空股份有限公司", short="長榮航", industry="航空運輸業",
+       price=43.3, chg_pct=3.71, K=60.7, D=53.25, golden_cross=True,
+       big_pct=78.31, big_streak=13, small_pct=12.8, small_streak=0,
+       ma=dict(月=(41.72,"↘"), 季=(39.41,"↗"), 半年=(37.44,"↗"), 年=(37.3,"↗")), ma_bull=False,
+       op_str="4/4", op_ok=True, rev_str="0/4", rev_ok=False, eps_str="1/4", eps_ok=False,
+       base_small_note=False),
+  dict(rank=9, code="6585", full="鼎基先進材料股份有限公司", short="鼎基", industry="其他業(高效能TPU材料)",
+       price=113.5, chg_pct=5.58, K=26.9, D=30.26, golden_cross=False,
+       big_pct=74.94, big_streak=1, small_pct=14.44, small_streak=0,
+       ma=dict(月=(122.6,"↘"), 季=(116.1,"↗"), 半年=(102.7,"↗"), 年=(99.02,"↗")), ma_bull=False,
+       op_str="4/4", op_ok=True, rev_str="0/4", rev_ok=False, eps_str="0/4", eps_ok=False,
+       base_small_note=True),
+  dict(rank=10, code="1597", full="直得科技股份有限公司", short="直得", industry="精密傳動元件業",
+       price=114, chg_pct=9.62, K=22.51, D=24.38, golden_cross=False,
+       big_pct=43.95, big_streak=0, small_pct=33.51, small_streak=0,
+       ma=dict(月=(130.7,"↘"), 季=(155.2,"↘"), 半年=(124.5,"↗"), 年=(101.5,"↗")), ma_bull=False,
+       op_str="2/4", op_ok=False, rev_str="2/4", rev_ok=False, eps_str="3/4", eps_ok=True,
+       base_small_note=True),
+]
+
+for s in stocks:
+    s["K_gt_50"] = s["K"] > 50
+    s["K_gt_D"] = s["K"] > s["D"]
+    # neutral commentary
+    parts = []
+    if s["chg_pct"] >= 9.5:
+        parts.append(f"當日大漲{s['chg_pct']}%，接近漲停")
+    elif s["chg_pct"] > 0:
+        parts.append(f"當日上漲{s['chg_pct']}%")
+    else:
+        parts.append(f"當日下跌{abs(s['chg_pct'])}%")
+    if s["golden_cross"]:
+        parts.append("KD出現黃金交叉")
+    elif s["K_gt_D"]:
+        parts.append("K值仍在D值之上，短線動能偏多")
+    else:
+        parts.append("K值低於D值，短線動能偏弱")
+    if s["K_gt_50"]:
+        parts.append("K值站上50中軸")
+    else:
+        parts.append("K值尚未站上50中軸")
+    if s["big_streak"] >= 2:
+        parts.append(f"大戶持股連{s['big_streak']}週增加")
+    if s["small_streak"] >= 2:
+        parts.append(f"散戶持股連{s['small_streak']}週增加")
+    if not s["ma_bull"]:
+        parts.append("均線尚未呈現多頭排列")
+    s["comment"] = "，".join(parts) + "。"
+
+# ---- meta json for cards ----
+meta = {
+    "target_date": TARGET_DATE,
+    "weekday": WEEKDAY,
+    "is_backfill": IS_BACKFILL,
+    "stocks": [
+        dict(
+            rank=s["rank"], code=s["code"], name=f"{s['full']}({s['short']})",
+            price=s["price"], chg_pct=s["chg_pct"],
+            golden_cross=s["golden_cross"], ma_bull=s["ma_bull"],
+            op_margin_ok=s["op_ok"], rev_ok=s["rev_ok"], eps_ok=s["eps_ok"]
+        ) for s in stocks
+    ]
+}
+
+with open("stockradar_cards_meta.json", "w", encoding="utf-8") as f:
+    json.dump(meta, f, ensure_ascii=False, indent=2)
+
+with open("stocks_full.json", "w", encoding="utf-8") as f:
+    json.dump(dict(target_date=TARGET_DATE, weekday=WEEKDAY, is_backfill=IS_BACKFILL,
+                    exec_date=EXEC_DATE, browser_used=BROWSER_USED, stocks=stocks), f, ensure_ascii=False, indent=2)
+
+print("done")

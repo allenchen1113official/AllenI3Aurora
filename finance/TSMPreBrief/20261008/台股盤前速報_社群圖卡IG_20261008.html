@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><title>台股盤前速報 IG</title>
+<style>
+:root{
+  --mint:#92E0BE; --blue:#4F8AD5; --ink:#12332B; --sage:#2F6152; --paper:#DEE7E2;
+  --up:#C9342F; --dn:#0F7D62; --muted:#5A7A70;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1080px;overflow:hidden}
+body{
+  font-family:"Noto Sans CJK TC","Noto Sans TC",sans-serif;
+  background:
+    radial-gradient(760px 520px at 2% -10%, rgba(146,224,190,.60), transparent 62%),
+    radial-gradient(720px 520px at 100% 6%, rgba(79,138,213,.42), transparent 64%),
+    radial-gradient(620px 420px at 50% 112%, rgba(146,224,190,.28), transparent 70%),
+    #F4FAF7;
+  color:var(--ink);
+}
+.sheet{position:absolute;inset:0;padding:40px 52px 0;display:flex;flex-direction:column}
+
+/* brand */
+.brow{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.badge{width:54px;height:54px;flex:0 0 54px;border-radius:15px;
+  background:linear-gradient(135deg,var(--mint) 0%,var(--blue) 100%);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 3px 13px rgba(18,51,43,.20)}
+.badge span{display:flex;align-items:center;justify-content:center;white-space:nowrap;
+  line-height:1;font-size:16px;font-weight:900;color:#fff;letter-spacing:.02em}
+.badge sup{font-size:9px;line-height:1;vertical-align:super}
+.bn{display:flex;align-items:center;gap:11px;white-space:nowrap}
+.bzh{font-size:20px;font-weight:900;letter-spacing:.09em}
+.bsep{width:1px;height:21px;background:var(--sage);opacity:.38}
+.ben{font-size:11px;font-weight:700;color:var(--sage);letter-spacing:.11em}
+.ben sup{font-size:7.5px}
+.dstamp{margin-left:auto;text-align:right;white-space:nowrap}
+.d1{font-size:25px;font-weight:900;letter-spacing:.04em;line-height:1.08}
+.d2{font-size:11.5px;color:var(--sage);font-weight:700;letter-spacing:.05em;margin-top:3px}
+
+/* headline */
+h1{font-size:62px;font-weight:900;letter-spacing:.06em;line-height:1;margin-bottom:12px}
+.hlsub{font-size:21px;font-weight:900;color:var(--sage);letter-spacing:.05em;margin-bottom:12px}
+.basis{font-size:12.5px;color:var(--sage);font-weight:600;line-height:1.6;margin-bottom:18px;
+  border-left:3px solid var(--blue);padding-left:11px}
+
+/* hero */
+.hero{background:rgba(255,255,255,.82);border:1px solid var(--paper);border-radius:16px;
+  padding:20px 24px;display:flex;align-items:center;gap:24px;margin-bottom:14px}
+.hl1{flex:1}
+.hk{font-size:12.5px;font-weight:800;color:var(--sage);letter-spacing:.09em}
+.hv{font-size:58px;font-weight:900;line-height:1.02;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.hd{font-size:23px;font-weight:900;color:var(--dn);font-variant-numeric:tabular-nums;margin-top:2px}
+.hside{text-align:right;white-space:nowrap;border-left:1px solid var(--paper);padding-left:24px}
+.hsk{font-size:11.5px;font-weight:800;color:var(--sage);letter-spacing:.06em}
+.hsv{font-size:23px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.3}
+.hsv.dn{color:var(--dn)}
+.hsv small{font-size:14px;font-weight:800}
+
+/* stat row */
+.row3{display:flex;gap:14px;margin-bottom:14px}
+.st{flex:1;background:rgba(255,255,255,.82);border:1px solid var(--paper);border-radius:13px;padding:14px 16px}
+.sk{font-size:11.5px;font-weight:800;color:var(--sage);letter-spacing:.07em;white-space:nowrap}
+.sv{font-size:26px;font-weight:900;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sv.dn{color:var(--dn)} .sv.up{color:var(--up)}
+.sx{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;margin-top:1px}
+
+/* sector + us */
+.two{display:flex;gap:14px;margin-bottom:14px}
+.sect{flex:1;background:rgba(255,255,255,.82);border:1px solid var(--paper);border-radius:13px;padding:14px 16px}
+.stt{font-size:11.5px;font-weight:800;color:var(--sage);letter-spacing:.09em;margin-bottom:9px}
+.slist{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:8px;padding:6px 10px;font-size:13.5px;font-weight:800;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.chip.u{background:rgba(201,52,47,.10);color:var(--up);border:1px solid rgba(201,52,47,.24)}
+.chip.d{background:rgba(15,125,98,.10);color:var(--dn);border:1px solid rgba(15,125,98,.24)}
+
+/* verdict */
+.verd{background:linear-gradient(135deg,rgba(201,52,47,.11),rgba(201,52,47,.04));
+  border:1px solid rgba(201,52,47,.30);border-radius:16px;padding:18px 22px;margin-bottom:14px;
+  display:flex;align-items:center;gap:22px}
+.vleft{flex:0 0 auto}
+.vk{font-size:11.5px;font-weight:800;color:var(--sage);letter-spacing:.11em}
+.vv{font-size:34px;font-weight:900;color:var(--up);letter-spacing:.04em;line-height:1.18;margin-top:3px}
+.vx{font-size:12.5px;font-weight:700;color:var(--sage);margin-top:3px}
+.vright{flex:1;border-left:1px solid rgba(201,52,47,.22);padding-left:22px;
+  font-size:12.5px;line-height:1.66;font-weight:600;color:var(--ink)}
+.vright b{font-weight:900}
+
+/* watch */
+.watch{background:rgba(255,255,255,.82);border:1px solid var(--paper);border-radius:13px;
+  padding:15px 17px;flex:1}
+.wl{font-size:14.5px;line-height:1.72;font-weight:600}
+.wl b{color:var(--up);font-weight:900}
+.wl2{font-size:12.5px;line-height:1.62;color:var(--muted);font-weight:600;margin-top:9px;
+  padding-top:9px;border-top:1px dashed var(--paper)}
+
+/* footer */
+.foot{display:flex;align-items:center;justify-content:space-between;
+  padding:15px 0 18px;margin-top:14px;border-top:1px solid var(--paper)}
+.fl{font-size:11.5px;font-weight:800;color:var(--sage);letter-spacing:.08em}
+.fl sup{font-size:7.5px}
+.fl i{display:block;font-style:normal;font-size:10.5px;color:var(--muted);font-weight:600;margin-top:2px}
+.fr{font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:.04em;text-align:right;line-height:1.55}
+</style></head><body>
+<div class="sheet">
+
+  <div class="brow">
+    <div class="badge"><span>AI<sup>3</sup>A</span></div>
+    <div class="bn">
+      <span class="bzh">艾倫極光報報</span><span class="bsep"></span>
+      <span class="ben">Allen I<sup>3</sup> Aurora Brief</span>
+    </div>
+    <div class="dstamp">
+      <div class="d1">10 / 08</div>
+      <div class="d2">2026 週四 · 盤前 06:00</div>
+    </div>
+  </div>
+
+  <h1>台股盤前速報</h1>
+  <div class="hlsub">傳產漲停撐盤，美股轉弱埋補跌伏筆</div>
+  <div class="basis">資料基準：上一交易日 2026/10/07（週三）台股收盤 ＋ 美東 10/07 美股收盤<br>上一交易日與今日之間無休市日</div>
+
+  <div class="hero">
+    <div class="hl1">
+      <div class="hk">加權指數 TAIEX · 上一交易日收盤</div>
+      <div class="hv">49,806.37</div>
+      <div class="hd">−16.18（−0.03%）</div>
+    </div>
+    <div class="hside">
+      <div class="hsk">成交金額</div>
+      <div class="hsv">9,259.92<small> 億</small></div>
+      <div class="hsk" style="margin-top:9px">櫃買指數</div>
+      <div class="hsv dn">430.46<small> −0.09%</small></div>
+    </div>
+  </div>
+
+  <div class="row3">
+    <div class="st">
+      <div class="sk">三大法人合計</div>
+      <div class="sv dn">−212.57 億</div>
+      <div class="sx">外資 −130.44／自營 −77.96</div>
+    </div>
+    <div class="st">
+      <div class="sk">融資餘額</div>
+      <div class="sv up">+23.4 億</div>
+      <div class="sx">增至 6,400.01 億，連 2 日增</div>
+    </div>
+    <div class="st">
+      <div class="sk">台積電 2330</div>
+      <div class="sv">2,585</div>
+      <div class="sx">平盤　漲 595／跌 394 家</div>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="sect">
+      <div class="stt">類股輪動 · 證交所細分類</div>
+      <div class="slist" style="margin-bottom:8px">
+        <span class="chip u">玻璃陶瓷 +8.98%</span>
+        <span class="chip u">塑膠 +6.85%</span>
+      </div>
+      <div class="slist">
+        <span class="chip d">電子零組件 −1.39%</span>
+        <span class="chip d">電腦週邊 −1.28%</span>
+      </div>
+    </div>
+    <div class="sect">
+      <div class="stt">上一美股交易日（美東 10/07）</div>
+      <div class="slist" style="margin-bottom:8px">
+        <span class="chip d">道瓊 −0.66%</span>
+        <span class="chip d">費半 −1.15%</span>
+      </div>
+      <div class="slist">
+        <span class="chip d">台積電 ADR −2.09%</span>
+        <span class="chip u">ADR 溢價 +16.16%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="verd">
+    <div class="vleft">
+      <div class="vk">選股　均線多頭 ＋ 大戶增持 ＋ 量增</div>
+      <div class="vv">今日無符合條件之標的</div>
+      <div class="vx">上市 0 檔　·　上櫃 0 檔</div>
+    </div>
+    <div class="vright">
+      漏斗：名單 150 → 掃描 14 → 量增≥2倍 <b>4</b> → 均線 5&gt;20&gt;60 <b>12</b> → a∩c <b>3</b> → 三條件 <b>0</b>。台塑 4.8×、台玻 5.1～6.5×、台化 2.3× 過關，但大戶持股僅 +0.33／−0.15／0.00 pp，未達 +1 pp 門檻。
+    </div>
+  </div>
+
+  <div class="watch">
+    <div class="stt">今日盤前觀察重點</div>
+    <div class="wl">
+      ADR 溢價仍達 <b>+16.16%</b>，權值股有補跌壓力；美債 10 年期升至 <b>5.286%</b>、盤中 5.36% 為 2002 年 4 月以來最高，不利高評價成長股。法人賣超而融資加碼的背離，是量能若無法延續時的風險點。
+    </div>
+    <div class="wl2">今日 14:30 大立光、15:00 長榮法說會；一般個股無除權息；非台指期結算日，10 月月結算 10/21。</div>
+  </div>
+
+  <div class="foot">
+    <div class="fl">Allen I<sup>3</sup> Aurora Brief · 艾倫極光報報<i>Allen Chen · Est. 2026</i></div>
+    <div class="fr">本內容為資料彙整，非投資建議<br>外資台指期未平倉與各檔 MA240 為資料未取得</div>
+  </div>
+
+</div>
+</body></html>

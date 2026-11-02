@@ -1,0 +1,127 @@
+{
+  "target_date": "2026-07-31",
+  "weekday": "星期五",
+  "is_backfill": true,
+  "stocks": [
+    {
+      "rank": 1,
+      "code": "3029",
+      "name": "零壹股份有限公司(零壹)",
+      "price": 109.5,
+      "chg_pct": 7.88,
+      "golden_cross": true,
+      "ma_bull": false,
+      "op_margin_ok": false,
+      "rev_ok": false,
+      "eps_ok": true
+    },
+    {
+      "rank": 2,
+      "code": "2347",
+      "name": "聯強國際股份有限公司(聯強)",
+      "price": 93.7,
+      "chg_pct": 8.83,
+      "golden_cross": true,
+      "ma_bull": false,
+      "op_margin_ok": false,
+      "rev_ok": false,
+      "eps_ok": false
+    },
+    {
+      "rank": 3,
+      "code": "2330",
+      "name": "台灣積體電路製造股份有限公司(台積電)",
+      "price": 2425,
+      "chg_pct": 9.98,
+      "golden_cross": true,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": true,
+      "eps_ok": true
+    },
+    {
+      "rank": 4,
+      "code": "2603",
+      "name": "長榮海運股份有限公司(長榮)",
+      "price": 204,
+      "chg_pct": 1.49,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": false
+    },
+    {
+      "rank": 5,
+      "code": "3034",
+      "name": "聯詠科技股份有限公司(聯詠)",
+      "price": 519,
+      "chg_pct": 5.7,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": false
+    },
+    {
+      "rank": 6,
+      "code": "6146",
+      "name": "耕興股份有限公司(耕興)",
+      "price": 192.5,
+      "chg_pct": 3.49,
+      "golden_cross": true,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": false
+    },
+    {
+      "rank": 7,
+      "code": "2317",
+      "name": "鴻海精密工業股份有限公司(鴻海)",
+      "price": 250.5,
+      "chg_pct": 9.15,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": false,
+      "rev_ok": false,
+      "eps_ok": true
+    },
+    {
+      "rank": 8,
+      "code": "2618",
+      "name": "長榮航空股份有限公司(長榮航)",
+      "price": 43.3,
+      "chg_pct": 3.71,
+      "golden_cross": true,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": false
+    },
+    {
+      "rank": 9,
+      "code": "6585",
+      "name": "鼎基先進材料股份有限公司(鼎基)",
+      "price": 113.5,
+      "chg_pct": 5.58,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": false
+    },
+    {
+      "rank": 10,
+      "code": "1597",
+      "name": "直得科技股份有限公司(直得)",
+      "price": 114,
+      "chg_pct": 9.62,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": false,
+      "rev_ok": false,
+      "eps_ok": true
+    }
+  ]
+}

@@ -13,3 +13,19 @@ __pycache__/
 
 # 社群圖卡渲染器自動下載的字型快取（scripts/podcast/render_social_card.py）
 scripts/podcast/.fonts/
+
+# Google 雲端文件捷徑（含帳號 email 與文件 ID）與 base64 暫存檔，不進公開 repo
+*.gdoc
+*.b64
+*.b64part*
+*.b64.txt
+pdfb64_*
+
+# 名片頁含個人聯絡資訊，品牌指南僅留在 Drive
+brand/brand-guideline.pdf
+brand/brand-guideline1.pdf
+
+# 內容損毀、無法檢查的 PDF
+newsletter/day/20260721/艾倫極光日報_20260721*.pdf
+newsletter/day/20260730/艾倫極光日報_20260730.pdf
+newsletter/day/20260731/艾倫極光日報_20260731.pdf

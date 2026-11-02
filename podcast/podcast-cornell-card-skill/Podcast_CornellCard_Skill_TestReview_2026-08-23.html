@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>podcast-cornell-card skill 測試檢視頁（2026-08-23 iteration-1）</title>
+<style>
+  :root{
+    --bg:#070b14; --panel:#0d131f; --border:#2c384c; --border-dim:#1e2838;
+    --t1:#eaf2f8; --t2:#c7d1dc; --t3:#8994a0; --mint:#7ed9a8; --sky:#63ace2; --ok:#3ddc97;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#05070b;color:var(--t2);padding:28px 14px;display:flex;flex-direction:column;align-items:center;gap:22px;
+       font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,sans-serif;}
+  .wrap{width:100%;max-width:1000px;display:flex;flex-direction:column;gap:22px;}
+  h1{color:var(--t1);font-size:26px;}
+  h2{color:var(--t1);font-size:19px;margin-bottom:4px;}
+  .meta{color:var(--t3);font-size:13px;line-height:1.7;}
+  .sec{background:var(--bg);border:1px solid var(--border-dim);border-radius:10px;padding:22px 26px;}
+  .prompt{background:var(--panel);border-left:3px solid var(--sky);padding:10px 14px;border-radius:0 8px 8px 0;
+          font-size:14px;margin:10px 0 14px;line-height:1.7;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px;}
+  th,td{border:1px solid var(--border-dim);padding:8px 10px;text-align:left;vertical-align:top;line-height:1.6;}
+  th{color:var(--t3);font-weight:700;background:var(--panel);}
+  .pass{color:var(--ok);font-weight:700;white-space:nowrap;}
+  /* --- 圖卡重繪（與 PNG 同版式的縮小版） --- */
+  .card{background:var(--bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:14px;}
+  .card .hd{padding:12px 18px;background:linear-gradient(120deg,rgba(16,68,54,.5),rgba(15,42,72,.4) 60%,transparent);}
+  .kick{font-weight:700;font-size:13px;letter-spacing:.06em;}
+  .kick.mint{color:var(--mint);} .kick.sky{color:var(--sky);}
+  .card .dt{float:right;color:var(--t3);font-size:12px;font-family:ui-monospace,Consolas,monospace;}
+  .card .tt{color:var(--t1);font-size:19px;font-weight:800;margin-top:6px;line-height:1.3;}
+  .cols{display:grid;grid-template-columns:0.9fr 1.9fr;gap:16px;padding:6px 18px;color:var(--t3);
+        font-size:11px;letter-spacing:.08em;font-weight:700;border-bottom:1px solid var(--border-dim);}
+  .row{display:grid;grid-template-columns:0.9fr 1.9fr;gap:16px;padding:11px 18px;border-bottom:1px solid var(--border-dim);}
+  .cue{font-weight:800;font-size:15px;line-height:1.4;}
+  .cue.mint{color:var(--mint);} .cue.sky{color:var(--sky);}
+  .nt{font-size:14px;line-height:1.6;color:var(--t2);}
+  .more{padding:9px 18px;color:var(--t3);font-size:12.5px;}
+  .sum{margin:12px 16px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;
+       padding:12px 16px;position:relative;}
+  .sum b{display:block;font-size:11.5px;letter-spacing:.08em;margin-bottom:6px;}
+  .sum b.mint{color:var(--mint);} .sum b.sky{color:var(--sky);}
+  .sum p{color:var(--t1);font-size:14px;line-height:1.6;}
+  .brand{display:flex;align-items:center;gap:9px;justify-content:flex-end;padding:0 16px 14px;}
+  .bicon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--mint),var(--sky));
+         color:#0d2e30;display:flex;align-items:center;justify-content:center;font:800 11px/1 sans-serif;}
+  .bcn{color:var(--t1);font-weight:800;font-size:14px;line-height:1.1;}
+  .ben{color:var(--t3);font-size:8px;letter-spacing:2px;}
+  .note{color:var(--t3);font-size:12.5px;line-height:1.7;max-width:1000px;}
+  code{background:var(--panel);border:1px solid var(--border-dim);border-radius:4px;padding:1px 5px;
+       font-size:12px;color:var(--t2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sec">
+    <h1>podcast-cornell-card · skill 測試檢視頁</h1>
+    <p class="meta">iteration-1 · 測試日 2026-08-23 · 依 CLAUDE.md「Skill 建立與測試流程」第 2–3 步執行：乾淨目錄照 SKILL.md 實跑兩案例（正常範例＋壓力案例），全部斷言通過。本頁為原始檢視頁（含內嵌 PNG，約 1MB，超過 base64 上傳安全上限）的<b style="color:var(--t1)">純文字 HTML 重繪雲端版</b>；圖卡以同版式 HTML 重現，PNG 原檔見對話附件與本機測試目錄。</p>
+  </div>
+
+  <div class="sec">
+    <h2>eval-0 · sample-episode（正常範例）✅ 3/3</h2>
+    <div class="prompt">用內建示範集試跑，產出 FB（1200×630）與 IG（1080×1080）康乃爾筆記圖卡。</div>
+    <table>
+      <tr><th style="width:55%">斷言</th><th style="width:10%">結果</th><th>證據</th></tr>
+      <tr><td>輸出 1200×630 與 1080×1080 兩張 PNG</td><td class="pass">PASS</td><td>sample-fb.png 1200×630、sample-ig.png 1080×1080</td></tr>
+      <tr><td>右下角有艾倫報報品牌鎖定</td><td class="pass">PASS</td><td>目視確認</td></tr>
+      <tr><td>文字無重疊溢出、標點不落單成行</td><td class="pass">PASS</td><td>目視確認</td></tr>
+    </table>
+    <div class="card">
+      <div class="hd"><span class="dt">2026.08.21 · 58m</span><span class="kick mint">CORNELL NOTES · 康乃爾筆記</span>
+        <div class="tt">股癌 Gooaye — EP.整理盤心法</div></div>
+      <div class="cols"><span>線索 CUES</span><span>筆記 NOTES</span></div>
+      <div class="row"><span class="cue mint">整理盤定義</span><span class="nt">指數量縮、區間震盪，多空皆難有趨勢行情；勝率低、盈虧比差，操作應降頻。</span></div>
+      <div class="row"><span class="cue mint">部位控制</span><span class="nt">資金分批進出、保留現金水位；不重倉猜底摸頭，等突破或帶量表態再加碼。</span></div>
+      <div class="row"><span class="cue mint">AI 供應鏈</span><span class="nt">近期修正屬籌碼換手、非基本面轉壞；留意法人回補與月營收確認趨勢。</span></div>
+      <div class="row"><span class="cue mint">心態提醒</span><span class="nt">無聊的盤做無聊的事：檢視持股邏輯、更新觀察清單，勝過頻繁交易。</span></div>
+      <div class="sum"><b class="mint">總結 SUMMARY</b><p>整理盤的核心是「等」：控制部位、留住現金、降低交易頻率，把力氣花在檢視邏輯與觀察清單上，待趨勢表態再出手。</p></div>
+      <div class="brand"><div class="bicon">AI³A</div><div><div class="bcn">艾倫報報</div><div class="ben">ALLEN I³ AURORA</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>eval-1 · long-episode-truncation（壓力案例）✅ 4/4</h2>
+    <div class="prompt">7 列長筆記＋長標題＋tone=intelligence 的一集（stress.json），驗證截斷行為與配色。</div>
+    <table>
+      <tr><th style="width:55%">斷言</th><th style="width:10%">結果</th><th>證據</th></tr>
+      <tr><td>FB 版放不下時顯示「…及另外 N 個重點」註記</td><td class="pass">PASS</td><td>FB 版顯示 3 列＋「…及另外 4 個重點」</td></tr>
+      <tr><td>IG 版容納更多列（7 列全入）</td><td class="pass">PASS</td><td>IG 版 7 列完整呈現</td></tr>
+      <tr><td>tone=intelligence 線索欄為藍色</td><td class="pass">PASS</td><td>目視確認</td></tr>
+      <tr><td>雙行標題正確換行不溢出</td><td class="pass">PASS</td><td>目視確認</td></tr>
+    </table>
+    <div class="card">
+      <div class="hd"><span class="dt">2026.08.22 · 1h 12m</span><span class="kick sky">CORNELL NOTES · 康乃爾筆記</span>
+        <div class="tt">曼報 Manny's — EP.AI 資本支出的臨界點——七個必須追蹤的訊號</div></div>
+      <div class="cols"><span>線索 CUES</span><span>筆記 NOTES（FB 版呈現，前 3 列＋截斷註記）</span></div>
+      <div class="row"><span class="cue sky">資本支出年增</span><span class="nt">四大雲端商合計資本支出年增仍逾五成，但環比增速已連兩季放緩，市場焦點從「花多少」轉向「賺多少」，投報率成為法說會必答題。</span></div>
+      <div class="row"><span class="cue sky">算力租賃價格</span><span class="nt">H 系列與 B 系列的租賃價差擴大，舊卡折舊壓力浮現；若租賃價格持續走低，二線資料中心的融資模型會先出問題。</span></div>
+      <div class="row"><span class="cue sky">電力缺口</span><span class="nt">資料中心電力需求成長遠快於電網擴建，核電與燃氣的長約成為新護城河；電力合約年限是判斷業者信心的代理指標。</span></div>
+      <div class="more">…及另外 4 個重點（完整筆記見網站）——IG 版（1080×1080）則 7 列全數容納：推論占比、軟體毛利、資產負債表、監管變數。</div>
+      <div class="sum"><b class="sky">總結 SUMMARY</b><p>循環未到頂，但敘事已從擴張轉向驗收：盯緊投報率、推論占比與電力合約三條主線，比猜指數位置更有用。</p></div>
+      <div class="brand"><div class="bicon">AI³A</div><div><div class="bcn">艾倫報報</div><div class="ben">ALLEN I³ AURORA</div></div></div>
+    </div>
+  </div>
+
+  <p class="note">
+    測試環境與產物：skill scripts 複製至乾淨目錄執行，字型自 fonts.gstatic.com 快取；PNG 產物
+    <code>sample-fb/ig.png</code>、<code>stress-fb/ig.png</code> 於測試目錄與對話附件。skill 本體備份見同資料夾
+    （SKILL.md／render_social_card.py／episode.sample.json／README_如何還原skill檔.md）。
+    相關：<code>AllenI3Aurora/finance/taiex-heatmap-skill/</code>（同流程測試之熱力圖 skill 備份）。
+  </p>
+</div>
+</body>
+</html>

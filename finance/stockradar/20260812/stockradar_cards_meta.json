@@ -1,0 +1,127 @@
+{
+  "target_date": "2026-08-12",
+  "weekday": "星期三",
+  "is_backfill": false,
+  "stocks": [
+    {
+      "rank": 1,
+      "code": "2059",
+      "name": "川湖科技股份有限公司(川湖)",
+      "price": 12315,
+      "chg_pct": 3.44,
+      "golden_cross": false,
+      "ma_bull": true,
+      "op_margin_ok": true,
+      "rev_ok": true,
+      "eps_ok": true
+    },
+    {
+      "rank": 2,
+      "code": "2395",
+      "name": "研華股份有限公司(研華)",
+      "price": 661,
+      "chg_pct": -0.9,
+      "golden_cross": false,
+      "ma_bull": true,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": true
+    },
+    {
+      "rank": 3,
+      "code": "2603",
+      "name": "長榮海運股份有限公司(長榮)",
+      "price": 218,
+      "chg_pct": 1.87,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": false
+    },
+    {
+      "rank": 4,
+      "code": "3293",
+      "name": "鈊象電子股份有限公司(鈊象)",
+      "price": 804,
+      "chg_pct": 1.52,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": true
+    },
+    {
+      "rank": 5,
+      "code": "1303",
+      "name": "南亞塑膠工業股份有限公司(南亞)",
+      "price": 190,
+      "chg_pct": 2.7,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": false,
+      "rev_ok": false,
+      "eps_ok": true
+    },
+    {
+      "rank": 6,
+      "code": "1717",
+      "name": "長興材料工業股份有限公司(長興)",
+      "price": 71.9,
+      "chg_pct": 2.71,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": false,
+      "rev_ok": false,
+      "eps_ok": true
+    },
+    {
+      "rank": 7,
+      "code": "2637",
+      "name": "慧洋海運股份有限公司(慧洋-KY)",
+      "price": 87.3,
+      "chg_pct": -0.91,
+      "golden_cross": false,
+      "ma_bull": true,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": false
+    },
+    {
+      "rank": 8,
+      "code": "2383",
+      "name": "台光電子材料股份有限公司(台光電)",
+      "price": 5535,
+      "chg_pct": 4.63,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": true,
+      "eps_ok": true
+    },
+    {
+      "rank": 9,
+      "code": "2454",
+      "name": "聯發科技股份有限公司(聯發科)",
+      "price": 4020,
+      "chg_pct": 1.52,
+      "golden_cross": false,
+      "ma_bull": false,
+      "op_margin_ok": true,
+      "rev_ok": false,
+      "eps_ok": false
+    },
+    {
+      "rank": 10,
+      "code": "6213",
+      "name": "聯茂電子股份有限公司(聯茂)",
+      "price": 452,
+      "chg_pct": 5.73,
+      "golden_cross": false,
+      "ma_bull": true,
+      "op_margin_ok": false,
+      "rev_ok": false,
+      "eps_ok": true
+    }
+  ]
+}

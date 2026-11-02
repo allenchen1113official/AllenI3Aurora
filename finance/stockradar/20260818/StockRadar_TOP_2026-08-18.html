@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台股每日分析報表 - TOP 10排行 (2026-08-18)</title>
+<style>
+  :root{
+    --up:#d32f2f;      /* 台股慣例：上漲紅 */
+    --down:#1b8a3a;    /* 台股慣例：下跌綠 */
+    --head:#2e7d32;
+    --rank-bg:#e8f5e9;
+    --code-bg:#e3f2fd;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+       margin:0;padding:24px;background:#f7f8fa;color:#1f2328;line-height:1.55;}
+  .wrap{max-width:1680px;margin:0 auto;}
+  h1{font-size:26px;margin:0 0 6px;}
+  .date{font-size:17px;font-weight:700;color:#2e7d32;margin-bottom:10px;}
+  .backfill{background:#fff4e5;border:1px solid #f0a92b;border-left:6px solid #f0a92b;
+            padding:10px 14px;border-radius:6px;font-size:14px;margin:0 0 16px;}
+  .backfill b{color:#a35c00;}
+  .note{background:#eef4ff;border:1px solid #b9cdf3;border-radius:6px;padding:10px 14px;
+        font-size:13px;margin:0 0 18px;color:#28405e;}
+  .tblbox{overflow-x:auto;background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.12);}
+  table{border-collapse:collapse;width:100%;font-size:13px;min-width:1500px;}
+  th,td{border:1px solid #d8dde3;padding:7px 9px;text-align:center;vertical-align:middle;}
+  thead th{background:var(--head);color:#fff;font-weight:700;font-size:13px;}
+  thead tr.src th{background:#4e9a52;font-size:11px;font-weight:500;letter-spacing:.3px;}
+  td.rank{background:var(--rank-bg);font-weight:700;font-size:17px;}
+  td.code{background:var(--code-bg);font-family:ui-monospace,Menlo,monospace;font-weight:700;white-space:nowrap;}
+  td.name{text-align:left;font-weight:600;white-space:nowrap;}
+  td.ind{white-space:nowrap;color:#4b5563;}
+  td.price{font-family:ui-monospace,Menlo,monospace;font-weight:700;text-align:right;}
+  td.chg{font-family:ui-monospace,Menlo,monospace;font-weight:700;text-align:right;white-space:nowrap;}
+  .up{color:var(--up);}
+  .down{color:var(--down);}
+  .flat{color:#6b7280;}
+  td.cmt{text-align:left;font-size:12px;color:#374151;max-width:290px;}
+  .yes{color:#0f7b34;font-weight:700;}
+  .no{color:#9aa2ad;}
+  .gc-yes{background:#fff7d6;color:#8a6100;font-weight:700;border-radius:4px;padding:1px 5px;}
+  .kd{font-family:ui-monospace,Menlo,monospace;white-space:nowrap;}
+  .cnt{font-family:ui-monospace,Menlo,monospace;white-space:nowrap;}
+  .ok{background:#eaf7ec;}
+  .warn{font-size:11px;color:#a35c00;display:block;}
+  tbody tr:nth-child(even){background:#fcfcfd;}
+  footer{margin-top:24px;background:#fff;border-radius:8px;padding:18px 20px;
+         box-shadow:0 1px 4px rgba(0,0,0,.10);font-size:13px;color:#374151;}
+  footer h2{font-size:16px;margin:0 0 10px;color:#2e7d32;}
+  footer h3{font-size:14px;margin:16px 0 6px;color:#1f2328;}
+  footer ul{margin:6px 0 0 20px;padding:0;}
+  footer li{margin-bottom:5px;}
+  .disclaim{margin-top:16px;padding:12px 14px;background:#fdf1f1;border:1px solid #eab6b6;
+            border-radius:6px;color:#8a1f1f;font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>台股每日分析報表 - TOP 10排行</h1>
+  <div class="date">目標日期：2026-08-18（星期二）</div>
+
+  <p class="backfill">
+    <b>本次為補產出 2026-08-18（最近一個交易日）資料，非執行當日資料。</b><br>
+    本排程執行時間為 2026-08-19（星期三）台北時間 00:04，尚在當日台股開盤（09:00）之前，
+    2026-08-19 當日並無任何成交資料，故取最近一個已完成交易的 TWSE 交易日 2026-08-18 為「目標日期」。
+    Google 試算表「StockList / TOP」分頁之最新一列亦為 2026/8/18，與目標日期一致。
+  </p>
+
+  <p class="note">
+    <b>資料筆數：</b>10 檔（TOP1~TOP10，來源為 Google 試算表 StockList「TOP」分頁 2026/8/18 列）。<br>
+    <b>價格與 KD：</b>TWSE 官方每日交易 API（STOCK_DAY，2026/06~2026/08 共 55 個交易日），10 檔皆為上市股，無需改用 TPEx。<br>
+    <b>大戶／散戶、均線、財報：</b>Goodinfo! 台灣股市資訊網。股權分散資料統計日期為 2026/08/14（26W33，為目標日期前之最新完整週別）。
+  </p>
+
+  <div class="tblbox">
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">日期</th>
+        <th rowspan="2">排名</th>
+        <th rowspan="2">股票代碼</th>
+        <th rowspan="2">股票名稱</th>
+        <th rowspan="2">產業</th>
+        <th rowspan="2">股價<br>(收盤)</th>
+        <th rowspan="2">漲跌幅</th>
+        <th colspan="4">KD 指標 (9,3,3)</th>
+        <th colspan="2">大戶 (&gt;800張)</th>
+        <th colspan="2">散戶 (≦50張)</th>
+        <th rowspan="2">均線多頭排列</th>
+        <th colspan="3">近4季基本面達標判斷</th>
+        <th rowspan="2">客觀技術面短評</th>
+      </tr>
+      <tr class="src">
+        <th>K / D 值</th><th>K&gt;50</th><th>K&gt;D</th><th>黃金交叉</th>
+        <th>持股比例</th><th>連買週數</th>
+        <th>持股比例</th><th>連買週數</th>
+        <th>營益率&gt;10%</th><th>營收年增&gt;20%</th><th>EPS年增&gt;10%</th>
+      </tr>
+      <tr class="src">
+        <th>—</th><th>試算表</th><th>試算表</th><th>WebSearch</th><th>WebSearch</th>
+        <th>TWSE</th><th>TWSE</th>
+        <th>TWSE(自算)</th><th>TWSE(自算)</th><th>TWSE(自算)</th><th>TWSE(自算)</th>
+        <th>Goodinfo</th><th>Goodinfo</th><th>Goodinfo</th><th>Goodinfo</th>
+        <th>Goodinfo</th><th>Goodinfo</th><th>Goodinfo</th><th>Goodinfo</th>
+        <th>本報表自動生成</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">1</td>
+        <td class="code">TPE:6672</td>
+        <td class="name">騰輝電子-KY</td>
+        <td class="ind">電子零組件</td>
+        <td class="price">288.00</td>
+        <td class="chg up">▲ +1.77%</td>
+        <td class="kd">89.60 / 86.58</td>
+        <td class="yes">是</td>
+        <td class="yes">是</td>
+        <td class="no">否<br><span class="warn">前一日已 K&gt;D，非新交叉</span></td>
+        <td class="cnt">20.64%</td>
+        <td class="cnt ok">2 週</td>
+        <td class="cnt">58.10%</td>
+        <td class="cnt">0 週</td>
+        <td class="no">否<br><span class="warn">月233.5↗ &lt; 季244.6↗（半198.4↗／年146.7↗）</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td>2/4 · <span class="no">false</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td class="cmt">K、D 皆位於 80 以上高檔區且 K&gt;D，配合當日收紅，屬強勢延續型態；惟指標已進入高檔，短線波動可能加大。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">2</td>
+        <td class="code">TPE:6213</td>
+        <td class="name">聯茂電子（聯茂）</td>
+        <td class="ind">電子零組件</td>
+        <td class="price">488.00</td>
+        <td class="chg up">▲ +1.46%</td>
+        <td class="kd">93.44 / 90.72</td>
+        <td class="yes">是</td>
+        <td class="yes">是</td>
+        <td class="no">否<br><span class="warn">前一日已 K&gt;D</span></td>
+        <td class="cnt">63.90%</td>
+        <td class="cnt ok">2 週</td>
+        <td class="cnt">22.09%</td>
+        <td class="cnt">0 週</td>
+        <td class="ok"><span class="yes">是</span><br><span class="warn">月366↗ &gt; 季327.9↗ &gt; 半266.5↗ &gt; 年189.5↗</span></td>
+        <td>1/4 · <span class="no">false</span></td>
+        <td>2/4 · <span class="no">false</span></td>
+        <td class="ok">3/4 · <span class="yes">true</span></td>
+        <td class="cmt">KD 進入 90 以上極高檔且維持多頭排列，價格與指標同步走高；技術面過熱風險需留意。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">3</td>
+        <td class="code">TPE:2059</td>
+        <td class="name">川湖科技（川湖）</td>
+        <td class="ind">電子零組件</td>
+        <td class="price">14370.00</td>
+        <td class="chg up">▲ +4.51%</td>
+        <td class="kd">92.85 / 92.56</td>
+        <td class="yes">是</td>
+        <td class="yes">是</td>
+        <td class="no">否<br><span class="warn">前一日已 K&gt;D</span></td>
+        <td class="cnt">58.69%</td>
+        <td class="cnt">0 週</td>
+        <td class="cnt">12.53%</td>
+        <td class="cnt">0 週</td>
+        <td class="ok"><span class="yes">是</span><br><span class="warn">月9992↗ &gt; 季7916↗ &gt; 半5863↗ &gt; 年4672↗</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td class="cmt">當日漲幅 +4.51% 為 TOP10 最大，KD 於 90 以上高檔黏合（K、D 僅差 0.29），趨勢強但動能收斂，須觀察是否出現高檔死亡交叉。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">4</td>
+        <td class="code">TPE:2395</td>
+        <td class="name">研華科技（研華）</td>
+        <td class="ind">電腦及週邊設備（工業電腦）</td>
+        <td class="price">679.00</td>
+        <td class="chg up">▲ +0.74%</td>
+        <td class="kd">75.86 / 78.35</td>
+        <td class="yes">是</td>
+        <td class="no">否</td>
+        <td class="no">否</td>
+        <td class="cnt">79.86%</td>
+        <td class="cnt">0 週</td>
+        <td class="cnt">5.39%</td>
+        <td class="cnt">0 週</td>
+        <td class="ok"><span class="yes">是</span><br><span class="warn">月618↗ &gt; 季540.9↗ &gt; 半456↗ &gt; 年380.6↗</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td>1/4 · <span class="no">false</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td class="cmt">股價小漲但 K 值已由上向下跌破 D（K&lt;D），短線動能轉弱；K 仍在 50 以上，中期結構尚未破壞。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">5</td>
+        <td class="code">TPE:2520</td>
+        <td class="name">冠德建設（冠德）</td>
+        <td class="ind">建材營造</td>
+        <td class="price">35.90</td>
+        <td class="chg flat">▬ 0.00%</td>
+        <td class="kd">82.88 / 70.53</td>
+        <td class="yes">是</td>
+        <td class="yes">是</td>
+        <td class="no">否<br><span class="warn">前一日已 K&gt;D</span></td>
+        <td class="cnt">69.93%</td>
+        <td class="cnt ok">7 週</td>
+        <td class="cnt">17.52%</td>
+        <td class="cnt">0 週</td>
+        <td class="no">否<br><span class="warn">月34.94→（走平）、年33.36→（走平），四線未全數向上</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td>1/4 · <span class="no">false</span></td>
+        <td>2/4 · <span class="no">false</span></td>
+        <td class="cmt">收盤平盤，KD 維持多頭且 K－D 差距達 12.35 為 TOP10 最大，動能仍偏強；大戶持股連續 7 週增加為本期最長，籌碼面集中趨勢明顯。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">6</td>
+        <td class="code">TPE:1303</td>
+        <td class="name">南亞塑膠（南亞）</td>
+        <td class="ind">塑膠工業</td>
+        <td class="price">200.00</td>
+        <td class="chg down">▼ -0.25%</td>
+        <td class="kd">75.67 / 77.50</td>
+        <td class="yes">是</td>
+        <td class="no">否</td>
+        <td class="no">否</td>
+        <td class="cnt">84.45%</td>
+        <td class="cnt ok">1 週</td>
+        <td class="cnt">8.98%</td>
+        <td class="cnt">0 週</td>
+        <td class="ok"><span class="yes">是</span><br><span class="warn">月180↗ &gt; 季157↗ &gt; 半120.8↗ &gt; 年87.25↗</span></td>
+        <td>1/4 · <span class="no">false</span></td>
+        <td>1/4 · <span class="no">false</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span>
+            <span class="warn">⚠ 基期過小，數值參考性低：2026Q1／2025Q4／2025Q3 之去年同期 EPS 絕對值均小於 0.1 元，換算出的年增率（+2900%／+1450%／+4000%）失真，實質獲利改善幅度應以絕對金額判讀。</span></td>
+        <td class="cmt">股價小跌且 K 值已下彎跌破 D，短線轉弱；均線仍呈完整多頭排列，長線結構未變。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">7</td>
+        <td class="code">TPE:2383</td>
+        <td class="name">台光電子（台光電）</td>
+        <td class="ind">電子零組件</td>
+        <td class="price">6205.00</td>
+        <td class="chg down">▼ -2.28%</td>
+        <td class="kd">88.27 / 88.84</td>
+        <td class="yes">是</td>
+        <td class="no">否</td>
+        <td class="no">否</td>
+        <td class="cnt">60.17%</td>
+        <td class="cnt">0 週</td>
+        <td class="cnt">12.07%</td>
+        <td class="cnt">0 週</td>
+        <td class="ok"><span class="yes">是</span><br><span class="warn">月5212↗ &gt; 季5199↗ &gt; 半4359↗ &gt; 年2905↗</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td class="cmt">當日下跌 2.28%，KD 於 88 附近高檔剛形成死亡交叉（K 微幅低於 D），短線修正訊號；三項基本面條件皆為近4季 4/4 全數達標。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">8</td>
+        <td class="code">TPE:2637</td>
+        <td class="name">慧洋海運-KY（慧洋-KY）</td>
+        <td class="ind">航運業（散裝航運）</td>
+        <td class="price">88.70</td>
+        <td class="chg up">▲ +1.95%</td>
+        <td class="kd">79.30 / 76.58</td>
+        <td class="yes">是</td>
+        <td class="yes">是</td>
+        <td class="gc-yes">是（黃金交叉）<br><span class="warn">前一日 K69.97 &lt; D75.22 → 當日 K79.30 &gt; D76.58</span></td>
+        <td class="cnt">80.01%</td>
+        <td class="cnt ok">2 週</td>
+        <td class="cnt">9.23%</td>
+        <td class="cnt">0 週</td>
+        <td class="ok"><span class="yes">是</span><br><span class="warn">月84.27↗ &gt; 季79.9↗ &gt; 半75.73↗ &gt; 年70.38↗</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td>1/4 · <span class="no">false</span></td>
+        <td>2/4 · <span class="no">false</span>
+            <span class="warn">⚠ 最新已公告財報為 2026Q1（2026Q2 尚未公告），故近4季採 2026Q1／2025Q4／2025Q3／2025Q2。</span></td>
+        <td class="cmt">本期 TOP10 唯一出現 KD 黃金交叉的個股，K 由 69.97 翻升至 79.30 並向上穿越 D，配合當日收紅與完整均線多頭排列，短線轉強訊號較明確。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">9</td>
+        <td class="code">TPE:1301</td>
+        <td class="name">台灣塑膠（台塑）</td>
+        <td class="ind">塑膠工業</td>
+        <td class="price">58.90</td>
+        <td class="chg down">▼ -0.34%</td>
+        <td class="kd">64.78 / 59.16</td>
+        <td class="yes">是</td>
+        <td class="yes">是</td>
+        <td class="no">否<br><span class="warn">前一日已 K&gt;D</span></td>
+        <td class="cnt">72.31%</td>
+        <td class="cnt ok">1 週</td>
+        <td class="cnt">18.13%</td>
+        <td class="cnt">0 週</td>
+        <td class="no">否<br><span class="warn">月57.78↘（走勢向下），雖 月&gt;季&gt;半年&gt;年 但月線下彎</span></td>
+        <td>0/4 · <span class="no">false</span></td>
+        <td>0/4 · <span class="no">false</span></td>
+        <td class="ok">3/4 · <span class="yes">true</span>
+            <span class="warn">⚠ 基期過小，數值參考性低：2026Q1／2025Q4 之去年同期 EPS 絕對值小於 0.1 元，年增率（+5000%／-1225%）失真；且近4季有 3 季營業利益率為負值，基本面仍處虧轉盈初期。</span></td>
+        <td class="cmt">KD 位於中高檔（K 64.78）且維持 K&gt;D，但股價小跌、月線下彎，屬多頭動能鈍化階段；營益率與營收年增條件皆未達標。</td>
+      </tr>
+
+      <tr>
+        <td>2026-08-18</td>
+        <td class="rank">10</td>
+        <td class="code">TPE:2344</td>
+        <td class="name">華邦電子（華邦電）</td>
+        <td class="ind">半導體業（記憶體）</td>
+        <td class="price">176.50</td>
+        <td class="chg down">▼ -2.75%</td>
+        <td class="kd">66.36 / 73.68</td>
+        <td class="yes">是</td>
+        <td class="no">否</td>
+        <td class="no">否</td>
+        <td class="cnt">66.82%</td>
+        <td class="cnt">0 週</td>
+        <td class="cnt">24.71%</td>
+        <td class="cnt ok">1 週</td>
+        <td class="no">否<br><span class="warn">月161.3↗ &lt; 季171.6↗（半138.4↗／年100.7↗）</span></td>
+        <td class="ok">4/4 · <span class="yes">true</span></td>
+        <td class="ok">3/4 · <span class="yes">true</span></td>
+        <td class="ok">3/4 · <span class="yes">true</span></td>
+        <td class="cmt">當日跌幅 -2.75% 為 TOP10 最大，K 值已明顯低於 D（差距 -7.32）且持續下彎，短線修正壓力較重；基本面三項條件皆達標，量價與指標背離值得留意。</td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+  <footer>
+    <h2>資料來源與方法論說明</h2>
+
+    <h3>一、資料來源</h3>
+    <ul>
+      <li><b>TOP1~TOP10 股票代碼：</b>使用者 Google Drive 試算表「StockList」之「TOP」分頁（gid=0），採 2026/8/18 該列資料。</li>
+      <li><b>股票名稱／產業別：</b>WebSearch 公開資料查證（財報狗、鉅亨網、Goodinfo! 等），並與 Goodinfo 個股頁標題交叉核對。</li>
+      <li><b>收盤價、漲跌幅、KD：</b>臺灣證券交易所（TWSE）官方每日交易資料 API
+          <code>rwd/zh/afterTrading/STOCK_DAY</code>，抓取 2026/06、2026/07、2026/08 三個月共 55 個交易日之開高低收，
+          由本報表自行計算 KD。10 檔皆有 TWSE 資料（均為上市股），未使用 TPEx 上櫃 API。</li>
+      <li><b>大戶／散戶持股比例與連買週數：</b>Goodinfo! 台灣股市資訊網「股東持股分級變化（週）」
+          <code>EquityDistributionClassHis.asp?CHT_CAT=WEEK</code>，取最近 20 週。本次最新完整週別為 26W33（統計日 2026/08/14）。</li>
+      <li><b>均線落點與走勢箭頭：</b>Goodinfo! <code>StockDetail.asp</code> 之「均線落點」表（08/18 資料）。</li>
+      <li><b>單季營益率／營收／EPS：</b>Goodinfo! <code>StockBzPerformance.asp?RPT_CAT=M_QUAR</code> 單季經營績效（合併報表），
+          取營業收入、獲利率%之營業利益欄、稅後 EPS，並自動排除數值為「-」之尚未公告季度。</li>
+    </ul>
+
+    <h3>二、KD 指標定義</h3>
+    <ul>
+      <li>參數為 <b>KD(9,3,3)</b>：RSV = (當日收盤 − 近9日最低) ÷ (近9日最高 − 近9日最低) × 100。</li>
+      <li>K = ⅔ × 前一日K + ⅓ × RSV；D = ⅔ × 前一日D + ⅓ × 當日K。<b>初始值 K = D = 50</b>。</li>
+      <li><b>K&gt;50</b>：K 值大於 50，代表位於中線之上。<b>K&gt;D</b>：當日 K 值大於 D 值，屬多頭排列。</li>
+      <li><b>KD 黃金交叉</b>：定義為「前一交易日 K ≦ D（死叉狀態）且當日 K &gt; D」，即由死叉翻轉為黃金交叉的當日。
+          若前一日已呈 K&gt;D，雖然當日仍為多頭排列，但不計為新的黃金交叉。</li>
+    </ul>
+
+    <h3>三、大戶／散戶定義</h3>
+    <ul>
+      <li><b>大戶持股比例</b>＝「＞800張~≦1千張」＋「＞1千張」兩級持股比例加總。</li>
+      <li><b>散戶持股比例</b>＝「≦10張」＋「＞10張~≦50張」兩級持股比例加總。</li>
+      <li><b>連買週數</b>：由最新週往前逐週比較，計算連續幾週該比例較「前一週」增加；若最新週較前一週減少或持平，則記為 0 週。</li>
+      <li>股權分散資料為週頻資料且集保公告有時間落差，統計日（2026/08/14）與目標日期（2026/08/18）不同屬正常現象。</li>
+    </ul>
+
+    <h3>四、均線多頭排列（ma_bull）定義</h3>
+    <ul>
+      <li>同時滿足兩項條件才判定為「是」：
+        <ol>
+          <li>數值排列：<b>月線 &gt; 季線 &gt; 半年線 &gt; 年線</b>；</li>
+          <li>走勢方向：四條均線之 Goodinfo 走勢箭頭<b>皆為 ↗（向上）</b>。</li>
+        </ol>
+      </li>
+      <li>若排列不符、或任一均線箭頭為 ↘（向下）／→（走平），即判定為「否」。</li>
+      <li>若掛牌時間過短、缺半年線或年線資料，標示「資料不足」並保守視為「否」。本次 10 檔均有完整四線資料，無資料不足情形。</li>
+    </ul>
+
+    <h3>五、營益率／營收／EPS 三條件定義（近4季達標判斷）</h3>
+    <ul>
+      <li>取最近 <b>4 個「已公告」</b>單季財報（自動排除數值為「-」之未公告季度），逐季判斷：
+        <ul>
+          <li><b>營益率條件：</b>該季單季營業利益率 &gt; 10%。</li>
+          <li><b>營收條件：</b>該季營業收入較<b>去年同一季</b>成長 &gt; 20%。</li>
+          <li><b>EPS 條件：</b>該季稅後 EPS 較<b>去年同一季</b>成長 &gt; 10%。</li>
+        </ul>
+      </li>
+      <li>各項以「x/4」記錄近4季達標季數；<b>達標 ≧ 3 季</b>時對應布林欄位（op_margin_ok／rev_ok／eps_ok）為 <b>true</b>，否則為 false。</li>
+      <li><b>基期過小提醒：</b>當去年同期 EPS 絕對值小於 0.1 元（或營收基期為 0／極小）時，換算成長率會產生數百至數千 % 的失真數值。
+          本報表<b>不隱藏、不略過</b>這類極端值，但會於該欄加註「基期過小，數值參考性低」，提醒以絕對金額而非成長率判讀。
+          此提醒僅為文字說明，<b>不影響</b> true/false 的機械判定結果。</li>
+    </ul>
+
+    <h3>六、顏色慣例與其他說明</h3>
+    <ul>
+      <li>本報表所有漲跌相關顏色一律採<b>台股慣例：上漲為紅色、下跌為綠色</b>（紅漲綠跌），未採用西式漲綠跌紅配色。</li>
+      <li>表格標題列為綠色底、「排名」欄為淺綠色底、「股票代碼」欄為淺藍色底。</li>
+      <li>五項訊號（KD黃金交叉、均線多頭、營益率&gt;10%、營收年增&gt;20%、EPS年增&gt;10%）在本 HTML 報表中<b>無論是否達標皆完整顯示文字狀態</b>，不做隱藏，以便逐項查閱。
+          （社群圖卡則採「僅顯示達標訊號」規則，兩者呈現規則不同。）</li>
+      <li>「客觀技術面短評」為依據本表所列 KD 數值與當日漲跌幅機械生成之中性描述，非任何個人觀點或投資建議。</li>
+    </ul>
+
+    <div class="disclaim">
+      <b>免責聲明：</b>本報表所有數據均取自 TWSE／TPEx／Goodinfo! 台灣股市資訊網等公開資料來源，
+      僅供研究與資料整理參考，<b>不構成任何投資建議、買賣推薦或收益保證</b>。
+      公開資料可能存在更新落差或誤差，投資決策請自行查證原始資料並自負盈虧風險。
+      本報表由排程自動產出，撰述者非證券投資顧問或分析師。
+    </div>
+
+    <p style="margin-top:14px;color:#6b7280;font-size:12px;">
+      艾倫報報 ALLEN I³ AURORA · StockRadar TOP 10 · 目標日期 2026-08-18（星期二）· 執行時間 2026-08-19 00:04（台北時間）
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
