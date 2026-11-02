@@ -140,30 +140,110 @@ firebase deploy --only firestore:rules
 **方式 C — GitHub Actions 自動部署（一次設定，之後全自動）**
 
 `.github/workflows/firestore-rules-deploy.yml` 會在 `firebase/firestore.rules` 合併進 `main` 時
-自動部署，也可在 Actions 頁面手動觸發。只需一次性設定 Secret：
-
-1. [Google Cloud Console](https://console.cloud.google.com/) → 頂端專案選單切到 **alleni3aurora**
-   （注意：是 Firebase 的專案，**不是** `alleni3aurora-drive`；Drive 那把金鑰沒有部署權限）。
-2. **IAM 與管理 → 服務帳戶 → 建立服務帳戶**，名稱例如 `rules-deployer`。
-3. 角色只需 **1 個**：**Firebase Rules Admin（Firebase 規則管理員，`roles/firebaserules.admin`）**。
-   部署腳本 `scripts/firebase/deploy-rules.mjs` 直接呼叫 Firebase Rules REST API（建立 ruleset →
-   把 `cloud.firestore` release 指向它），不經 firebase-tools，因此不需要 Firebase 檢視者／
-   Datastore 索引管理員／Service Usage 消費者這些 IAM 預檢角色（舊版 SOP 曾要求 4 個；多給無妨）。
-
-   > 已建立過服務帳戶、只差角色時：**IAM 與管理 → IAM** → 找到 `rules-deployer@…` →
-   > 鉛筆圖示 → 新增角色 → 儲存，**不需重新產生金鑰或更新 GitHub Secret**。
-   > 若同時跑社群發文排程，另需 `roles/datastore.user`（見 docs/SOCIAL_SOP.md 第三節）。
-   > 失敗時 Actions run 頂端會有「Firestore 規則部署失敗」annotation：HTTP 403 → 金鑰所屬帳戶沒有
-   > Rules Admin（或 Secret 貼的是別把金鑰）；HTTP 400 → 規則語法錯誤，訊息附行號。
-4. 點該服務帳戶 → **金鑰(KEYS) → 新增金鑰 → JSON**，下載金鑰檔。
-5. GitHub Repo → **Settings → Secrets and variables → Actions → New repository secret**：
-   - Name：`FIREBASE_SERVICE_ACCOUNT`（一字不差）
-   - Secret：貼上金鑰 JSON 全文。
-6. Repo → **Actions → 部署 Firestore 安全規則 → Run workflow**，跑一次確認綠燈；
-   之後規則有變更合併進 `main` 就會自動部署，不需再手動處理。
+自動部署，也可在 Actions 頁面手動觸發。部署腳本 `scripts/firebase/deploy-rules.mjs` 直接呼叫
+Firebase Rules REST API（建立 ruleset → 把 `cloud.firestore` release 指向它），不經 firebase-tools，
+因此服務帳戶只需 **Firebase Rules Admin（`roles/firebaserules.admin`）** 一個角色。
+完整的 Secret／IAM 設定與部署 SOP 見下一節 **6-1**。
 
 > ⚠️ **這一步不可省略。** 在 Firestore 建立資料庫時選「正式版 / Production mode」，其預設規則會**拒絕所有讀寫**；
 > 未把本專案規則發布上去，後台任何寫入都會出現 **Missing or insufficient permissions**。
+
+## 6-1. Secret／IAM 設定後部署規則 SOP（方式 C 詳細版）
+
+適用時機：Actions「部署 Firestore 安全規則」出現 **HTTP 403「The caller does not have permission」**、
+首次設定、或要更換 `FIREBASE_SERVICE_ACCOUNT` 金鑰時。全程約 10 分鐘，不影響線上網站。
+
+### 6-1-0. 先弄清楚「這把 Secret 是誰、誰在用」
+
+`FIREBASE_SERVICE_ACCOUNT` **不只給規則部署用**。下列 7 支 workflow 共用同一把金鑰，透過 firebase-admin
+讀寫 Firestore：
+
+| Workflow | 用途 | 需要的角色 |
+| --- | --- | --- |
+| `firestore-rules-deploy.yml` | 部署安全規則 | Firebase Rules Admin |
+| `newsletter-send.yml` | 寄本期電子報 | Cloud Datastore 使用者 |
+| `subscriber-mail.yml` | 確認信／歡迎信 | Cloud Datastore 使用者 |
+| `social-publish.yml` | PilotOne 發文／YouTube 上傳 | Cloud Datastore 使用者 |
+| `social-insights.yml` | 社群成效同步 | Cloud Datastore 使用者 |
+| `schedule-monitor.yml` | 排程監控 | Cloud Datastore 使用者 |
+| `youtube-sync.yml` | YouTube 頻道同步 | Cloud Datastore 使用者 |
+
+（`GDRIVE_SERVICE_ACCOUNT` 是另一把，給 `daily-update`／`focus-update` 讀 Drive，與本節無關。）
+
+**所以無論走哪條路，最後持有金鑰的服務帳戶都必須同時有這 2 個角色：**
+
+| 角色 | ID | 用途 |
+| --- | --- | --- |
+| Firebase Rules Admin（Firebase 規則管理員） | `roles/firebaserules.admin` | 規則部署 |
+| Cloud Datastore 使用者 | `roles/datastore.user` | 其他 6 支排程讀寫 Firestore |
+
+**查目前金鑰是誰的**：Actions → 任一次「部署 Firestore 安全規則」run → Summary 頂端 annotation
+`部署身分：服務帳戶 xxx@alleni3aurora.iam.gserviceaccount.com（金鑰所屬專案 …）`。
+失敗時「Firestore 規則部署失敗」annotation 末尾會列「已有 […]；缺少 […]」的 firebaserules 權限。
+
+### 6-1-1. 二選一
+
+| | 方案 A：現有帳戶補角色（建議） | 方案 B：換成 `rules-deployer` 的金鑰 |
+| --- | --- | --- |
+| 動作 | IAM 加 1 個角色 | IAM 加 2 個角色＋建金鑰＋更新 Secret |
+| 風險 | 無（Secret 不動） | Secret 換錯／角色漏給 → 6 支排程一起 403 |
+| 適合 | 只想讓部署通過 | 想把「規則部署」與「排程讀寫」收斂到專用帳戶 |
+
+> 兩案的 IAM 操作都在 **[Google Cloud Console](https://console.cloud.google.com/) → 頂端專案選單切到 `alleni3aurora`**（Firebase 的專案，**不是** `alleni3aurora-drive`）。
+
+#### 方案 A：補角色給現有金鑰的帳戶
+
+1. 從 6-1-0 的 annotation 抄下服務帳戶 Email（例如 `drive-reader@alleni3aurora.iam.gserviceaccount.com`）。
+2. GCP Console → **IAM 與管理 → IAM** → 在清單找到該 Email（找不到就按「授予存取權」，主體貼該 Email）。
+3. 鉛筆「編輯主體」→ **新增其他角色** → 搜尋 `Firebase Rules Admin` 選取 → **儲存**。
+4. 確認同一列的角色也含 **Cloud Datastore 使用者**（既有排程本來就在跑的話一定有）。
+5. 跳到 6-1-2 部署。**不需**重新產生金鑰或更新 GitHub Secret。
+
+#### 方案 B：改用 `rules-deployer` 的金鑰
+
+1. **補角色**：IAM 與管理 → IAM → 找 `rules-deployer@alleni3aurora.iam.gserviceaccount.com`（沒有 → 先到「服務帳戶」建立，名稱 `rules-deployer`）→ 編輯主體 → 確認同時有 **Firebase Rules Admin** 與 **Cloud Datastore 使用者** → 儲存。
+2. **建金鑰**：IAM 與管理 → **服務帳戶** → 點 `rules-deployer` → **金鑰** 分頁 → **新增金鑰 → 建立新的金鑰 → JSON → 建立**，瀏覽器下載 `alleni3aurora-xxxx.json`。
+3. **更新 Secret**：GitHub repo → **Settings → Secrets and variables → Actions** → `FIREBASE_SERVICE_ACCOUNT` 右側鉛筆 **Update** → 用文字編輯器開啟 JSON，**全選整段貼上**（含最外層 `{ }`，不是只貼 `private_key`）→ **Update secret**。
+4. 本機 JSON 檔用完即刪；舊金鑰等 6-1-3 全部驗證通過後，再回「服務帳戶 → 金鑰」把舊帳戶（drive-reader）那把**停用或刪除**。
+
+### 6-1-2. 部署規則
+
+1. 確認 `main` 上的 `firebase/firestore.rules` 檔頭版次（`規則版次：rN`）大於目前線上版（Firebase Console → Firestore → 規則 可看）；PR 流程已強制遞增，一般不需手動改。
+2. GitHub → **Actions** → 左側 **部署 Firestore 安全規則** → 右上 **Run workflow** → branch `main` → **Run workflow**。
+3. 等約 1 分鐘，點進該 run 看三個判讀點：
+   - Summary annotation **`部署身分`**：服務帳戶 Email 是你預期的那個（方案 B 應顯示 `rules-deployer@…`）。
+   - 步驟「規則編譯檢查（dry-run）」印出 `dry-run：規則編譯通過`。
+   - 步驟「部署」印出 **`✔ Firestore 規則已部署：projects/alleni3aurora/releases/cloud.firestore`**。
+4. Firebase Console → Firestore → **規則** 分頁，檔頭版次與 `main` 一致即完成。
+
+> IAM 角色變更偶爾需 1–2 分鐘生效；剛改完就跑而 403，等一下按 **Re-run jobs** 即可。
+
+### 6-1-3. 驗證其他排程沒被影響（方案 B 必做；方案 A 可略）
+
+Actions 手動 **Run workflow** 下列任一支，綠燈即代表 `datastore.user` 到位：
+- **排程監控**（`schedule-monitor`，最快、冪等）或 **社群自動發文**（`social-publish`，佇列空時只是 no-op）。
+- 之後 10 分鐘內 `subscriber-mail`／`social-publish` 的定時 run 也應維持綠燈；若出現
+  `PERMISSION_DENIED: Missing or insufficient permissions` 代表金鑰帳戶缺 Cloud Datastore 使用者，回 6-1-1 補。
+
+### 6-1-4. 部署後的應用
+
+- 規則 r12 以後包含 `aurora_vlog_episodes`（Vlog）與 `aurora_youtube*`；部署成功後到後台 `admin/#vlog`
+  按「⬆ 匯入系列 JSON（冰島 12 集）」，再進各集「素材與影音」／「影片預覽」編修。
+- 之後凡 `firebase/firestore.rules` 變更合併進 `main`，workflow 會自動部署，不需再手動跑。
+
+### 6-1-5. 疑難排解
+
+| 症狀（Actions annotation） | 原因 | 處理 |
+| --- | --- | --- |
+| `HTTP 403 … 缺少 [firebaserules.rulesets.create, …]` | 金鑰帳戶沒有 Firebase Rules Admin | 6-1-1 方案 A 步驟 3 |
+| `testIamPermissions HTTP 403`／`專案不存在` | 金鑰屬於別的專案（如 `alleni3aurora-drive`）或帳戶在 `alleni3aurora` 完全沒角色 | 看 `部署身分` 的「金鑰所屬專案」；改用 `alleni3aurora` 內帳戶的金鑰，或在 `alleni3aurora` IAM 加該 Email |
+| `金鑰專案不符` warning | 同上 | 同上 |
+| `FIREBASE_SERVICE_ACCOUNT 不是合法 JSON` | Secret 只貼了部分／多了引號 | 重新貼 JSON 全文 |
+| `取得 access token 失敗 … invalid_grant` | 金鑰已被刪除／停用，或系統時間偏差 | 重新建金鑰並更新 Secret |
+| `HTTP 400 … L12:5 …` | 規則語法錯誤（附行號） | 修 `firestore.rules`、版次 +1 後重新合併 |
+| 版次檢查步驟失敗 | 檔頭 `規則版次：rN` 未遞增 | 依 CLAUDE.md 規則 +1 並更新「最後更新」 |
+| 規則部署成功但其他排程 403 | 金鑰帳戶缺 Cloud Datastore 使用者 | 6-1-1 方案 B 步驟 1 |
+
 
 ## 7. 初始化資料
 
