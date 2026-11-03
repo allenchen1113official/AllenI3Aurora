@@ -1,9 +1,9 @@
 {
-  "date": "2026.11.02",
-  "dateLabel": "2026.11.02（最新）",
-  "asOf": "2026.11.03",
-  "desc": "今日 TOP 10：長榮2603…",
-  "summary": "今日 TOP 10：長榮2603、萬海2615、陽明2609、華航2610、長榮航2618、晶豪科3006、聯詠3034、系統電5309、嘉基6715、台泥1101。，・KD黃金交叉：萬海、陽明、華航、長榮航（前一日K≦D，今日KD），・均線多頭排…",
+  "date": "2026.11.03",
+  "dateLabel": "2026.11.03（最新）",
+  "asOf": "2026.11.04",
+  "desc": "【台股選股雷達 2026-11-03…",
+  "summary": "【台股選股雷達 2026-11-03（二）TOP 10】，今日排行前10：長榮2603、萬海2615、台泥1101、長榮航2618、系統電5309、陽明2609、藥華藥6446、嘉基6715、上品4770、華航2610。，航運股占多數，但今日多數收…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -36,105 +36,81 @@
     {
       "code": "2603",
       "name": "長榮",
-      "changePct": "+1.10%",
-      "up": true,
-      "signals": [
-        "ma",
-        "om"
-      ]
+      "changePct": "-2.91%",
+      "up": false,
+      "signals": []
     },
     {
       "code": "2615",
       "name": "萬海",
-      "changePct": "-0.42%",
-      "up": false,
-      "signals": [
-        "gc",
-        "ma",
-        "om"
-      ]
-    },
-    {
-      "code": "2609",
-      "name": "陽明",
-      "changePct": "+0.79%",
-      "up": true,
-      "signals": [
-        "gc",
-        "ma"
-      ]
-    },
-    {
-      "code": "2610",
-      "name": "華航",
-      "changePct": "+2.48%",
-      "up": true,
-      "signals": [
-        "gc"
-      ]
-    },
-    {
-      "code": "2618",
-      "name": "長榮航",
-      "changePct": "+1.05%",
-      "up": true,
-      "signals": [
-        "gc",
-        "om"
-      ]
-    },
-    {
-      "code": "3006",
-      "name": "晶豪科",
-      "changePct": "-5.78%",
-      "up": false,
-      "signals": [
-        "om",
-        "rev",
-        "eps"
-      ]
-    },
-    {
-      "code": "3034",
-      "name": "聯詠",
-      "changePct": "-0.70%",
-      "up": false,
-      "signals": [
-        "ma",
-        "om"
-      ]
-    },
-    {
-      "code": "5309",
-      "name": "系統電",
-      "changePct": "+0.16%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6715",
-      "name": "嘉基",
-      "changePct": "-6.93%",
+      "changePct": "-3.35%",
       "up": false,
       "signals": []
     },
     {
       "code": "1101",
       "name": "台泥",
-      "changePct": "-0.88%",
+      "changePct": "-1.42%",
       "up": false,
-      "signals": [
-        "ma"
-      ]
+      "signals": []
+    },
+    {
+      "code": "2618",
+      "name": "長榮航",
+      "changePct": "+1.27%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "5309",
+      "name": "系統電",
+      "changePct": "-7.23%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "2609",
+      "name": "陽明",
+      "changePct": "-2.97%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "6446",
+      "name": "藥華藥",
+      "changePct": "+2.94%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "6715",
+      "name": "嘉基",
+      "changePct": "-10.00%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "4770",
+      "name": "上品",
+      "changePct": "-4.33%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "2610",
+      "name": "華航",
+      "changePct": "+0.24%",
+      "up": true,
+      "signals": []
     }
   ],
   "radar": {
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1u3fjw5Pn5p-U-qtEF0wzu64bWCYiQ9Uu&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1xOFM5UaN-Gle3xnOMlAsJTVpECrVbOdp&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/12DsXu6tgrUj3YPjpluSMeNM1mpW_ocWe/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1qMQHTOL6rNLf4W4xPVjK8fGQzAGbTStB/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-11-03T13:33:35.749Z"
+  "updatedAt": "2026-11-03T20:45:15.324Z"
 }

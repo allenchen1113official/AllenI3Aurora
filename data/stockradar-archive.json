@@ -1,5 +1,17 @@
 [
   {
+    "no": "stockradar-20261102",
+    "kind": "選股",
+    "date": "2026.11.02",
+    "tone": "intelligence",
+    "title": "台股選股雷達 · TOP 10 訊號排行｜2026.11.02",
+    "desc": "今日 TOP 10：長榮2603…",
+    "cover": "https://drive.google.com/thumbnail?id=1u3fjw5Pn5p-U-qtEF0wzu64bWCYiQ9Uu&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1u3fjw5Pn5p-U-qtEF0wzu64bWCYiQ9Uu&sz=w1600",
+    "summary": "今日 TOP 10：長榮2603、萬海2615、陽明2609、華航2610、長榮航2618、晶豪科3006、聯詠3034、系統電5309、嘉基6715、台泥1101。，・KD黃金交叉：萬海、陽明、華航、長榮航（前一日K≦D，今日KD），・均線多頭排…",
+    "items": 10
+  },
+  {
     "no": "stockradar-20261030",
     "kind": "選股",
     "date": "2026.10.30",
