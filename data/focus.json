@@ -6,7 +6,7 @@
       "title": "台股盤前速報",
       "desc": "反彈條件具備，賣壓尚未收手…",
       "summary": "反彈條件具備，賣壓尚未收手。，外資四個交易日賣超 3,621 億、台指期淨空單升至 9.18 萬口，但上一美股交易日費半勁揚 2.63%、夜盤台指期回升逾 400 點，今日的分歧在於落後補漲的技術性反彈能否壓過仍未收手的外資賣壓。，上一交易日（11…",
-      "meta": "2026.11.04 · 盤前速報",
+      "meta": "2026.11.04 · 盤前速報（最新）",
       "icon": "bell",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/prebrief.html"
     },
@@ -16,7 +16,7 @@
       "title": "台股熱力圖 · 上市／上櫃",
       "desc": "【上市 社群貼文文案 2026-11…",
       "summary": "【上市 社群貼文文案 2026-11-04（三）】，（圖為2026/11/04交易日收盤；個股漲跌幅為Yahoo股市收盤查證，少數個股為同類股模擬值），加權指數收42,948.91點、跌358.63點（-0.83%），盤中一度震盪逾1,800點，外…",
-      "meta": "2026.11.04 · 市值熱力圖",
+      "meta": "2026.11.04 · 市值熱力圖（最新）",
       "icon": "chart",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
     },
@@ -26,7 +26,7 @@
       "title": "台股選股雷達",
       "desc": "今日TOP10：長榮、台泥、陽明…",
       "summary": "今日TOP10：長榮、台泥、陽明、上品、嘉基、華航、藥華藥、雍智、長榮航、禾伸堂。，・KD黃金交叉：6683雍智，・均線多頭排列（月季半年年）：2603 長榮、1101 台泥、2609 陽明、4770 上品，・營益率10%（近4季達標≥3季）：長榮…",
-      "meta": "2026.11.04 · 訊號雷達",
+      "meta": "2026.11.04 · 訊號雷達（最新）",
       "icon": "compass",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html"
     },
@@ -41,6 +41,6 @@
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/daily.html"
     }
   ],
-  "asOf": "2026.11.04",
-  "updatedAt": "2026-11-04T15:45:02.970Z"
+  "asOf": "2026.11.05",
+  "updatedAt": "2026-11-04T19:18:14.150Z"
 }
