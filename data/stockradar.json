@@ -1,9 +1,9 @@
 {
-  "date": "2026.11.04",
-  "dateLabel": "2026.11.04（最新）",
-  "asOf": "2026.11.05",
-  "desc": "今日TOP10：長榮、台泥、陽明…",
-  "summary": "今日TOP10：長榮、台泥、陽明、上品、嘉基、華航、藥華藥、雍智、長榮航、禾伸堂。，・KD黃金交叉：6683雍智，・均線多頭排列（月季半年年）：2603 長榮、1101 台泥、2609 陽明、4770 上品，・營益率10%（近4季達標≥3季）：長榮…",
+  "date": "2026.11.05",
+  "dateLabel": "2026.11.05（最新）",
+  "asOf": "2026.11.06",
+  "desc": "今日TOP10：1476儒鴻…",
+  "summary": "今日TOP10：1476儒鴻、6715嘉基、2603長榮、2610華航、2615萬海、2618長榮航、3624光頡、6683雍智、1101台泥、2034允強。，航運族群（長榮、華航、萬海、長榮航）同列榜上；儒鴻出現KD黃金交叉，光頡、雍智、嘉基當日…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,6 +34,22 @@
   ],
   "top10": [
     {
+      "code": "1476",
+      "name": "儒鴻",
+      "changePct": "+73.2%",
+      "up": true,
+      "signals": [
+        "gc"
+      ]
+    },
+    {
+      "code": "6715",
+      "name": "嘉基",
+      "changePct": "+70.1%",
+      "up": true,
+      "signals": []
+    },
+    {
       "code": "2603",
       "name": "長榮",
       "changePct": "+73.7%",
@@ -41,6 +57,45 @@
       "signals": [
         "ma"
       ]
+    },
+    {
+      "code": "2610",
+      "name": "華航",
+      "changePct": "+71.7%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "2615",
+      "name": "萬海",
+      "changePct": "+87.4%",
+      "up": true,
+      "signals": [
+        "ma"
+      ]
+    },
+    {
+      "code": "2618",
+      "name": "長榮航",
+      "changePct": "+81.5%",
+      "up": true,
+      "signals": [
+        "ma"
+      ]
+    },
+    {
+      "code": "3624",
+      "name": "光頡",
+      "changePct": "+45.3%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "6683",
+      "name": "雍智",
+      "changePct": "+14.6%",
+      "up": true,
+      "signals": []
     },
     {
       "code": "1101",
@@ -52,64 +107,9 @@
       ]
     },
     {
-      "code": "2609",
-      "name": "陽明",
-      "changePct": "+64.1%",
-      "up": true,
-      "signals": [
-        "ma"
-      ]
-    },
-    {
-      "code": "4770",
-      "name": "上品",
-      "changePct": "+63.5%",
-      "up": true,
-      "signals": [
-        "ma"
-      ]
-    },
-    {
-      "code": "6715",
-      "name": "嘉基",
-      "changePct": "+70.1%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "2610",
-      "name": "華航",
-      "changePct": "+71.7%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6446",
-      "name": "23.0%",
-      "changePct": "+45.8%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6683",
-      "name": "雍智",
-      "changePct": "+14.6%",
-      "up": true,
-      "signals": [
-        "gc"
-      ]
-    },
-    {
-      "code": "2618",
-      "name": "長榮航",
-      "changePct": "+81.5%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "3026",
-      "name": "禾伸堂",
-      "changePct": "+42.5%",
+      "code": "2034",
+      "name": "允強",
+      "changePct": "",
       "up": true,
       "signals": []
     }
@@ -118,9 +118,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1wOtyslw8sGhfJQwN9Ecm_E4ZKAPC4YBV&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1Yk05SMWXqNwCYZbFwMvXNmiGp38leRPG&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/15eTqiM31ebcp-_dD3DvxxT2maCbw2JEB/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1EW5gUPnzjkiNbLmgYQ7on8D-xU9PphGb/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-11-05T10:17:35.208Z"
+  "updatedAt": "2026-11-05T16:44:17.057Z"
 }
