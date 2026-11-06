@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261105",
+    "kind": "熱力圖",
+    "date": "2026.11.05",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.11.05",
+    "cover": "https://drive.google.com/thumbnail?id=1CcwXZn7AdjAF3Uvfo-ANB2ryoDocATB7&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1CcwXZn7AdjAF3Uvfo-ANB2ryoDocATB7&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1CcwXZn7AdjAF3Uvfo-ANB2ryoDocATB7&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1xR6VdA8IkQge-KxykzjXRQx83ki5dOpM&sz=w1600",
+    "summary": "今天台股大跌1,374點，收在41,574.72點（-3.20%）。電子、半導體成了重災區：聯發科 -6.86%、日月光投控 -8.77%、廣達 -0.83%、台積電相對抗跌 -0.88%；反觀金融股逆勢翻紅，中信金 +2.32%、華南金 +1.1…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261104",
     "kind": "熱力圖",
     "date": "2026.11.04",
