@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261106",
+    "kind": "熱力圖",
+    "date": "2026.11.06",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.11.06",
+    "cover": "https://drive.google.com/thumbnail?id=1uwidwx45Td68PgnjpoWteiJAfE55SV2w&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1uwidwx45Td68PgnjpoWteiJAfE55SV2w&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1uwidwx45Td68PgnjpoWteiJAfE55SV2w&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1m1I7IJqH7OdAVh3iXLg_P0vSHgWMdsaf&sz=w1600",
+    "summary": "【台股上市熱力圖 2026-11-06 貼文文案】，（個股漲跌幅已用Yahoo股市收盤價查證；未查證個股為同類股模擬值），加權指數收39,701.64點，單日重挫1,873點（-4.51%），失守4萬點。外部壓力來自前一晚美股科技股暴跌（那斯達克-…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261105",
     "kind": "熱力圖",
     "date": "2026.11.05",
