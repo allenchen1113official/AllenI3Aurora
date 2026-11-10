@@ -1,9 +1,9 @@
 {
-  "date": "2026.11.09",
-  "dateLabel": "2026.11.09（最新）",
+  "date": "2026.11.10",
+  "dateLabel": "2026.11.10",
   "asOf": "2026.11.10",
-  "desc": "今日 TOP10：6426統新…",
-  "summary": "今日 TOP10：6426統新、2034允強、2618長榮航、6913鴻呈、6715嘉基、8422可寧衛、2615萬海、6620漢達、2379瑞昱、3006晶豪科。，KD黃金交叉：2034允強、8422可寧衛、6620漢達。均線多頭：2618長榮航…",
+  "desc": "今日排行前10名依序為:允強、鴻呈…",
+  "summary": "今日排行前10名依序為:允強、鴻呈、定穎投控、長榮、統新、雍智科技、同欣電、漢達、南亞、萬海。，・KD黃金交叉:萬海(2615)、統新(6426)，・均線多頭排列(月季半年年皆向上):長榮(2603)，・營益率10%、營收年增20%、EPS年增10…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,87 +34,89 @@
   ],
   "top10": [
     {
-      "code": "6426",
-      "name": "統新",
-      "changePct": "",
-      "up": true,
-      "signals": []
-    },
-    {
       "code": "2034",
-      "name": "允強",
-      "changePct": "",
+      "name": "未逐一查證",
+      "changePct": "+5.11%",
       "up": true,
       "signals": []
     },
     {
-      "code": "2618",
-      "name": "長榮航",
-      "changePct": "",
+      "code": "6913",
+      "name": "未逐一查證",
+      "changePct": "+2.69%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "3715",
+      "name": "未逐一查證",
+      "changePct": "+9.68%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "2603",
+      "name": "長榮",
+      "changePct": "+4.07%",
       "up": true,
       "signals": [
         "ma"
       ]
     },
     {
-      "code": "6913",
-      "name": "鴻呈",
-      "changePct": "",
+      "code": "6426",
+      "name": "未逐一查證",
+      "changePct": "+9.92%",
+      "up": true,
+      "signals": [
+        "gc"
+      ]
+    },
+    {
+      "code": "6683",
+      "name": "未逐一查證",
+      "changePct": "+8.37%",
       "up": true,
       "signals": []
     },
     {
-      "code": "6715",
-      "name": "嘉基",
-      "changePct": "",
+      "code": "6271",
+      "name": "未逐一查證",
+      "changePct": "+10.00%",
       "up": true,
       "signals": []
     },
     {
-      "code": "8422",
-      "name": "可寧衛*",
-      "changePct": "",
+      "code": "6620",
+      "name": "未逐一查證",
+      "changePct": "+9.61%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "1303",
+      "name": "南亞",
+      "changePct": "+9.89%",
       "up": true,
       "signals": []
     },
     {
       "code": "2615",
       "name": "萬海",
-      "changePct": "",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6620",
-      "name": "漢達",
-      "changePct": "",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "2379",
-      "name": "瑞昱",
-      "changePct": "",
+      "changePct": "+4.21%",
       "up": true,
       "signals": [
-        "ma"
+        "gc"
       ]
-    },
-    {
-      "code": "3006",
-      "name": "晶豪科",
-      "changePct": "",
-      "up": true,
-      "signals": []
     }
   ],
   "radar": {
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1aXEMmARxLwbdxRKFsU5WeuBQfeqlMs9l&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=13kCxK8rgbJXy5i3EjyOZJNgZO33DffT8&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1fDSawj24Dd6OA89bvYZa-WlilTTDRdBt/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/17r-HWJRalr9VdhC3g9wLhd8JTenrJ91f/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-11-10T10:25:23.068Z"
+  "updatedAt": "2026-11-10T14:15:08.830Z"
 }
