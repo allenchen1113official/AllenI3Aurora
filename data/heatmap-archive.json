@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261109",
+    "kind": "熱力圖",
+    "date": "2026.11.09",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.11.09",
+    "cover": "https://drive.google.com/thumbnail?id=1qfRDI9VAxLJ8XguROsmN64mYQ7f8hVMP&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1qfRDI9VAxLJ8XguROsmN64mYQ7f8hVMP&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1qfRDI9VAxLJ8XguROsmN64mYQ7f8hVMP&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1NijmpyO539Rn5A3SLYvyebGM284HMNC8&sz=w1600",
+    "summary": "【上市熱力圖貼文文案 交易日 2026-11-09】，（資料：Yahoo奇摩股市收盤價，個股漲跌幅依（成交−昨收）/昨收自行計算），加權指數暴衝 1,960.06 點、收 41,661.70（+4.94%），上市櫃共 237 檔漲停，電子權值股全面…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261106",
     "kind": "熱力圖",
     "date": "2026.11.06",
