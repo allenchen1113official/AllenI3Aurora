@@ -1,9 +1,9 @@
 {
-  "date": "2026.11.10",
-  "dateLabel": "2026.11.10（最新）",
-  "asOf": "2026.11.11",
-  "desc": "今日排行前10名依序為:允強、鴻呈…",
-  "summary": "今日排行前10名依序為:允強、鴻呈、定穎投控、長榮、統新、雍智科技、同欣電、漢達、南亞、萬海。，・KD黃金交叉:萬海(2615)、統新(6426)，・均線多頭排列(月季半年年皆向上):長榮(2603)，・營益率10%、營收年增20%、EPS年增10…",
+  "date": "2026.11.11",
+  "dateLabel": "2026.11.11（最新）",
+  "asOf": "2026.11.12",
+  "desc": "今日排行：允強(2034)…",
+  "summary": "今日排行：允強(2034)、定穎投控(3715)、嘉基(6715)、南亞(1303)、台化(1326)、精確(3162)、大城地產(6171)、漢達(6620)、台泥(1101)、瑞昱(2379)。，・10 檔中 9 檔收紅，嘉基(+9.94%)、…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -35,78 +35,94 @@
   "top10": [
     {
       "code": "2034",
-      "name": "未逐一查證",
-      "changePct": "+5.11%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6913",
-      "name": "未逐一查證",
-      "changePct": "+2.69%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "3715",
-      "name": "未逐一查證",
-      "changePct": "+9.68%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "2603",
-      "name": "長榮",
-      "changePct": "+4.07%",
+      "name": "允強",
+      "changePct": "+48.79%",
       "up": true,
       "signals": [
         "ma"
       ]
     },
     {
-      "code": "6426",
-      "name": "未逐一查證",
-      "changePct": "+9.92%",
+      "code": "3715",
+      "name": "定穎投控",
+      "changePct": "+22.06%",
       "up": true,
       "signals": [
-        "gc"
+        "rev"
       ]
     },
     {
-      "code": "6683",
-      "name": "未逐一查證",
-      "changePct": "+8.37%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6271",
-      "name": "未逐一查證",
-      "changePct": "+10.00%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "6620",
-      "name": "未逐一查證",
-      "changePct": "+9.61%",
+      "code": "6715",
+      "name": "嘉基",
+      "changePct": "+71.44%",
       "up": true,
       "signals": []
     },
     {
       "code": "1303",
       "name": "南亞",
-      "changePct": "+9.89%",
-      "up": true,
-      "signals": []
-    },
-    {
-      "code": "2615",
-      "name": "萬海",
-      "changePct": "+4.21%",
+      "changePct": "+83.68%",
       "up": true,
       "signals": [
-        "gc"
+        "ma",
+        "eps"
+      ]
+    },
+    {
+      "code": "1326",
+      "name": "台化",
+      "changePct": "+81.61%",
+      "up": true,
+      "signals": [
+        "eps"
+      ]
+    },
+    {
+      "code": "3162",
+      "name": "精確",
+      "changePct": "+58.70%",
+      "up": true,
+      "signals": [
+        "rev"
+      ]
+    },
+    {
+      "code": "6171",
+      "name": "大城地產",
+      "changePct": "+82.08%",
+      "up": true,
+      "signals": [
+        "om"
+      ]
+    },
+    {
+      "code": "6620",
+      "name": "漢達",
+      "changePct": "+52.20%",
+      "up": true,
+      "signals": [
+        "om",
+        "eps"
+      ]
+    },
+    {
+      "code": "1101",
+      "name": "台泥",
+      "changePct": "+52.37%",
+      "up": true,
+      "signals": [
+        "gc",
+        "ma"
+      ]
+    },
+    {
+      "code": "2379",
+      "name": "瑞昱",
+      "changePct": "+63.95%",
+      "up": true,
+      "signals": [
+        "gc",
+        "ma"
       ]
     }
   ],
@@ -114,9 +130,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=13kCxK8rgbJXy5i3EjyOZJNgZO33DffT8&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1pL9X2ro49IKxPEnLl4l6GI_hg_ApXBOD&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/17r-HWJRalr9VdhC3g9wLhd8JTenrJ91f/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1g85sTdc7e5h8CsZUGaA8ExyQKGjFuK_0/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-11-11T13:29:22.322Z"
+  "updatedAt": "2026-11-11T17:30:47.548Z"
 }
