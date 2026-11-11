@@ -14,6 +14,8 @@
    環境變數：
      GITHUB_TOKEN / GITHUB_REPOSITORY   Actions 內建（需 actions: write、issues: write）
      FIREBASE_SERVICE_ACCOUNT           服務帳戶 JSON（與社群發文共用；未設定時只做 2 以外的部分）
+     GDRIVE_SERVICE_ACCOUNT             Drive 唯讀服務帳戶（與今日關注動態共用）：讀 AllenI3Aurora Agent 巡檢報告
+                                        ops/agent/status_latest.json；未設定時 Claude 排程改以 data/*.json 新鮮度判斷
      MONITOR_DRY_RUN=1                  只評估並印出，不觸發、不開 Issue、不寫 Firestore
      MONITOR_ISSUES=off                 關閉 Issue 告警
      MONITOR_AUTOHEAL=off               關閉自動重試與補跑
@@ -23,7 +25,7 @@ import { readFileSync, readdirSync, existsSync, appendFileSync, writeFileSync } 
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as core from "./core.mjs";
-import { REPO, policyFor, DATA_CHECKS } from "./registry.mjs";
+import { REPO, policyFor, DATA_CHECKS, AGENT_REPORT } from "./registry.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const env = (k) => (process.env[k] || "").trim();
@@ -100,7 +102,28 @@ async function collect() {
     try { data[chk.file] = { json: JSON.parse(readFileSync(join(ROOT, chk.file), "utf8")) }; }
     catch (e) { data[chk.file] = { json: null, err: existsSync(join(ROOT, chk.file)) ? "JSON 解析失敗" : "檔案不存在" }; }
   }
-  return { workflows: list, data };
+  return { workflows: list, data, claudeAgent: await collectAgentReport() };
+}
+
+/* AllenI3Aurora Agent（Claude 排程）寫在 Drive 的巡檢報告；讀不到不影響其他監控 */
+async function collectAgentReport() {
+  const sa = env("GDRIVE_SERVICE_ACCOUNT");
+  if (!sa) { log("::notice::未設定 GDRIVE_SERVICE_ACCOUNT：Claude 排程改以 data/*.json 新鮮度判斷。"); return null; }
+  try {
+    const { google } = await import("googleapis");
+    const auth = new google.auth.GoogleAuth({ credentials: JSON.parse(sa), scopes: ["https://www.googleapis.com/auth/drive.readonly"] });
+    const drive = google.drive({ version: "v3", auth });
+    const res = await drive.files.list({
+      q: `name = '${AGENT_REPORT.driveName}' and trashed = false`, orderBy: "modifiedTime desc", pageSize: 5,
+      fields: "files(id,name,modifiedTime)", supportsAllDrives: true, includeItemsFromAllDrives: true,
+    });
+    const f = (res.data.files || [])[0];
+    if (!f) { log("::notice::Drive 尚無 Agent 巡檢報告"); return null; }
+    const body = await drive.files.get({ fileId: f.id, alt: "media", supportsAllDrives: true }, { responseType: "text" });
+    const rep = core.normalizeAgentReport(typeof body.data === "string" ? JSON.parse(body.data) : body.data);
+    if (!rep) log("::warning::Agent 巡檢報告格式不符，已忽略");
+    return rep;
+  } catch (e) { log(`::warning::讀取 Agent 巡檢報告失敗：${e.message}`); return null; }
 }
 
 /* ---------------- Firestore ---------------- */
@@ -214,6 +237,8 @@ async function alerts(result) {
   const items = [
     ...result.workflows.map((w) => ({ key: `wf:${w.file}`, title: w.label, status: w.eval.status, reasons: w.eval.reasons, link: w.eval.lastDone ? w.eval.lastDone.url : w.html })),
     ...result.checks.map((c) => ({ key: `data:${c.key}`, title: `資料：${c.label}`, status: c.eval.status, reasons: [c.eval.reason], link: `https://github.com/${OWNER}/${NAME}/blob/main/${c.file}` })),
+    // Claude 排程：只在有 Agent 巡檢報告時告警（沒有報告時已由 data 檢查涵蓋，避免重複開單）
+    ...(result.claudeAgent ? result.claude.map((c) => ({ key: `claude:${c.id}`, title: `Claude：${c.name}`, status: c.eval.status, reasons: [c.eval.reason], link: `https://${OWNER.toLowerCase()}.github.io/${NAME}/admin/monitor/` })) : []),
   ];
   let opened = 0;
   for (const it of items) {
@@ -276,6 +301,7 @@ function buildStatus(snap, result, startedAt) {
         status: ev.status, reasons: ev.reasons };
     }),
     data: Object.fromEntries(Object.entries(snap.data).map(([k, v]) => [k, { err: v.err || "", json: v.json ? pickData(v.json) : null }])),
+    claudeAgent: snap.claudeAgent || null,
   };
 }
 /* 快照只留新鮮度檢查需要的欄位（避免把整份日報塞進 Firestore） */

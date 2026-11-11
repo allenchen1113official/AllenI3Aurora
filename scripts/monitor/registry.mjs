@@ -72,15 +72,24 @@ export const DATA_CHECKS = [
     source: "youtube-sync 06:23／18:23（需 YT_* Secrets）" },
 ];
 
-/* Claude 排程任務（2026-10-30 盤點；cron 為台北時間）。
-   check＝對應的 DATA_CHECKS key；發文類任務需 Allen 每次確認，無法自動驗證，check 留空。 */
+/* Claude 排程任務（2026-11-11 盤點；cron 為台北時間）。
+   check＝對應的 DATA_CHECKS key（AllenI3Aurora Agent 巡檢報告缺席時的退回判斷）。
+   kind：produce＝產出素材、post＝社群發文（需 Allen 每次確認才會按發布）、mail＝信件摘要、agent＝巡檢代理本身。
+   AllenI3Aurora Agent（Claude 排程）每個巡檢點把各任務的實際產出／圖卡文案／發文結果寫成
+   Drive `AllenI3Aurora/ops/agent/status_latest.json`，監控代理讀入後以它為主要判斷依據。 */
 export const CLAUDE_TASKS = [
-  { id: "trig_015t1mPpSXjxpW9UvpexfaLs", name: "台股盤前速報",              cron: "CRON_TZ=Asia/Taipei 0 6 * * 1-5",   check: "prebrief" },
-  { id: "trig_01X7LmRceXNfnvqQ8kDzRdEK", name: "艾倫極光日報",              cron: "CRON_TZ=Asia/Taipei 0 7 * * *",     check: "daily" },
-  { id: "trig_0134Mk14zpeYqRZmF81d3hCS", name: "台股熱力圖（上市／上櫃）",   cron: "CRON_TZ=Asia/Taipei 0 18 * * 1-5",  check: "heatmap" },
-  { id: "trig_015VuRq61T3jNPWYmmg64RCZ", name: "台股選股雷達 TOP 10",        cron: "CRON_TZ=Asia/Taipei 30 21 * * 1-5", check: "stockradar" },
-  { id: "trig_01Dz4wx74V1MnnHGaheaXrj4", name: "盤前速報｜FB＋IG 發文",      cron: "CRON_TZ=Asia/Taipei 30 6 * * 1-5",  check: "", manual: true },
-  { id: "trig_01AhPQ5phpLMW8vyKVMnVhuj", name: "極光日報｜FB＋IG＋Threads 發文", cron: "CRON_TZ=Asia/Taipei 8 8 * * *",   check: "", manual: true },
-  { id: "trig_01KeuuacckZZsdd8UgCpd3dk", name: "熱力圖｜FB＋IG＋Threads 發文", cron: "CRON_TZ=Asia/Taipei 56 19 * * 1-5", check: "", manual: true },
-  { id: "trig_018cCAAwpSA8wce1uVfd3PH2", name: "選股雷達｜FB＋IG＋Threads 發文", cron: "CRON_TZ=Asia/Taipei 0 23 * * 1-5", check: "", manual: true },
+  { id: "trig_015t1mPpSXjxpW9UvpexfaLs", name: "台股盤前速報",                 cron: "CRON_TZ=Asia/Taipei 0 6 * * 1-5",   check: "prebrief",   kind: "produce" },
+  { id: "trig_01Dz4wx74V1MnnHGaheaXrj4", name: "盤前速報｜FB＋IG＋Threads 發文", cron: "CRON_TZ=Asia/Taipei 30 6 * * 1-5",  check: "",           kind: "post", manual: true },
+  { id: "trig_01X7LmRceXNfnvqQ8kDzRdEK", name: "艾倫極光日報",                 cron: "CRON_TZ=Asia/Taipei 0 7 * * *",     check: "daily",      kind: "produce" },
+  { id: "trig_01FA6QPzcKigbrH5zhzuGqJP", name: "Gmail 每日摘要",               cron: "CRON_TZ=Asia/Taipei 0 7 * * *",     check: "",           kind: "mail" },
+  { id: "trig_01AhPQ5phpLMW8vyKVMnVhuj", name: "極光日報｜FB＋IG＋Threads 發文", cron: "CRON_TZ=Asia/Taipei 8 8 * * *",     check: "",           kind: "post", manual: true },
+  { id: "trig_0134Mk14zpeYqRZmF81d3hCS", name: "台股熱力圖（上市／上櫃）",      cron: "CRON_TZ=Asia/Taipei 0 18 * * 1-5",  check: "heatmap",    kind: "produce" },
+  { id: "trig_01KeuuacckZZsdd8UgCpd3dk", name: "熱力圖｜FB＋IG＋Threads 發文",   cron: "CRON_TZ=Asia/Taipei 56 19 * * 1-5", check: "",           kind: "post", manual: true },
+  { id: "trig_015VuRq61T3jNPWYmmg64RCZ", name: "台股選股雷達 TOP 10",           cron: "CRON_TZ=Asia/Taipei 30 21 * * 1-5", check: "stockradar", kind: "produce" },
+  { id: "trig_018cCAAwpSA8wce1uVfd3PH2", name: "選股雷達｜FB＋IG＋Threads 發文", cron: "CRON_TZ=Asia/Taipei 0 23 * * 1-5",  check: "",           kind: "post", manual: true },
+  { id: "aurora-agent", tid: "trig_014J2SYkJeqeJ8S2QvSM4WAH", name: "AllenI3Aurora Agent 巡檢",      cron: "CRON_TZ=Asia/Taipei 41 7,9,19,21,23 * * *", check: "", kind: "agent", agent: true },
 ];
+
+/* AllenI3Aurora Agent 巡檢報告（Drive 檔案；監控代理以 GDRIVE_SERVICE_ACCOUNT 唯讀讀取）
+   報告超過 warnHours 未更新 → 注意；超過 failHours → 異常（代理本身可能停擺）。 */
+export const AGENT_REPORT = { driveName: "status_latest.json", driveFolder: "AllenI3Aurora/ops/agent", warnHours: 11, failHours: 26 };

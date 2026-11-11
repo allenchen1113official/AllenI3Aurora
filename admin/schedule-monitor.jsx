@@ -234,7 +234,7 @@ function ScheduleMonitorPanel() {
       return { ...w, runs: [...map.values()].sort((a, b) => Date.parse(b.created) - Date.parse(a.created)).slice(0, 20) };
     });
     const data = { ...((snap && snap.data) || {}), ...((live && live.data) || {}) };
-    return core.evaluateAll({ workflows, data }, now);
+    return core.evaluateAll({ workflows, data, claudeAgent: (snap && snap.claudeAgent) || null }, now);
   }, [core, snap, live, now]);
 
   const pending = useMemo(() => new Set(reqs.filter((r) => ["queued", "dispatching", "dispatched", "running"].includes(r.state)).map((r) => r.workflow)), [reqs]);
@@ -343,15 +343,40 @@ function ScheduleMonitorPanel() {
         </section>}
 
         {show("claude") && <section className="sm-sec">
-          <h3>Claude 排程任務 <small>以產出判斷；重新執行請到 Claude 的排程頁</small></h3>
-          <div className="sm-list">{r.claude.filter((c) => match(c.eval.status)).map((c) => (
-            <div key={c.id} className="sm-row">
-              <div><Pill status={c.eval.status} core={core} label={c.eval.status === "unknown" ? "人工確認" : undefined} /></div>
-              <div><b>{c.name}</b><div className="sm-k" style={{ fontFamily: "var(--font-mono)" }}>{c.cron.replace("CRON_TZ=Asia/Taipei ", "")}（台北）</div></div>
-              <div>{c.eval.reason}</div>
-              <div className="sm-k">上次 {core.fmtTpe(c.eval.prevExpected)}<br />下次 {core.fmtTpe(c.eval.nextExpected)}</div>
-            </div>
-          ))}{!r.claude.some((c) => match(c.eval.status)) && <div className="sm-empty">此篩選沒有項目</div>}</div>
+          <h3>Claude 排程任務 <small>{r.claudeAgent
+            ? <>AllenI3Aurora Agent 巡檢 {core.ago(Date.parse(r.claudeAgent.generatedAt), now)}（{core.fmtTpe(Date.parse(r.claudeAgent.generatedAt))}）· 電腦{r.claudeAgent.device.online ? "在線" : "離線"} · 自動補跑／重新備稿，發文仍需你確認</>
+            : "尚無 Agent 巡檢報告，暫以產出新鮮度判斷；重新執行請到 Claude 的排程頁"}</small></h3>
+          <div className="sm-list">{r.claude.filter((c) => match(c.eval.status)).map((c) => {
+            const a = c.eval.agent;
+            const PS = { published: "✅ 已發", pending: "⏳ 待確認", failed: "❌ 失敗", missing: "⚠️ 缺", skipped: "— 略過", na: "—", unknown: "？" };
+            const plat = (o, urls) => o ? ["fb", "ig", "threads"].filter((k) => o[k]).map((k) => {
+              const lab = { fb: "FB", ig: "IG", threads: "Threads" }[k] + " " + (PS[o[k]] || o[k]);
+              return urls && urls[k] ? <a key={k} href={urls[k]} target="_blank" rel="noopener" style={{ marginRight: 8 }}>{lab} ↗</a> : <span key={k} style={{ marginRight: 8 }}>{lab}</span>;
+            }) : null;
+            return (
+              <div key={c.id} className="sm-row">
+                <div><Pill status={c.eval.status} core={core} label={c.eval.status === "unknown" ? "人工確認" : a && a.status === "pending" ? "待確認" : undefined} /></div>
+                <div><b>{c.name}</b><div className="sm-k" style={{ fontFamily: "var(--font-mono)" }}>{c.cron.replace("CRON_TZ=Asia/Taipei ", "")}（台北）</div></div>
+                <div>{c.eval.reason}
+                  {a && <div className="sm-k" style={{ marginTop: 4 }}>
+                    {a.targetDate ? <>目標日 {a.targetDate} · </> : null}
+                    {a.files ? <>檔案 {a.files.found}/{a.files.expected}{a.files.missing.length ? `（缺 ${a.files.missing.join("、")}）` : ""} · </> : null}
+                    {a.social ? <>文案圖卡 {plat(a.social)} </> : null}
+                    {a.posts ? <>發文 {plat(a.posts, a.urls)} </> : null}
+                    {a.attempts ? <>· 今日補救 {a.attempts} 次</> : null}
+                    {a.lastAction ? <> · 最近動作：{a.lastAction}</> : null}
+                  </div>}
+                </div>
+                <div className="sm-k">上次 {core.fmtTpe(c.eval.prevExpected)}<br />下次 {core.fmtTpe(c.eval.nextExpected)}</div>
+              </div>
+            );
+          })}{!r.claude.some((c) => match(c.eval.status)) && <div className="sm-empty">此篩選沒有項目</div>}</div>
+          {r.claudeAgent && r.claudeAgent.actions.length > 0 && <details style={{ marginTop: 8 }}>
+            <summary className="sm-k" style={{ cursor: "pointer" }}>Agent 本輪動作（{r.claudeAgent.actions.length}）</summary>
+            <div className="sm-list">{r.claudeAgent.actions.map((x, i) => (
+              <div key={i} className="sm-k" style={{ padding: "4px 0" }}>{x.ok ? "✔" : "✖"} {x.at ? core.fmtTpe(Date.parse(x.at)) : ""} · {x.kind} · {x.task} · {x.detail}</div>
+            ))}</div>
+          </details>}
         </section>}
       </> : <div className="sm-list"><div className="sm-empty">{liveBusy || snap === undefined ? "載入中…" : "尚無資料：請按「即時更新」，或等待監控代理第一次執行。"}</div></div>}
 

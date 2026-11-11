@@ -30,6 +30,22 @@ Claude 排程任務（產出）─┘   schedule-monitor.yml   │   「重新�
 4. 告警（`MONITOR_ISSUES=off` 可關）：狀態為「異常／已停用」時開 Issue，恢復後留言並自動關閉。
 5. 快照寫入 Firestore `aurora_ops/schedule_status`，代理日誌寫 `aurora_ops/agent`；Step Summary 也有一份表格。
 
+## AllenI3Aurora Agent（Claude 排程巡檢與自動修復）
+
+GitHub Actions 看不到 Claude 排程的執行內容，因此另有一個 Claude 排程「AllenI3Aurora Agent」（`trig_014J2SYkJeqeJ8S2QvSM4WAH`，台北 07:41／09:41／19:41／21:41／23:41）負責：
+
+| 檢查 | 補救 |
+|---|---|
+| 9 個 Claude 排程是否啟用、今日是否觸發（`list_triggers`） | 漏跑 → `fire_trigger` 補跑；被停用 → 推播請 Allen 確認（不自動啟用） |
+| 產出資料夾必要檔案是否齊全、PNG 尺寸、文字檔格式（Threads ≤500 字、三版文案、日報 7 領域＋來源網址、禁用詞） | 不齊或不合格 → 帶缺漏清單 `fire_trigger` 原排程重跑；重複資料夾 `D 2` 以 `mv -n` 併回 |
+| FB／IG／Threads 是否已發布（Chrome 唯讀查看個人頁） | 已觸發 3 小時內未發＝待 Allen 確認（推播提醒一次）；逾時或漏跑 → 重新觸發發文排程「重新備稿」 |
+
+- 補救上限：每任務每日 2 次、間隔 ≥40 分鐘，並以 `send_later` 45 分鐘後複查；達上限推播請 Allen 處理。
+- **Agent 不會按下發布**：公開發文仍須 Allen 在各發文排程的對話中回覆「發布」。
+- 巡檢報告寫在 Drive `AllenI3Aurora/ops/agent/status_latest.json`（另存 `status_YYYYMMDD_HHMM.json` 歷史、`state_YYYYMMDD.json` 補救計數）。監控代理以 `GDRIVE_SERVICE_ACCOUNT` 讀入、經 `core.normalizeAgentReport()` 白名單過濾後寫進 `aurora_ops/schedule_status.claudeAgent`，後台「Claude 排程任務」區顯示每項的檔案數、文案圖卡、三平台發文狀態與補救紀錄。
+- 報告超過 11 小時未更新＝注意、26 小時＝異常（Agent 本身停擺）；報告缺席時退回 `data/*.json` 新鮮度判斷。
+- Agent 需在 Mac mini 的 Claude 桌面版開啟「需要這台電腦／Require this computer」才能讀本機資料夾與 Chrome；未開啟時只能用 Drive 連接器做存在性檢查並把報告上傳 Drive。
+
 ## 健康度判斷
 
 | 狀態 | 條件 |

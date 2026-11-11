@@ -205,3 +205,42 @@ test("後台建立請求的 payload 全在規則白名單內，且 state／mode 
   // 取消只改 state＋updatedAt
   assert.match(panel, /\.update\(\{ state: "cancelled", updatedAt: [^}]+\}\)/);
 });
+
+/* ---------------- AllenI3Aurora Agent 巡檢報告 ---------------- */
+test("Agent 報告：白名單正規化，非法欄位與長字串被剔除／截斷", () => {
+  const rep = core.normalizeAgentReport({
+    version: 1, generatedAt: "2026-11-11T13:41:00Z", checkpoint: "21:41", date: "2026-11-11",
+    device: { online: true }, summary: "x".repeat(999), evil: "<script>",
+    tasks: [{ id: "trig_0134Mk14zpeYqRZmF81d3hCS", status: "hacked", reason: "ok", files: { expected: 10, found: 9, missing: ["a.png"] },
+      posts: { fb: "published", ig: "weird" }, urls: { fb: "https://facebook.com/p/1", ig: "javascript:alert(1)" } }],
+  });
+  assert.equal(rep.summary.length, 300);
+  assert.equal(rep.evil, undefined);
+  assert.equal(rep.tasks[0].status, "idle");
+  assert.deepEqual(rep.tasks[0].posts, { fb: "published", ig: "unknown" });
+  assert.deepEqual(Object.keys(rep.tasks[0].urls), ["fb"]);
+  assert.equal(core.normalizeAgentReport({ tasks: [] }), null); // 無 generatedAt
+  assert.equal(core.normalizeAgentReport(null), null);
+});
+
+test("Agent 報告：新鮮報告優先於 data 新鮮度；pending 視為執行中；過期退回 data 判斷", () => {
+  const now = TPE("2026-11-11T21:50");
+  const rep = core.normalizeAgentReport({ generatedAt: new Date(TPE("2026-11-11T21:41")).toISOString(), device: { online: true },
+    tasks: [{ id: "trig_01KeuuacckZZsdd8UgCpd3dk", status: "pending", reason: "三平台已備稿，待 Allen 回覆發布" },
+            { id: "trig_0134Mk14zpeYqRZmF81d3hCS", status: "fail", reason: "缺 2 張 Threads 圖，已補跑" }] });
+  const r = core.evaluateAll({ workflows: [], data: {}, claudeAgent: rep }, now);
+  const by = (id) => r.claude.find((c) => c.id === id).eval;
+  assert.equal(by("trig_01KeuuacckZZsdd8UgCpd3dk").status, "running");
+  assert.equal(by("trig_0134Mk14zpeYqRZmF81d3hCS").status, "fail");
+  assert.equal(by("aurora-agent").status, "ok");
+  const later = core.evaluateAll({ workflows: [], data: {}, claudeAgent: rep }, now + 30 * core.HOUR);
+  assert.equal(later.claude.find((c) => c.id === "aurora-agent").eval.status, "fail");
+  assert.notEqual(later.claude.find((c) => c.id === "trig_0134Mk14zpeYqRZmF81d3hCS").eval.reason.slice(0, 6), "Agent：");
+});
+
+test("Agent 報告：電腦離線時代理本身標示注意；無報告時為待命", () => {
+  const now = TPE("2026-11-11T08:00");
+  const rep = core.normalizeAgentReport({ generatedAt: new Date(TPE("2026-11-11T07:41")).toISOString(), device: { online: false, note: "Mac mini 未回應" }, tasks: [] });
+  assert.equal(core.agentFreshness(rep, now).status, "warn");
+  assert.equal(core.agentFreshness(null, now).status, "unknown");
+});

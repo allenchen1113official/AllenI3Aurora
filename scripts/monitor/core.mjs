@@ -8,7 +8,7 @@
    - 後台頁（admin/schedule-monitor.jsx）以 <script type="module"> 載入本檔，
      監控代理（run-monitor.mjs）在 Node 端使用同一份邏輯，兩邊判斷一致。
    ===================================================================== */
-import { policyFor, DATA_CHECKS, CLAUDE_TASKS } from "./registry.mjs";
+import { policyFor, DATA_CHECKS, CLAUDE_TASKS, AGENT_REPORT } from "./registry.mjs";
 
 export const MIN = 60 * 1000;
 export const HOUR = 60 * MIN;
@@ -334,19 +334,69 @@ export function evaluateDataCheck(chk, data, now = Date.now(), err = "") {
   return out;
 }
 
+/* ---------------- AllenI3Aurora Agent 巡檢報告 ---------------- */
+/* 報告由 Claude 排程寫入 Drive，屬外部輸入：只保留白名單欄位、限制長度與筆數，再進 Firestore／畫面。 */
+const AGENT_STATUS = new Set(["ok", "warn", "fail", "pending", "running", "idle", "skipped"]);
+const POST_STATE = new Set(["published", "pending", "failed", "missing", "skipped", "na", "unknown"]);
+const str = (v, n = 160) => (typeof v === "string" ? v : v == null ? "" : String(v)).slice(0, n);
+const int = (v) => (Number.isFinite(+v) ? Math.max(0, Math.min(99, Math.round(+v))) : 0);
+export function normalizeAgentReport(json) {
+  if (!json || typeof json !== "object" || !Array.isArray(json.tasks)) return null;
+  const at = Date.parse(json.generatedAt);
+  if (!Number.isFinite(at)) return null;
+  const posts = (p) => {
+    const o = {};
+    for (const k of ["fb", "ig", "threads"]) if (p && p[k] != null) o[k] = POST_STATE.has(p[k]) ? p[k] : "unknown";
+    return o;
+  };
+  const tasks = json.tasks.slice(0, 20).map((t) => ({
+    id: str(t && t.id, 60), status: AGENT_STATUS.has(t && t.status) ? t.status : "idle", reason: str(t && t.reason, 240),
+    targetDate: str(t && t.targetDate, 10),
+    files: t && t.files ? { expected: int(t.files.expected), found: int(t.files.found), missing: (Array.isArray(t.files.missing) ? t.files.missing : []).slice(0, 12).map((x) => str(x, 90)) } : null,
+    social: t && t.social ? posts(t.social) : null,
+    posts: t && t.posts ? posts(t.posts) : null,
+    urls: t && t.urls ? Object.fromEntries(["fb", "ig", "threads"].filter((k) => /^https:\/\//.test(t.urls[k] || "")).map((k) => [k, str(t.urls[k], 300)])) : null,
+    attempts: int(t && t.attempts), lastAction: str(t && t.lastAction, 160),
+  })).filter((t) => t.id);
+  const actions = (Array.isArray(json.actions) ? json.actions : []).slice(0, 30).map((a) => ({
+    at: str(a && a.at, 30), kind: str(a && a.kind, 20), task: str(a && a.task, 60), ok: !!(a && a.ok), detail: str(a && a.detail, 200),
+  }));
+  return {
+    version: int(json.version) || 1, generatedAt: new Date(at).toISOString(), checkpoint: str(json.checkpoint, 8), date: str(json.date, 10),
+    device: { online: !!(json.device && json.device.online), note: str(json.device && json.device.note, 160) },
+    summary: str(json.summary, 300), tasks, actions,
+  };
+}
+
+/* 巡檢報告的任務狀態 → 監控狀態：pending（待 Allen 確認發文）視為執行中，skipped（休市等）視為待命 */
+const fromAgent = (s) => (s === "pending" ? "running" : s === "skipped" ? "idle" : s);
+export function agentFreshness(report, now = Date.now()) {
+  if (!report) return { status: "unknown", reason: "尚未收到 AllenI3Aurora Agent 巡檢報告", ageH: NaN };
+  const ageH = (now - Date.parse(report.generatedAt)) / HOUR;
+  const base = `最近巡檢 ${fmtTpe(Date.parse(report.generatedAt))}${report.device && !report.device.online ? "（電腦離線）" : ""}`;
+  if (ageH > AGENT_REPORT.failHours) return { status: "fail", reason: `${base}，已超過 ${AGENT_REPORT.failHours} 小時未巡檢`, ageH };
+  if (ageH > AGENT_REPORT.warnHours) return { status: "warn", reason: `${base}，已超過 ${AGENT_REPORT.warnHours} 小時未巡檢`, ageH };
+  if (report.device && !report.device.online) return { status: "warn", reason: `${base}；${report.device.note || "無法存取 Mac mini"}`, ageH };
+  return { status: "ok", reason: base + (report.summary ? `：${report.summary}` : ""), ageH };
+}
+
 /* ---------------- Claude 排程任務 ---------------- */
-export function evaluateClaudeTask(task, checks, now = Date.now()) {
+export function evaluateClaudeTask(task, checks, now = Date.now(), report = null) {
   let c = null;
   try { c = parseCron(task.cron); } catch { /* 註冊表錯誤 */ }
   const prev = c ? prevFire(c, now) : NaN, next = c ? nextFire(c, now) : NaN;
+  if (task.agent) { const f = agentFreshness(report, now); return { status: f.status, reason: f.reason, prevExpected: prev, nextExpected: next, agent: null }; }
+  const fresh = report && agentFreshness(report, now).ageH <= AGENT_REPORT.failHours;
+  const a = fresh ? report.tasks.find((t) => t.id === task.id) : null;
+  if (a) return { status: fromAgent(a.status), reason: `Agent：${a.reason || a.status}`, prevExpected: prev, nextExpected: next, agent: a };
   const chk = task.check ? checks.find((x) => x.key === task.check) : null;
-  let status = "unknown", reason = task.manual ? "發文需人工確認，無法自動驗證" : "無對應產出可驗證";
+  let status = "unknown", reason = task.manual ? "發文需人工確認；等待 Agent 巡檢回報" : "無對應產出可驗證；等待 Agent 巡檢回報";
   if (chk && chk.eval) { status = chk.eval.status === "idle" ? "unknown" : chk.eval.status; reason = `產出：${chk.label} · ${chk.eval.reason}`; }
-  return { status, reason, prevExpected: prev, nextExpected: next };
+  return { status, reason, prevExpected: prev, nextExpected: next, agent: null };
 }
 
 /* ---------------- 整體彙整 ---------------- */
-/* snap：{ workflows:[{file,name,state,crons,runs,html}], data:{ "data/x.json": {json|null, err} } } */
+/* snap：{ workflows:[{file,name,state,crons,runs,html}], data:{ "data/x.json": {json|null, err} }, claudeAgent?: 巡檢報告（已 normalize） } */
 export function evaluateAll(snap, now = Date.now()) {
   const workflows = (snap.workflows || []).map((w) => {
     const pol = policyFor(w.file);
@@ -357,12 +407,13 @@ export function evaluateAll(snap, now = Date.now()) {
     const d = data[chk.file] || {};
     return { ...chk, eval: evaluateDataCheck(chk, d.json || null, now, d.err || "") };
   });
-  const claude = CLAUDE_TASKS.map((t) => ({ ...t, eval: evaluateClaudeTask(t, checks, now) }));
+  const report = snap.claudeAgent || null;
+  const claude = CLAUDE_TASKS.map((t) => ({ ...t, eval: evaluateClaudeTask(t, checks, now, report) }));
   const counts = { ok: 0, running: 0, warn: 0, fail: 0, idle: 0 };
   const bump = (s) => { const k = s === "disabled" ? "fail" : s === "unknown" ? "idle" : s; counts[k] = (counts[k] || 0) + 1; };
   workflows.forEach((w) => bump(w.eval.status)); checks.forEach((c) => bump(c.eval.status)); claude.forEach((c) => bump(c.eval.status));
   const overall = counts.fail ? "fail" : counts.warn ? "warn" : counts.running ? "running" : "ok";
-  return { workflows, checks, claude, counts, overall, now };
+  return { workflows, checks, claude, claudeAgent: report, counts, overall, now };
 }
 
 /* ---------------- 重跑請求驗證（代理與後台共用） ---------------- */
