@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261110",
+    "kind": "熱力圖",
+    "date": "2026.11.10",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.11.10",
+    "cover": "https://drive.google.com/thumbnail?id=1PYNjdCpeQDsIm3wEW-Lk3mv01qbobNuw&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1PYNjdCpeQDsIm3wEW-Lk3mv01qbobNuw&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1PYNjdCpeQDsIm3wEW-Lk3mv01qbobNuw&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1xti3CixrTFMO_egUAUdO6KQQ4zxglw5m&sz=w1600",
+    "summary": "今天加權指數大漲 1,050.22 點、收 42,711.92（+2.52%），成交值約 1 兆元。電子類股強攻，台達電漲停、台積電收 2,285 元（+2.24%）、聯發科 +2.82%；塑膠、航運也同步轉強。，焦點個股：台達電 +9.91%、世…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261109",
     "kind": "熱力圖",
     "date": "2026.11.09",
