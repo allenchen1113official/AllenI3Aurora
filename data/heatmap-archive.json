@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261111",
+    "kind": "熱力圖",
+    "date": "2026.11.11",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.11.11",
+    "cover": "https://drive.google.com/thumbnail?id=1ApETm8Xmh9FMK0flbboDvNFlsbIY6emR&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1ApETm8Xmh9FMK0flbboDvNFlsbIY6emR&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1ApETm8Xmh9FMK0flbboDvNFlsbIY6emR&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1oJsKZZT_ARqmIiwa4e66jVY7J3qJLYqF&sz=w1600",
+    "summary": "（註：新光金2888、三商壽2867未查得收盤，以同類股模擬值呈現），加權指數大漲1,545點、收44,257點，創史上第6大漲點！台積電公布10月營收創高、股利調升至9元，領軍衝高；IC設計、電子零組件、面板族群同步強攻。，英業達 -6.74%、…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261110",
     "kind": "熱力圖",
     "date": "2026.11.10",
