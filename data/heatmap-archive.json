@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261112",
+    "kind": "熱力圖",
+    "date": "2026.11.12",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.11.12",
+    "cover": "https://drive.google.com/thumbnail?id=1J5SDWcQHy5f4srZ1wrw6vvGHl5r8vESt&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1J5SDWcQHy5f4srZ1wrw6vvGHl5r8vESt&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1J5SDWcQHy5f4srZ1wrw6vvGHl5r8vESt&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1_n-KerJYNjqds1ID5a7xurO3zijeXeZG&sz=w1600",
+    "summary": "電子權值股重挫、加權指數收跌1,165點（-2.63%）收43,091.87點，成交約1.01兆元；電子類股跌3.07%，金融股近乎平盤。，權值股方面：台積電 -2.30%、聯發科 -3.51%、台達電 -4.25%；反觀統一 +1.43%、台灣大…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261111",
     "kind": "熱力圖",
     "date": "2026.11.11",
