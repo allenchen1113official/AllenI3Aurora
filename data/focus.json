@@ -6,7 +6,7 @@
       "title": "台股盤前速報",
       "desc": "台股先跌，美股卻沒跟上…",
       "summary": "台股先跌，美股卻沒跟上。，台股在美股開盤前已自行重挫 2.63%、失守 44,000 點，但黃仁勳辭任輝達執行長的衝擊只讓美股四大指數小跌 0.3～0.4%、費半僅跌 0.54%，今日分歧在於這是「已先行反映完畢的超跌」，還是「AI 領導真空下的第…",
-      "meta": "2026.11.13 · 盤前速報",
+      "meta": "2026.11.13 · 盤前速報（最新）",
       "icon": "bell",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/prebrief.html"
     },
@@ -16,7 +16,7 @@
       "title": "台股熱力圖 · 上市／上櫃",
       "desc": "【資料】已查證收盤 98/100 檔…",
       "summary": "【資料】已查證收盤 98/100 檔（2888新光金、2867三商壽退回類股平均），加權指數收 43,675.12 點、+583.25（+1.35%）。IC設計與面板光電類股領漲，世芯-KY +9.39%、創意 +9.54%、聯發科 +7.01%；…",
-      "meta": "2026.11.13 · 市值熱力圖",
+      "meta": "2026.11.13 · 市值熱力圖（最新）",
       "icon": "chart",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
     },
@@ -41,6 +41,6 @@
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/daily.html"
     }
   ],
-  "asOf": "2026.11.13",
-  "updatedAt": "2026-11-13T13:52:32.728Z"
+  "asOf": "2026.11.14",
+  "updatedAt": "2026-11-13T16:17:31.633Z"
 }
