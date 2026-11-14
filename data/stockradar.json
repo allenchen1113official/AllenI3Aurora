@@ -1,9 +1,9 @@
 {
-  "date": "2026.11.12",
-  "dateLabel": "2026.11.12（最新）",
+  "date": "2026.11.13",
+  "dateLabel": "2026.11.13（最新）",
   "asOf": "2026.11.14",
-  "desc": "台股選股雷達 TOP 10 2026…",
-  "summary": "台股選股雷達 TOP 10 2026-11-12（星期四），・定穎投控(3715)、敬鵬(2355)雙雙漲停作收，儒鴻(1476)大漲4.68%，K值82.45進入高檔區。，・上品(4770)、晶豪科(3006)今日回檔逾4%，但上品仍維持均線多頭…",
+  "desc": "▸ 排行前三：6913 鴻呈…",
+  "summary": "▸ 排行前三：6913 鴻呈、1802 台玻、3715 定穎投控，▸ 世芯-KY 大漲 9.39%、統新漲 7.47%、台化漲 5.34%；允強、定穎投控收黑，▸ 基本面三項全數達標：鴻呈、晶豪科、統新（營益率10%、營收年增20%、EPS年增10…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,76 +34,72 @@
   ],
   "top10": [
     {
-      "code": "2034",
-      "name": "允強",
-      "changePct": "-1.43%",
-      "up": false,
-      "signals": [
-        "ma"
-      ]
+      "code": "6913",
+      "name": "鴻呈",
+      "changePct": "+2.67%",
+      "up": true,
+      "signals": []
+    },
+    {
+      "code": "1802",
+      "name": "台玻",
+      "changePct": "+4.16%",
+      "up": true,
+      "signals": []
     },
     {
       "code": "3715",
       "name": "定穎投控",
-      "changePct": "+9.96%",
+      "changePct": "-1.39%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "6830",
+      "name": "汎銓",
+      "changePct": "+3.62%",
       "up": true,
       "signals": []
     },
     {
-      "code": "4770",
-      "name": "上品",
-      "changePct": "-5.84%",
-      "up": false,
-      "signals": [
-        "ma"
-      ]
-    },
-    {
-      "code": "3162",
-      "name": "精確",
-      "changePct": "-1.94%",
-      "up": false,
-      "signals": []
-    },
-    {
-      "code": "6683",
-      "name": "雍智科技",
-      "changePct": "-1.65%",
-      "up": false,
-      "signals": []
-    },
-    {
-      "code": "6715",
-      "name": "嘉基",
-      "changePct": "+1.10%",
+      "code": "3661",
+      "name": "世芯-KY",
+      "changePct": "+9.39%",
       "up": true,
       "signals": []
     },
     {
-      "code": "2355",
-      "name": "敬鵬",
-      "changePct": "+9.96%",
+      "code": "2034",
+      "name": "允強",
+      "changePct": "-3.11%",
+      "up": false,
+      "signals": []
+    },
+    {
+      "code": "1326",
+      "name": "台化",
+      "changePct": "+5.34%",
       "up": true,
       "signals": []
     },
     {
       "code": "3006",
       "name": "晶豪科",
-      "changePct": "-4.04%",
-      "up": false,
+      "changePct": "+3.55%",
+      "up": true,
       "signals": []
     },
     {
-      "code": "6913",
-      "name": "鴻呈",
-      "changePct": "",
+      "code": "6426",
+      "name": "統新",
+      "changePct": "+7.47%",
       "up": true,
       "signals": []
     },
     {
       "code": "1476",
       "name": "儒鴻",
-      "changePct": "+4.68%",
+      "changePct": "+4.74%",
       "up": true,
       "signals": []
     }
@@ -112,9 +108,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1sGFsDkktMJSY4zIpImhDE659Budpwnps&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=16tVgqLhAL1uAKOgaW4sR-lSrQ-mXqkwS&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1O5-q3ZLphWBjgligbHb1leiCplUmmQh7/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1r_lCUhQOQk2K_cc9PHj0K9hD1fNHqgIq/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-11-13T21:30:12.895Z"
+  "updatedAt": "2026-11-14T04:47:08.074Z"
 }
