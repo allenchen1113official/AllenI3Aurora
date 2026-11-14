@@ -4,9 +4,9 @@
   "asOf": "2026.11.14",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.11.14 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.11.14 無人機產業的「美國製造」轉向與反無人機執法同步加速，FAA Part 108 BVLOS 最終規則 12 月 7 日法定期限是本季最大觀察點。智慧家庭方面，Matter 攝影機與 Aliro 數位門鑰匙正式落地，跨生態系整合更進一步；網球年終總決賽少了 Sinner，… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "本日重點：農業與無人機持續朝自動化與超視距（BVLOS）應用推進，智慧家庭則由 Matter 1.6.1 與 Aliro 門禁標準帶動整合；巴黎大師賽進入關鍵輪次，Djokovic 順利晉級。",
+  "focusNote": "無人機產業的「美國製造」轉向與反無人機執法同步加速，FAA Part 108 BVLOS 最終規則 12 月 7 日法定期限是本季最大觀察點。智慧家庭方面，Matter 攝影機與 Aliro 數位門鑰匙正式落地，跨生態系整合更進一步；網球年終總決賽少了 Sinner，Alcaraz 與球王 Zverev 的冠軍之爭成焦點。",
   "sections": [
     {
       "tag": "農業",
@@ -14,14 +14,19 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "銅線防盜系統 COP-R-LOCK 運作滿一年零失竊（11/3）。",
-          "sourceName": "iGrow News",
-          "source": "https://igrownews.com/farmblox-latest-news/"
+          "text": "美國密蘇里州 Agri Spray 因應 FCC 與國防部對中國製無人機的限制，宣布五年內從代理中國機種轉為美國供應鏈自製，第四年導入美製馬達、第五年導入美製電池，並計畫兩年內增聘 25–30 人。",
+          "sourceName": "DroneLife",
+          "source": "https://dronelife.com/2026/11/12/agri-spray-plans-shift-to-u-s-drone-manufacturing-as-federal-restrictions-reshape-the-market"
         },
         {
-          "text": "Huma 推出 Gro-Power 產品線，跨入粒狀肥料市場（10/29）。",
-          "sourceName": "iGrow News",
-          "source": "https://igrownews.com/huma-latest-news/"
+          "text": "11 月 5 日於加州 Parlier 舉辦的田間日中，七家公司展示自駕農機、精準標靶噴灑與灌溉工具，其中 Kingman Ag 可將一般曳引機改裝為自駕。",
+          "sourceName": "The Business Journal",
+          "source": "https://thebusinessjournal.com/kearney-agtech-field-day-parlier-uc-anr/"
+        },
+        {
+          "text": "巴西 CropLife 聯合多個產業公會推出免費指南，涵蓋設備登記、遙控駕駛資格與作業程序，違規可能面臨高額罰款、設備沒收甚至刑責。",
+          "sourceName": "GrowinAgri Daily",
+          "source": "https://growinagri.substack.com/p/12th-november-2026-growinagri-daily"
         }
       ]
     },
@@ -31,14 +36,19 @@
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "JavaScript Matter SDK 發布新版並支援 Matter 1.6.1（10/21，擴大搜尋範圍）。",
-          "sourceName": "GitHub matter.js",
-          "source": "https://github.com/matter-js/matter.js"
+          "text": "新版前端支援 Matter 攝影機快照與 WebRTC 即時影像，並以 Labs 功能提供雙向通話（需 HTTPS）；HACS 也正式內建為官方 Marketplace，11 月 4 日正式發布。",
+          "sourceName": "Matter Alpha",
+          "source": "https://www.matteralpha.com/industry-news/matter-cameras-and-two-way-talk-officially-arrive-in-home-assistant-2026-11"
         },
         {
-          "text": "連網標準聯盟的 Aliro 門禁標準獲 TIME 選為年度最佳發明（10/15，擴大搜尋範圍）。",
-          "sourceName": "TIME",
-          "source": "https://time.com/collection/best-inventions/2026/connectivity-standards-alliance-aliro/"
+          "text": "更新修正舊款 Nest 攝影機串流卡頓與重開機問題，Gemini for Home 可在指令對應多台裝置時主動追問，並擴充 Google Home MCP 讓 AI 代理協助建立自動化。",
+          "sourceName": "Android Central",
+          "source": "https://androidcentral.com/accessories/smart-home/googles-latest-home-update-fixes-nest-camera-headaches-and-upgrades-gemini"
+        },
+        {
+          "text": "Android 使用者可在 Google Home 公開預覽中以 NFC 感應解鎖相容 Matter 智慧鎖，首波包括 Aqara U400、Schlage Sense Pro 與 Nuki Keypad 2 NFC。",
+          "sourceName": "Matter-Smarthome",
+          "source": "https://matter-smarthome.de/en/products/aliro-comes-to-google-and-nuki-is-ready/"
         }
       ]
     },
@@ -48,14 +58,19 @@
       "title": "無人機系統",
       "items": [
         {
-          "text": "普渡大學的 Windracers ULTRA 自主飛機於新設走廊完成超視距飛行（11/3）。",
-          "sourceName": "Unmanned Airspace",
-          "source": "https://www.unmannedairspace.info/uncategorized/windracers-ultra-flies-bvlos-in-indianas-new-drone-corridor/"
+          "text": "依 2024 年 FAA 再授權法，超視距（BVLOS）最終規則須於 2026 年 12 月 7 日前發布；截至 11 月 2 日，規則仍在白宮 OIRA「審查中」，錯過期限也不會讓提案自動生效。",
+          "sourceName": "FlyCRE",
+          "source": "https://www.flycre.com/blog/bvlos-rule-part-108-orange-county.html"
         },
         {
-          "text": "美國 FCC 提出無人機通訊及反無人機偵測所用頻譜的修改提案（10/29）。",
-          "sourceName": "Unmanned Airspace",
-          "source": "https://www.unmannedairspace.info/uncategorized/fcc-proposes-spectrum-changes-for-drone-communications-and-counter-uas-detection/"
+          "text": "FAA 環境評估草案顯示，Zipline 規劃於鳳凰城與土桑全年 24 小時營運，最大容量每日 13 萬次配送，公眾意見徵詢至 12 月初。",
+          "sourceName": "DroneLife",
+          "source": "https://dronelife.com/2026/11/12/zipline-arizona-drone-delivery-expansion/"
+        },
+        {
+          "text": "依 SAFER SKIES 法案，州與地方執法機關須完成認證與專業訓練才能取得反制權限，FBI 計畫將每年訓練名額由不到 100 人提升至約 320 人。",
+          "sourceName": "DroneLife",
+          "source": "https://dronelife.com/2026/11/12/fbi-counter-drone-training-local-law-enforcement/"
         }
       ]
     },
@@ -65,9 +80,19 @@
       "title": "冰島旅行",
       "items": [
         {
-          "text": "建議選配冬季胎的四輪驅動車、出發前查路況並預留時間，自駕也方便追極光（2/14 發布，近期無更新，沿用既有內容）。",
-          "sourceName": "In Your Pocket",
-          "source": "https://www.inyourpocket.com/iceland/exploring-iceland-in-winter-why-renting-a-car-is_81009f"
+          "text": "11 月 9 日雨後夜間驟降溫，路面結冰；自駕旅客請查看道路管理局即時地圖或撥 1777，放慢車速並拉長煞車距離。",
+          "sourceName": "Iceland Review",
+          "source": "https://www.icelandreview.com/news/iceland-black-ice-warning-november-9-2026/"
+        },
+        {
+          "text": "11 月 9–15 日活動包括熱可可極光巴士團、11 日起的 Iceland Noir 推理文學節，以及 Bíó Paradís 的義大利電影節，適合冬季旅人安排夜間行程。",
+          "sourceName": "Iceland Review",
+          "source": "https://icelandreview.com/news/what-to-do-this-week-iceland-noir-italian-cinema-and-more"
+        },
+        {
+          "text": "（10/28 報導）冰洞僅限持證導遊帶團進入，擅入違法；自駕須四驅加冬季胎，內陸 F 路封閉，並需備冰爪與防水層次衣物。",
+          "sourceName": "Nomad Lawyer",
+          "source": "https://www.nomadlawyer.org/iceland-winter-travel-november-ice-cave-openings-safety-regulations-2026"
         }
       ]
     },
@@ -77,14 +102,19 @@
       "title": "攝影",
       "items": [
         {
-          "text": "仿 1980 年代 110 底片相機的小巧數位相機逐漸受到關注（10/25）。",
+          "text": "Leica 復刻稀有錘紋塗裝，底片機 M-A 售 8,000 美元、6,000 萬畫素數位旁軸 M11-P 售 10,950 美元，11 月 12 日全球上市。",
           "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/cameras/compact-cameras/is-the-next-retro-point-and-shoot-trend-the-110-camera-boxy-pocketable-1980s-cameras-are-sparking-digital-lookalikes"
+          "source": "https://www.digitalcameraworld.com/cameras/rangefinder-cameras/forget-black-and-silver-leica-has-revived-one-of-its-rarest-camera-finishes-for-two-stunning-new-rangefinders"
         },
         {
-          "text": "John-Oliver Dum 的得獎微距作品，以焦點堆疊呈現花園蜘蛛細節（10/25）。",
+          "text": "以「家庭」為主題的 HIPA 國際攝影獎，20 萬美元首獎由孟加拉攝影師 Pinu Rahman 奪得，空拍一家五口在火災後殘牆間入睡的畫面。",
           "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/photography/awards-and-competitions/this-regal-looking-spider-is-smaller-than-a-fingernail-but-thanks-to-clever-use-of-focus-stacking-we-can-see-it-in-incredible-detail"
+          "source": "https://www.digitalcameraworld.com/photography/awards-and-competitions/drone-photo-of-family-sheltering-in-the-remains-of-their-burnt-out-home-wins-worlds-richest-photo-competition"
+        },
+        {
+          "text": "新增非 AI 的光暈／高光溢散工具、一鍵去痘、閉眼修正（生成式 beta），iPad 也可連機拍攝。",
+          "sourceName": "Digital Camera World",
+          "source": "https://www.digitalcameraworld.com/tech/software/a-new-cinematic-glow-tool-is-coming-to-lightroom-and-no-its-not-genai-these-are-the-4-biggest-updates-to-adobe-lightroom-2027"
         }
       ]
     },
@@ -94,9 +124,19 @@
       "title": "薩克斯風",
       "items": [
         {
-          "text": "薩克斯風為大賽 11 種樂器之一（2/16 發布，近期無更新，沿用既有內容）。",
-          "sourceName": "Estonian Music Council",
-          "source": "https://emc.ee/en/teated/the-estonian-wind-and-percussion-players-competition-will-take-place-from-november-22-to-november-27-2026/"
+          "text": "葛萊美得主薩克斯風手 Kamasi Washington 與 Ami Taf Ra 11 月 17 日於納許維爾 City Winery 演出，專輯融合北非、福音、靈魂與爵士元素。",
+          "sourceName": "Music City Review",
+          "source": "https://www.musiccityreview.com/2026/11/04/the-jazz-beat-november-2026/"
+        },
+        {
+          "text": "薩克斯風手兼作曲家 Tara Davidson 率 Marni Project 四重奏於 T.Sound 廠牌發行新作，獲 Jazz Journal 11 月新片單收錄。",
+          "sourceName": "Jazz Journal",
+          "source": "https://jazzjournal.co.uk/2026/11/10/new-releases-october-november-2026-t-y/"
+        },
+        {
+          "text": "（10/2 發表）沿用原聲薩克斯風指法，新增 16 種音色共 89 種、改用 USB-C，並有 15 段音量與耳機輸出，適合在家安靜練習音準與技巧。",
+          "sourceName": "Yamaha",
+          "source": "https://www.yamaha.com/en/news_release/2026/26100201/"
         }
       ]
     },
@@ -106,9 +146,19 @@
       "title": "網球",
       "items": [
         {
-          "text": "Djokovic 在首輪以 6-7(5)、7-5、6-1 逆轉 Vacherot；Rinderknech 在 Cerundolo 退賽後晉級（11/3）。",
-          "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/scores/current/paris/352/results"
+          "text": "McEnroe 組：Zverev、Shelton、Fils、Jodar；Lendl 組：Alcaraz、Medvedev、Cobolli、Tiafoe；Alcaraz 挾九連勝，球王 Zverev 力拚年度第三冠。",
+          "sourceName": "Tennis365",
+          "source": "https://www.tennis365.com/tennis-news/atp-finals-draw-alexander-zverev-ben-shelton-carlos-alcaraz-daniil-medvedev"
+        },
+        {
+          "text": "兩屆冠軍 Sinner 自溫網後因右膝傷休兵，計畫於 12 月底的 Six Kings Slam 復出，提醒膝關節傷害需充分復健再上場。",
+          "sourceName": "Flashscore",
+          "source": "https://www.flashscore.com/news/icouldn-t-move-at-all-sinner-reveals-severity-of-recent-knee-injury/EwV4I0sp/"
+        },
+        {
+          "text": "22 歲的 Arthur Fils 在 Tiafoe 巴黎大師賽次輪落敗後確定入圍，成為繼 2016 年 Monfils 之後首位參賽的法國球員。",
+          "sourceName": "Flashscore",
+          "source": "https://www.flashscore.com/news/tennis-atp-fils-clinches-first-finals-berth-thanks-to-tiafoe-loss-in-paris/hvJq8Oq9/"
         }
       ]
     }
@@ -136,17 +186,17 @@
     }
   ],
   "highlights": [
-    "銅線防盜系統 COP-R-LOCK 運作滿一年零失竊（11/3）。",
-    "JavaScript Matter SDK 發布新版並支援 Matter 1.6.1（10/21，擴大搜尋範圍）。",
-    "普渡大學的 Windracers ULTRA 自主飛機於新設走廊完成超視距飛行（11/3）。",
-    "建議選配冬季胎的四輪驅動車、出發前查路況並預留時間，自駕也方便追極光（2/14 發布，近期無更新，沿用既有內容）。"
+    "美國密蘇里州 Agri Spray 因應 FCC 與國防部對中國製無人機的限制，宣布五年內從代理中國機種轉為美國供應鏈自",
+    "新版前端支援 Matter 攝影機快照與 WebRTC 即時影像，並以 Labs 功能提供雙向通話（需 HTTPS）；H",
+    "依 2024 年 FAA 再授權法，超視距（BVLOS）最終規則須於 2026 年 12 月 7 日前發布；截至 11 ",
+    "11 月 9 日雨後夜間驟降溫，路面結冰；自駕旅客請查看道路管理局即時地圖或撥 1777，放慢車速並拉長煞車距離。"
   ],
   "cover": {
     "title": "今日日報封面",
-    "local": "assets/rabbit-reading.jpeg",
-    "drive": ""
+    "drive": "",
+    "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/1Tsl2l8B7-GBEMhwDsoseu6CMGaJz6bodEpw_Y84p1hc/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/1edOco2E2ResEIDtnT466DDUF7QOwtGxjUOT5yIxQ3tI/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-11-14T02:09:11.124Z"
+  "updatedAt": "2026-11-14T06:01:42.312Z"
 }
