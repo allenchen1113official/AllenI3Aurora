@@ -4,9 +4,9 @@
   "asOf": "2026.11.15",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.11.15 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.11.15 AI 與無人機正從試點走向規模化：肯亞 AI 病蟲害偵測、固定翼噴灑無人機，以及 Wing 免費配送與 FAA UTM 220 萬架次都是訊號；智慧家庭方面 Apple HomeView 與 Google Aliro 數位鑰匙讓 Matter／Thread 生態更完整。… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "無人機產業的「美國製造」轉向與反無人機執法同步加速，FAA Part 108 BVLOS 最終規則 12 月 7 日法定期限是本季最大觀察點。智慧家庭方面，Matter 攝影機與 Aliro 數位門鑰匙正式落地，跨生態系整合更進一步；網球年終總決賽少了 Sinner，Alcaraz 與球王 Zverev 的冠軍之爭成焦點。",
+  "focusNote": "AI 與無人機正從試點走向規模化：肯亞 AI 病蟲害偵測、固定翼噴灑無人機，以及 Wing 免費配送與 FAA UTM 220 萬架次都是訊號；智慧家庭方面 Apple HomeView 與 Google Aliro 數位鑰匙讓 Matter／Thread 生態更完整。ATP 年終總決賽今日開打、Sinner 缺席，冰島自駕旅人請留意暴風雪橙色警報。",
   "sections": [
     {
       "tag": "農業",
@@ -14,19 +14,19 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "美國密蘇里州 Agri Spray 因應 FCC 與國防部對中國製無人機的限制，宣布五年內從代理中國機種轉為美國供應鏈自製，第四年導入美製馬達、第五年導入美製電池，並計畫兩年內增聘 25–30 人。",
-          "sourceName": "DroneLife",
-          "source": "https://dronelife.com/2026/11/12/agri-spray-plans-shift-to-u-s-drone-manufacturing-as-federal-restrictions-reshape-the-market"
+          "text": "肯亞 Farmerlifeline 奪 Smart Africa 創新挑戰賽：以太陽能田間攝影機結合 AI 早期偵測病蟲害，並以在地語言簡訊提供防治建議，獲 5 萬美元補助部署。",
+          "sourceName": "TechAfrica News",
+          "source": "https://techafricanews.com/2026/11/13/kenya-farmerlifeline-wins-smart-africa-innovation-challenge-ai-farming"
         },
         {
-          "text": "11 月 5 日於加州 Parlier 舉辦的田間日中，七家公司展示自駕農機、精準標靶噴灑與灌溉工具，其中 Kingman Ag 可將一般曳引機改裝為自駕。",
-          "sourceName": "The Business Journal",
-          "source": "https://thebusinessjournal.com/kearney-agtech-field-day-parlier-uc-anr/"
+          "text": "Citri\\&Co 全球導入 Orth AI 農藝平台：秘魯子公司 Safresco 試點後擴大至逾 33,000 公頃農場，整合田間觀測與歷史資料，協助灌溉、施肥與作物保護並減少投入浪費。",
+          "sourceName": "GrowInAgri",
+          "source": "https://growinagri.substack.com/p/10th-november-2026-growinagri-daily"
         },
         {
-          "text": "巴西 CropLife 聯合多個產業公會推出免費指南，涵蓋設備登記、遙控駕駛資格與作業程序，違規可能面臨高額罰款、設備沒收甚至刑責。",
-          "sourceName": "GrowinAgri Daily",
-          "source": "https://growinagri.substack.com/p/12th-november-2026-growinagri-daily"
+          "text": "Forward Robotics 推出 U9 固定翼噴灑無人機：垂直起降後以固定翼巡航，翼展 9 公尺、100 公升藥箱、時速 100 公里、噴幅 12 公尺，提升大面積農噴效率。",
+          "sourceName": "Farmtario",
+          "source": "https://farmtario.com/crops/ontario-company-builds-fixed-wing-spray-drone-for-farmers"
         }
       ]
     },
@@ -36,19 +36,19 @@
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "新版前端支援 Matter 攝影機快照與 WebRTC 即時影像，並以 Labs 功能提供雙向通話（需 HTTPS）；HACS 也正式內建為官方 Marketplace，11 月 4 日正式發布。",
+          "text": "Apple 推出 HomeView 智慧家庭螢幕：售價 299 美元，有桌上型與壁掛型，可透過人臉辨識最多 6 位使用者並顯示個人化主畫面；因 Siri AI 未開放，暫不在歐盟販售。",
+          "sourceName": "MacRumors",
+          "source": "https://macrumors.com/2026/11/13/apple-launches-two-products-today"
+        },
+        {
+          "text": "Google 錢包支援 Aliro 數位家門鑰匙：Android 手機可 NFC 輕觸或 UWB 免持解鎖相容智慧鎖，需搭配支援 Thread 的 Google 中樞，目前於 Google Home 公開預覽。",
+          "sourceName": "Matter Alpha",
+          "source": "https://www.matteralpha.com/industry-news/google-wallet-aliro-digital-home-keys-android-smart-locks"
+        },
+        {
+          "text": "Home Assistant 2026.11 正式支援 Matter 攝影機：新增 WebRTC 即時影像、快照與隱私模式狀態，雙向對講以 Labs 預覽提供，HACS 也升級為內建 Marketplace。",
           "sourceName": "Matter Alpha",
           "source": "https://www.matteralpha.com/industry-news/matter-cameras-and-two-way-talk-officially-arrive-in-home-assistant-2026-11"
-        },
-        {
-          "text": "更新修正舊款 Nest 攝影機串流卡頓與重開機問題，Gemini for Home 可在指令對應多台裝置時主動追問，並擴充 Google Home MCP 讓 AI 代理協助建立自動化。",
-          "sourceName": "Android Central",
-          "source": "https://androidcentral.com/accessories/smart-home/googles-latest-home-update-fixes-nest-camera-headaches-and-upgrades-gemini"
-        },
-        {
-          "text": "Android 使用者可在 Google Home 公開預覽中以 NFC 感應解鎖相容 Matter 智慧鎖，首波包括 Aqara U400、Schlage Sense Pro 與 Nuki Keypad 2 NFC。",
-          "sourceName": "Matter-Smarthome",
-          "source": "https://matter-smarthome.de/en/products/aliro-comes-to-google-and-nuki-is-ready/"
         }
       ]
     },
@@ -58,19 +58,19 @@
       "title": "無人機系統",
       "items": [
         {
-          "text": "依 2024 年 FAA 再授權法，超視距（BVLOS）最終規則須於 2026 年 12 月 7 日前發布；截至 11 月 2 日，規則仍在白宮 OIRA「審查中」，錯過期限也不會讓提案自動生效。",
-          "sourceName": "FlyCRE",
-          "source": "https://www.flycre.com/blog/bvlos-rule-part-108-orange-county.html"
+          "text": "美國五部會簽署反無人機合作備忘錄：國防、運輸、國土安全、能源與司法部協調反無人機系統測試與部署，FAA 負責評估安全風險並可限制空域，以免影響民航。",
+          "sourceName": "DefenseScoop",
+          "source": "https://defensescoop.com/2026/11/09/agencies-agree-to-counter-unauthorized-drones-without-compromising-civilian-safety-under-new-mou"
         },
         {
-          "text": "FAA 環境評估草案顯示，Zipline 規劃於鳳凰城與土桑全年 24 小時營運，最大容量每日 13 萬次配送，公眾意見徵詢至 12 月初。",
-          "sourceName": "DroneLife",
-          "source": "https://dronelife.com/2026/11/12/zipline-arizona-drone-delivery-expansion/"
+          "text": "FAA：UTM 今年已處理 220 萬架次飛行：今年以來 220 萬架次經 UTM 策略性衝突排除；Part 108 超視距（BVLOS）規則仍未公布時程，國會期限為 12 月 7 日。",
+          "sourceName": "DroneXL",
+          "source": "https://dronexl.co/2026/11/10/faa-auvsi-utm-2-2-million-flights-part-108-type-certification/"
         },
         {
-          "text": "依 SAFER SKIES 法案，州與地方執法機關須完成認證與專業訓練才能取得反制權限，FBI 計畫將每年訓練名額由不到 100 人提升至約 320 人。",
-          "sourceName": "DroneLife",
-          "source": "https://dronelife.com/2026/11/12/fbi-counter-drone-training-local-law-enforcement/"
+          "text": "Wing 於曼菲斯啟動 Walmart 免費無人機配送：11 月 10 日起從曼菲斯地區三家 Walmart 超級中心起飛配送且免運費，搶先尚未公布開航日期的 Amazon。",
+          "sourceName": "DroneXL",
+          "source": "https://dronexl.co/2026/11/12/wing-walmart-memphis-drone-delivery-amazon-coming-soon"
         }
       ]
     },
@@ -80,19 +80,19 @@
       "title": "冰島旅行",
       "items": [
         {
-          "text": "11 月 9 日雨後夜間驟降溫，路面結冰；自駕旅客請查看道路管理局即時地圖或撥 1777，放慢車速並拉長煞車距離。",
+          "text": "北部與東部發布橙色天氣警報：暴風雪伴隨大雪，Öræfi 以東陣風達 45–50 m/s，強風時段不建議出行；自駕前請查詢氣象局預報與即時路況，首都區也可能嚴重結冰。",
           "sourceName": "Iceland Review",
-          "source": "https://www.icelandreview.com/news/iceland-black-ice-warning-november-9-2026/"
+          "source": "https://www.icelandreview.com/news/iceland-orange-weather-warnings-blizzard-november-2026/"
         },
         {
-          "text": "11 月 9–15 日活動包括熱可可極光巴士團、11 日起的 Iceland Noir 推理文學節，以及 Bíó Paradís 的義大利電影節，適合冬季旅人安排夜間行程。",
+          "text": "擬議自然景點費引發法律疑慮：草案向非居民成人收取 4,500 ISK 年票，涵蓋 Geysir、Gullfoss 與 Þingvellir，預計 2027 年 5 月起徵收；地方與旅遊業者質疑居民豁免可能牴觸 EEA 規範。",
           "sourceName": "Iceland Review",
-          "source": "https://icelandreview.com/news/what-to-do-this-week-iceland-noir-italian-cinema-and-more"
+          "source": "https://www.icelandreview.com/news/iceland-nature-tax-eea-legal-objections/"
         },
         {
-          "text": "（10/28 報導）冰洞僅限持證導遊帶團進入，擅入違法；自駕須四驅加冬季胎，內陸 F 路封閉，並需備冰爪與防水層次衣物。",
-          "sourceName": "Nomad Lawyer",
-          "source": "https://www.nomadlawyer.org/iceland-winter-travel-november-ice-cave-openings-safety-regulations-2026"
+          "text": "Icelandair 機師 11/20 起包機罷工：罷工涵蓋代第三方營運的包機客運與貨運，定期航班不受影響，規劃行程的旅客可放心但宜留意包機團。",
+          "sourceName": "Iceland Review",
+          "source": "https://www.icelandreview.com/news/icelandair-pilots-approve-charter-flight-strike-november-2026-2/"
         }
       ]
     },
@@ -102,19 +102,19 @@
       "title": "攝影",
       "items": [
         {
-          "text": "Leica 復刻稀有錘紋塗裝，底片機 M-A 售 8,000 美元、6,000 萬畫素數位旁軸 M11-P 售 10,950 美元，11 月 12 日全球上市。",
+          "text": "CIPA 數據：全片幅出貨 2026 年最多下滑 20%：APS-C 與 M43 相機出貨相對穩健、單位價值上升 14%，評論質疑廠商為何仍偏重高階全片幅新機。",
           "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/cameras/rangefinder-cameras/forget-black-and-silver-leica-has-revived-one-of-its-rarest-camera-finishes-for-two-stunning-new-rangefinders"
+          "source": "https://www.digitalcameraworld.com/cameras/mirrorless-cameras/has-the-full-frame-bubble-burst-the-latest-sales-data-proves-consumers-are-crying-out-for-aps-c-cameras-so-why-are-most-new-models-still-full-frame-and-high-end"
         },
         {
-          "text": "以「家庭」為主題的 HIPA 國際攝影獎，20 萬美元首獎由孟加拉攝影師 Pinu Rahman 奪得，空拍一家五口在火災後殘牆間入睡的畫面。",
+          "text": "1839 Awards 年度國際攝影師揭曉：義大利水下攝影師 Giacomo Marchione 以記錄浮游生物每日垂直遷移的系列《The Invisible》奪得最高榮譽。",
           "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/photography/awards-and-competitions/drone-photo-of-family-sheltering-in-the-remains-of-their-burnt-out-home-wins-worlds-richest-photo-competition"
+          "source": "https://www.digitalcameraworld.com/photography/awards-and-competitions/photographer-captures-the-invisible-and-wins-highest-honor-in-prestigious-international-competition"
         },
         {
-          "text": "新增非 AI 的光暈／高光溢散工具、一鍵去痘、閉眼修正（生成式 beta），iPad 也可連機拍攝。",
+          "text": "Lightroom 新增「最愛滑桿」自訂工作區：Lightroom 2027 桌面版可將常用滑桿加星收進 Favorites 區、自由排序並匯出匯入，加快修圖流程（Lightroom Classic 不支援）。",
           "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/tech/software/a-new-cinematic-glow-tool-is-coming-to-lightroom-and-no-its-not-genai-these-are-the-4-biggest-updates-to-adobe-lightroom-2027"
+          "source": "https://www.digitalcameraworld.com/tech/software/photographers-can-now-save-all-their-favorite-lightroom-sliders-in-one-place-heres-how"
         }
       ]
     },
@@ -124,19 +124,19 @@
       "title": "薩克斯風",
       "items": [
         {
-          "text": "葛萊美得主薩克斯風手 Kamasi Washington 與 Ami Taf Ra 11 月 17 日於納許維爾 City Winery 演出，專輯融合北非、福音、靈魂與爵士元素。",
-          "sourceName": "Music City Review",
+          "text": "Kamasi Washington 11/17 納許維爾演出：葛萊美得主薩克斯風手 Kamasi Washington 將與 Ami Taf Ra 同台，兩人合作的專輯《The Prophet and the Madman》融合北非、靈魂與爵士元素。",
+          "sourceName": "The Music City Review",
           "source": "https://www.musiccityreview.com/2026/11/04/the-jazz-beat-november-2026/"
         },
         {
-          "text": "薩克斯風手兼作曲家 Tara Davidson 率 Marni Project 四重奏於 T.Sound 廠牌發行新作，獲 Jazz Journal 11 月新片單收錄。",
-          "sourceName": "Jazz Journal",
-          "source": "https://jazzjournal.co.uk/2026/11/10/new-releases-october-november-2026-t-y/"
+          "text": "RNCM 薩克斯風日於曼徹斯特登場：11 月 8 日全天活動邀請 Emma Rawicz、Trio Abril 與古典名家 Arno Bornkamp，並有薩克斯風大樂團、工作坊與樂器展。",
+          "sourceName": "RNCM",
+          "source": "https://www.rncm.ac.uk/events/rncm-saxophone-day-2026/"
         },
         {
-          "text": "（10/2 發表）沿用原聲薩克斯風指法，新增 16 種音色共 89 種、改用 USB-C，並有 15 段音量與耳機輸出，適合在家安靜練習音準與技巧。",
-          "sourceName": "Yamaha",
-          "source": "https://www.yamaha.com/en/news_release/2026/26100201/"
+          "text": "UConn 薩克斯風四重奏展現自主合奏：演出 Torke《May, June, July》、巴哈《G 小調小賦格》與 Singelée 作品；團員自選曲目、由教師 Greg Case 指導，強調專注練習的合奏心法。",
+          "sourceName": "The Daily Campus",
+          "source": "https://dailycampus.com/2026/11/10/uconn-saxophone-quartet-performance-highlights-student-work/"
         }
       ]
     },
@@ -146,19 +146,19 @@
       "title": "網球",
       "items": [
         {
-          "text": "McEnroe 組：Zverev、Shelton、Fils、Jodar；Lendl 組：Alcaraz、Medvedev、Cobolli、Tiafoe；Alcaraz 挾九連勝，球王 Zverev 力拚年度第三冠。",
-          "sourceName": "Tennis365",
-          "source": "https://www.tennis365.com/tennis-news/atp-finals-draw-alexander-zverev-ben-shelton-carlos-alcaraz-daniil-medvedev"
+          "text": "ATP 年終總決賽今日杜林開打：McEnroe 組：Zverev、Shelton、Fils、Jodar；Lendl 組：Alcaraz、Medvedev、Cobolli、Tiafoe；Sinner 因傷退賽。",
+          "sourceName": "Tennis Majors",
+          "source": "https://www.tennismajors.com/atp/nitto-atp-finals-atp/atp-finals-2026-groups-schedule-format-how-to-watch-866945.html"
         },
         {
-          "text": "兩屆冠軍 Sinner 自溫網後因右膝傷休兵，計畫於 12 月底的 Six Kings Slam 復出，提醒膝關節傷害需充分復健再上場。",
-          "sourceName": "Flashscore",
-          "source": "https://www.flashscore.com/news/icouldn-t-move-at-all-sinner-reveals-severity-of-recent-knee-injury/EwV4I0sp/"
+          "text": "首日焦點與四位新面孔：首日 Zverev 對 Jodar、Shelton 對 Fils；Cobolli、Fils、Tiafoe、Jodar 皆首度參賽，Alcaraz 帶著室內 9 連勝尋求首座年終冠軍。",
+          "sourceName": "ATP Tour",
+          "source": "https://www.atptour.com/en/news/nitto-atp-finals-2026-draw-resource-page"
         },
         {
-          "text": "22 歲的 Arthur Fils 在 Tiafoe 巴黎大師賽次輪落敗後確定入圍，成為繼 2016 年 Monfils 之後首位參賽的法國球員。",
-          "sourceName": "Flashscore",
-          "source": "https://www.flashscore.com/news/tennis-atp-fils-clinches-first-finals-berth-thanks-to-tiafoe-loss-in-paris/hvJq8Oq9/"
+          "text": "巡迴賽傷病潮：用球是元兇嗎？：PTPA 指 2026 年初上肢傷害增 42%、手臂傷害增 112%，Fritz、Djokovic 歸咎用球，但 11 月研究回顧發現用球與肘傷直接關聯的證據有限。",
+          "sourceName": "Yahoo Sports",
+          "source": "https://sports.yahoo.com/articles/tennis-balls-really-behind-tours-170003324.html"
         }
       ]
     }
@@ -186,17 +186,17 @@
     }
   ],
   "highlights": [
-    "美國密蘇里州 Agri Spray 因應 FCC 與國防部對中國製無人機的限制，宣布五年內從代理中國機種轉為美國供應鏈自",
-    "新版前端支援 Matter 攝影機快照與 WebRTC 即時影像，並以 Labs 功能提供雙向通話（需 HTTPS）；H",
-    "依 2024 年 FAA 再授權法，超視距（BVLOS）最終規則須於 2026 年 12 月 7 日前發布；截至 11 ",
-    "11 月 9 日雨後夜間驟降溫，路面結冰；自駕旅客請查看道路管理局即時地圖或撥 1777，放慢車速並拉長煞車距離。"
+    "肯亞 Farmerlifeline 奪 Smart Africa 創新挑戰賽",
+    "Apple 推出 HomeView 智慧家庭螢幕",
+    "美國五部會簽署反無人機合作備忘錄",
+    "北部與東部發布橙色天氣警報"
   ],
   "cover": {
     "title": "今日日報封面",
-    "local": "assets/rabbit-reading.jpeg",
-    "drive": ""
+    "drive": "",
+    "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/1edOco2E2ResEIDtnT466DDUF7QOwtGxjUOT5yIxQ3tI/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/1ubLdCBgXitSGG2jolUhnOdSKuhYyhNlBHp0F1H9jqv4/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-11-15T03:08:35.173Z"
+  "updatedAt": "2026-11-15T06:06:15.785Z"
 }
