@@ -41,6 +41,17 @@ export const CONTAINER_CHANNELS = ["ig", "th"];
 export const NATIVE_CHANNELS = ["fb", "yt"];
 export const CHANNEL_LABEL = { fb: "Facebook 粉專", ig: "Instagram", th: "Threads", yt: "YouTube" };
 
+/* 多圖：頻道自己的 imageUrls 優先，其次貼文層 imageUrls，最後退回單張 imageUrl（舊資料相容）。
+   FB 多圖貼文、IG 輪播最多 10 張，Threads 輪播最多 20 張。 */
+export const MAX_IMAGES = { fb: 10, ig: 10, th: 20 };
+export function imagesFor(post, ch) {
+  const c = (post && post[ch]) || {};
+  const pick = Array.isArray(c.imageUrls) && c.imageUrls.length ? c.imageUrls
+    : Array.isArray(post && post.imageUrls) && post.imageUrls.length ? post.imageUrls
+    : post && post.imageUrl ? [post.imageUrl] : [];
+  return pick.map((u) => String(u || "").trim()).filter(Boolean).slice(0, MAX_IMAGES[ch] || 10);
+}
+
 const iso = (ms) => new Date(ms).toISOString();
 const parseTime = (v) => {
   if (!v) return NaN;
@@ -93,8 +104,22 @@ export function createFbGraph({ token, pageId, version = "v25.0", fetchImpl = fe
   const call = makeCaller(`https://graph.facebook.com/${version}`, token, fetchImpl);
   return {
     /* 發文：有圖走 /photos，否則走 /feed。scheduleUnix 有值則為 Meta 原生排程。 */
-    async publish({ message, link, imageUrl, scheduleUnix }) {
+    async publish({ message, link, imageUrl, imageUrls, scheduleUnix }) {
       const sched = scheduleUnix ? { published: "false", scheduled_publish_time: String(scheduleUnix) } : {};
+      const list = (imageUrls && imageUrls.length ? imageUrls : imageUrl ? [imageUrl] : []).filter(Boolean);
+      if (list.length > 1) {
+        // 多圖貼文：先上傳未發布的照片（排程貼文需 temporary），再以 attached_media 組成一則貼文
+        const photoIds = [];
+        for (const url of list) {
+          const p = await call("POST", `${pageId}/photos`, { url, published: "false", ...(scheduleUnix ? { temporary: "true" } : {}) });
+          photoIds.push(p.id);
+        }
+        const media = Object.fromEntries(photoIds.map((id, i) => [`attached_media[${i}]`, JSON.stringify({ media_fbid: id })]));
+        const text = [message, link].filter(Boolean).join("\n\n");
+        const r = await call("POST", `${pageId}/feed`, { message: text, ...media, ...sched });
+        return { postId: r.id, photoIds };
+      }
+      imageUrl = list[0] || "";
       if (imageUrl) {
         // 照片貼文不支援 link 參數，連結併入內文
         const caption = [message, link].filter(Boolean).join("\n\n");
@@ -118,11 +143,21 @@ export function createFbGraph({ token, pageId, version = "v25.0", fetchImpl = fe
 const normStatus = (s) => String(s || "").toUpperCase();
 
 /* Instagram 商業帳號（沿用粉專 Token，需 instagram_content_publish 權限；IG 貼文必須有圖） */
-export function createIgGraph({ token, igUserId, version = "v25.0", fetchImpl = fetch }) {
-  const call = makeCaller(`https://graph.facebook.com/${version}`, token, fetchImpl);
+/* host：graph.facebook.com（Facebook 登入，沿用粉專 Token）或 graph.instagram.com（Instagram 登入，IG 專用 Token） */
+export function createIgGraph({ token, igUserId, version = "v25.0", host = "graph.facebook.com", fetchImpl = fetch }) {
+  const call = makeCaller(`https://${host}/${version}`, token, fetchImpl);
+  const igLogin = host === "graph.instagram.com";
   return {
-    async create({ text, imageUrl }) {
-      const r = await call("POST", `${igUserId}/media`, { image_url: imageUrl, caption: text || "" });
+    async create({ text, imageUrl, imageUrls }) {
+      const list = (imageUrls && imageUrls.length ? imageUrls : imageUrl ? [imageUrl] : []).filter(Boolean);
+      if (list.length > 1) {
+        // 輪播：每張圖先建子容器，再建 CAROUSEL 容器（status／publish 都對 CAROUSEL 容器）
+        const children = [];
+        for (const url of list) children.push((await call("POST", `${igUserId}/media`, { image_url: url, is_carousel_item: "true" })).id);
+        const r = await call("POST", `${igUserId}/media`, { media_type: "CAROUSEL", children: children.join(","), caption: text || "" });
+        return { id: r.id, children };
+      }
+      const r = await call("POST", `${igUserId}/media`, { image_url: list[0] || "", caption: text || "" });
       return { id: r.id };
     },
     async status(id) {
@@ -135,7 +170,7 @@ export function createIgGraph({ token, igUserId, version = "v25.0", fetchImpl = 
     },
     async permalink(id) { return (await call("GET", id, { fields: "permalink" })).permalink || null; },
     async checkToken() {
-      const r = await call("GET", igUserId, { fields: "id,username" });
+      const r = igLogin ? await call("GET", "me", { fields: "user_id,username" }) : await call("GET", igUserId, { fields: "id,username" });
       return { name: r.username ? "@" + r.username : r.id };
     },
   };
@@ -145,8 +180,15 @@ export function createIgGraph({ token, igUserId, version = "v25.0", fetchImpl = 
 export function createThreadsGraph({ token, userId, version = "v1.0", fetchImpl = fetch }) {
   const call = makeCaller(`https://graph.threads.net/${version}`, token, fetchImpl);
   return {
-    async create({ text, imageUrl }) {
-      const p = imageUrl ? { media_type: "IMAGE", image_url: imageUrl, text: text || "" } : { media_type: "TEXT", text: text || "" };
+    async create({ text, imageUrl, imageUrls }) {
+      const list = (imageUrls && imageUrls.length ? imageUrls : imageUrl ? [imageUrl] : []).filter(Boolean);
+      if (list.length > 1) {
+        const children = [];
+        for (const url of list) children.push((await call("POST", `${userId}/threads`, { media_type: "IMAGE", image_url: url, is_carousel_item: "true" })).id);
+        const r = await call("POST", `${userId}/threads`, { media_type: "CAROUSEL", children: children.join(","), text: text || "" });
+        return { id: r.id, children };
+      }
+      const p = list[0] ? { media_type: "IMAGE", image_url: list[0], text: text || "" } : { media_type: "TEXT", text: text || "" };
       const r = await call("POST", `${userId}/threads`, p);
       return { id: r.id };
     },
@@ -169,6 +211,19 @@ export function createThreadsGraph({ token, userId, version = "v1.0", fetchImpl 
 /* Threads 長效 Token 續期（Token 需已發出 24 小時以上且未過期）；回傳 { token, expiresAt } */
 export async function refreshThreadsToken({ token, fetchImpl = fetch, now = Date.now() }) {
   const url = `https://graph.threads.net/refresh_access_token?${new URLSearchParams({ grant_type: "th_refresh_token", access_token: token })}`;
+  const res = await fetchImpl(url, { method: "GET" });
+  let data = {};
+  try { data = await res.json(); } catch { /* 非 JSON 回應 */ }
+  if (!res.ok || data.error || !data.access_token) {
+    const er = data.error || {};
+    throw new GraphError(er.message || `HTTP ${res.status}`, { code: er.code, status: res.status });
+  }
+  return { token: data.access_token, expiresAt: iso(now + Number(data.expires_in || 0) * 1000) };
+}
+
+/* Instagram 登入的長效 Token 續期（graph.instagram.com，需已發出 24 小時以上且未過期） */
+export async function refreshInstagramToken({ token, fetchImpl = fetch, now = Date.now() }) {
+  const url = `https://graph.instagram.com/refresh_access_token?${new URLSearchParams({ grant_type: "ig_refresh_token", access_token: token })}`;
   const res = await fetchImpl(url, { method: "GET" });
   let data = {};
   try { data = await res.json(); } catch { /* 非 JSON 回應 */ }
@@ -277,7 +332,7 @@ async function runFb(act, cur, { graph, save, now, log, tag }) {
     // 先標記 publishing（鎖已在 claim 時寫入），再呼叫 API
     await save("fb", { state: "publishing" });
     const scheduleUnix = act === "schedule_native" ? Math.floor(parseTime(cur.scheduledAt) / 1000) : null;
-    const r = await graph.publish({ message: fb.caption || "", link: fb.link || "", imageUrl: cur.imageUrl || "", scheduleUnix });
+    const r = await graph.publish({ message: fb.caption || "", link: fb.link || "", imageUrl: imagesFor(cur, "fb")[0] || "", imageUrls: imagesFor(cur, "fb"), scheduleUnix });
     if (act === "schedule_native") {
       await save("fb", { state: "scheduled", postId: r.postId, photoId: r.photoId || null, error: null, nativeScheduledAt: iso(now) });
       log(`${tag} FB 已交給 Meta 原生排程 → ${r.postId}`);
@@ -416,7 +471,8 @@ async function runContainer(ch, act, cur, { graphs, save, now, log, tag }) {
     return {};
   }
   if (act === "create") {
-    const r = await g.create({ text: c.caption || "", imageUrl: cur.imageUrl || "" });
+    const imgs = imagesFor(cur, ch);
+    const r = await g.create({ text: c.caption || "", imageUrl: imgs[0] || "", imageUrls: imgs });
     await save(ch, { state: "processing", containerId: r.id, containerAt: iso(now), error: null });
     log(`${tag} ${label} 已建立容器 ${r.id}`);
     act = "check";

@@ -11,6 +11,9 @@
      META_PAGE_TOKEN           粉專 Token（建議 Business Manager 系統使用者 Token）
      META_PAGE_ID              粉專 ID
      META_IG_USER_ID           IG 商業帳號 ID（沿用 META_PAGE_TOKEN，需 instagram_content_publish）
+     IG_TOKEN                  選填：改用「Instagram 登入」的 IG 長效 Token（graph.instagram.com，
+                               不需連結粉專；排程器每日續期，存 aurora_social_secrets/instagram）
+     （相容別名：FB_PAGE_TOKEN／FB_PAGE_ID／IG_USER_ID 等同 META_PAGE_TOKEN／META_PAGE_ID／META_IG_USER_ID）
      THREADS_USER_ID           Threads 使用者 ID
      THREADS_TOKEN             Threads 長效 Token（排程器每日自動續期，續期後存於
                                aurora_social_secrets/threads，前端規則禁止讀取）
@@ -21,7 +24,7 @@
      SOCIAL_DRY_RUN            '1' 時只列出將執行的動作，不呼叫發文 API、不改資料
    ===================================================================== */
 import { runOnce, createFbGraph, createIgGraph, createThreadsGraph, LOCK_STALE_MS, isAuthError, CHANNEL_LABEL } from "./core.mjs";
-import { threadsToken } from "./threads-token.mjs";
+import { threadsToken, instagramToken } from "./threads-token.mjs";
 import { createYouTubeClient } from "./youtube.mjs";
 
 const COLL = "aurora_social_posts";
@@ -33,11 +36,12 @@ const env = (name) => (process.env[name] || "").trim();
 async function main() {
   const dryRun = process.env.SOCIAL_DRY_RUN === "1";
   const sa = env("FIREBASE_SERVICE_ACCOUNT");
-  const metaToken = env("META_PAGE_TOKEN"), pageId = env("META_PAGE_ID"), igUserId = env("META_IG_USER_ID");
+  const metaToken = env("META_PAGE_TOKEN") || env("FB_PAGE_TOKEN"), pageId = env("META_PAGE_ID") || env("FB_PAGE_ID");
+  const igUserId = env("META_IG_USER_ID") || env("IG_USER_ID"), igSeed = env("IG_TOKEN");
   const thUserId = env("THREADS_USER_ID"), thSeed = env("THREADS_TOKEN");
   const version = env("META_GRAPH_VERSION") || "v25.0";
   const yt = { clientId: env("YT_CLIENT_ID"), clientSecret: env("YT_CLIENT_SECRET"), refreshToken: env("YT_REFRESH_TOKEN") };
-  const configured = { fb: !!(metaToken && pageId), ig: !!(metaToken && igUserId), th: !!(thUserId && thSeed), yt: !!(yt.clientId && yt.clientSecret && yt.refreshToken) };
+  const configured = { fb: !!(metaToken && pageId), ig: !!((igSeed || metaToken) && igUserId), th: !!(thUserId && thSeed), yt: !!(yt.clientId && yt.clientSecret && yt.refreshToken) };
   if (!sa) {
     console.log("::warning::未設定 FIREBASE_SERVICE_ACCOUNT，略過本輪。設定方式見 docs/SOCIAL_SOP.md。");
     return;
@@ -78,9 +82,12 @@ async function main() {
   /* 各平台客戶端與 Token 檢查：失效的平台本輪暫停（貼文保持 pending），其他平台照常 */
   const clients = {};
   const health = {};
-  let thToken = null;
+  let thToken = null, igToken = null;
   if (configured.fb) clients.fb = createFbGraph({ token: metaToken, pageId, version });
-  if (configured.ig) clients.ig = createIgGraph({ token: metaToken, igUserId, version });
+  if (configured.ig && igSeed) {
+    igToken = await instagramToken(db, igSeed, { refresh: !dryRun });
+    clients.ig = createIgGraph({ token: igToken.token, igUserId, version, host: "graph.instagram.com" });
+  } else if (configured.ig) clients.ig = createIgGraph({ token: metaToken, igUserId, version });
   if (configured.th) {
     thToken = await threadsToken(db, thSeed, { refresh: !dryRun });
     clients.th = createThreadsGraph({ token: thToken.token, userId: thUserId });
@@ -109,7 +116,7 @@ async function main() {
       pageName: (health.fb && health.fb.name) || null,
       channels: {
         fb: chMeta("fb"),
-        ig: chMeta("ig"),
+        ig: { ...chMeta("ig"), login: igSeed ? "instagram" : "facebook", expiresAt: igToken ? igToken.expiresAt : null, refreshError: igToken ? igToken.refreshError : null },
         th: { ...chMeta("th"), expiresAt: thToken ? thToken.expiresAt : null, refreshError: thToken ? thToken.refreshError : null },
         yt: chMeta("yt"),
       },
@@ -121,6 +128,7 @@ async function main() {
 
   console.log(`本輪處理 ${summary.total} 筆；不可重試失敗 ${summary.failed} 筆${dryRun ? "（DRY-RUN）" : ""}`);
   for (const ch of Object.keys(health)) console.log(`  ${CHANNEL_LABEL[ch]}: ${health[ch].ok ? "● 正常 " + (health[ch].name || "") : "✕ " + health[ch].error}`);
+  if (igToken && igToken.expiresAt) console.log(`  Instagram Token 到期：${igToken.expiresAt}${igToken.refreshError ? `（續期失敗：${igToken.refreshError}）` : ""}`);
   if (thToken && thToken.expiresAt) console.log(`  Threads Token 到期：${thToken.expiresAt}${thToken.refreshError ? `（續期失敗：${thToken.refreshError}）` : ""}`);
   const bad = Object.keys(health).filter((ch) => !health[ch].ok);
   if (bad.length) {

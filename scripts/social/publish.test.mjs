@@ -574,3 +574,105 @@ test("YouTube：取消已排定影片 → 刪除影片退回草稿", async () =>
   assert.equal(d.yt.videoId, null);
   assert.equal(d.queueState, "draft");
 });
+
+/* ---------- 多圖：FB 多圖貼文、IG／Threads 輪播（Claude 排程素材匯入使用） ---------- */
+import { imagesFor, refreshInstagramToken } from "./core.mjs";
+
+function seqFetch(...resps) {
+  const reqs = [];
+  let i = 0;
+  const f = async (url, init = {}) => {
+    reqs.push({ url, method: init.method, body: init.body ? Object.fromEntries(init.body) : null });
+    const resp = resps[Math.min(i++, resps.length - 1)];
+    return { ok: !resp.error, status: resp.error ? 400 : 200, json: async () => resp };
+  };
+  f.reqs = reqs;
+  return f;
+}
+
+test("imagesFor：頻道 imageUrls 優先 → 貼文 imageUrls → 單張 imageUrl；IG 最多 10 張", () => {
+  const p = { imageUrl: "https://a/0.jpg", imageUrls: ["https://a/1.jpg", "https://a/2.jpg"], th: { imageUrls: ["https://t/1.jpg"] } };
+  assert.deepEqual(imagesFor(p, "th"), ["https://t/1.jpg"]);
+  assert.deepEqual(imagesFor(p, "ig"), ["https://a/1.jpg", "https://a/2.jpg"]);
+  assert.deepEqual(imagesFor({ imageUrl: "https://a/0.jpg" }, "fb"), ["https://a/0.jpg"]);
+  assert.deepEqual(imagesFor({}, "fb"), []);
+  const many = Array.from({ length: 12 }, (_, i) => `https://a/${i}.jpg`);
+  assert.equal(imagesFor({ imageUrls: many }, "ig").length, 10);
+  assert.equal(imagesFor({ imageUrls: many }, "th").length, 12);
+});
+
+test("FB 多圖：照片以 published=false 上傳，再以 attached_media 依序組成一則；排程時照片帶 temporary", async () => {
+  const f = seqFetch({ id: "ph1" }, { id: "ph2" }, { id: "PG_post" });
+  const g = createFbGraph({ token: "TKN", pageId: "PG", fetchImpl: f });
+  const r = await g.publish({ message: "內文", link: "", imageUrls: ["https://a/1.jpg", "https://a/2.jpg"], scheduleUnix: 1800000000 });
+  assert.equal(f.reqs.length, 3);
+  assert.match(f.reqs[0].url, /\/PG\/photos$/);
+  assert.equal(f.reqs[0].body.published, "false");
+  assert.equal(f.reqs[0].body.temporary, "true");
+  assert.equal(f.reqs[1].body.url, "https://a/2.jpg");
+  assert.match(f.reqs[2].url, /\/PG\/feed$/);
+  assert.equal(f.reqs[2].body["attached_media[0]"], JSON.stringify({ media_fbid: "ph1" }));
+  assert.equal(f.reqs[2].body["attached_media[1]"], JSON.stringify({ media_fbid: "ph2" }));
+  assert.equal(f.reqs[2].body.scheduled_publish_time, "1800000000");
+  assert.equal(r.postId, "PG_post");
+});
+
+test("FB 多圖立即發布：照片不帶 temporary，feed 不帶 published", async () => {
+  const f = seqFetch({ id: "ph1" }, { id: "ph2" }, { id: "PG_post" });
+  const g = createFbGraph({ token: "TKN", pageId: "PG", fetchImpl: f });
+  await g.publish({ message: "內文", imageUrls: ["https://a/1.jpg", "https://a/2.jpg"] });
+  assert.equal(f.reqs[0].body.temporary, undefined);
+  assert.equal(f.reqs[2].body.published, undefined);
+});
+
+test("IG 輪播：子容器 is_carousel_item，再建 CAROUSEL 容器帶 children 與 caption", async () => {
+  const f = seqFetch({ id: "k1" }, { id: "k2" }, { id: "k3" }, { id: "CAR" });
+  const g = createIgGraph({ token: "TKN", igUserId: "IGU", fetchImpl: f });
+  const r = await g.create({ text: "說明", imageUrls: ["https://a/1.jpg", "https://a/2.jpg", "https://a/3.jpg"] });
+  assert.equal(r.id, "CAR");
+  assert.equal(f.reqs[0].body.is_carousel_item, "true");
+  assert.equal(f.reqs[0].body.caption, undefined);
+  assert.equal(f.reqs[3].body.media_type, "CAROUSEL");
+  assert.equal(f.reqs[3].body.children, "k1,k2,k3");
+  assert.equal(f.reqs[3].body.caption, "說明");
+});
+
+test("IG 用 Instagram 登入：走 graph.instagram.com，checkToken 查 me", async () => {
+  const f = seqFetch({ user_id: "IGU", username: "allenchen1113.official" });
+  const g = createIgGraph({ token: "IGT", igUserId: "IGU", host: "graph.instagram.com", fetchImpl: f });
+  const r = await g.checkToken();
+  assert.match(f.reqs[0].url, /^https:\/\/graph\.instagram\.com\/v25\.0\/me\?/);
+  assert.equal(r.name, "@allenchen1113.official");
+});
+
+test("Threads 輪播：子容器 IMAGE＋is_carousel_item，再建 CAROUSEL 帶 text", async () => {
+  const f = seqFetch({ id: "t1" }, { id: "t2" }, { id: "TC" });
+  const g = createThreadsGraph({ token: "TKN", userId: "TU", fetchImpl: f });
+  const r = await g.create({ text: "短文", imageUrls: ["https://a/1.jpg", "https://a/2.jpg"] });
+  assert.equal(r.id, "TC");
+  assert.equal(f.reqs[0].body.media_type, "IMAGE");
+  assert.equal(f.reqs[0].body.is_carousel_item, "true");
+  assert.equal(f.reqs[2].body.media_type, "CAROUSEL");
+  assert.equal(f.reqs[2].body.children, "t1,t2");
+  assert.equal(f.reqs[2].body.text, "短文");
+});
+
+test("容器頻道建立時傳入頻道自己的多圖清單", async () => {
+  const created = [];
+  const ig = { create: async (a) => { created.push(a); return { id: "C" }; }, status: async () => ({ status: "IN_PROGRESS" }) };
+  const post = { id: "p1", queueState: "pending", scheduledAt: new Date(T0).toISOString(), imageUrl: "https://a/0.jpg",
+    ig: { enabled: true, state: "approved", caption: "c", imageUrls: ["https://a/1.jpg", "https://a/2.jpg"] } };
+  const docs = { p1: { ...post } };
+  const store = { claim: async (id) => ({ ...docs[id] }), update: async (id, patch) => Object.assign(docs[id], patch) };
+  await processPost(post, { store, graph: null, graphs: { ig }, now: T0 });
+  assert.deepEqual(created[0].imageUrls, ["https://a/1.jpg", "https://a/2.jpg"]);
+  assert.equal(created[0].imageUrl, "https://a/1.jpg");
+});
+
+test("Instagram Token 續期：graph.instagram.com ig_refresh_token", async () => {
+  const f = seqFetch({ access_token: "NEW", expires_in: 5184000 });
+  const r = await refreshInstagramToken({ token: "OLD", fetchImpl: f, now: 0 });
+  assert.match(f.reqs[0].url, /graph\.instagram\.com\/refresh_access_token\?grant_type=ig_refresh_token/);
+  assert.equal(r.token, "NEW");
+  assert.equal(r.expiresAt, new Date(5184000 * 1000).toISOString());
+});

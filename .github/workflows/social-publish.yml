@@ -8,6 +8,12 @@ name: 社群自動發文（Facebook／Instagram／Threads／YouTube）
 #   - YouTube：核准後即上傳（可續傳），公開影片帶 publishAt 由 YouTube 定時公開
 # 狀態機與重試規則見 scripts/social/core.mjs；設定步驟見 docs/SOCIAL_SOP.md。
 #
+# 發文前先執行「Claude 排程素材匯入」（scripts/social/ingest-content.mjs）：
+#   讀 content 分支今天／昨天的 content/<topic>/<YYYYMMDD>/manifest.json，
+#   圖卡轉 JPEG 推回 content 分支，建立／更新 aurora_social_posts/cs_<topic>_<YYYYMMDD>。
+#   一般主題為草稿（後台 PilotOne 審核核准）；SOCIAL_AUTO_TOPICS（預設 txf-flash）
+#   且 manifest 標記 autoPublish＋verified 者直接核准、本輪發布。見 docs/SOCIAL_SOP.md 第九節。
+#
 # 需要的 Repo Secrets：
 #   FIREBASE_SERVICE_ACCOUNT  服務帳戶 JSON（需加授「Cloud Datastore 使用者」角色）
 #   META_PAGE_TOKEN           粉專 Token（系統使用者 Token，不會過期）
@@ -15,9 +21,13 @@ name: 社群自動發文（Facebook／Instagram／Threads／YouTube）
 #   META_IG_USER_ID           （選用）IG 商業帳號 ID，沿用 META_PAGE_TOKEN
 #   THREADS_USER_ID           （選用）Threads 使用者 ID
 #   THREADS_TOKEN             （選用）Threads 長效 Token，排程器每日自動續期
+#   IG_TOKEN                  （選用）改用「Instagram 登入」的 IG 長效 Token（不需連結粉專，每日自動續期）
+#   FB_PAGE_TOKEN / FB_PAGE_ID / IG_USER_ID
+#                             （選用）META_PAGE_TOKEN / META_PAGE_ID / META_IG_USER_ID 的相容別名
 #   YT_CLIENT_ID / YT_CLIENT_SECRET / YT_REFRESH_TOKEN
 #                             （選用）YouTube Data API OAuth；scripts/social/youtube-auth.mjs 取得
 # 選用 Repo Variable：META_GRAPH_VERSION（預設 v25.0）
+#                     SOCIAL_AUTO_TOPICS（允許自動發布的主題，逗號分隔；預設 txf-flash，none＝全部人工審核）
 # 未設定的平台自動停用；全部未設定時只會印出警告並略過，不會失敗。
 on:
   schedule:
@@ -39,7 +49,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write   # 素材匯入需把 JPEG 圖卡與匯入紀錄推回 content 分支
 
 jobs:
   publish:
@@ -51,15 +61,37 @@ jobs:
         with:
           node-version: 20
       - name: 行為測試
-        run: node --test scripts/social/publish.test.mjs scripts/social/youtube.test.mjs
-      - name: 安裝 firebase-admin
-        run: npm install --no-save --no-audit --no-fund firebase-admin@13
+        run: node --test scripts/social/publish.test.mjs scripts/social/youtube.test.mjs scripts/social/ingest.test.mjs
+      - name: 安裝 firebase-admin 與 sharp
+        run: npm install --no-save --no-audit --no-fund firebase-admin@13 sharp@0.34
+      - name: 取出 content 分支（Claude 排程素材）
+        id: content
+        continue-on-error: true   # 分支尚未建立時略過匯入，不影響發文
+        uses: actions/checkout@v4
+        with:
+          ref: content
+          path: .content
+      - name: Claude 排程素材匯入
+        if: steps.content.outcome == 'success'
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          SOCIAL_AUTO_TOPICS: ${{ vars.SOCIAL_AUTO_TOPICS }}
+          SOCIAL_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
+        run: |
+          git -C .content config user.name "github-actions[bot]"
+          git -C .content config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node scripts/social/ingest-content.mjs .content
       - name: 執行發文排程
+        if: success() || failure()   # 素材匯入失敗仍照常處理既有佇列
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
           META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
           META_IG_USER_ID: ${{ secrets.META_IG_USER_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
           THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}

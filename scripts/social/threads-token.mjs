@@ -2,7 +2,7 @@
    Threads 長效 Token 管理（發文排程器與成效同步共用）
    ===================================================================== */
 import { createHash } from "node:crypto";
-import { refreshThreadsToken } from "./core.mjs";
+import { refreshThreadsToken, refreshInstagramToken } from "./core.mjs";
 
 const TH_SECRET_DOC = "aurora_social_secrets/threads";
 const HOUR = 3600 * 1000;
@@ -12,7 +12,17 @@ const TH_RETRY_MS = HOUR;              // 續期失敗（如 Token 未滿 24 小
 /* Threads Token：Secret 為種子；續期後的新 Token 存 Firestore（僅 Admin SDK 可讀）。
    使用者更新 THREADS_TOKEN Secret 時，以雜湊辨識並改用新種子。 */
 export async function threadsToken(db, seed, { refresh = true } = {}) {
-  const ref = db.doc(TH_SECRET_DOC);
+  return managedToken(db, TH_SECRET_DOC, seed, refreshThreadsToken, { refresh });
+}
+
+/* Instagram 登入（graph.instagram.com）的長效 Token：與 Threads 相同的種子＋每日續期機制，存 aurora_social_secrets/instagram */
+const IG_SECRET_DOC = "aurora_social_secrets/instagram";
+export async function instagramToken(db, seed, { refresh = true } = {}) {
+  return managedToken(db, IG_SECRET_DOC, seed, refreshInstagramToken, { refresh });
+}
+
+async function managedToken(db, doc, seed, refreshFn, { refresh = true } = {}) {
+  const ref = db.doc(doc);
   const seedHash = createHash("sha256").update(seed).digest("hex").slice(0, 16);
   const snap = await ref.get();
   const d = snap.exists && snap.data().seedHash === seedHash ? snap.data() : {};
@@ -24,7 +34,7 @@ export async function threadsToken(db, seed, { refresh = true } = {}) {
   const tried = Date.parse(d.refreshTriedAt || "");
   if (refresh && (!isFinite(last) || now - last > TH_REFRESH_EVERY_MS) && (!isFinite(tried) || now - tried > TH_RETRY_MS)) {
     try {
-      const r = await refreshThreadsToken({ token });
+      const r = await refreshFn({ token });
       token = r.token; expiresAt = r.expiresAt;
       await ref.set({ token, expiresAt, seedHash, refreshedAt: new Date(now).toISOString(), refreshTriedAt: new Date(now).toISOString(), refreshError: null });
     } catch (e) {

@@ -235,6 +235,59 @@ YouTube（`yt.state`）與 FB 相同集合：`approved` → 上傳中 `publishin
 - 某些貼文讀取失敗只記錄在 `aurora_social_meta/insights`；全部都失敗（多半是權限不足）才會讓 workflow 失敗。
 - 手動執行：Actions →「社群成效同步」→ Run workflow（可勾 dry_run 只看數字不寫入）。
 
+## 九之二、Claude 排程素材匯入（AllenI3Aurora 產出 → PilotOne）
+
+Claude 排程任務（台指期快訊、盤前速報、極光日報／午報、熱力圖、選股雷達）不再用 Mac mini 的 Chrome 發文：成品推到本 repo 的 **`content` 分支**，`social-publish.yml` 每 10 分鐘先跑 `scripts/social/ingest-content.mjs` 匯入，再由同一個排程器發文。
+
+```
+Claude 排程任務 ── git push ──→ content 分支 content/<topic>/<YYYYMMDD>/
+                                   manifest.json＋fb.txt／ig.txt／threads.txt＋圖卡 PNG
+social-publish.yml（每 10 分鐘）
+   ├─ ingest-content.mjs：驗證 → PNG 轉 JPEG 推回 _publish/ → aurora_social_posts/cs_<topic>_<YYYYMMDD>
+   │     一般主題：草稿 → 後台「PilotOne 審核」核准
+   │     SOCIAL_AUTO_TOPICS（預設 txf-flash）且 autoPublish＋verified：直接核准、本輪發布
+   │     狀態摘要寫 content 分支 ops/ingest_log/<YYYYMMDD>.json（巡檢 Agent 讀）
+   └─ publish-social-posts.mjs：FB 多圖貼文、IG 輪播、Threads 輪播
+```
+
+**manifest.json**（每個產出排程推送前寫一份；`platforms` 的 key 為 `fb`、`ig`、`threads`，不發的平台拿掉）：
+
+```json
+{
+  "version": 1, "topic": "txf-flash", "date": "2026-11-16",
+  "title": "今日關注動態｜台股台指期快訊 2026/11/16",
+  "autoPublish": true, "verified": true,
+  "platforms": {
+    "fb": { "caption": "fb.txt", "images": ["TXFFlash_Chips_2026-11-16.png", "TXFFlash_Flash_2026-11-16.png"] },
+    "ig": { "caption": "ig.txt", "images": ["TXFFlash_Chips_2026-11-16.png", "TXFFlash_Flash_2026-11-16.png"] },
+    "threads": { "caption": "threads.txt", "images": ["TXFFlash_Chips_2026-11-16.png"] }
+  },
+  "producedBy": "trig_01MnVUo9LzneqZBPwQGR1yaC", "producedAt": "2026-11-16T16:42:00+08:00"
+}
+```
+
+| 項目 | 規則 |
+|------|------|
+| 主題代碼 | `txf-flash`、`tsm-prebrief`、`daily`、`noon`、`heatmap`、`stockradar` |
+| 驗證 | 資料夾日期＝`date`；每份文案含當日 `YYYY/MM/DD`；IG ≤ 2,200 字元、hashtag ≤ 30、必須有圖；Threads ≤ 500 字元；圖片 PNG／JPEG 且存在；IG／FB ≤ 10 張、Threads ≤ 20 張。不合格不建立貼文，原因寫進 workflow log 與 `ops/ingest_log` |
+| 文件 id | `cs_<topic>_<YYYYMMDD>`，同一天同主題只有一筆 |
+| 重產 | `producedAt` 變更且三平台都還是草稿／失敗 → 更新內容；已核准、發布中或已發布 → 不覆蓋 |
+| 自動發布 | 主題在 Repo Variable `SOCIAL_AUTO_TOPICS`（預設 `txf-flash`；設 `none` 全部人工審核）且 manifest `autoPublish`、`verified` 都是 `true` |
+| 圖卡網址 | 轉 JPEG 後存 `content/<topic>/<YYYYMMDD>/_publish/`，網址為 `https://raw.githubusercontent.com/<repo>/<commit SHA>/…`（以 SHA 固定，平台不會抓到舊圖）|
+| 多圖 | 頻道欄位 `imageUrls`（陣列）優先於貼文 `imageUrl`；FB 以 `attached_media` 組多圖貼文，IG／Threads 為輪播容器 |
+| 編修 | 後台「PilotOne 審核」可改文字與核准；各平台圖卡列在圖片欄下方，圖片網址欄只作縮圖 |
+
+**Instagram 兩種登入方式**：沿用粉專 Token（`META_IG_USER_ID`，IG 必須連結粉專），或設定 `IG_TOKEN`（Instagram 登入的長效 Token，不需連結粉專；排程器每日續期，存 `aurora_social_secrets/instagram`）。有 `IG_TOKEN` 時優先使用。成效同步目前只支援前者。
+
+**Secrets 別名**：`FB_PAGE_TOKEN`／`FB_PAGE_ID`／`IG_USER_ID` 等同 `META_PAGE_TOKEN`／`META_PAGE_ID`／`META_IG_USER_ID`，兩組擇一設定即可。
+
+**首次上線**：
+1. Actions →「社群自動發文」→ Run workflow 勾 dry_run，log 應出現「素材匯入：今天／昨天共 N 份 manifest（DRY-RUN）」。
+2. 先讓台指期快訊以 `autoPublish: false` 送審兩天，在後台確認文案、圖卡順序無誤後手動核准。
+3. 停用 Mac 上「台指期快訊發文」Claude 排程，再改回 `autoPublish: true`。其他主題逐一切換，一次只切一個，避免與 Mac 發文排程重複發文。
+
+測試：`node --test scripts/social/ingest.test.mjs`（10 項匯入規則）；多圖用戶端測試在 `publish.test.mjs`。
+
 ## 十、測試
 
 YouTube 客戶端（token 換發、可續傳上傳、錯誤分類）：`node --test scripts/social/youtube.test.mjs`。
@@ -249,5 +302,5 @@ workflow 每次執行前也會先跑這組測試；push 到 main 時以 dry_run 
 
 ## 下一階段
 
-- ~~**第二階段**：Instagram、Threads~~（已完成：容器兩段式發布、冪等使用 `creation_id`、Threads Token 自動續期）。待做：IG 專用 1080×1080 JPEG 圖卡、輪播與 Reels。
+- ~~**第二階段**：Instagram、Threads~~（已完成：容器兩段式發布、冪等使用 `creation_id`、Threads Token 自動續期）。~~輪播~~（已完成：FB 多圖、IG／Threads 輪播，第九之二節）。待做：Reels。
 - **第三階段**：Claude API 自動產生 FB／IG 文案草稿、「要求重寫」回饋、失敗通知信。

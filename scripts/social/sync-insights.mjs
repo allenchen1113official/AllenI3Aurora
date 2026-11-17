@@ -21,7 +21,7 @@ const env = (name) => (process.env[name] || "").trim();
 async function main() {
   const dryRun = process.env.SOCIAL_DRY_RUN === "1";
   const sa = env("FIREBASE_SERVICE_ACCOUNT");
-  const metaToken = env("META_PAGE_TOKEN"), thSeed = env("THREADS_TOKEN");
+  const metaToken = env("META_PAGE_TOKEN") || env("FB_PAGE_TOKEN"), thSeed = env("THREADS_TOKEN");
   if (!sa || (!metaToken && !thSeed)) {
     console.log("::warning::未設定 FIREBASE_SERVICE_ACCOUNT 或任何平台 Token，略過成效同步。見 docs/SOCIAL_SOP.md。");
     return;

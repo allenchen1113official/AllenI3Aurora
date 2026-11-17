@@ -2196,6 +2196,17 @@ function SocialPanel() {
             <div style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 8, lineHeight: 1.7 }}>
               站內圖卡為固定檔名、每日覆寫。交給 Meta 排程時圖片會在「排程當下」上傳定格；立即發布則抓送出當下的版本。
             </div>
+            {[["fb", "Facebook"], ["ig", "Instagram"], ["th", "Threads"]].some(([c]) => sel[c] && Array.isArray(sel[c].imageUrls) && sel[c].imageUrls.length) ? (
+              <div style={{ marginTop: 12, borderTop: "1px solid var(--border)", paddingTop: 10 }}>
+                <div style={{ fontSize: 12, color: "var(--text-3)", marginBottom: 6 }}>Claude 排程素材：各平台依序發布下列圖卡（多張＝FB 多圖／IG、Threads 輪播；上方圖片網址欄僅作縮圖）</div>
+                {[["fb", "Facebook"], ["ig", "Instagram"], ["th", "Threads"]].filter(([c]) => sel[c] && sel[c].enabled && Array.isArray(sel[c].imageUrls) && sel[c].imageUrls.length).map(([c, label]) => (
+                  <div key={c} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 11.5, color: "var(--text-3)", width: 72 }}>{label}</span>
+                    {sel[c].imageUrls.map((u, i) => <a key={u + i} href={u} target="_blank" rel="noopener"><img src={u} alt={`${label} 圖 ${i + 1}`} style={{ width: 54, height: 54, objectFit: "cover", borderRadius: 6, background: "var(--night-700)" }} /></a>)}
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
           <div style={{ ...box, opacity: 0.55 }}>
             <div style={{ fontWeight: 800, color: "var(--text-2)", fontFamily: "var(--font-display)", fontSize: 14 }}>Instagram（第二階段開放）</div>
