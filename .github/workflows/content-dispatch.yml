@@ -1,0 +1,32 @@
+name: 素材到站即觸發發文（content 分支）
+
+# Claude 排程任務把素材推到 content 分支時，立即觸發 main 的 social-publish.yml，
+# 不必等 GitHub 排程（*/10 的 cron 實際常被延後數小時）。
+# 匯入步驟寫回 content 的提交訊息帶 [skip ci]，不會再觸發本 workflow，不會迴圈。
+on:
+  push:
+    branches: [content]
+    paths:
+      - "content/**/manifest.json"
+      - "content/**/*.txt"
+      - "content/**/*.png"
+      - "content/**/*.jpg"
+      - ".github/workflows/content-dispatch.yml"
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: content-dispatch
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 觸發 social-publish.yml（main）
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run social-publish.yml --ref main -R "${{ github.repository }}"
