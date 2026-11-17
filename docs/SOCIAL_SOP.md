@@ -250,6 +250,10 @@ social-publish.yml（每 10 分鐘）
    └─ publish-social-posts.mjs：FB 多圖貼文、IG 輪播、Threads 輪播
 ```
 
+**觸發時機**：content 分支自帶 `.github/workflows/content-dispatch.yml`，素材一推上去就以 workflow_dispatch 觸發 main 的 `social-publish.yml`（GitHub 的 `*/10` cron 實際一天只跑約 4–8 次，不能依賴）。匯入步驟寫回 content 的提交帶 `[skip ci]`，不會迴圈。後台人工核准的貼文仍要等下一次排程或補跑。
+
+**服務帳戶權限**：匯入與發文都要讀寫 Firestore，`FIREBASE_SERVICE_ACCOUNT` 必須有「Cloud Datastore 使用者」角色（第三節）；缺少時 Actions 摘要會出現 `PERMISSION_DENIED`。
+
 **manifest.json**（每個產出排程推送前寫一份；`platforms` 的 key 為 `fb`、`ig`、`threads`，不發的平台拿掉）：
 
 ```json
