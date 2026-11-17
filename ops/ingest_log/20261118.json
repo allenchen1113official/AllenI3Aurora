@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-18",
+  "posts": [
+    {
+      "id": "cs_heatmap_20261118",
+      "topic": "heatmap",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    }
+  ],
+  "lastIngest": [
+    {
+      "id": "cs_heatmap_20261118",
+      "topic": "heatmap",
+      "date": "20261118",
+      "status": "created",
+      "auto": false
+    }
+  ],
+  "generatedAt": "2026-11-17T18:33:43.930Z"
+}
