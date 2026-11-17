@@ -173,5 +173,6 @@ async function main() {
 
 main().catch((e) => {
   console.error("素材匯入失敗：", e);
+  console.log(`::error::素材匯入失敗：${(e && e.message) || e}`);
   process.exitCode = 1;
 });

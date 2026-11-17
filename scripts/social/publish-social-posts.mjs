@@ -142,5 +142,6 @@ async function main() {
 
 main().catch((e) => {
   console.error(isAuthError(e) ? "認證錯誤：" : "執行失敗：", e);
+  console.log(`::error::發文排程${isAuthError(e) ? "認證錯誤" : "執行失敗"}：${(e && e.message) || e}`);
   process.exitCode = 1;
 });

@@ -59,4 +59,4 @@ async function main() {
   }
 }
 
-main().catch((e) => { console.error("執行失敗：", e); process.exitCode = 1; });
+main().catch((e) => { console.error("執行失敗：", e); console.log(`::error::成效同步執行失敗：${(e && e.message) || e}`); process.exitCode = 1; });
