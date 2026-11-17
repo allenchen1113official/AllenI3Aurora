@@ -13,9 +13,9 @@ const { useState, useEffect, useCallback } = React;
 const FbPreview = SocFbPreview; // admin.jsx 的 FB 貼文預覽
 
 const HUB_PF = [
-  { id: "fb", short: "FB", name: "Facebook 粉絲專頁", color: "#1877F2", live: true, api: "Meta Graph API（Token 存於 Secrets）", formats: "圖文 · 連結貼文" },
-  { id: "ig", short: "IG", name: "Instagram 商業帳號", color: "#C13584", live: true, api: "Instagram Graph API（沿用 Meta Token）", formats: "單張圖片貼文（必須有圖）", limit: 2200 },
-  { id: "th", short: "TH", name: "Threads", color: "#101010", live: true, api: "Threads API（長效 Token 每日自動續期）", formats: "文字 · 單張圖片", limit: 500 },
+  { id: "fb", short: "FB", name: "Facebook 粉絲專頁", color: "#1877F2", live: true, api: "Meta Graph API（Token 存於 Secrets）", formats: "圖文 · 多圖（最多 10 張）· 連結貼文" },
+  { id: "ig", short: "IG", name: "Instagram 商業帳號", color: "#C13584", live: true, api: "Instagram Graph API（沿用 Meta Token，或 IG_TOKEN 每日自動續期）", formats: "單張圖片 · 輪播（最多 10 張，必須有圖）", limit: 2200 },
+  { id: "th", short: "TH", name: "Threads", color: "#101010", live: true, api: "Threads API（長效 Token 每日自動續期）", formats: "文字 · 單張圖片 · 輪播（最多 20 張）", limit: 500 },
   { id: "yt", short: "YT", name: "YouTube 頻道", color: "#FF0000", live: true, api: "YouTube Data API（OAuth refresh token 存於 Secrets）", formats: "影片 · Shorts（公開可下載的影片網址）", limit: 5000 },
   { id: "pc", short: "PC", name: "Podcast（RSS 託管）", color: "#7C3AED", phase: "第二階段", api: "RSS 託管", formats: "音檔 · Show notes" },
 ];
