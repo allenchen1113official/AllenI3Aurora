@@ -1,6 +1,6 @@
 {
-  "date": "2026.11.17",
-  "dateLabel": "2026.11.17（最新）",
+  "date": "2026.11.18",
+  "dateLabel": "2026.11.18",
   "asOf": "2026.11.18",
   "taiex": {
     "name": "加權指數 TAIEX",
@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "加權指數收40,092.11點，下跌947.97點（-2.31%），盤中一度失守4萬點。權值股與電子零組件、ABF載板族群重挫，金融與傳產相對抗跌。，加權指數收40,092.11點，下跌947.97點（-2.31%），盤中一度失守4萬點。權值股與電…",
+  "summary": "【上市 分享文案 交易日 2026-11-18】，（個股漲跌幅為 Yahoo 股市 11/18 收盤查證；少數未查到者為同類股平均示意），加權指數收40,194.91點，漲102.80點（+0.26%）。AI供應鏈強、金融股明顯走弱：日月光投控+5…",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1bYdUDc80QC0Cu5HHYl3t0-yU5rZ92C0J&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1qaTQwI6jgWQ1lNrAhBamQ2RtlM_ZrY4r&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=14Hs2_5mLZoHo9T4U3HmgBCPdknqAWpM7&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1n-eGnCwUERH7bXwIxTM7icLWCHr_uRuw&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-11-18T09:11:13.608Z"
+  "updatedAt": "2026-11-18T11:02:36.789Z"
 }
