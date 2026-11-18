@@ -348,6 +348,11 @@ function Sidebar({ active, onNav }) {
         </div>
         <IconButton size="sm" label="設定"><Icons.settings size={17} /></IconButton>
       </div>
+      <div style={{ padding: "0 6px", fontSize: 11.5, color: "var(--text-4)" }}>
+        <a href="/AllenI3Aurora/privacy.html" style={{ color: "var(--text-3)", textDecoration: "none" }}>隱私權政策</a>
+        <span style={{ margin: "0 6px" }}>·</span>
+        <a href="/AllenI3Aurora/privacy.html?lang=en" style={{ color: "var(--text-3)", textDecoration: "none" }}>Privacy Policy</a>
+      </div>
     </aside>
   );
 }
