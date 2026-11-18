@@ -795,7 +795,6 @@
             <p style={{ color: "var(--text-2)", margin: "8px 0 0", fontSize: "var(--text-md)" }}>{K.brand.tagline}　今天有 <b style={{ color: "var(--insight)" }}>{focusList.length}</b> 則關注動態、<b style={{ color: "var(--intelligence)" }}>1</b> 場會議與 <b style={{ color: "var(--illumination)" }}>{podcastCount}</b> 集必聽 Podcast。</p>
           </div>
           <div style={{ display: "flex", gap: 10 }}>
-            <Button variant="primary" iconRight={<I.arrow size={16} />}>撰寫今日速報</Button>
             <Button variant="secondary" icon={<I.cal size={16} />} onClick={openCalendar}>行事曆</Button>
           </div>
         </Card>
