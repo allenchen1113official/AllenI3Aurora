@@ -351,7 +351,11 @@ function Sidebar({ active, onNav }) {
       <div style={{ padding: "0 6px", fontSize: 11.5, color: "var(--text-4)" }}>
         <a href="/AllenI3Aurora/privacy.html" style={{ color: "var(--text-3)", textDecoration: "none" }}>隱私權政策</a>
         <span style={{ margin: "0 6px" }}>·</span>
-        <a href="/AllenI3Aurora/privacy.html?lang=en" style={{ color: "var(--text-3)", textDecoration: "none" }}>Privacy Policy</a>
+        <a href="/AllenI3Aurora/privacy.html?lang=en" style={{ color: "var(--text-3)", textDecoration: "none" }}>Privacy</a>
+        <br />
+        <a href="/AllenI3Aurora/terms.html" style={{ color: "var(--text-3)", textDecoration: "none" }}>服務條款</a>
+        <span style={{ margin: "0 6px" }}>·</span>
+        <a href="/AllenI3Aurora/terms.html?lang=en" style={{ color: "var(--text-3)", textDecoration: "none" }}>Terms</a>
       </div>
     </aside>
   );
