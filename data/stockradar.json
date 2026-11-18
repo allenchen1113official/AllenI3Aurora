@@ -1,9 +1,9 @@
 {
-  "date": "2026.11.17",
-  "dateLabel": "2026.11.17（最新）",
-  "asOf": "2026.11.18",
-  "desc": "台股選股雷達 TOP 10 2026…",
-  "summary": "台股選股雷達 TOP 10 2026-11-17（星期二），・今日TOP10普遍收黑，台玻、健策、汎銓跌幅逼近跌停，雍智、定穎投控跌幅亦逾7%，短線波動劇烈。，・10檔皆未出現KD黃金交叉，也皆不符合「均線多頭排列」條件。，・基本面訊號：健策、雍智…",
+  "date": "2026.11.18",
+  "dateLabel": "2026.11.18（最新）",
+  "asOf": "2026.11.19",
+  "desc": "今日 TOP10：敦陽科、世芯-KY…",
+  "summary": "今日 TOP10：敦陽科、世芯-KY、定穎投控、騰輝電子-KY、儒鴻、長榮、陽明、萬海、聯茂、汎銓，・世芯-KY（+9.87%）、定穎投控（+9.80%）雙雙強攻近漲停，KD 皆在 50 以上且 KD。，・航運三雄長榮、陽明、萬海同步收紅，萬海上漲…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,19 +34,59 @@
   ],
   "top10": [
     {
-      "code": "1802",
-      "name": "台玻",
-      "changePct": "-9.92%",
+      "code": "2480",
+      "name": "敦陽科",
+      "changePct": "-1.36%",
       "up": false,
       "signals": [
+        "ma",
+        "om",
         "eps"
+      ]
+    },
+    {
+      "code": "3661",
+      "name": "世芯-KY",
+      "changePct": "+9.87%",
+      "up": true,
+      "signals": [
+        "om"
+      ]
+    },
+    {
+      "code": "3715",
+      "name": "定穎投控",
+      "changePct": "+9.80%",
+      "up": true,
+      "signals": [
+        "rev"
+      ]
+    },
+    {
+      "code": "6672",
+      "name": "騰輝電子-KY",
+      "changePct": "-2.06%",
+      "up": false,
+      "signals": [
+        "om",
+        "rev",
+        "eps"
+      ]
+    },
+    {
+      "code": "1476",
+      "name": "儒鴻",
+      "changePct": "-0.26%",
+      "up": false,
+      "signals": [
+        "om"
       ]
     },
     {
       "code": "2603",
       "name": "長榮",
-      "changePct": "-0.19%",
-      "up": false,
+      "changePct": "+0.39%",
+      "up": true,
       "signals": [
         "om"
       ]
@@ -54,69 +94,34 @@
     {
       "code": "2609",
       "name": "陽明",
-      "changePct": "-0.17%",
-      "up": false,
+      "changePct": "+1.00%",
+      "up": true,
       "signals": []
     },
     {
-      "code": "2034",
-      "name": "允強",
-      "changePct": "-0.86%",
-      "up": false,
-      "signals": []
-    },
-    {
-      "code": "2480",
-      "name": "敦陽科",
-      "changePct": "-1.86%",
-      "up": false,
-      "signals": [
-        "om",
-        "eps"
-      ]
-    },
-    {
-      "code": "1476",
-      "name": "儒鴻",
-      "changePct": "",
+      "code": "2615",
+      "name": "萬海",
+      "changePct": "+4.23%",
       "up": true,
       "signals": [
+        "gc",
         "om"
       ]
     },
     {
-      "code": "3653",
-      "name": "健策",
-      "changePct": "-9.97%",
-      "up": false,
+      "code": "6213",
+      "name": "聯茂",
+      "changePct": "+1.50%",
+      "up": true,
       "signals": [
-        "om",
-        "eps"
-      ]
-    },
-    {
-      "code": "3715",
-      "name": "定穎投控",
-      "changePct": "-7.27%",
-      "up": false,
-      "signals": [
-        "rev"
-      ]
-    },
-    {
-      "code": "6683",
-      "name": "雍智",
-      "changePct": "-7.94%",
-      "up": false,
-      "signals": [
-        "om",
+        "rev",
         "eps"
       ]
     },
     {
       "code": "6830",
       "name": "汎銓",
-      "changePct": "-9.05%",
+      "changePct": "-0.26%",
       "up": false,
       "signals": []
     }
@@ -125,9 +130,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1_as7lgDfFRWFBJFyFozpwYDTy8qp4Kf8&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=17YVVS6s0e8dFFpNvR5S7FpiY_1uJzslf&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1IJb6n3AZ80dIeQabF7sCNwnuljLXEAiK/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1asvI8q0ez34N5T984WbnysVVVx0xNXxY/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-11-18T11:02:39.653Z"
+  "updatedAt": "2026-11-18T18:01:43.035Z"
 }
