@@ -70,29 +70,65 @@ function parseHistory(items) {
   const last = closes[closes.length - 1];
   const prev = closes.length > 1 ? closes[closes.length - 2] : last;
   const pts = last - prev, pct = prev ? (pts / prev) * 100 : 0;
-  const asOf = `${formatTwDate(rows[rows.length - 1].date)} 收盤`;
-  return { value: numFmt.format(last), delta: deltaLabel(pct, pts), points: +pts.toFixed(2), pct: +pct.toFixed(2), data: closes.slice(-9), asOf, live: false };
+  const date = formatTwDate(rows[rows.length - 1].date);
+  const asOf = `${date} 收盤`;
+  return { value: numFmt.format(last), delta: deltaLabel(pct, pts), points: +pts.toFixed(2), pct: +pct.toFixed(2), data: closes.slice(-9), date, asOf, live: false };
 }
 
-/* MIS 即時 → 當前指數、漲跌。走勢沿用收盤歷史。 */
-function parseRealtime(json, sparkFallback) {
+/* 從結果取資料日 YYYY-MM-DD（優先 date 欄位，否則解析 asOf）。 */
+function resultDate(r) {
+  if (!r) return "";
+  if (r.date) return String(r.date);
+  const m = String(r.asOf || "").match(/(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : "";
+}
+
+/* MIS 即時 → 當前指數、漲跌。走勢沿用收盤歷史。
+   - 交易時段：僅接受台北「今日」資料（盤中即時）。
+   - 非交易時段：接受 MIS 保留的最近一個交易日收盤快照——只要不比 OpenAPI
+     收盤舊即可。OpenAPI 收盤常延遲一天以上，若像舊版只收「今日」，
+     跨過台北午夜後就會退回 OpenAPI 而把較新的收盤覆蓋成前一日。 */
+function parseRealtime(json, history, now = new Date()) {
   const a = json && json.msgArray && json.msgArray[0];
   if (!a) return null;
   const cur = parseFloat(String(a.z || "").replace(/,/g, ""));
   const prev = parseFloat(String(a.y || "").replace(/,/g, ""));
   if (!Number.isFinite(cur) || cur <= 0 || !Number.isFinite(prev) || prev <= 0) return null;
-  if (a.d && String(a.d) !== taipeiNowParts().ymd) return null; // 僅接受今日資料
+  const date = a.d ? formatTwDate(a.d) : "";
+  if (!date) return null;
+  const today = formatTwDate(taipeiNowParts(now).ymd);
+  const trading = isTradingHours(now) && date === today;
+  if (isTradingHours(now) && date !== today) return null; // 盤中卻非今日＝尚未開盤／舊快照
+  if (date > today) return null;
+  const histDate = resultDate(history);
+  if (histDate && date < histDate) return null; // 比 OpenAPI 收盤舊，不採用
   const pts = cur - prev, pct = prev ? (pts / prev) * 100 : 0;
-  // 交易時段內為即時（盤中）；收盤後 MIS 仍保留當日收盤快照，標為收盤。
-  const trading = isTradingHours();
-  // 走勢以近幾日收盤為底，末點換成當前指數，讓走勢線收在與大字相同的水準。
-  const spark = sparkFallback && sparkFallback.length ? [...sparkFallback.slice(-8), cur] : undefined;
+  // 走勢以近幾日收盤為底，末點換成當前指數；若 OpenAPI 已含同一天收盤則換掉該點，避免重複。
+  let spark;
+  const hd = history && history.data;
+  if (hd && hd.length) spark = histDate === date ? [...hd.slice(0, -1).slice(-8), cur] : [...hd.slice(-8), cur];
   return {
     value: numFmt.format(cur), delta: deltaLabel(pct, pts), points: +pts.toFixed(2), pct: +pct.toFixed(2),
     data: spark,
-    asOf: trading ? `${a.t || ""} 盤中`.trim() : `${formatTwDate(a.d)} 收盤`,
+    date,
+    asOf: trading ? `${a.t || ""} 盤中`.trim() : `${date} 收盤`,
     live: trading,
   };
+}
+
+/* 決定最終寫入值：取資料日較新者；同日時盤中/MIS 優先於 OpenAPI。
+   絕不以較舊的資料日覆蓋現有檔案（防止「回退」成前一日收盤）。 */
+export function pickResult({ realtime, history, existing }) {
+  let result = realtime || history || null;
+  if (realtime && history && resultDate(history) > resultDate(realtime)) result = history;
+  if (!result) return null;
+  const exDate = resultDate(existing);
+  if (exDate && resultDate(result) < exDate) return null; // 比現有檔案舊 → 不覆蓋
+  return result;
+}
+
+function readExisting() {
+  try { return JSON.parse(readFileSync(OUT, "utf8")); } catch { return null; }
 }
 
 async function main() {
@@ -101,37 +137,33 @@ async function main() {
   try { history = parseHistory(await fetchJSON(OPENAPI_HIST)); }
   catch (e) { console.error("OpenAPI 收盤抓取失敗：", e.message); }
 
-  // 優先採用 MIS：交易時段為即時；收盤後 MIS 仍保留「當日」收盤快照，
-  // 比 OpenAPI（每日收盤更新有延遲，收盤後可能仍是前一日）更早反映當日
-  // 最新指數。parseRealtime 已限定僅接受台北時區「今日」的資料。
-  let result = null;
-  try {
-    const rt = parseRealtime(await fetchJSON(MIS_REALTIME), history && history.data);
-    if (rt) result = rt;
-  } catch (e) { console.error("MIS 抓取失敗：", e.message); }
+  let realtime = null;
+  try { realtime = parseRealtime(await fetchJSON(MIS_REALTIME), history); }
+  catch (e) { console.error("MIS 抓取失敗：", e.message); }
 
-  // MIS 無今日資料（週末／假日／夜間重置後）才退回 OpenAPI 收盤。
-  if (!result) result = history;
+  const existing = readExisting();
+  console.log("OpenAPI：", history ? `${resultDate(history)} ${history.value}` : "無",
+    "｜MIS：", realtime ? `${realtime.date} ${realtime.value}${realtime.live ? "（盤中）" : ""}` : "無",
+    "｜現有：", existing ? `${resultDate(existing)} ${existing.value}` : "無");
 
+  const result = pickResult({ realtime, history, existing });
   if (!result) {
-    // 全數失敗：保留現有檔案，不覆蓋成空值。
-    console.error("無可用資料，維持現有 data/taiex.json 不變。");
+    console.error("無較新資料（或來源皆失敗），維持現有 data/taiex.json 不變。");
     process.exit(0);
   }
 
+  if (!result.date) result.date = resultDate(result);
+  if (!result.data && existing && Array.isArray(existing.data)) result.data = existing.data;
   result.updatedAt = new Date().toISOString();
-
-  // 保留現有走勢以免即時來源無走勢時清空。
-  if (!result.data) {
-    try {
-      const cur = JSON.parse(readFileSync(OUT, "utf8"));
-      if (Array.isArray(cur.data)) result.data = cur.data;
-    } catch { /* 無現檔 */ }
-  }
 
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify(result, null, 2) + "\n");
-  console.log("已寫入", OUT, "→", result.value, result.delta, result.live ? "(盤中)" : "(收盤)");
+  console.log("已寫入", OUT, "→", result.date, result.value, result.delta, result.live ? "(盤中)" : "(收盤)");
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+// 直接執行才跑 main（測試 import 時不執行）。
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}
+
+export { parseHistory, parseRealtime, resultDate, isTradingHours };
