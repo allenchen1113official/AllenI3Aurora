@@ -14,6 +14,7 @@ on:
     paths:
       - ".github/workflows/taiex-update.yml"
       - "scripts/update-taiex.mjs"
+      - "scripts/update-taiex.test.mjs"
   workflow_dispatch: {}
 
 # 避免多個排程重疊執行造成 push 衝突。
@@ -32,6 +33,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: 單元測試（防回退邏輯）
+        run: node --test scripts/update-taiex.test.mjs
       - name: 抓取並更新 data/taiex.json
         run: node scripts/update-taiex.mjs
       - name: 有變動才提交
