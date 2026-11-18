@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-17T23:47:12.806Z",
+  "updatedAt": "2026-11-18T23:19:01.943Z",
   "source": "https://allenchen1113official.github.io/allenannuli/",
   "count": 27,
   "range": {
@@ -10,7 +10,7 @@
     {
       "id": "0c5a2167-c03b-4176-b986-2a7d942c5652",
       "user_id": "e9e3d8fd-66e3-4280-8235-c9e0063bd210",
-      "number": 96,
+      "number": 98,
       "unit": "次",
       "label": "捐血次數",
       "color": "#ec4899",
@@ -259,8 +259,8 @@
       "month": 6,
       "day": null,
       "tone": "illumination",
-      "title": "台水工作",
-      "body": "台水工作",
+      "title": "考上公職",
+      "body": "考上公職",
       "cats": []
     },
     {
