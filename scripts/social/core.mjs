@@ -100,6 +100,15 @@ export function makeCaller(base, token, fetchImpl) {
 }
 
 /* ---------- FB Graph 客戶端（fetchImpl 可注入） ---------- */
+/* 粉專名稱防呆：health 正常但名稱不是預期粉專時回傳錯誤訊息（null＝通過）。expect 為 * 或空值時不檢查。 */
+export function fbNameMismatch(h, expect) {
+  if (!h || !h.ok || !expect || expect === "*") return null;
+  const norm = (x) => String(x || "").replace(/\s+/g, "");
+  if (norm(h.name) === norm(expect)) return null;
+  return `Facebook：META_PAGE_ID 對應的是「${h.name || "（未知）"}」，不是預期的粉專「${expect}」，已暫停 FB 發文以免發錯地方。` +
+    `請改用「${expect}」粉專的 id 與粉專 Token（SOCIAL_SOP 第二節第 5 步）；若確定無誤，把 Repo Variable META_PAGE_EXPECT_NAME 設為實際名稱。`;
+}
+
 export function createFbGraph({ token, pageId, version = "v25.0", fetchImpl = fetch }) {
   const call = makeCaller(`https://graph.facebook.com/${version}`, token, fetchImpl);
   return {

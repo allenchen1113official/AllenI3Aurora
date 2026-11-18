@@ -10,6 +10,7 @@
      FIREBASE_SERVICE_ACCOUNT  服務帳戶 JSON（需「Cloud Datastore 使用者」角色）
      META_PAGE_TOKEN           粉專 Token（建議 Business Manager 系統使用者 Token）
      META_PAGE_ID              粉專 ID
+     META_PAGE_EXPECT_NAME     （Variable，選用）粉專預期名稱，預設「艾倫報報」，不符即暫停 FB；* 關閉檢查
      META_IG_USER_ID           IG 商業帳號 ID（沿用 META_PAGE_TOKEN，需 instagram_content_publish）
      IG_TOKEN                  選填：改用「Instagram 登入」的 IG 長效 Token（graph.instagram.com，
                                不需連結粉專；排程器每日續期，存 aurora_social_secrets/instagram）
@@ -23,7 +24,7 @@
      META_GRAPH_VERSION        選填，預設 v25.0
      SOCIAL_DRY_RUN            '1' 時只列出將執行的動作，不呼叫發文 API、不改資料
    ===================================================================== */
-import { runOnce, createFbGraph, createIgGraph, createThreadsGraph, LOCK_STALE_MS, isAuthError, CHANNEL_LABEL } from "./core.mjs";
+import { runOnce, createFbGraph, createIgGraph, createThreadsGraph, LOCK_STALE_MS, isAuthError, CHANNEL_LABEL , fbNameMismatch } from "./core.mjs";
 import { threadsToken, instagramToken } from "./threads-token.mjs";
 import { createYouTubeClient } from "./youtube.mjs";
 
@@ -97,6 +98,11 @@ async function main() {
     try { health[ch] = { ok: true, name: (await clients[ch].checkToken()).name || null, error: null }; }
     catch (e) { health[ch] = { ok: false, name: null, error: e.message }; }
   }
+  // 防呆：META_PAGE_ID 必須是「艾倫報報」粉專，名稱不符就暫停 FB，避免發到個人檔案或其他粉專。
+  // Repo Variable META_PAGE_EXPECT_NAME 可改預期名稱；設為 * 關閉檢查。
+  const expectName = env("META_PAGE_EXPECT_NAME") || "艾倫報報";
+  const fbMismatch = fbNameMismatch(health.fb, expectName);
+  if (fbMismatch) { health.fb = { ...health.fb, ok: false, error: fbMismatch }; console.log(`::warning::${fbMismatch}`); }
   const paused = Object.keys(health).filter((ch) => !health[ch].ok);
   const { fb: graph, ...graphs } = clients;
 
