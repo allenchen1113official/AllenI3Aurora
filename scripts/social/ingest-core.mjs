@@ -6,7 +6,7 @@
    ingest-content.mjs（social-publish.yml 每 10 分鐘先執行）讀這些素材，
    轉成 PilotOne 佇列 aurora_social_posts 的一筆貼文：
      - 一般主題 → 草稿（queueState=draft），等 Allen 在「PilotOne 審核」核准
-     - 允許自動發布的主題（SOCIAL_AUTO_TOPICS，預設只有 txf-flash）且
+     - 允許自動發布的主題（SOCIAL_AUTO_TOPICS，預設無＝全部人工審核）且
        manifest.autoPublish && manifest.verified → 直接核准、立即發布
    文件 id 固定 cs_<topic>_<YYYYMMDD>：同一天同主題只會有一筆，重跑不重複。
    ===================================================================== */
@@ -19,7 +19,8 @@ export const KNOWN_TOPICS = {
   heatmap: { label: "台股熱力圖．上市／上櫃", category: "理財" },
   stockradar: { label: "台股選股雷達", category: "理財" },
 };
-export const DEFAULT_AUTO_TOPICS = ["txf-flash"];
+// 2026-11-18 Allen 決定：所有主題（含台指期快訊）一律經 PilotOne 人工審核；要開放自動發布請設 Repo Variable SOCIAL_AUTO_TOPICS
+export const DEFAULT_AUTO_TOPICS = [];
 export const LIMITS = { ig: 2200, th: 500, igHashtags: 30, maxImages: { fb: 10, ig: 10, th: 20 } };
 export const CHANNEL_FILES = { fb: "fb.txt", ig: "ig.txt", th: "threads.txt" };
 const MANIFEST_CH = { fb: "fb", ig: "ig", threads: "th" }; // manifest.platforms 的 key → PilotOne 頻道

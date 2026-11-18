@@ -143,6 +143,13 @@ Repo → Settings → Secrets and variables → Actions：
 | `YT_CLIENT_SECRET` | Secret（選用） | 第二之三節的 OAuth 用戶端密鑰 |
 | `YT_REFRESH_TOKEN` | Secret（選用） | 第二之三節 `youtube-auth.mjs` 印出的 refresh token |
 | `META_GRAPH_VERSION` | Variable（選用） | 預設 `v25.0`；Meta 淘汰舊版前改成新版即可 |
+| `IG_TOKEN` | Secret（選用） | Instagram 登入長效 Token（粉專未連結 IG 時用，第九之三節） |
+| `GDRIVE_SERVICE_ACCOUNT` | Secret | Drive 橋接讀送審包（與今日關注動態共用，見 GDRIVE_SETUP_SOP.md） |
+| `SMTP_*`／`MAIL_FROM` | Secret | 審核通知 Email（沿用電子報） |
+| `PILOTONE_NOTIFY_EMAIL` | Secret（選用） | 審核通知收件人，預設 allenchen1113.official@gmail.com |
+| `LINE_CHANNEL_TOKEN`／`LINE_USER_ID` | Secret（選用） | 審核通知 LINE（Messaging API，第九之三節） |
+| `META_PAGE_EXPECT_NAME` | Variable（選用） | 粉專預期名稱，預設「艾倫報報」，不符即暫停 FB；`*` 關閉 |
+| `SOCIAL_AUTO_TOPICS` | Variable（選用） | 免審主題，預設不設＝全部人工審核 |
 
 所有平台都未設定時，排程器只印警告並略過，不會讓 workflow 失敗。某平台 Token 失效時，只暫停該平台（貼文保持排程中），workflow 會失敗讓 GitHub 寄信通知。
 
@@ -276,7 +283,7 @@ social-publish.yml（每 10 分鐘）
 | 驗證 | 資料夾日期＝`date`；每份文案含當日 `YYYY/MM/DD`；IG ≤ 2,200 字元、hashtag ≤ 30、必須有圖；Threads ≤ 500 字元；圖片 PNG／JPEG 且存在；IG／FB ≤ 10 張、Threads ≤ 20 張。不合格不建立貼文，原因寫進 workflow log 與 `ops/ingest_log` |
 | 文件 id | `cs_<topic>_<YYYYMMDD>`，同一天同主題只有一筆 |
 | 重產 | `producedAt` 變更且三平台都還是草稿／失敗 → 更新內容；已核准、發布中或已發布 → 不覆蓋 |
-| 自動發布 | 主題在 Repo Variable `SOCIAL_AUTO_TOPICS`（預設 `txf-flash`；設 `none` 全部人工審核）且 manifest `autoPublish`、`verified` 都是 `true` |
+| 自動發布 | 主題在 Repo Variable `SOCIAL_AUTO_TOPICS`（2026-11-18 起預設不設＝全部人工審核）且 manifest `autoPublish`、`verified` 都是 `true` |
 | 圖卡網址 | 轉 JPEG 後存 `content/<topic>/<YYYYMMDD>/_publish/`，網址為 `https://raw.githubusercontent.com/<repo>/<commit SHA>/…`（以 SHA 固定，平台不會抓到舊圖）|
 | 多圖 | 頻道欄位 `imageUrls`（陣列）優先於貼文 `imageUrl`；FB 以 `attached_media` 組多圖貼文，IG／Threads 為輪播容器 |
 | 編修 | 後台「PilotOne 審核」可改文字與核准；各平台圖卡列在圖片欄下方，圖片網址欄只作縮圖 |
@@ -291,6 +298,57 @@ social-publish.yml（每 10 分鐘）
 3. 停用 Mac 上「台指期快訊發文」Claude 排程，再改回 `autoPublish: true`。其他主題逐一切換，一次只切一個，避免與 Mac 發文排程重複發文。
 
 測試：`node --test scripts/social/ingest.test.mjs`（10 項匯入規則）；多圖用戶端測試在 `publish.test.mjs`。
+
+## 九之三、Drive 送審包＋人工審核通知（2026-11-18 起，全部排程改走官方 API）
+
+Allen 決定：**所有 Claude 發文排程（盤前速報、極光日報、極光午報、台指期快訊、熱力圖、選股雷達）一律改由官方 API 發文，且全部經 PilotOne 人工審核**；未核准的貼文不會發出、也不會過期（隔天核准照樣發，核准即以當下時間立即發布）。Mac mini 上的 Chrome 不再用於發文。
+
+```
+Mac mini 產出排程 ── 寫 Drive ──→ AllenI3Aurora/<主題>/<YYYYMMDD>/（原有成品）
+Mac mini 發文排程（原時間）── 整理三平台文案＋圖卡 ──→ <YYYYMMDD>/pilotone/ 送審包
+                         └─ Claude 推播「待審核」＋ PilotOne 連結
+social-publish.yml（每 10 分鐘）
+   ├─ drive-bridge.mjs：GDRIVE_SERVICE_ACCOUNT 讀送審包 → content 分支 content/<topic>/<YYYYMMDD>/
+   ├─ ingest-content.mjs：驗證、轉 JPEG → aurora_social_posts/cs_<topic>_<YYYYMMDD>（草稿）
+   ├─ notify-review.mjs：新草稿 → Email＋LINE 通知「PilotOne 待審核」
+   └─ publish-social-posts.mjs：已核准者以 Graph API／Instagram API／Threads API 發布
+PilotOne 審核（admin/pilotone/#review）── 核准 ──→ aurora_ops_requests 請監控代理立即觸發 social-publish.yml
+```
+
+**送審包格式**（Drive `<主題資料夾>/<YYYYMMDD>/pilotone/`，與 content 分支相同，見第九之二節 manifest）：`manifest.json`＋`fb.txt`／`ig.txt`／`threads.txt`＋manifest 列出的圖卡（PNG／JPEG，檔名不可含 `/`）。`autoPublish` 一律寫 `false`。manifest 必須**最後寫入**；`producedAt` 變更才會重新同步，已核准或已發布的貼文不會被覆蓋。
+
+| 主題代碼 | Drive 資料夾 | 發文排程（Claude） |
+|---|---|---|
+| `tsm-prebrief` | `finance/TSMPreBrief` | trig_01Dz4wx74V1MnnHGaheaXrj4（交易日 06:30） |
+| `daily` | `newsletter/day` | trig_01AhPQ5phpLMW8vyKVMnVhuj（每日 08:08） |
+| `noon` | `newsletter/noon` | trig_01WcXdPLybB5fwsYrYZ6wh5V（每日 12:56） |
+| `txf-flash` | `finance/twex` | trig_01AX9chVhyFpy13mDpmyLYQJ（交易日 16:56） |
+| `heatmap` | `finance/heatmap` | trig_01KeuuacckZZsdd8UgCpd3dk（交易日 19:56） |
+| `stockradar` | `finance/stockradar` | trig_018cCAAwpSA8wce1uVfd3PH2（交易日 23:00） |
+
+**審核通知三管道**：
+1. **Claude 推播**：發文排程寫完送審包後推播（手機）。
+2. **Email**：沿用電子報 SMTP Secrets（`SMTP_HOST`／`SMTP_PORT`／`SMTP_USER`／`SMTP_PASS`／`MAIL_FROM`），收件人 `PILOTONE_NOTIFY_EMAIL`（選用，預設 allenchen1113.official@gmail.com）。
+3. **LINE**：LINE Notify 已於 2025 年停止服務，改用 **LINE Messaging API**：
+   1. https://developers.line.biz/console/ → 建立 Provider → 建立 **Messaging API channel**（會同時建立一個 LINE 官方帳號）。
+   2. channel →「Messaging API」分頁 → **Channel access token (long-lived)** → Issue，存成 Secret `LINE_CHANNEL_TOKEN`。
+   3. 「Basic settings」分頁最下方 **Your user ID**（U 開頭 33 字元）存成 Secret `LINE_USER_ID`。
+   4. 用手機 LINE 掃該 channel 的 QR code 加入好友（沒加好友收不到 push）。
+   5. 免費方案每月訊息數有上限（以 LINE 官方帳號後台「用量」為準）；每輪匯入只送一則彙整訊息，每天約 6 則。
+   未設定的管道自動略過，寄送失敗只發警告、不影響發文。
+
+**粉專名稱防呆**：排程器會比對 `META_PAGE_ID` 的名稱，不是「艾倫報報」就暫停 FB（貼文保留、IG／Threads 照常），Actions 摘要顯示原因。2026-11-18 的檢查結果為「陳艾倫」：若「陳艾倫」不是要發文的粉專，請照第二節第 5 步重新取得「艾倫報報」的 `id` 與 `access_token`，更新 `META_PAGE_ID`／`META_PAGE_TOKEN`；若確定就是它，把 Repo Variable `META_PAGE_EXPECT_NAME` 設為「陳艾倫」。
+
+**Instagram**：粉專未連結 IG，所以用 `IG_TOKEN`（Instagram 登入，`graph.instagram.com`；IG 須為專業帳號，已確認）＋`META_IG_USER_ID`。取得方式：developers.facebook.com → App「AI3A艾倫極光報報」→ 使用案例「Instagram API（使用 Instagram 登入）」→ 權限 `instagram_business_basic`、`instagram_business_content_publish` → 「產生存取權杖」加入 @allenchen1113.official → 複製長效 Token（60 天，排程器每日自動續期，存 `aurora_social_secrets/instagram`）。
+
+**自動發布**：預設全部人工審核。若日後想讓某主題免審，設 Repo Variable `SOCIAL_AUTO_TOPICS`（例如 `txf-flash`），且該主題送審包的 manifest 要寫 `autoPublish: true`、`verified: true`。
+
+**上線檢查**：
+1. Actions → 社群自動發文 → Run workflow（dry_run）→ log 應出現「Drive 橋接完成：檢查 N 份送審包」「Facebook 粉專／Instagram／Threads: ● 正常」與「審核通知 DRY-RUN」。
+2. 第一天各排程送審後，PilotOne 審核頁應出現待審草稿，Email／LINE 各收到通知；核准後約 5～15 分鐘內三平台出現貼文，PilotOne 顯示貼文網址。
+3. AllenI3Aurora Agent 巡檢改讀 PilotOne 狀態（content 分支 `ops/ingest_log/<YYYYMMDD>.json`），不再用 Chrome 讀貼文。
+
+測試：`node --test scripts/social/bridge.test.mjs`（Drive 橋接、審核通知、粉專名稱防呆）。
 
 ## 十、測試
 

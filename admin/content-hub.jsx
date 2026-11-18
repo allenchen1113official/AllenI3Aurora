@@ -552,8 +552,9 @@ function HubComposer({ init, reload, flash, go }) {
       const upd = { scheduledAt: iso, queueState: "pending", "review.approvedAt": new Date().toISOString(), "review.by": who, lock: { by: null, at: null }, updatedAt: new Date().toISOString() };
       for (const ch of toSend) Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null }, ch === "fb" ? {} : ch === "yt" ? { "yt.uploadUri": null } : { [ch + ".containerId"]: null });
       await db.collection(SOC_COLL).doc(id).update(upd);
+      if (window.socRequestPublishRun) await window.socRequestPublishRun(who); // 請監控代理立即觸發 social-publish.yml
       await reload();
-      flash(s.mode === "now" ? "已核准立即發布 ✓ 排程器下一輪送出" : `已核准 ✓ 將於 ${isoToTpInput(iso).replace("T", " ")}（台北）發布到 ${sendNames}`);
+      flash(s.mode === "now" ? "已核准立即發布 ✓ 排程器約 5 分鐘內送出" : `已核准 ✓ 將於 ${isoToTpInput(iso).replace("T", " ")}（台北）發布到 ${sendNames}`);
       go("calendar");
     } catch (ex) { setErr("核准失敗：" + errText(ex)); }
     setBusy(false);
@@ -852,6 +853,7 @@ function HubLibrary({ list, openPost, query, setQuery, reload }) {
         if (why) skipped.push(`「${r.title || "未命名"}」${why}`); else done++;
       } catch (ex) { skipped.push(`「${r.title || "未命名"}」失敗：${errText(ex)}`); }
     }
+    if (op === "approve" && done && window.socRequestPublishRun) await window.socRequestPublishRun(who); // 立即觸發排程器
     await reload();
     setSelected(new Set());
     setNote({ ok: done > 0, lines: [`${def.label}：完成 ${done} 筆` + (skipped.length ? `，略過 ${skipped.length} 筆` : "")].concat(skipped) });

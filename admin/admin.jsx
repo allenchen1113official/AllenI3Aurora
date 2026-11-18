@@ -1796,6 +1796,20 @@ const SOC_COLL = "aurora_social_posts";
 const SOC_META_DOC = "aurora_social_meta/runner";
 const SOC_NATIVE_MIN_MIN = 20; // 與 core.mjs FB_NATIVE_MIN_LEAD_MS 一致
 
+/* 核准後請排程監控代理立即觸發 social-publish.yml（寫 aurora_ops_requests 佇列，欄位須符合 firestore.rules 的
+   opsReqFields／validOpsRequest），不必等每 10 分鐘的 cron（GitHub 實際常延後）。失敗不影響核准，只是等下一輪排程。 */
+async function socRequestPublishRun(who) {
+  if (!db) return false;
+  try {
+    await db.collection("aurora_ops_requests").add({
+      workflow: "social-publish.yml", action: "dispatch", inputs: {}, note: "PilotOne 核准後立即發布",
+      state: "queued", mode: "queue", requestedBy: who || "", requestedAt: new Date().toISOString(),
+    });
+    return true;
+  } catch (e) { console.warn("PilotOne：觸發發文排程請求失敗（等下一輪排程）", e); return false; }
+}
+window.socRequestPublishRun = socRequestPublishRun;
+
 const SOC_FB_META = {
   draft:            { label: "待審核",     color: "var(--text-2)",       bg: "var(--night-700)" },
   approved:         { label: "已核准・待送出", color: "var(--illumination)", bg: "var(--illumination-soft)" },
@@ -1988,7 +2002,8 @@ function SocialPanel() {
       }
       await db.collection(SOC_COLL).doc(id).update(upd);
       setSel((s) => ({ ...s, scheduledAt: iso, queueState: "pending", fb: { ...s.fb, state: "approved", attempts: 0, error: null } }));
-      await load(); flash(msg);
+      const kicked = await socRequestPublishRun(who);
+      await load(); flash(msg + (kicked ? "（已請排程器約 5 分鐘內執行）" : ""));
     } catch (ex) { setErr("核准失敗：" + errText(ex)); }
     setBusy(false);
   };

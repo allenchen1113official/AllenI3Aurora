@@ -66,11 +66,14 @@ test("不合格：文案未含當日日期、IG hashtag 超過 30、未知平台
 });
 
 test("自動發布只限白名單主題且 autoPublish＋verified 皆為 true", () => {
-  assert.equal(isAutoPublish(goodManifest()), true);
-  assert.equal(isAutoPublish({ ...goodManifest(), verified: false }), false);
-  assert.equal(isAutoPublish({ ...goodManifest(), autoPublish: "true" }), false);
-  assert.equal(isAutoPublish({ ...goodManifest(), topic: "heatmap" }), false);
+  const allow = ["txf-flash"]; // 由 Repo Variable SOCIAL_AUTO_TOPICS 明確開放時
+  assert.equal(isAutoPublish(goodManifest(), allow), true);
+  assert.equal(isAutoPublish({ ...goodManifest(), verified: false }, allow), false);
+  assert.equal(isAutoPublish({ ...goodManifest(), autoPublish: "true" }, allow), false);
+  assert.equal(isAutoPublish({ ...goodManifest(), topic: "heatmap" }, allow), false);
   assert.equal(isAutoPublish(goodManifest(), []), false);
+  // 預設（未設定 SOCIAL_AUTO_TOPICS）：全部人工審核，台指期快訊也不例外
+  assert.equal(isAutoPublish(goodManifest()), false);
 });
 
 const urlOf = (img) => `https://raw.example/${img.replace(/\.png$/, ".jpg")}`;

@@ -9,13 +9,14 @@
       推回 content 分支，以 commit SHA 組成不會變動的 raw.githubusercontent.com 網址
    4. 建立／更新 aurora_social_posts/cs_<topic>_<YYYYMMDD>：
         一般主題 → 草稿，等後台「PilotOne 審核」核准
-        SOCIAL_AUTO_TOPICS 內且 autoPublish＋verified → 直接核准、立即發布
+        SOCIAL_AUTO_TOPICS 內且 autoPublish＋verified → 直接核准、立即發布（2026-11-18 起預設全部人工審核）
    5. 把今天／昨天各主題的貼文狀態寫到 ops/ingest_log/<YYYYMMDD>.json（給巡檢 Agent 讀）
 
    環境變數：
      FIREBASE_SERVICE_ACCOUNT  服務帳戶 JSON（同發文排程器）
      SOCIAL_DRY_RUN            '1' 時只驗證、轉檔到暫存區並列出計畫，不寫 Firestore、不推 git
-     SOCIAL_AUTO_TOPICS        允許自動發布的主題，逗號分隔（預設 txf-flash；設為 none 全部改人工審核）
+     SOCIAL_AUTO_TOPICS        允許自動發布的主題，逗號分隔（預設不開放＝全部人工審核；none 同義）
+     INGEST_RESULT             （選用）把本輪匯入結果寫成 JSON，供 notify-review.mjs 寄審核通知
      GITHUB_REPOSITORY         owner/repo，用來組 raw 網址（GitHub Actions 自動提供）
      CONTENT_BRANCH            預設 content
    ===================================================================== */
@@ -137,7 +138,8 @@ async function main() {
       await col.doc(w.id).set(doc, { merge: w.plan.action === "update" });
       console.log(`${tag} 已${w.plan.action === "create" ? "建立" : "更新"} ${w.id}：${how}`);
     }
-    results.push({ id: w.id, topic: w.f.topic, date: w.f.ymd, status: w.plan.action === "create" ? "created" : "updated", auto: w.autoOk });
+    results.push({ id: w.id, topic: w.f.topic, date: w.f.ymd, status: w.plan.action === "create" ? "created" : "updated", auto: w.autoOk,
+      title: String(w.m.title || "").trim(), channels: Object.keys(w.v.channels) });
   }
 
   /* 匯入紀錄＋貼文狀態（內容沒變就不提交，避免每 10 分鐘一個 commit） */
@@ -166,6 +168,9 @@ async function main() {
       try { git(dir, "push", "origin", `HEAD:${branch}`); } catch (e) { console.log(`::warning::紀錄推送失敗（下一輪再試）：${e.message}`); }
     }
   }
+
+  // 本輪結果給 notify-review.mjs 寄審核通知（ops/ingest_log 只保留每篇最近一次結果，不適合判斷「本輪新增」）
+  if (env("INGEST_RESULT")) writeFileSync(env("INGEST_RESULT"), JSON.stringify(results, null, 2) + "\n");
 
   const bad = results.filter((r) => r.status === "invalid");
   console.log(`素材匯入完成：建立 ${results.filter((r) => r.status === "created").length}、更新 ${results.filter((r) => r.status === "updated").length}、略過 ${results.filter((r) => r.status === "skipped").length}、不合格 ${bad.length}`);
