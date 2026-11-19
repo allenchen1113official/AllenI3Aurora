@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-19",
+  "posts": [
+    {
+      "id": "cs_noon_20261119",
+      "topic": "noon",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    }
+  ],
+  "lastIngest": [
+    {
+      "id": "cs_noon_20261119",
+      "topic": "noon",
+      "date": "20261119",
+      "status": "created",
+      "auto": false,
+      "title": "台股為什麼失守 4 萬點？3 大利空＋13 則給科技人的午間必讀｜艾倫極光午報 2026/11/19",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    }
+  ],
+  "generatedAt": "2026-11-19T07:20:19.519Z"
+}
