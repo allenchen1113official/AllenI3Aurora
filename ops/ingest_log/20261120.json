@@ -4,6 +4,46 @@
     {
       "id": "cs_stock-2330_20261120",
       "topic": "stock-2330",
+      "queueState": "pending",
+      "fb": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_stock-6669_20261120",
+      "topic": "stock-6669",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_stock-7769_20261120",
+      "topic": "stock-7769",
       "queueState": "draft",
       "fb": {
         "state": "draft",
@@ -35,7 +75,33 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_stock-6669_20261120",
+      "topic": "stock-6669",
+      "date": "20261120",
+      "status": "created",
+      "auto": false,
+      "title": "緯穎 6669 交易診斷 2026/11/20",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_stock-7769_20261120",
+      "topic": "stock-7769",
+      "date": "20261120",
+      "status": "created",
+      "auto": false,
+      "title": "鴻勁 7769 交易診斷 2026/11/20",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-19T17:36:23.779Z"
+  "generatedAt": "2026-11-19T17:59:11.972Z"
 }
