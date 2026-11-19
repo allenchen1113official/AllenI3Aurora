@@ -6,38 +6,38 @@
       "topic": "txf-flash",
       "queueState": "pending",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110550661524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The children with IDs 18165681088500431 are invalid, nonexistent, or expired."
       }
     },
     {
       "id": "cs_noon_20261119",
       "topic": "noon",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110503255524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df7JvdNET6p/",
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/Df7JwALkcjr",
         "error": null
       }
     },
@@ -46,19 +46,19 @@
       "topic": "heatmap",
       "queueState": "pending",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110550403524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The children with IDs 18165681001500431 are invalid, nonexistent, or expired."
       }
     },
     {
@@ -169,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T16:01:32.924Z"
+  "generatedAt": "2026-11-19T16:04:59.064Z"
 }
