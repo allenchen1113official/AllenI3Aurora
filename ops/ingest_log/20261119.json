@@ -4,7 +4,7 @@
     {
       "id": "cs_txf-flash_20261119",
       "topic": "txf-flash",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550661524851",
@@ -16,9 +16,9 @@
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The children with IDs 18165685033500431 are invalid, nonexistent, or expired."
       }
     },
     {
@@ -44,7 +44,7 @@
     {
       "id": "cs_heatmap_20261119",
       "topic": "heatmap",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550403524851",
@@ -56,9 +56,9 @@
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The children with IDs 18165684874500431 are invalid, nonexistent, or expired."
       }
     },
     {
@@ -66,18 +66,18 @@
       "topic": "stockradar",
       "queueState": "pending",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110557177524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/Df7iCfBINLL",
         "error": null
       }
     },
@@ -86,17 +86,17 @@
       "topic": "tw-whale-weekly",
       "queueState": "pending",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110557399524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -169,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T16:40:05.276Z"
+  "generatedAt": "2026-11-19T16:41:59.755Z"
 }
