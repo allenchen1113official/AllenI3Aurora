@@ -44,15 +44,15 @@
     {
       "id": "cs_stock-6669_20261120",
       "topic": "stock-6669",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110601529524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df8DKsRgU2F/",
         "error": null
       },
       "th": {
@@ -64,20 +64,20 @@
     {
       "id": "cs_stock-7769_20261120",
       "topic": "stock-7769",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110601619524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df8DMeWAQAR/",
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/Df8DNHEm_zg",
         "error": null
       }
     }
@@ -136,5 +136,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T23:14:06.962Z"
+  "generatedAt": "2026-11-19T23:15:22.655Z"
 }
