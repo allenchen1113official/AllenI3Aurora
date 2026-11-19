@@ -20,6 +20,7 @@ export const DRIVE_PATHS = {
   noon: ["newsletter", "noon"],
   heatmap: ["finance", "heatmap"],
   stockradar: ["finance", "stockradar"],
+  "tw-whale-weekly": ["finance", "whale"],
 };
 export const PKG_DIR = "pilotone";
 export const MANIFEST = "manifest.json";
