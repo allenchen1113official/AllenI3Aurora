@@ -1,0 +1,30 @@
+{
+ "version": 1,
+ "topic": "stock-2330",
+ "date": "2026-11-20",
+ "title": "台積電 2330 交易診斷 2026/11/20",
+ "autoPublish": false,
+ "verified": true,
+ "producedBy": "個股交易診斷排程",
+ "producedAt": "2026-11-20T01:35:32+08:00",
+ "platforms": {
+  "fb": {
+   "caption": "fb.txt",
+   "images": [
+    "2330_FB_1200x630_20261119.png"
+   ]
+  },
+  "ig": {
+   "caption": "ig.txt",
+   "images": [
+    "2330_IG_1080x1350_20261119.png"
+   ]
+  },
+  "threads": {
+   "caption": "threads.txt",
+   "images": [
+    "2330_Threads_1080x1350_20261119.png"
+   ]
+  }
+ }
+}

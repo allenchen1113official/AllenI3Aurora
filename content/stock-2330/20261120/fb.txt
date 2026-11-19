@@ -1,0 +1,42 @@
+台積電2330為什麼EPS 78.75元，股價卻從高點跌19%？5個重點1張看懂📉
+
+發布日 2026/11/20｜資料基準：11/19（週四）收盤，所有數字已與官方資料交叉驗證。
+
+① 基本面｜持平
+・10月營收 5868.9 億元，月增 14.66%、年增 59.71%
+・前10月 44856.17 億元，年增 43.29%
+・單季毛利率 66.2% → 67.7% → 66.4%
+・本年累計 EPS 78.75 元
+
+② 籌碼面｜偏弱
+・近5日（11/13–11/19）外資 -49,778 張、投信 +7,880 張、自營商 +20,064 張
+・千張大戶持股 84.56% → 84.17%（10/16 → 11/13）
+・融資 34,401 → 32,784 張（-4.7%）
+
+③ 均線｜空頭排列
+・收盤 2,100；5日 2,202、10日 2,240、20日 2,297、60日 2,401
+
+④ 趨勢（DMI／MACD）｜空方主導
+・ADX 29.4（上升），+DI 15.7、−DI 42.2
+・MACD 柱 -15.2（近20日最低 -29.4）
+
+⑤ 事件｜除息 每股7元，12/10（週四）除息交易日
+
+🔑 關鍵價位：2,100（最新收盤）／2,240（10日線 壓力）／2,297（月線 轉強）／2,590（10/06 波段高）
+✅ 止跌訊號：−DI 下彎＋MACD 翻紅＋站回 10 日線
+
+📎 資料來源
+・股價：https://www.twse.com.tw/zh/trading/historical/stock-day.html
+・月營收：https://mopsov.twse.com.tw/nas/t21/sii/t21sc03_115_10_0.html
+・財報：https://mopsov.twse.com.tw/mops/web/t163sb04
+・三大法人：https://www.twse.com.tw/zh/trading/foreign/t86.html
+・融資：https://www.twse.com.tw/zh/trading/margin/mi-margn.html
+・集保股權分散：https://www.tdcc.com.tw/portal/zh/smWeb/qryStock
+・除息公告：https://pr.tsmc.com/chinese/news/3332
+・除息（第二來源）：https://money.udn.com/money/amp/story/5607/9684950
+・財報新聞：https://uanalyze.com.tw/articles/6834758884
+・營收新聞：https://finance.technews.tw/2026/11/10/tsmc-2330-202610-financial-report/
+
+※ 技術指標由官方日K自行計算（Wilder DMI 14、MACD 12/26/9）。僅供研究參考，非投資建議。
+
+#台積電 #2330 #台股 #技術分析 #艾倫極光報報
