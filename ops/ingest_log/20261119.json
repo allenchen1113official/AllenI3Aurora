@@ -4,26 +4,6 @@
     {
       "id": "cs_txf-flash_20261119",
       "topic": "txf-flash",
-      "queueState": "draft",
-      "fb": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      },
-      "ig": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      },
-      "th": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      }
-    },
-    {
-      "id": "cs_noon_20261119",
-      "topic": "noon",
       "queueState": "pending",
       "fb": {
         "state": "approved",
@@ -42,8 +22,68 @@
       }
     },
     {
+      "id": "cs_noon_20261119",
+      "topic": "noon",
+      "queueState": "pending",
+      "fb": {
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110503255524851",
+        "error": null
+      },
+      "ig": {
+        "state": "processing",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "processing",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_heatmap_20261119",
       "topic": "heatmap",
+      "queueState": "pending",
+      "fb": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_stockradar_20261119",
+      "topic": "stockradar",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_tw-whale-weekly_20261119",
+      "topic": "tw-whale-weekly",
       "queueState": "draft",
       "fb": {
         "state": "draft",
@@ -90,6 +130,32 @@
       ]
     },
     {
+      "id": "cs_stockradar_20261119",
+      "topic": "stockradar",
+      "date": "20261119",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜台股選股雷達 2026/11/19（週四）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_tw-whale-weekly_20261119",
+      "topic": "tw-whale-weekly",
+      "date": "20261119",
+      "status": "created",
+      "auto": false,
+      "title": "21 檔大戶一週加碼超過 3 個百分點！想跟著籌碼選股的你，這份集保週報先收藏",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_txf-flash_20261119",
       "topic": "txf-flash",
       "date": "20261119",
@@ -103,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T13:07:59.312Z"
+  "generatedAt": "2026-11-19T16:01:32.924Z"
 }
