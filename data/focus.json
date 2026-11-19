@@ -6,7 +6,7 @@
       "title": "台股盤前速報",
       "desc": "夜盤失守 4 萬，現貨守住年線…",
       "summary": "夜盤失守 4 萬，現貨守住年線。，一句話開盤觀點：台股盤中振盪 1,677 點後靠權值股守住 4 萬點與年線，台指期夜盤卻已失守 4 萬，今日分歧在於現貨補跌或夜盤回補。，上一交易日加權指數收 40,194.91 點、上漲 102.80 點（＋0.…",
-      "meta": "2026.11.19 · 盤前速報",
+      "meta": "2026.11.19 · 盤前速報（最新）",
       "icon": "bell",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/prebrief.html"
     },
@@ -16,7 +16,7 @@
       "title": "台股熱力圖 · 上市／上櫃",
       "desc": "台股上市熱力圖 社群貼文文案 交易日…",
       "summary": "台股上市熱力圖 社群貼文文案 交易日 2026-11-19（週四，正常開市），資料：Yahoo奇摩股市收盤頁（收盤日期已核對=2026/11/19）；大盤與法人數字另以MoneyDJ盤後報導交叉核對。個股已查證98/100檔（新光金2888、三商壽…",
-      "meta": "2026.11.19 · 市值熱力圖",
+      "meta": "2026.11.19 · 市值熱力圖（最新）",
       "icon": "chart",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/heatmap.html"
     },
@@ -24,9 +24,9 @@
       "tag": "選股",
       "tone": "intelligence",
       "title": "台股選股雷達",
-      "desc": "今日 TOP10：敦陽科、世芯-KY…",
-      "summary": "今日 TOP10：敦陽科、世芯-KY、定穎投控、騰輝電子-KY、儒鴻、長榮、陽明、萬海、聯茂、汎銓，・世芯-KY（+9.87%）、定穎投控（+9.80%）雙雙強攻近漲停，KD 皆在 50 以上且 KD。，・航運三雄長榮、陽明、萬海同步收紅，萬海上漲…",
-      "meta": "2026.11.18 · 訊號雷達（最新）",
+      "desc": "台股選股雷達 TOP 10 排行（2…",
+      "summary": "台股選股雷達 TOP 10 排行（2026-11-19 星期四），今日 TOP 10：敦陽科、健策、儒鴻、允強、騰輝電子-KY、台玻、定穎投控、世芯-KY、迅得、可寧衛，・盤面偏弱，10 檔中僅儒鴻小漲 0.13%，其餘收黑；騰輝電子-KY、定穎投…",
+      "meta": "2026.11.19 · 訊號雷達（最新）",
       "icon": "compass",
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/stockradar.html"
     },
@@ -41,6 +41,6 @@
       "link": "https://allenchen1113official.github.io/AllenI3Aurora/daily.html"
     }
   ],
-  "asOf": "2026.11.19",
-  "updatedAt": "2026-11-19T11:04:32.543Z"
+  "asOf": "2026.11.20",
+  "updatedAt": "2026-11-19T16:40:12.013Z"
 }

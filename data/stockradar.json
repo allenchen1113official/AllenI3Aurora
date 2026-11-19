@@ -1,9 +1,9 @@
 {
-  "date": "2026.11.18",
-  "dateLabel": "2026.11.18（最新）",
-  "asOf": "2026.11.19",
-  "desc": "今日 TOP10：敦陽科、世芯-KY…",
-  "summary": "今日 TOP10：敦陽科、世芯-KY、定穎投控、騰輝電子-KY、儒鴻、長榮、陽明、萬海、聯茂、汎銓，・世芯-KY（+9.87%）、定穎投控（+9.80%）雙雙強攻近漲停，KD 皆在 50 以上且 KD。，・航運三雄長榮、陽明、萬海同步收紅，萬海上漲…",
+  "date": "2026.11.19",
+  "dateLabel": "2026.11.19（最新）",
+  "asOf": "2026.11.20",
+  "desc": "台股選股雷達 TOP 10 排行（2…",
+  "summary": "台股選股雷達 TOP 10 排行（2026-11-19 星期四），今日 TOP 10：敦陽科、健策、儒鴻、允強、騰輝電子-KY、台玻、定穎投控、世芯-KY、迅得、可寧衛，・盤面偏弱，10 檔中僅儒鴻小漲 0.13%，其餘收黑；騰輝電子-KY、定穎投…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -36,103 +36,104 @@
     {
       "code": "2480",
       "name": "敦陽科",
-      "changePct": "-1.36%",
+      "changePct": "-1.65%",
       "up": false,
       "signals": [
-        "ma",
         "om",
         "eps"
       ]
     },
     {
-      "code": "3661",
-      "name": "世芯-KY",
-      "changePct": "+9.87%",
-      "up": true,
-      "signals": [
-        "om"
-      ]
-    },
-    {
-      "code": "3715",
-      "name": "定穎投控",
-      "changePct": "+9.80%",
-      "up": true,
-      "signals": [
-        "rev"
-      ]
-    },
-    {
-      "code": "6672",
-      "name": "騰輝電子-KY",
-      "changePct": "-2.06%",
+      "code": "3653",
+      "name": "健策",
+      "changePct": "-9.96%",
       "up": false,
       "signals": [
         "om",
-        "rev",
         "eps"
       ]
     },
     {
       "code": "1476",
       "name": "儒鴻",
-      "changePct": "-0.26%",
+      "changePct": "+0.13%",
+      "up": true,
+      "signals": [
+        "om"
+      ]
+    },
+    {
+      "code": "2034",
+      "name": "允強",
+      "changePct": "-4.91%",
       "up": false,
-      "signals": [
-        "om"
-      ]
-    },
-    {
-      "code": "2603",
-      "name": "長榮",
-      "changePct": "+0.39%",
-      "up": true,
-      "signals": [
-        "om"
-      ]
-    },
-    {
-      "code": "2609",
-      "name": "陽明",
-      "changePct": "+1.00%",
-      "up": true,
       "signals": []
     },
     {
-      "code": "2615",
-      "name": "萬海",
-      "changePct": "+4.23%",
-      "up": true,
+      "code": "6672",
+      "name": "騰輝電子-KY",
+      "changePct": "-10.00%",
+      "up": false,
       "signals": [
-        "gc",
-        "om"
-      ]
-    },
-    {
-      "code": "6213",
-      "name": "聯茂",
-      "changePct": "+1.50%",
-      "up": true,
-      "signals": [
+        "om",
         "rev",
         "eps"
       ]
     },
     {
-      "code": "6830",
-      "name": "汎銓",
-      "changePct": "-0.26%",
+      "code": "1802",
+      "name": "台玻",
+      "changePct": "-9.97%",
       "up": false,
-      "signals": []
+      "signals": [
+        "eps"
+      ]
+    },
+    {
+      "code": "3715",
+      "name": "定穎投控",
+      "changePct": "-10.00%",
+      "up": false,
+      "signals": [
+        "rev"
+      ]
+    },
+    {
+      "code": "3661",
+      "name": "世芯-KY",
+      "changePct": "-8.86%",
+      "up": false,
+      "signals": [
+        "om"
+      ]
+    },
+    {
+      "code": "6438",
+      "name": "迅得",
+      "changePct": "-3.73%",
+      "up": false,
+      "signals": [
+        "om",
+        "eps"
+      ]
+    },
+    {
+      "code": "8422",
+      "name": "可寧衛*",
+      "changePct": "-3.33%",
+      "up": false,
+      "signals": [
+        "om"
+      ]
     }
   ],
   "radar": {
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=17YVVS6s0e8dFFpNvR5S7FpiY_1uJzslf&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1P5nIFhBIzLxqjEwBjXcfRds6hJcG6VRD&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/1asvI8q0ez34N5T984WbnysVVVx0xNXxY/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1C183fpnapnwEf_rkDtt0h_f2YF28EpiP/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-11-19T11:04:30.742Z"
+  "updatedAt": "2026-11-19T16:40:09.933Z"
 }
