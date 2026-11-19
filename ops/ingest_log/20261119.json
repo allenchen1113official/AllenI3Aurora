@@ -4,7 +4,7 @@
     {
       "id": "cs_txf-flash_20261119",
       "topic": "txf-flash",
-      "queueState": "done",
+      "queueState": "pending",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550661524851",
@@ -16,9 +16,9 @@
         "error": null
       },
       "th": {
-        "state": "failed",
+        "state": "approved",
         "url": null,
-        "error": "The children with IDs 18165681088500431 are invalid, nonexistent, or expired."
+        "error": null
       }
     },
     {
@@ -44,7 +44,7 @@
     {
       "id": "cs_heatmap_20261119",
       "topic": "heatmap",
-      "queueState": "done",
+      "queueState": "pending",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550403524851",
@@ -56,27 +56,27 @@
         "error": null
       },
       "th": {
-        "state": "failed",
+        "state": "approved",
         "url": null,
-        "error": "The children with IDs 18165681001500431 are invalid, nonexistent, or expired."
+        "error": null
       }
     },
     {
       "id": "cs_stockradar_20261119",
       "topic": "stockradar",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -84,19 +84,19 @@
     {
       "id": "cs_tw-whale-weekly_20261119",
       "topic": "tw-whale-weekly",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -169,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T16:08:20.269Z"
+  "generatedAt": "2026-11-19T16:40:05.276Z"
 }
