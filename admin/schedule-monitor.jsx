@@ -356,7 +356,7 @@ function ScheduleMonitorPanel() {
             return (
               <div key={c.id} className="sm-row">
                 <div><Pill status={c.eval.status} core={core} label={c.eval.status === "unknown" ? "人工確認" : a && a.status === "pending" ? "待確認" : undefined} /></div>
-                <div><b>{c.name}</b><div className="sm-k" style={{ fontFamily: "var(--font-mono)" }}>{c.cron.replace("CRON_TZ=Asia/Taipei ", "")}（台北）</div></div>
+                <div><b>{c.name}</b><div className="sm-k" style={{ fontFamily: "var(--font-mono)" }}>{c.cron ? `${c.cron.replace("CRON_TZ=Asia/Taipei ", "")}（台北）` : "不定時（手動觸發）"}</div></div>
                 <div>{c.eval.reason}
                   {a && <div className="sm-k" style={{ marginTop: 4 }}>
                     {a.targetDate ? <>目標日 {a.targetDate} · </> : null}

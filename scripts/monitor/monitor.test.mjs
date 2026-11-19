@@ -52,7 +52,18 @@ test("所有 workflow 的 cron 都能解析，且排程行附台北時間註解�
     for (const c of y.crons) assert.doesNotThrow(() => core.parseCron(c.expr), `${f}: ${c.expr}`);
     if (y.crons.length) assert.ok(y.name, `${f} 缺 name`);
   }
-  for (const t of CLAUDE_TASKS) assert.doesNotThrow(() => core.parseCron(t.cron), t.name);
+  for (const t of CLAUDE_TASKS) {
+    if (t.onDemand && !t.cron) continue; // 不定時任務（手動觸發）沒有 cron
+    assert.doesNotThrow(() => core.parseCron(t.cron), t.name);
+  }
+});
+
+test("不定時 Claude 任務：無 cron 時為待命，不誤判為逾期", () => {
+  const t = CLAUDE_TASKS.find((x) => x.onDemand);
+  assert.ok(t, "registry 應有不定時任務（個股交易診斷）");
+  const e = core.evaluateClaudeTask(t, [], Date.parse("2026-11-20T02:00:00Z"), null);
+  assert.equal(e.status, "idle");
+  assert.match(e.reason, /手動觸發/);
 });
 
 /* ---------------- 健康度 ---------------- */
