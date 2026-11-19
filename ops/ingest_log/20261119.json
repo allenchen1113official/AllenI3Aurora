@@ -2,8 +2,48 @@
   "date": "2026-11-19",
   "posts": [
     {
+      "id": "cs_txf-flash_20261119",
+      "topic": "txf-flash",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_noon_20261119",
       "topic": "noon",
+      "queueState": "pending",
+      "fb": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_heatmap_20261119",
+      "topic": "heatmap",
       "queueState": "draft",
       "fb": {
         "state": "draft",
@@ -24,6 +64,19 @@
   ],
   "lastIngest": [
     {
+      "id": "cs_heatmap_20261119",
+      "topic": "heatmap",
+      "date": "20261119",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜台股熱力圖．上市／上櫃 2026/11/19（週四）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_noon_20261119",
       "topic": "noon",
       "date": "20261119",
@@ -35,7 +88,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_txf-flash_20261119",
+      "topic": "txf-flash",
+      "date": "20261119",
+      "status": "created",
+      "auto": false,
+      "title": "加權重挫 1,768.02 點，為什麼外資台指淨空單仍有 99,219 口？給期貨交易人的 3 個籌碼訊號",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-19T07:20:19.519Z"
+  "generatedAt": "2026-11-19T13:07:59.312Z"
 }
