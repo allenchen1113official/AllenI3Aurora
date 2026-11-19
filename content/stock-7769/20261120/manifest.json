@@ -1,0 +1,30 @@
+{
+ "version": 1,
+ "topic": "stock-7769",
+ "date": "2026-11-20",
+ "title": "鴻勁 7769 交易診斷 2026/11/20",
+ "autoPublish": false,
+ "verified": true,
+ "producedBy": "個股交易診斷排程",
+ "producedAt": "2026-11-20T01:58:17+08:00",
+ "platforms": {
+  "fb": {
+   "caption": "fb.txt",
+   "images": [
+    "7769_FB_1200x630_20261119.png"
+   ]
+  },
+  "ig": {
+   "caption": "ig.txt",
+   "images": [
+    "7769_IG_1080x1350_20261119.png"
+   ]
+  },
+  "threads": {
+   "caption": "threads.txt",
+   "images": [
+    "7769_Threads_1080x1350_20261119.png"
+   ]
+  }
+ }
+}

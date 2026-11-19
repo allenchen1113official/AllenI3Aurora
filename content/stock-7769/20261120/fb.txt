@@ -1,0 +1,41 @@
+鴻勁7769為什麼EPS 93.47元，股價卻從高點跌55%？5個重點1張看懂📉
+
+發布日 2026/11/20｜資料基準：11/19（週四）收盤，所有數字已與官方資料交叉驗證。
+
+① 基本面｜強
+・10月營收 52.23 億元，月增 -8.84%、年增 78.80%
+・前10月 459.36 億元，年增 92.07%
+・單季毛利率 56.2% → 56.1% → 56.9%
+・本年累計 EPS 93.47 元
+
+② 籌碼面｜偏弱
+・近5日（11/13–11/19）外資 +267 張、投信 -48 張、自營商 +65 張
+・千張大戶持股 56.96% → 56.96%（10/16 → 11/13）
+・融資 681 → 529 張（-22.3%）
+
+③ 均線｜空頭排列
+・收盤 3,210；5日 3,611、10日 3,844、20日 4,374、60日 5,467
+
+④ 趨勢（DMI／MACD）｜空方主導
+・ADX 31.7（上升），+DI 12.5、−DI 37.4
+・MACD 柱 -68.4（近20日最低 -147.8）
+
+⑤ 事件｜無經雙來源確認的近期事件
+
+🔑 關鍵價位：3,210（最新收盤・跌停）／3,844（10日線 壓力）／4,374（月線 轉強）／7,160（09/08 波段高）
+✅ 止跌訊號：−DI 下彎＋MACD 翻紅＋站回 10 日線
+
+📎 資料來源
+・股價：https://www.twse.com.tw/zh/trading/historical/stock-day.html
+・月營收：https://mopsov.twse.com.tw/nas/t21/sii/t21sc03_115_10_0.html
+・財報：https://mopsov.twse.com.tw/mops/web/t163sb04
+・三大法人：https://www.twse.com.tw/zh/trading/foreign/t86.html
+・融資：https://www.twse.com.tw/zh/trading/margin/mi-margn.html
+・集保股權分散：https://www.tdcc.com.tw/portal/zh/smWeb/qryStock
+・財報新聞：https://blog.fugle.tw/post/earnings-call-7769-2026-10-28
+・財報新聞（第二來源）：https://wantrich.chinatimes.com/news/20261029900039-420101
+・營收新聞：https://winvest.tw/News/Detail/99048
+
+※ 技術指標由官方日K自行計算（Wilder DMI 14、MACD 12/26/9）。僅供研究參考，非投資建議。
+
+#鴻勁 #7769 #台股 #技術分析 #艾倫極光報報

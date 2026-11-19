@@ -1,0 +1,42 @@
+緯穎6669為什麼EPS 94.04元，股價卻從高點跌51%？5個重點1張看懂📉
+
+發布日 2026/11/20｜資料基準：11/19（週四）收盤，所有數字已與官方資料交叉驗證。
+
+① 基本面｜持平
+・10月營收 1651.32 億元，月增 -4.34%、年增 80.94%
+・前10月 11544.1 億元，年增 54.03%
+・單季毛利率 7.5% → 9.3% → 8.9%
+・本年累計 EPS 94.04 元（9/2 除權配股後股數增加，前兩季 EPS 已不可直接相加比較）
+
+② 籌碼面｜偏弱
+・近5日（11/13–11/19）外資 +3,185 張、投信 -537 張、自營商 +282 張
+・千張大戶持股 63.4% → 62.91%（10/16 → 11/13）
+・融資 4,931 → 3,674 張（-25.5%）
+
+③ 均線｜空頭排列
+・股價已依 9/2 除權（每股配 1.98 股）還原計算
+・收盤 1,410；5日 1,497、10日 1,562、20日 1,698、60日 2,045
+
+④ 趨勢（DMI／MACD）｜空方主導
+・ADX 33.7（上升），+DI 11.1、−DI 37.0
+・MACD 柱 -17.6（近20日最低 -33.8）
+
+⑤ 事件｜無經雙來源確認的近期事件
+
+🔑 關鍵價位：1,410（最新收盤）／1,562（10日線 壓力）／1,698（月線 轉強）／2,875（09/02 波段高）
+✅ 止跌訊號：−DI 下彎＋MACD 翻紅＋站回 10 日線
+
+📎 資料來源
+・股價：https://www.twse.com.tw/zh/trading/historical/stock-day.html
+・月營收：https://mopsov.twse.com.tw/nas/t21/sii/t21sc03_115_10_0.html
+・財報：https://mopsov.twse.com.tw/mops/web/t163sb04
+・三大法人：https://www.twse.com.tw/zh/trading/foreign/t86.html
+・融資：https://www.twse.com.tw/zh/trading/margin/mi-margn.html
+・集保股權分散：https://www.tdcc.com.tw/portal/zh/smWeb/qryStock
+・除權資訊：https://www.pocket.tw/school/articles/7853/
+・財報新聞：https://uanalyze.com.tw/articles/2502258599
+・營收新聞：https://finance.technews.tw/2026/11/06/wiwynn-6669-202610-financial-report/
+
+※ 技術指標由官方日K自行計算（Wilder DMI 14、MACD 12/26/9）。僅供研究參考，非投資建議。
+
+#緯穎 #6669 #台股 #技術分析 #艾倫極光報報
