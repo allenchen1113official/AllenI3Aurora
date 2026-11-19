@@ -2,7 +2,7 @@
    PilotOne 審核通知（純邏輯）：素材匯入建立／更新了待審草稿時，組出 Email 與 LINE 訊息。
    實際寄送在 notify-review.mjs。
    ===================================================================== */
-import { KNOWN_TOPICS } from "./ingest-core.mjs";
+import { topicInfo } from "./ingest-core.mjs";
 
 export const REVIEW_URL = "https://allenchen1113official.github.io/AllenI3Aurora/admin/pilotone/#review";
 const CH_LABEL = { fb: "FB", ig: "IG", th: "Threads" };
@@ -13,7 +13,7 @@ export function reviewItems(results) {
 }
 
 const slash = (ymd) => (/^\d{8}$/.test(ymd || "") ? `${ymd.slice(0, 4)}/${ymd.slice(4, 6)}/${ymd.slice(6, 8)}` : ymd || "");
-const label = (r) => (KNOWN_TOPICS[r.topic] && KNOWN_TOPICS[r.topic].label) || r.topic;
+const label = (r) => (topicInfo(r.topic) && topicInfo(r.topic).label) || r.topic;
 const chans = (r) => (Array.isArray(r.channels) && r.channels.length ? r.channels.map((c) => CH_LABEL[c] || c).join("＋") : "FB＋IG＋Threads");
 
 export function buildReviewMessage(items, { url = REVIEW_URL } = {}) {

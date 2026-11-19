@@ -24,7 +24,7 @@ import { readFileSync, existsSync, readdirSync, mkdirSync, writeFileSync, statSy
 import { join, basename, extname } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
-import { taipeiDays, validateManifest, isAutoPublish, buildPost, planIngest, postSummary, docIdOf, KNOWN_TOPICS, DEFAULT_AUTO_TOPICS } from "./ingest-core.mjs";
+import { taipeiDays, validateManifest, isAutoPublish, buildPost, planIngest, postSummary, docIdOf, KNOWN_TOPICS, DEFAULT_AUTO_TOPICS, topicInfo } from "./ingest-core.mjs";
 
 const COLL = "aurora_social_posts";
 const env = (n) => (process.env[n] || "").trim();
@@ -146,7 +146,9 @@ async function main() {
   if (!dryRun && col) {
     for (const d of days) {
       const posts = [];
-      for (const topic of Object.keys(KNOWN_TOPICS)) {
+      // 固定主題＋本輪在 content/ 找到的主題家族（如 stock-6274）
+      const topics = [...new Set([...Object.keys(KNOWN_TOPICS), ...found.map((x) => x.topic).filter((t) => !KNOWN_TOPICS[t] && topicInfo(t))])];
+      for (const topic of topics) {
         const s = await col.doc(docIdOf(topic, d.ymd)).get();
         if (s.exists) posts.push(postSummary(s.id, s.data()));
       }

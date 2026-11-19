@@ -1,7 +1,7 @@
 /* Claude 排程素材匯入：node --test scripts/social/ingest.test.mjs */
 import test from "node:test";
 import assert from "node:assert/strict";
-import { taipeiDays, validateManifest, isAutoPublish, buildPost, planIngest, postSummary, docIdOf } from "./ingest-core.mjs";
+import { taipeiDays, validateManifest, isAutoPublish, buildPost, planIngest, postSummary, docIdOf, topicInfo } from "./ingest-core.mjs";
 import { nextQueueState, planPost } from "./core.mjs";
 
 const folder = { topic: "txf-flash", ymd: "20261116" };
@@ -138,4 +138,22 @@ test("文件 id 與狀態摘要", () => {
   assert.deepEqual(s.fb, { state: "published", url: "https://www.facebook.com/1_2", error: null });
   assert.equal(s.ig.url, "https://ig/p");
   assert.equal(s.th, null);
+});
+
+test("主題家族 stock-<代號>：個股交易診斷，同日多檔各自一筆、草稿待審、不可自動發布", () => {
+  assert.equal(topicInfo("stock-6274").label, "個股交易診斷 6274");
+  assert.equal(topicInfo("stock-00631L").label, "個股交易診斷 00631L");
+  assert.equal(topicInfo("stock-abc"), null);
+  assert.equal(topicInfo("stock-"), null);
+  const f = { topic: "stock-6274", ymd: "20261116" };
+  const m = { ...goodManifest(), topic: "stock-6274", title: "台燿 6274 交易診斷 2026/11/16", autoPublish: false, verified: true };
+  const v = validateManifest(m, f, fileSet());
+  assert.equal(v.ok, true, v.errors.join());
+  assert.notEqual(docIdOf("stock-6274", "20261116"), docIdOf("stock-2330", "20261116"));
+  assert.equal(isAutoPublish({ ...m, autoPublish: true }), false); // 預設白名單為空
+  const doc = buildPost(m, f, v.channels, { urlOf: (x) => "https://x/" + x, auto: false, nowIso: "2026-11-16T10:00:00Z" });
+  assert.equal(doc.queueState, "draft");
+  assert.equal(doc.hub.category, "理財");
+  assert.match(doc.note, /個股交易診斷 6274/);
+  assert.equal(doc.source.manifestPath, "content/stock-6274/20261116/manifest.json");
 });

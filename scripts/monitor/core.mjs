@@ -385,6 +385,10 @@ export function evaluateClaudeTask(task, checks, now = Date.now(), report = null
   let c = null;
   try { c = parseCron(task.cron); } catch { /* 註冊表錯誤 */ }
   const prev = c ? prevFire(c, now) : NaN, next = c ? nextFire(c, now) : NaN;
+  if (task.onDemand && !task.cron) {
+    const a0 = report && agentFreshness(report, now).ageH <= AGENT_REPORT.failHours ? (report.tasks || []).find((t) => t.id === task.id) : null;
+    return { status: a0 ? fromAgent(a0.status) : "idle", reason: a0 ? `Agent：${a0.reason || a0.status}` : "不定時任務，需要時手動觸發（附股票代號）", prevExpected: NaN, nextExpected: NaN, agent: a0 };
+  }
   if (task.agent) { const f = agentFreshness(report, now); return { status: f.status, reason: f.reason, prevExpected: prev, nextExpected: next, agent: null }; }
   const fresh = report && agentFreshness(report, now).ageH <= AGENT_REPORT.failHours;
   const a = fresh ? report.tasks.find((t) => t.id === task.id) : null;

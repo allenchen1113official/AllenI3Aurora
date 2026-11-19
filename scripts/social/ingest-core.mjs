@@ -20,6 +20,17 @@ export const KNOWN_TOPICS = {
   stockradar: { label: "台股選股雷達", category: "理財" },
   "tw-whale-weekly": { label: "台股大戶籌碼週報", category: "理財" },
 };
+/* 主題家族：一個主題代碼對應多檔個股（同一天可各有一筆貼文）。
+   stock-<代號> ＝ 台股個股交易診斷（StockAdvisor tw-stock-diagnosis-card skill，不定時手動觸發的 Claude 排程產出）。
+   不放進 KNOWN_TOPICS（那是固定主題清單，與 Drive 橋接 DRIVE_PATHS 一一對應）；個股素材直接推 content 分支。 */
+export const TOPIC_FAMILIES = [
+  { re: /^stock-(\d{4,6}[A-Z]?)$/, info: (m) => ({ label: `個股交易診斷 ${m[1]}`, category: "理財", family: "stock" }) },
+];
+export function topicInfo(topic) {
+  if (KNOWN_TOPICS[topic]) return KNOWN_TOPICS[topic];
+  for (const f of TOPIC_FAMILIES) { const m = String(topic || "").match(f.re); if (m) return f.info(m); }
+  return null;
+}
 // 2026-11-18 Allen 決定：所有主題（含台指期快訊）一律經 PilotOne 人工審核；要開放自動發布請設 Repo Variable SOCIAL_AUTO_TOPICS
 export const DEFAULT_AUTO_TOPICS = [];
 export const LIMITS = { ig: 2200, th: 500, igHashtags: 30, maxImages: { fb: 10, ig: 10, th: 20 } };
@@ -56,7 +67,7 @@ export function validateManifest(m, folder, files) {
   if (!m || typeof m !== "object") return { ok: false, errors: ["manifest.json 不是有效的 JSON 物件"], channels };
   if (m.version !== 1) errors.push(`version 應為 1（目前 ${m.version}）`);
   if (m.topic !== folder.topic) errors.push(`topic「${m.topic}」與資料夾「${folder.topic}」不符`);
-  if (!KNOWN_TOPICS[folder.topic]) errors.push(`未知的主題代碼「${folder.topic}」`);
+  if (!topicInfo(folder.topic)) errors.push(`未知的主題代碼「${folder.topic}」`);
   const dash = `${folder.ymd.slice(0, 4)}-${folder.ymd.slice(4, 6)}-${folder.ymd.slice(6, 8)}`;
   const slash = dash.replace(/-/g, "/");
   if (m.date !== dash) errors.push(`date「${m.date}」與資料夾日期 ${dash} 不符`);
@@ -99,7 +110,7 @@ export function isAutoPublish(m, autoTopics = DEFAULT_AUTO_TOPICS) {
  *   urlOf(file) → 該圖片已轉 JPEG 的公開 https 網址
  */
 export function buildPost(m, folder, channels, { urlOf, auto, nowIso }) {
-  const t = KNOWN_TOPICS[folder.topic] || { category: "生活" };
+  const t = topicInfo(folder.topic) || { category: "生活" };
   const ch = (id) => {
     const c = channels[id];
     const base = { enabled: !!c, caption: c ? c.caption : "", state: c ? (auto ? "approved" : "draft") : "draft", attempts: 0, error: null,
