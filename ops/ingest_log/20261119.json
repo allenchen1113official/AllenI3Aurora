@@ -4,7 +4,7 @@
     {
       "id": "cs_txf-flash_20261119",
       "topic": "txf-flash",
-      "queueState": "done",
+      "queueState": "pending",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550661524851",
@@ -16,9 +16,9 @@
         "error": null
       },
       "th": {
-        "state": "failed",
+        "state": "approved",
         "url": null,
-        "error": "The children with IDs 18165689707500431 are invalid, nonexistent, or expired."
+        "error": null
       }
     },
     {
@@ -44,7 +44,7 @@
     {
       "id": "cs_heatmap_20261119",
       "topic": "heatmap",
-      "queueState": "done",
+      "queueState": "pending",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550403524851",
@@ -58,7 +58,7 @@
       "th": {
         "state": "failed",
         "url": null,
-        "error": "The children with IDs 18165689632500431 are invalid, nonexistent, or expired."
+        "error": null
       }
     },
     {
@@ -169,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T17:59:11.972Z"
+  "generatedAt": "2026-11-19T21:29:37.064Z"
 }

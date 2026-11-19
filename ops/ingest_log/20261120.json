@@ -6,17 +6,17 @@
       "topic": "stock-2330",
       "queueState": "pending",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110566783524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -24,19 +24,19 @@
     {
       "id": "cs_stock-6669_20261120",
       "topic": "stock-6669",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -44,19 +44,19 @@
     {
       "id": "cs_stock-7769_20261120",
       "topic": "stock-7769",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -103,5 +103,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T17:59:11.972Z"
+  "generatedAt": "2026-11-19T21:29:37.064Z"
 }
