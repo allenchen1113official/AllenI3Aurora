@@ -4,15 +4,15 @@
     {
       "id": "cs_txf-flash_20261119",
       "topic": "txf-flash",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550661524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df7drmklfPq/",
         "error": null
       },
       "th": {
@@ -44,15 +44,15 @@
     {
       "id": "cs_heatmap_20261119",
       "topic": "heatmap",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550403524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df7dncHFcwm/",
         "error": null
       },
       "th": {
@@ -146,7 +146,7 @@
       "id": "cs_tw-whale-weekly_20261119",
       "topic": "tw-whale-weekly",
       "date": "20261119",
-      "status": "created",
+      "status": "updated",
       "auto": false,
       "title": "21 檔大戶一週加碼超過 3 個百分點！想跟著籌碼選股的你，這份集保週報先收藏",
       "channels": [
@@ -169,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T16:04:59.064Z"
+  "generatedAt": "2026-11-19T16:08:20.269Z"
 }
