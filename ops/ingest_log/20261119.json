@@ -4,7 +4,7 @@
     {
       "id": "cs_txf-flash_20261119",
       "topic": "txf-flash",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550661524851",
@@ -16,9 +16,9 @@
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The children with IDs 18165704215500431 are invalid, nonexistent, or expired."
       }
     },
     {
@@ -169,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T21:29:37.064Z"
+  "generatedAt": "2026-11-19T23:14:06.962Z"
 }

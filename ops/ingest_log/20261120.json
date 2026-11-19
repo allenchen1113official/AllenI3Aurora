@@ -2,22 +2,42 @@
   "date": "2026-11-20",
   "posts": [
     {
+      "id": "cs_tsm-prebrief_20261120",
+      "topic": "tsm-prebrief",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_stock-2330_20261120",
       "topic": "stock-2330",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110566783524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df7rElmnODO/",
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/Df7rFMjHHBR",
         "error": null
       }
     },
@@ -26,19 +46,19 @@
       "topic": "stock-6669",
       "queueState": "pending",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110601529524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The media with id 18165704125500431 cannot be found."
       }
     },
     {
@@ -46,17 +66,17 @@
       "topic": "stock-7769",
       "queueState": "pending",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110601619524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -101,7 +121,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_tsm-prebrief_20261120",
+      "topic": "tsm-prebrief",
+      "date": "20261120",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜台股盤前速報 2026/11/20（週五）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-19T21:29:37.064Z"
+  "generatedAt": "2026-11-19T23:14:06.962Z"
 }
