@@ -18,6 +18,7 @@ const manifest = () => ({
 test("Drive 路徑涵蓋所有已知主題", () => {
   assert.deepEqual(Object.keys(DRIVE_PATHS).sort(), Object.keys(KNOWN_TOPICS).sort());
   assert.deepEqual(DRIVE_PATHS["txf-flash"], ["finance", "twex"]);
+  assert.deepEqual(DRIVE_PATHS["tw-whale-weekly"], ["finance", "whale"]);
 });
 
 test("referencedFiles：文案與圖卡去重，擋下路徑穿越與子資料夾", () => {

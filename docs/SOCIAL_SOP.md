@@ -279,7 +279,7 @@ social-publish.yml（每 10 分鐘）
 
 | 項目 | 規則 |
 |------|------|
-| 主題代碼 | `txf-flash`、`tsm-prebrief`、`daily`、`noon`、`heatmap`、`stockradar` |
+| 主題代碼 | `txf-flash`、`tsm-prebrief`、`daily`、`noon`、`heatmap`、`stockradar`、`tw-whale-weekly` |
 | 驗證 | 資料夾日期＝`date`；每份文案含當日 `YYYY/MM/DD`；IG ≤ 2,200 字元、hashtag ≤ 30、必須有圖；Threads ≤ 500 字元；圖片 PNG／JPEG 且存在；IG／FB ≤ 10 張、Threads ≤ 20 張。不合格不建立貼文，原因寫進 workflow log 與 `ops/ingest_log` |
 | 文件 id | `cs_<topic>_<YYYYMMDD>`，同一天同主題只有一筆 |
 | 重產 | `producedAt` 變更且三平台都還是草稿／失敗 → 更新內容；已核准、發布中或已發布 → 不覆蓋 |
@@ -325,6 +325,7 @@ PilotOne 審核（admin/pilotone/#review）── 核准 ──→ aurora_ops_re
 | `txf-flash` | `finance/twex` | trig_01AX9chVhyFpy13mDpmyLYQJ（交易日 16:56） |
 | `heatmap` | `finance/heatmap` | trig_01KeuuacckZZsdd8UgCpd3dk（交易日 19:56） |
 | `stockradar` | `finance/stockradar` | trig_018cCAAwpSA8wce1uVfd3PH2（交易日 23:00） |
+| `tw-whale-weekly` | `finance/whale` | trig_018dDeuwJzTCfNVVTd4Azru7（每週六 18:26；成品同步推 StockAdvisor `whale/YYYYMMDD/`） |
 
 **審核通知三管道**：
 1. **Claude 推播**：發文排程寫完送審包後推播（手機）。

@@ -18,6 +18,7 @@ export const KNOWN_TOPICS = {
   noon: { label: "艾倫極光午報", category: "AI 應用" },
   heatmap: { label: "台股熱力圖．上市／上櫃", category: "理財" },
   stockradar: { label: "台股選股雷達", category: "理財" },
+  "tw-whale-weekly": { label: "台股大戶籌碼週報", category: "理財" },
 };
 // 2026-11-18 Allen 決定：所有主題（含台指期快訊）一律經 PilotOne 人工審核；要開放自動發布請設 Repo Variable SOCIAL_AUTO_TOPICS
 export const DEFAULT_AUTO_TOPICS = [];
