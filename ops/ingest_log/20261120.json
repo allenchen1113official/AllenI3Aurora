@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-20",
+  "posts": [
+    {
+      "id": "cs_stock-2330_20261120",
+      "topic": "stock-2330",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    }
+  ],
+  "lastIngest": [
+    {
+      "id": "cs_stock-2330_20261120",
+      "topic": "stock-2330",
+      "date": "20261120",
+      "status": "created",
+      "auto": false,
+      "title": "台積電 2330 交易診斷 2026/11/20",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    }
+  ],
+  "generatedAt": "2026-11-19T17:36:23.779Z"
+}

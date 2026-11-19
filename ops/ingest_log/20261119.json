@@ -4,7 +4,7 @@
     {
       "id": "cs_txf-flash_20261119",
       "topic": "txf-flash",
-      "queueState": "done",
+      "queueState": "pending",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550661524851",
@@ -16,9 +16,9 @@
         "error": null
       },
       "th": {
-        "state": "failed",
+        "state": "approved",
         "url": null,
-        "error": "The children with IDs 18165685033500431 are invalid, nonexistent, or expired."
+        "error": null
       }
     },
     {
@@ -44,7 +44,7 @@
     {
       "id": "cs_heatmap_20261119",
       "topic": "heatmap",
-      "queueState": "done",
+      "queueState": "pending",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110550403524851",
@@ -56,23 +56,23 @@
         "error": null
       },
       "th": {
-        "state": "failed",
+        "state": "approved",
         "url": null,
-        "error": "The children with IDs 18165684874500431 are invalid, nonexistent, or expired."
+        "error": null
       }
     },
     {
       "id": "cs_stockradar_20261119",
       "topic": "stockradar",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110557177524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df7iB0sIB3c/",
         "error": null
       },
       "th": {
@@ -84,20 +84,20 @@
     {
       "id": "cs_tw-whale-weekly_20261119",
       "topic": "tw-whale-weekly",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110557399524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df7iGHXID9Q/",
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/Df7iGpgIG4F",
         "error": null
       }
     }
@@ -169,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T16:41:59.755Z"
+  "generatedAt": "2026-11-19T17:36:23.779Z"
 }
