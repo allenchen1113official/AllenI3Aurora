@@ -1,0 +1,25 @@
+台股為什麼失守 4 萬點？3 大利空＋13 則給科技人的午間必讀｜艾倫極光午報 2026/11/19
+今日關注動態｜艾倫極光午報 2026/11/19
+
+午安！今天台股盤中重挫逾 1,100 點、跌破 4 萬點，Fed 鷹派紀要、美國 AI 監管趨嚴、輝達接班變數三大利空一次湧現，國安基金傳進場護盤。同時 AI 模型戰沒停：Google、微軟同日推新模型，Anthropic IPO 據報以每股 83 美元定價。
+
+🤖 AI：Google 發表 Gemini 4 Neon，100 萬 token 上下文、每任務成本比旗艦低 32%
+🔗 https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-neon/
+
+🚦 智慧交通：Waymo 據報撤出高速公路自駕服務，施工區辨識仍是關鍵缺口
+🔗 https://www.bbc.co.uk/news/articles/cmy86pp336qlo
+
+💧 智慧水務：聖荷西水務靠智慧水表＋聲學偵漏，漏水率約 8%（全美平均約 14%）
+🔗 https://www.stocktitan.net/news/HTO/san-jose-water-launches-h2o-next-to-support-next-generation-of-jmsg18n1a719.html
+
+💻 科技：Nginx 爆兩個 HTTP/2 重大漏洞（CVSS 9.2），對外服務請盡速更新
+🔗 https://www.wiz.io/blog/nginx-http2-rce-vulnerabilities
+
+📈 財經：台股失守 4 萬點、外資賣超逾 1,800 億元，兆豐金逆勢漲逾 7%
+🔗 https://udn.com/news/story/7251/9888134
+
+你覺得國安基金該護盤，還是讓市場加速落底？留言聊聊，也分享給關心台股與 AI 的朋友 👇
+
+本文僅供資訊參考，非投資建議。
+艾倫極光報報 ALLEN I³ AURORA
+#艾倫極光午報 #AI #人工智慧 #智慧交通 #ITS #智慧水務 #科技新聞 #財經 #台股 #美股 #輝達 #AllenAurora
