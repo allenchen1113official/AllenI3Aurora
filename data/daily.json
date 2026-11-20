@@ -4,9 +4,9 @@
   "asOf": "2026.11.20",
   "title": "艾倫極光日報",
   "subtitle": "每日科技與生活動態",
-  "summary": "【日報】艾倫極光日報｜2026.11.20 科技、旅行、攝影與音樂的每日精選速報，用三分鐘掌握今天最值得知道的動態。洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
+  "summary": "【日報】艾倫極光日報｜2026.11.20 ATP 年終總決賽四強即將底定：Zverev、Shelton、Alcaraz 已晉級，週五 Tiafoe 對 Medvedev 爭最後一席。無人機安全成焦點，AI 偵測 GPS 欺騙達 97.5%、五角大廈啟動雷射反制競賽，而 Amazon 在麻州遭社區否決凸顯落地阻力；… 洞察世界·累積智慧·點亮未來，完整日報看這裡👇",
   "hashtags": "#艾倫極光日報 #日報 #智慧農業 #智慧家庭 #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
-  "focusNote": "無人機正從法規試點走向規模化：歐盟擬放寬農業無人機噴灑、Amazon 英國配送戶數擴大逾十倍、Purdue 開通 BVLOS 走廊；智慧家庭方面 Google Home 秋季大改版與 Home Assistant 內建市集，讓 Matter 生態整合再進一步。網球迷則可關注 Alcaraz 已搶先晉級年終四強。",
+  "focusNote": "ATP 年終總決賽四強即將底定：Zverev、Shelton、Alcaraz 已晉級，週五 Tiafoe 對 Medvedev 爭最後一席。無人機安全成焦點，AI 偵測 GPS 欺騙達 97.5%、五角大廈啟動雷射反制競賽，而 Amazon 在麻州遭社區否決凸顯落地阻力；智慧家庭則有 Apple HomeView 開賣與 Aqara Matter 燈具擴充 Apple Home 生態。",
   "sections": [
     {
       "tag": "農業",
@@ -14,19 +14,19 @@
       "title": "智慧農業",
       "items": [
         {
-          "text": "歐盟執委會提議在符合安全與環境要求下簡化特定無人機授權，義大利啟動三年無人機植保試驗，羅馬尼亞葡萄園試驗減少 53% 農藥用量（11/17）。",
-          "sourceName": "UkrAgroConsult",
-          "source": "https://ukragroconsult.com/en/news/eu-prepares-to-ease-rules-on-agricultural-drone-spraying/"
+          "text": "Cornell AgriTech 農業機器人中心剪綵啟用：位於紐約州 Geneva 校區的新中心將以 AI 與自動化研發採果、修枝、除草機器人，目標推廣到全紐約州農場（11/19）。",
+          "sourceName": "13WHAM",
+          "source": "https://13wham.com/news/local/cornell-agritech-cuts-ribbon-on-center-for-agricultural-robotics-in-geneva"
         },
         {
-          "text": "Mordor Intelligence 指 2025 年硬體佔 58% 營收，但 2026–2031 年農業服務預估年複合成長 29.5%；美國農業法案撥 5 億美元支持精準農業（11/7 彙整）。",
-          "sourceName": "Mean CEO Blog",
-          "source": "https://blog.mean.ceo/agritech-news-november-2026/"
+          "text": "USDA 近 500 萬美元支持土壤健康示範網絡：美國 NRCS 五年撥款近 500 萬美元給 American Farmland Trust，建立橫跨 14 州、35 座試驗農場的土壤健康管理網絡，並同步發布全國生物炭調查（11/18）。",
+          "sourceName": "AgWired",
+          "source": "https://agwired.com/2026/11/18/precision-ag-news-11-18-2/"
         },
         {
-          "text": "涵蓋作物基因、農業機器人、授粉管理與養分回收等技術，顯示農業自動化與生物技術受主流肯定（10/16 刊出，近 7 天無更新故沿用）。",
-          "sourceName": "AgNavigator",
-          "source": "https://www.agnavigator.com/Article/2026/10/16/time-names-six-agriculture-innovations-in-best-inventions-of-2026-list"
+          "text": "Spur AgConverge：7 家農業新創直面農民：內布拉斯加 Grand Island 舉辦第二屆 AgConverge，7 家新創展示 AI、機器人、灌溉、養分管理與動物健康方案，並由農民現場回饋（11/18）。",
+          "sourceName": "Nebraska TV",
+          "source": "https://nebraska.tv/news/local/two-day-spur-agconverge-brings-7-startups-to-grand-island-to-pitch-farm-tech"
         }
       ]
     },
@@ -36,19 +36,19 @@
       "title": "智慧家庭 / IoT",
       "items": [
         {
-          "text": "攝影機與門鈴新增鈴聲預覽、聲音事件描述，Android 數位家門鑰匙進駐 Google Wallet，Nest 溫控器支援第三方 Matter 感測器並新增 HVAC 健康警示（11/17）。",
-          "sourceName": "Droid Life",
-          "source": "https://droid-life.com/2026/11/17/google-home-rolls-out-huge-fall-2026-update"
+          "text": "Aqara 推六款 Matter 智慧燈支援 Apple Home：Floor Lamp T1 售 120 美元、18 個色彩分區、最高 1,000 流明，LED 崁燈 T2 售 50 美元；支援 Thread 與 Zigbee，需 HomePod 或 Apple TV 作為 Matter 中樞（11/17）。",
+          "sourceName": "MacRumors",
+          "source": "https://www.macrumors.com/2026/11/17/aqara-matter-lights-apple-home/"
         },
         {
-          "text": "11/11 版本讓 Gemini 遇到模糊指令會先追問（例如哪間臥室），計時器回應更快，並修復五款舊 Nest 攝影機串流問題，一鍵將所有溫控器切至節能模式（11/16）。",
-          "sourceName": "The Gadgeteer",
-          "source": "https://the-gadgeteer.com/2026/11/16/google-home-gets-more-reliable-gemini-commands-faster-timers-and-nest-camera-fixes/"
+          "text": "Apple HomeView 智慧家庭螢幕開賣：7 吋 Liquid Retina 螢幕，桌上型與壁掛型皆 299 美元，於美、英、加、澳等地上市；因 Siri AI 未在歐盟推出，暫不於歐盟販售（11/13 更新）。",
+          "sourceName": "Apple Newsroom",
+          "source": "https://apple.com/newsroom/2026/11/apple-homeview-available-today"
         },
         {
-          "text": "HACS 正式併入核心成為內建市集，新增 Matter 1.5 攝影機支援（WebRTC 直連）與實驗性雙向對講功能（11/4 正式版）。",
-          "sourceName": "Home Assistant",
-          "source": "https://www.home-assistant.io/blog/2026/11/04/release-202611/"
+          "text": "德媒實測 HomeView：軟體仍像測試版：teltarif 以倫敦購入機實測，介面與傳統 Siri 僅支援英文、Siri AI 需透過配對 iPhone 啟用，評論者認為軟體成熟度仍不足（11/18）。",
+          "sourceName": "teltarif.de",
+          "source": "https://teltarif.de/apple-homeview-smart-home-siri-deutschland/news/107697.html"
         }
       ]
     },
@@ -58,19 +58,19 @@
       "title": "無人機系統",
       "items": [
         {
-          "text": "Purdue 以 Windracers ULTRA 貨運無人機完成走廊首次超視距（BVLOS）測試飛行，並有載人追蹤機伴飛（11/17）。",
-          "sourceName": "DroneXL",
-          "source": "https://dronexl.co/2026/11/17/purdue-indiana-drone-corridor-midwest-uas-test-site/"
+          "text": "AI 偵測無人機 GPS 欺騙準確率 97.5%：East Texas A\\&M 測試 8 種 AI 模型，僅用 96 次真實飛行的運動資料判讀，預訓練模型 Chronos 以連續 10 筆讀數達 97.5% 準確率，下一步將做即時偵測（11/18）。",
+          "sourceName": "DroneLife",
+          "source": "https://dronelife.com/2026/11/18/east-texas-am-researchers-test-ai-to-detect-gps-spoofing-in-drones/"
         },
         {
-          "text": "英國民航局核准 Amazon Prime Air 在 Darlington 達 SAIL 4 等級，相同半徑內可服務住戶擴增至 8,000 戶（11/11）。",
-          "sourceName": "DroneXL",
-          "source": "https://dronexl.co/2026/11/11/amazon-prime-air-darlington-sail-4-caa-8000-homes/"
+          "text": "五角大廈選出 7 套反無人機雷射系統：從 13 份提案中選出 7 家，包括 Lockheed Martin/IPG、AeroVironment/BlueHalo 等，12 月中於猶他州 Dugway 實彈競賽，結果可直接轉為採購（11/18）。",
+          "sourceName": "DroneLife",
+          "source": "https://dronelife.com/2026/11/18/pentagon-counter-drone-laser-competition/"
         },
         {
-          "text": "FAA 於 AUVSI 活動公布 UTM 累計 220 萬架次飛行與型式認證新做法，但 Part 108 BVLOS 新規仍未公布時程（11/10）。",
+          "text": "Amazon 撤回麻州 Westborough 無人機起降場：鎮民以 510 比 13 通過禁設起降場，Amazon 撤回申請；報導指 MK30 重 83 磅、懸停噪音 92.1 dB，社區接受度成配送擴張關鍵（11/18）。",
           "sourceName": "DroneXL",
-          "source": "https://dronexl.co/2026/11/10/faa-auvsi-utm-2-2-million-flights-part-108-type-certification/"
+          "source": "https://dronexl.co/2026/11/18/amazon-westborough-drone-nyt-would-probably-not-happen-withdrew/"
         }
       ]
     },
@@ -80,19 +80,19 @@
       "title": "冰島旅行",
       "items": [
         {
-          "text": "冰島觀光局公布 10 月外籍旅客出境人次約 20.3 萬，冬季旅遊持續升溫（11/10）。",
-          "sourceName": "Icelandic Tourist Board",
-          "source": "https://www.ferdamalastofa.is/en/news/category/1/203-thousand-departures-of-foreign-passengers-in-october"
+          "text": "北冰島暴風雪橙色警報，不建議上路：北部與東部發布橙色警報，東南部 Öræfi 以東陣風達 45–50 m/s；冬季自駕務必出發前查詢路況與氣象（11/13）。",
+          "sourceName": "Iceland Review",
+          "source": "https://www.icelandreview.com/news/iceland-orange-weather-warnings-blizzard-november-2026/"
         },
         {
-          "text": "瓦特納冰川冰洞 11 月起開放須跟隨認證嚮導；高地 F 路依法封閉，自駕須 4WD 與合格雪胎，出發前查 Umferdin.is 與 Vedur.is（10/28）。",
-          "sourceName": "Nomad Lawyer",
-          "source": "https://www.nomadlawyer.org/iceland-winter-travel-november-ice-cave-openings-safety-regulations-2026"
+          "text": "黃金圈新精品飯店 360 Hotel Boutique & Spa：31 間客房、加入 LVX Collection，鄰近辛格維利爾國家公園與黃金瀑布，設地熱池與冷泉，每晚約 706 美元起（11 月新飯店精選）。",
+          "sourceName": "Business Traveller",
+          "source": "https://www.businesstraveller.com/lifestyle/the-best-new-hotels-around-the-world-november-2026/"
         },
         {
-          "text": "Hafnarfjörður 聖誕村 11 月 13 日開幕，結合極光團、地熱溫泉與跨年煙火（私人煙火 12/28–1/6 開放），Keflavík 預估 2026 年外國旅客約 224 萬（11/1）。",
-          "sourceName": "Travel And Tour World",
-          "source": "https://www.travelandtourworld.com/news/article/o7vowi6zt6lo/"
+          "text": "Iceland Noir 犯罪文學節落幕：雷克雅維克年度北歐犯罪小說盛會 11/11–14 於市區多個場館舉行，通行證 18,900 冰島克朗起，是冬季文化旅行的亮點（11/14 落幕）。",
+          "sourceName": "Tix.is",
+          "source": "https://tix.is/en/event/21223/iceland-noir-2026"
         }
       ]
     },
@@ -102,19 +102,14 @@
       "title": "攝影",
       "items": [
         {
-          "text": "全片幅 24.1MP 部分堆疊感光元件、6K 開放門錄影、無限時 4K 120p、內建 Arri LogC3 與 32-bit 浮點音訊，售價 4,699.99 美元，2027 年 1 月上市（11/17）。",
+          "text": "黑五相機早鳥優惠開跑：Canon EOS R100 套組 499 美元、Nikon Z30 套組 596.95 美元、OM-D E-M10 IV 套組 699.95 美元，Amazon 黑五週 11/19 起跑（11/19 更新）。",
           "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/cameras/cinema-cameras/the-first-compact-cinema-camera-in-lumix-history-is-here-with-6k-open-gate-unlimited-4k-120p-32-bit-float-built-in-arri-log-and-vertical-anamorphic-desqueeze"
+          "source": "https://www.digitalcameraworld.com/gift-guides-and-seasonal-sales/the-best-black-friday-camera-deals"
         },
         {
-          "text": "攝影大師跳脫汽車廣告慣用手法，以不同方向詮釋品牌與人物，值得作為商業人像賞析案例（11/18）。",
-          "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/photography/commercial-photography/when-jaguar-asked-annie-leibovitz-to-photograph-florence-pugh-with-their-new-car-she-dodged-the-standard-playbook-and-went-in-a-very-different-direction"
-        },
-        {
-          "text": "X100VI 持續缺貨之際，外型相近的 X-E5 搭配餅乾鏡套組迎來首次降價，黑五好康提前開跑（11/18）。",
-          "sourceName": "Digital Camera World",
-          "source": "https://www.digitalcameraworld.com/cameras/mirrorless-cameras/the-viral-fujifilm-x100vi-is-too-popular-for-sales-the-first-ever-discount-on-fujifilms-mirrorless-lookalike-with-a-pancake-lens-is-the-next-best-thing"
+          "text": "Lightroom 向量示波器（Vectorscope）教學：Vectorscope 由 Camera Raw 引入 Lightroom，可客觀檢查色彩飽和與膚色走向，作者以影片示範調色流程（11/15）。",
+          "sourceName": "PetaPixel",
+          "source": "https://petapixel.com/2026/11/15/how-to-use-vectorscope-in-lightroom/"
         }
       ]
     },
@@ -124,19 +119,19 @@
       "title": "薩克斯風",
       "items": [
         {
-          "text": "墨爾本薩克斯風手 Andrew Saragossi 率三重奏 Milton Man Gogh 奪得 2026 Freedman Jazz Fellowship，獲 3 萬澳元支持日本巡演等計畫（11/17）。",
-          "sourceName": "Limelight",
-          "source": "https://limelight-arts.com.au/news/2026-freedman-jazz-fellowship-winner-announced/"
-        },
-        {
-          "text": "英國薩克斯風名家 Andy Sheppard 於 ECM 發行三重奏專輯，搭檔鋼琴 Rita Marcotulli 與貝斯 Michel Benita（Jazz Journal 11/9 新片選）。",
+          "text": "Tara Davidson 新作《The Reflection Of An Echo》：加拿大薩克斯風手第九張專輯，也是 Marni Project 四重奏首張作品，收錄 8 首原創（Jazz Journal 11/10 新片選）。",
           "sourceName": "Jazz Journal",
-          "source": "https://jazzjournal.co.uk/2026/11/09/new-releases-october-november-2026-r-s/"
+          "source": "https://jazzjournal.co.uk/2026/11/10/new-releases-october-november-2026-t-y/"
         },
         {
-          "text": "11/8 於曼徹斯特舉行，含大師班工作坊，演出陣容有 Arno Bornkamp 與 Trio Abril、Emma Rawicz 搭檔 Gwilym Simcock。",
-          "sourceName": "RNCM",
-          "source": "https://www.rncm.ac.uk/festivals/rncm-saxophone-day/"
+          "text": "Gilles Torrent《World Jazz Sound》首度黑膠：瑞士薩克斯風手 21 歲才自學樂器，這張承襲 Coltrane 調式爵士的作品由 Jazzman 首度壓製 180g 雙 LP（11/10）。",
+          "sourceName": "Jazz Journal",
+          "source": "https://jazzjournal.co.uk/2026/11/10/new-releases-october-november-2026-t-y/"
+        },
+        {
+          "text": "Kamasi Washington 與 Dana Robbins 巡演納許維爾：Kamasi Washington 11/17 於 City Winery 演出，葛萊美得主薩克斯風手 Dana Robbins 五重奏 11/22 登場 Rudy's（11/4 月曆）。",
+          "sourceName": "Music City Review",
+          "source": "https://www.musiccityreview.com/2026/11/04/the-jazz-beat-november-2026/"
         }
       ]
     },
@@ -146,19 +141,19 @@
       "title": "網球",
       "items": [
         {
-          "text": "ATP 年終總決賽 Ivan Lendl 組，Alcaraz 以 6-2、6-4 勝 Medvedev 鎖定準決賽席位；Tiafoe 則 7-6(6)、6-0 擊敗 Cobolli（11/18）。",
+          "text": "Zverev 三戰全勝、Shelton 晉級四強：Zverev 6-4、7-6(6) 勝 Fils 以未失一盤戰績居 McEnroe 組第一；Shelton 7-6(8)、7-5 擊敗 Jodar 拿下小組第二（11/19）。",
+          "sourceName": "Sports Infos",
+          "source": "https://www.ski-nordique.net/tennis-masters-atp-finals-resultats-et-suivi-live-alcaraz-ecure-medvedev-et-frappe-a-la-porte-des-demi-finales.6756722-555153.html"
+        },
+        {
+          "text": "週五 Tiafoe 對 Medvedev 爭最後一席：Alcaraz 已以 2 勝鎖定 Lendl 組第一，Tiafoe 與 Medvedev 同為 1 勝 1 負，週五對決勝者晉級，週六準決賽開打（11/18）。",
           "sourceName": "ATP Tour",
-          "source": "https://www.atptour.com/en/news/nitto-atp-finals-2026-results"
+          "source": "https://www.atptour.com/en/news/cobolli-tiafoe-nitto-atp-finals-2026-wednesday"
         },
         {
-          "text": "頭號種子 Zverev 一發得分率 86%、10 記 Ace，擊退首度參賽的 20 歲西班牙新星 Jodar（11/15）。",
-          "sourceName": "Tennis Tour Talk",
-          "source": "https://tennistourtalk.com/139157/zverev-begins-atp-finals-quest-with-victory-over-jodar"
-        },
-        {
-          "text": "IJSPT 綜述指出網球肘應從訓練量、疲勞、恢復、動力鏈效率與器材的累積負荷整體評估，對業餘球友預防傷害有參考價值（11/1）。",
-          "sourceName": "IJSPT",
-          "source": "https://ijspt.scholasticahq.com/article/172626-has-modern-tennis-changed-the-mechanical-environment-of-the-elbow-a-narrative-review-and-the-cumulative-elbow-load-model"
+          "text": "發球生物力學與過勞傷害綜述：Sports Medicine – Open 綜述指出，正確發球技術與合適器材可降低關節負荷；現有研究多針對男性職業選手，女性與業餘球員仍待研究（2026）。",
+          "sourceName": "Sports Medicine – Open",
+          "source": "https://repository.up.ac.za/items/dd6a7567-58f2-410e-bf5f-5a559adae0b1"
         }
       ]
     }
@@ -186,17 +181,17 @@
     }
   ],
   "highlights": [
-    "歐盟執委會提議在符合安全與環境要求下簡化特定無人機授權，義大利啟動三年無人機植保試驗，羅馬尼亞葡萄園試驗減少 53% 農",
-    "攝影機與門鈴新增鈴聲預覽、聲音事件描述，Android 數位家門鑰匙進駐 Google Wallet，Nest 溫控器支",
-    "Purdue 以 Windracers ULTRA 貨運無人機完成走廊首次超視距（BVLOS）測試飛行，並有載人追蹤機伴",
-    "冰島觀光局公布 10 月外籍旅客出境人次約 20.3 萬，冬季旅遊持續升溫（11/10）。"
+    "Cornell AgriTech 農業機器人中心剪綵啟用",
+    "Aqara 推六款 Matter 智慧燈支援 Apple Home",
+    "AI 偵測無人機 GPS 欺騙準確率 97.5%",
+    "北冰島暴風雪橙色警報，不建議上路"
   ],
   "cover": {
     "title": "今日日報封面",
-    "local": "assets/rabbit-reading.jpeg",
-    "drive": ""
+    "drive": "",
+    "local": "assets/rabbit-reading.jpeg"
   },
-  "source": "https://docs.google.com/document/d/19eqR25N51YPMPhih9hvsy8ytO6DQOcfWq-Tr4vUnDfE/edit?usp=drivesdk",
+  "source": "https://docs.google.com/document/d/15K_J1XZ-mYlqXZKJOuFlY1FNt4gNHZcYjRml3sZS7wI/edit?usp=drivesdk",
   "note": "每日日報彙整科技與生活動態，每則附原始來源連結。完整內容以 Google Drive 當日日報原文為準；本頁為一頁式彙整呈現。",
-  "updatedAt": "2026-11-20T03:59:09.088Z"
+  "updatedAt": "2026-11-20T06:56:49.879Z"
 }
