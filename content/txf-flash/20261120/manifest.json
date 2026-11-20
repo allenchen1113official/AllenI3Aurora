@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "topic": "txf-flash",
+  "date": "2026-11-20",
+  "title": "加權重挫 2,393.60 點、期貨轉逆價差 158.29 點：給期貨交易人的 3 個籌碼訊號",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "TXFFlash_Chips_2026-11-20.png",
+        "TXFFlash_Flash_2026-11-20.png",
+        "TXFFlash_Retail_2026-11-20.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "TXFFlash_Chips_2026-11-20.png",
+        "TXFFlash_Flash_2026-11-20.png",
+        "TXFFlash_Retail_2026-11-20.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "TXFFlash_Chips_2026-11-20.png",
+        "TXFFlash_Flash_2026-11-20.png",
+        "TXFFlash_Retail_2026-11-20.png"
+      ]
+    }
+  },
+  "producedBy": "trig_01AX9chVhyFpy13mDpmyLYQJ",
+  "producedAt": "2026-11-20T16:56:37+08:00"
+}
