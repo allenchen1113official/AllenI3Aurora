@@ -2,6 +2,26 @@
   "date": "2026-11-20",
   "posts": [
     {
+      "id": "cs_txf-flash_20261120",
+      "topic": "txf-flash",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_tsm-prebrief_20261120",
       "topic": "tsm-prebrief",
       "queueState": "done",
@@ -24,6 +44,26 @@
     {
       "id": "cs_daily_20261120",
       "topic": "daily",
+      "queueState": "pending",
+      "fb": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_noon_20261120",
+      "topic": "noon",
       "queueState": "draft",
       "fb": {
         "state": "draft",
@@ -117,6 +157,19 @@
       ]
     },
     {
+      "id": "cs_noon_20261120",
+      "topic": "noon",
+      "date": "20261120",
+      "status": "created",
+      "auto": false,
+      "title": "13 則午間必讀：台股盤中重挫 5%、Anthropic 上市，為什麼 AI 交易突然急凍？給科技人與投資人的 5 領域速覽",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_stock-2330_20261120",
       "topic": "stock-2330",
       "date": "20261120",
@@ -167,7 +220,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_txf-flash_20261120",
+      "topic": "txf-flash",
+      "date": "20261120",
+      "status": "created",
+      "auto": false,
+      "title": "加權重挫 2,393.60 點、期貨轉逆價差 158.29 點：給期貨交易人的 3 個籌碼訊號",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-20T04:00:47.501Z"
+  "generatedAt": "2026-11-20T10:28:17.311Z"
 }
