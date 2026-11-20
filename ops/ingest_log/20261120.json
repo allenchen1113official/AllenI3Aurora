@@ -4,7 +4,7 @@
     {
       "id": "cs_tsm-prebrief_20261120",
       "topic": "tsm-prebrief",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110644747524851",
@@ -16,8 +16,8 @@
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/Df8l07VALiP",
         "error": null
       }
     },
@@ -64,7 +64,7 @@
     {
       "id": "cs_stock-6669_20261120",
       "topic": "stock-6669",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110601529524851",
@@ -76,8 +76,8 @@
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/Df8lyfFAMqB",
         "error": null
       }
     },
@@ -169,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-20T03:59:37.020Z"
+  "generatedAt": "2026-11-20T04:00:47.501Z"
 }
