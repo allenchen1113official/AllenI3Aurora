@@ -96,40 +96,73 @@
       if (!res.ok) return null;
       const j = await res.json();
       if (!j || j.value == null || j.delta == null) return null;
+      const m = String(j.asOf || "").match(/(\d{4}-\d{2}-\d{2})/);
       return {
         value: String(j.value),
         delta: String(j.delta),
         data: Array.isArray(j.data) ? j.data : undefined,
         asOf: j.asOf ? String(j.asOf) : "",
         live: !!j.live,
+        date: j.date ? String(j.date) : (m ? m[1] : ""),
       };
     } catch { return null; }
   }
 
-  /* 解析 MIS 盤中即時資料。null＝非交易中／無有效即時值（改用收盤）。 */
-  function parseTaiexRealtime(json, sparkFallback) {
+  const taiexYmdToIso = (s) => {
+    const v = String(s || "");
+    return /^\d{8}$/.test(v) ? `${v.slice(0, 4)}-${v.slice(4, 6)}-${v.slice(6, 8)}` : v;
+  };
+
+  /* 基準值是否過時、需要瀏覽器端補抓：
+     - 交易時段：一律嘗試（盤中即時）。
+     - 非交易時段：基準仍是「盤中」快照（伺服器沒抓到收盤），或平日 13:30 後資料日仍早於今天。
+     2026-11-20：GitHub cron 節流使伺服器端常停在盤中某一刻，舊版收盤後不補抓，首頁就一直卡住。 */
+  function taiexNeedsBrowserFetch(base, now = new Date()) {
+    if (isTaiexTradingHours(now)) return true;
+    if (!base) return true;
+    if (base.live) return true;
+    try {
+      const t = taipeiNowParts(now);
+      const weekday = t.weekday !== "Sat" && t.weekday !== "Sun";
+      return weekday && t.minutes > 13 * 60 + 30 && base.date && base.date < taiexYmdToIso(t.ymd);
+    } catch { return false; }
+  }
+
+  /* 解析 MIS 資料（盤中即時，或收盤後保留的當日收盤快照）。
+     null＝無有效值，或不比基準新（改用基準）。 */
+  function parseTaiexRealtime(json, base, now = new Date()) {
     const a = json && json.msgArray && json.msgArray[0];
     if (!a) return null;
     const cur = parseFloat(String(a.z || "").replace(/,/g, ""));
     const prev = parseFloat(String(a.y || "").replace(/,/g, ""));
     if (!isFinite(cur) || cur <= 0 || !isFinite(prev) || prev <= 0) return null;
-    // 僅接受「今日」（台北時區）的即時報價，避免假日／盤前誤用舊值。
-    if (a.d && String(a.d) !== taipeiNowParts().ymd) return null;
+    const date = taiexYmdToIso(a.d);
+    const today = taiexYmdToIso(taipeiNowParts(now).ymd);
+    if (!date || date > today) return null;
+    const trading = isTaiexTradingHours(now);
+    if (trading && date !== today) return null; // 盤中卻非今日＝尚未開盤／休市
+    const baseDate = (base && base.date) || "";
+    if (!trading && baseDate) {
+      if (date < baseDate) return null;                      // 比基準舊
+      if (date === baseDate && base && !base.live) return null; // 基準已是同日收盤
+    }
     const pts = cur - prev;
     const pct = prev ? (pts / prev) * 100 : 0;
-    // 走勢末點換成當前指數，讓走勢線收在與大字相同的水準。
-    const spark = sparkFallback && sparkFallback.length ? [...sparkFallback.slice(-8), cur] : undefined;
+    // 走勢末點換成當前指數；基準已含同一天的點（盤中快照）則換掉該點，避免重複。
+    const sd = base && base.data;
+    const spark = sd && sd.length ? (baseDate === date ? [...sd.slice(0, -1).slice(-8), cur] : [...sd.slice(-8), cur]) : undefined;
     return {
       value: taiexNumFmt.format(cur),
       delta: taiexDeltaLabel(pct, pts),
       data: spark,
-      asOf: a.t ? `${a.t} 盤中` : "盤中",
-      live: true,
+      asOf: trading ? (a.t ? `${a.t} 盤中` : "盤中") : `${date} 收盤`,
+      live: trading,
+      date,
     };
   }
 
-  /* 自動更新：以 data/taiex.json 為基準（同源、必定可用），交易時段另嘗試
-     瀏覽器端 MIS 即時覆蓋為更新的值；依交易／非交易採不同刷新頻率。 */
+  /* 自動更新：以 data/taiex.json 為基準（同源、必定可用）；交易時段或基準過時時
+     另嘗試瀏覽器端 MIS，成功則以較新的值覆蓋；依交易／非交易採不同刷新頻率。 */
   function useTaiexLive() {
     const [live, setLive] = React.useState(null);
     React.useEffect(() => {
@@ -141,10 +174,9 @@
         // 1) 先更新同源基準值（伺服器端即時／收盤與走勢）。
         const base = await fetchTaiexBaseline();
         if (base) baseRef.current = base;
-        // 2) 交易時段：另嘗試瀏覽器端 MIS 即時，成功則以更即時的值覆蓋。
-        if (isTaiexTradingHours()) {
-          const spark = baseRef.current && baseRef.current.data;
-          const rt = parseTaiexRealtime(await fetchJSONResilient(TAIEX_REALTIME_API), spark);
+        // 2) 交易時段或基準過時：嘗試瀏覽器端 MIS，成功則以較新的值覆蓋。
+        if (taiexNeedsBrowserFetch(baseRef.current)) {
+          const rt = parseTaiexRealtime(await fetchJSONResilient(TAIEX_REALTIME_API), baseRef.current);
           if (alive && rt) return setLive(rt);
         }
         if (alive && baseRef.current) setLive(baseRef.current);
@@ -821,7 +853,9 @@
               : (wov && wov.data && wov.data.length ? wov.data : s.data));
             const title = isTaiexStat(s)
               ? (live
-                  ? (live.live
+                  ? (live.live && !isTaiexTradingHours()
+                      ? `盤中快照 ${live.value}（${live.asOf}，尚未取得收盤）· 點擊看完整報價`
+                      : live.live
                       ? `盤中即時指數 ${live.value}（${live.asOf}，來源：證交所 MIS）· 點擊看完整即時報價`
                       : `最新收盤指數 ${live.value}（資料日 ${live.asOf}，來源：證交所 OpenAPI）· 點擊看盤中即時報價`)
                   : "查看線上即時報價（Yahoo 股市）")
