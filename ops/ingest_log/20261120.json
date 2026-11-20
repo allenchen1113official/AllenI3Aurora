@@ -4,6 +4,26 @@
     {
       "id": "cs_tsm-prebrief_20261120",
       "topic": "tsm-prebrief",
+      "queueState": "pending",
+      "fb": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_daily_20261120",
+      "topic": "daily",
       "queueState": "draft",
       "fb": {
         "state": "draft",
@@ -44,7 +64,7 @@
     {
       "id": "cs_stock-6669_20261120",
       "topic": "stock-6669",
-      "queueState": "done",
+      "queueState": "pending",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110601529524851",
@@ -56,9 +76,9 @@
         "error": null
       },
       "th": {
-        "state": "failed",
+        "state": "approved",
         "url": null,
-        "error": "The media with id 18165704125500431 cannot be found."
+        "error": null
       }
     },
     {
@@ -83,6 +103,19 @@
     }
   ],
   "lastIngest": [
+    {
+      "id": "cs_daily_20261120",
+      "topic": "daily",
+      "date": "20261120",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜艾倫極光日報 2026/11/20（週五）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
     {
       "id": "cs_stock-2330_20261120",
       "topic": "stock-2330",
@@ -136,5 +169,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-19T23:15:22.655Z"
+  "generatedAt": "2026-11-20T02:32:09.595Z"
 }
