@@ -3,12 +3,20 @@ name: 更新加權指數 TAIEX
 # 伺服器端定時抓取證交所加權指數，寫入 data/taiex.json（同源，供前端讀取）。
 # 區分交易／非交易時段：交易時段密集更新即時指數，非交易時段維持最新收盤。
 # 註：GitHub 排程以 UTC 計；台北 = UTC+8。台股交易 09:00–13:30 = UTC 01:00–05:30。
+#
+# 2026-11-20 改版：本 repo 的 GitHub cron 嚴重節流（*/5 盤中排程實測多日從未觸發，
+# 其餘排程延遲數小時），所以不再依賴密集 cron。改為「喚醒後在同一個 job 內輪詢」：
+# 交易日台北 08:45–15:10 之間任何一次觸發（cron／監控代理補跑／手動），都會每 5 分鐘
+# 抓一次並提交，一路跑到 15:10（涵蓋盤中、13:30 收盤與盤後 OpenAPI 確認）。
+# 下列 cron 只是多個「喚醒機會」，刻意避開整點／5 的倍數以降低被丟棄的機率。
 on:
   schedule:
-    - cron: "*/5 1-5 * * 1-5"   # 交易時段：台北週一至週五 09:00–13:59，每 5 分鐘
-    - cron: "35 5 * * 1-5"       # 台北 13:35 收盤結算
-    - cron: "0 7 * * 1-5"        # 台北 15:00 盤後確認
-    - cron: "0 12 * * *"         # 台北 20:00 每日一次（非交易日／夜間維持最新）
+    - cron: "47 0 * * 1-5"       # 台北週一至週五 08:47 喚醒（開盤前起跑）
+    - cron: "23 2 * * 1-5"       # 台北 10:23 喚醒（前一次被丟棄時補位）
+    - cron: "41 4 * * 1-5"       # 台北 12:41 喚醒
+    - cron: "37 5 * * 1-5"       # 台北 13:37 收盤結算
+    - cron: "13 7 * * 1-5"       # 台北 15:13 盤後確認（輪詢結束後的單次）
+    - cron: "19 12 * * *"        # 台北 20:19 每日一次（非交易日／夜間維持最新）
   push:
     branches: [main]
     paths:
@@ -28,6 +36,7 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 420   # 輪詢最長約 08:45–15:10（6.5 小時）
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,17 +44,46 @@ jobs:
           node-version: 20
       - name: 單元測試（防回退邏輯）
         run: node --test scripts/update-taiex.test.mjs
-      - name: 抓取並更新 data/taiex.json
-        run: node scripts/update-taiex.mjs
-      - name: 有變動才提交
+      - name: 抓取並更新 data/taiex.json（交易日盤中輪詢至 15:10）
         run: |
-          if [[ -n "$(git status --porcelain data/taiex.json)" ]]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data/taiex.json
-            git commit -m "chore(taiex): 自動更新加權指數 [skip ci]"
-            git pull --rebase --autostash origin main || true
-            git push
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          update_once() {
+            node scripts/update-taiex.mjs || echo "本輪抓取失敗，下一輪再試。"
+            if [[ -n "$(git status --porcelain data/taiex.json)" ]]; then
+              git add data/taiex.json
+              git commit -q -m "chore(taiex): 自動更新加權指數 [skip ci]"
+              for i in 1 2 3; do
+                git pull -q --rebase --autostash origin main && git push -q && break
+                echo "push 失敗，第 $i 次重試"; sleep 10
+              done
+            else
+              echo "指數無變動，略過提交。"
+            fi
+          }
+
+          # 台北時間：星期（1–7）與「今日 15:10」的 epoch 秒
+          dow=$(TZ=Asia/Taipei date +%u)
+          now=$(date +%s)
+          start=$(TZ=Asia/Taipei date -d "08:45" +%s)
+          end=$(TZ=Asia/Taipei date -d "15:10" +%s)
+
+          if [[ "$dow" -le 5 && "$now" -ge "$start" && "$now" -lt "$end" ]]; then
+            echo "交易日盤中／盤後時段：每 5 分鐘輪詢至台北 15:10。"
+            today=$(TZ=Asia/Taipei date +%Y-%m-%d)
+            holiday_check=$(TZ=Asia/Taipei date -d "09:40" +%s)
+            while :; do
+              update_once
+              # 休市日（國定假日／颱風假）：09:40 後仍抓不到今日資料就停止輪詢，避免空跑。
+              if [[ $(date +%s) -ge "$holiday_check" ]] && \
+                 [[ "$(node -p "require('./data/taiex.json').date || ''")" != "$today" ]]; then
+                echo "09:40 後仍無 $today 資料，判定休市，結束輪詢。"; break
+              fi
+              left=$(( end - $(date +%s) ))
+              [[ "$left" -gt 0 ]] || break
+              sleep $(( left < 300 ? left : 300 ))
+            done
           else
-            echo "指數無變動，略過提交。"
+            update_once
           fi
