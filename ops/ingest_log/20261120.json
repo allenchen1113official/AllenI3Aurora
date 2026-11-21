@@ -84,7 +84,7 @@
     {
       "id": "cs_heatmap_20261120",
       "topic": "heatmap",
-      "queueState": "done",
+      "queueState": "pending",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122110914705524851",
@@ -96,9 +96,9 @@
         "error": null
       },
       "th": {
-        "state": "failed",
+        "state": "approved",
         "url": null,
-        "error": "The children with IDs 18165845479500431 are invalid, nonexistent, or expired."
+        "error": null
       }
     },
     {
@@ -301,5 +301,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-21T07:22:02.195Z"
+  "generatedAt": "2026-11-21T09:38:22.556Z"
 }
