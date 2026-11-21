@@ -1880,22 +1880,22 @@ function SocBadge({ r }) {
 }
 
 /* Facebook 貼文樣式預覽（照片貼文：連結併入內文，與排程器送出內容一致）
-   配色採 Facebook 官方深色模式：底 #242526、主文 #E4E6EB（對比約 13:1）、次要 #B0B3B8，
-   與後台深色底融合、不刺眼；字體 Noto Sans TC 優先並開啟抗鋸齒，中文較清晰。 */
-const FBP = { bg: "#242526", line: "#3E4042", text: "#E4E6EB", sub: "#B0B3B8", faint: "#8A8D91", card: "#3A3B3C" };
+   白底（同 Facebook 淺色模式），文字加深：主文 #000000、次要 #3A3B3C（對比 ≥ 11:1）；
+   中文字體 Noto Sans TC 優先、內文字重 500，白底不開灰階抗鋸齒以免筆畫變細。 */
+const FBP = { bg: "#FFFFFF", line: "#CED0D4", text: "#000000", sub: "#3A3B3C", faint: "#606770", card: "#F0F2F5" };
 function SocFbPreview({ p }) {
   const isPhoto = !!p.imageUrl;
   const text = isPhoto ? [p.fb.caption, p.fb.link].filter(Boolean).join("\n\n") : p.fb.caption;
   return (
-    <div style={{ background: FBP.bg, color: FBP.text, borderRadius: 12, width: "100%", maxWidth: 500, overflow: "hidden", border: "1px solid " + FBP.line, fontFamily: "'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, -apple-system, sans-serif", WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale", textRendering: "optimizeLegibility", boxShadow: "0 4px 18px rgba(0,0,0,.4)" }}>
+    <div style={{ background: FBP.bg, color: FBP.text, borderRadius: 12, width: "100%", maxWidth: 500, overflow: "hidden", border: "1px solid " + FBP.line, fontFamily: "'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, -apple-system, sans-serif", WebkitFontSmoothing: "auto", textRendering: "optimizeLegibility", boxShadow: "0 4px 18px rgba(0,0,0,.35)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 16px 10px" }}>
         <img src={SOC_SITE_BASE + "assets/avatar.jpg"} alt="" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", background: FBP.card }} />
         <div>
           <div style={{ fontWeight: 700, fontSize: 15, color: FBP.text }}>艾倫報報</div>
-          <div style={{ color: FBP.sub, fontSize: 12.5 }}>{p.scheduledAt ? fmtLocal(p.scheduledAt) : "立即"} · 🌐</div>
+          <div style={{ color: FBP.sub, fontSize: 12.5, fontWeight: 500 }}>{p.scheduledAt ? fmtLocal(p.scheduledAt) : "立即"} · 🌐</div>
         </div>
       </div>
-      <div style={{ padding: "0 16px 14px", fontSize: 15, fontWeight: 400, lineHeight: 1.65, letterSpacing: ".01em", whiteSpace: "pre-wrap", wordBreak: "break-word", color: FBP.text }}>{text || <span style={{ color: FBP.faint }}>（尚無內文）</span>}</div>
+      <div style={{ padding: "0 16px 14px", fontSize: 15.5, fontWeight: 500, lineHeight: 1.65, letterSpacing: ".01em", whiteSpace: "pre-wrap", wordBreak: "break-word", color: FBP.text }}>{text || <span style={{ color: FBP.faint }}>（尚無內文）</span>}</div>
       {isPhoto ? (
         <img src={p.imageUrl} alt="" style={{ display: "block", width: "100%", background: FBP.card, borderTop: "1px solid " + FBP.line }} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} />
       ) : p.fb.link ? (
