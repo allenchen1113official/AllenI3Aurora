@@ -1880,9 +1880,9 @@ function SocBadge({ r }) {
 }
 
 /* Facebook 貼文樣式預覽（照片貼文：連結併入內文，與排程器送出內容一致）
-   白底（同 Facebook 淺色模式），文字加深：主文 #000000、次要 #3A3B3C（對比 ≥ 11:1）；
+   白底（同 Facebook 淺色模式），文字加深：主文 #1C1E21 墨黑（對比約 16:1，比純黑柔和）、次要 #4B4F56；
    中文字體 Noto Sans TC 優先、內文字重 500，白底不開灰階抗鋸齒以免筆畫變細。 */
-const FBP = { bg: "#FFFFFF", line: "#CED0D4", text: "#000000", sub: "#3A3B3C", faint: "#606770", card: "#F0F2F5" };
+const FBP = { bg: "#FFFFFF", line: "#CED0D4", text: "#1C1E21", sub: "#4B4F56", faint: "#606770", card: "#F0F2F5" };
 function SocFbPreview({ p }) {
   const isPhoto = !!p.imageUrl;
   const text = isPhoto ? [p.fb.caption, p.fb.link].filter(Boolean).join("\n\n") : p.fb.caption;
