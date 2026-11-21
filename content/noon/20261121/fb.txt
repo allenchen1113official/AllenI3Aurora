@@ -1,0 +1,21 @@
+給科技投資人的 13 則午間必讀：台股暴跌 2393 點、輝達單日 -14%，AI 泡沫訊號怎麼看？｜艾倫極光午報 2026/11/21
+今日關注動態｜艾倫極光午報 2026/11/21
+
+午間重點：週五美股 S&P 500 與道瓊雙雙進入修正，輝達單日重挫 14%；台股同日大跌 2,393.6 點收 36,033.29，史上第三大跌點。市場在問的不是 AI 會不會進步，而是 AI 基建的錢什麼時候回本。
+
+🤖 AI：Anthropic 上市後股價回落 8.5%，那斯達克抹去今年漲幅
+🔗 https://www.nbcnews.com/business/markets/anthropic-shares-markets-selloff-nasdaq-rcna610394
+🚦 智慧交通：六都交通論壇聚焦 AI 治理，桃園 AI 號誌讓公車準點率升至 92%
+🔗 https://money.udn.com/money/story/7307/9862553
+💧 智慧水務：智慧水表市場 2031 年上看 100.5 億美元
+🔗 https://www.globenewswire.com/news-release/2026/11/19/3406597/0/en/smart-water-meters-market-revenue-to-hit-10-05-billion-by-2031-marketsandmarkets.html
+💻 科技：OpenSSL 爆 CVSS 9.8 緩衝區溢位漏洞，維運單位快盤點
+🔗 https://github.com/openssl/openssl/pull/33652
+📈 財經：台股重挫 6.23%，政府研議第 3 波護盤、國安基金擬倍增至 1 兆
+🔗 https://www.setn.com/news/1942451
+
+👉 你覺得這波是 AI 泡沫修正，還是長線布局的機會？留言聊聊，也分享給關心台股、美股的朋友。
+
+本文僅供資訊參考，非投資建議。
+艾倫極光報報 ALLEN I³ AURORA
+#艾倫極光午報 #AI
