@@ -645,7 +645,7 @@ function HubComposer({ init, reload, flash, go }) {
                   <div style={{ fontSize: 11.5, marginTop: 5, color: len((s.ytTitle || s.title).trim()) > YT_TITLE_MAX ? "var(--danger)" : "var(--text-3)" }}>{len((s.ytTitle || s.title).trim())} / {YT_TITLE_MAX} 字 · 標籤取自主稿 Hashtag（{hubTags(s.hashtags).length} 個）</div></div>
                 <div><label className="ad-lbl" htmlFor="hub-yt-privacy">可見度</label>
                   <select id="hub-yt-privacy" className="ad-in" value={s.ytPrivacy} onChange={(e) => set("ytPrivacy", e.target.value)}>{YT_PRIVACY.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
-                  <div style={{ ...muted, fontSize: 11.5, marginTop: 5, lineHeight: 1.6 }}>{s.ytPrivacy === "public" ? "公開影片：核准後即上傳（先為私人），到預定時間由 YouTube 自動公開，分鐘級準時。" : "非公開影片無法定時公開：到預定時間才由排程器上傳（每 10 分鐘一輪）。"}</div></div>
+                  <div style={{ ...muted, fontSize: 11.5, marginTop: 5, lineHeight: 1.6 }}>{s.ytPrivacy === "public" ? "公開影片：核准後即上傳（先為私人），到預定時間由 YouTube 自動公開，分鐘級準時。" : "非公開影片無法定時公開：到預定時間才由排程器上傳（每 2 分鐘一輪）。"}</div></div>
                 {s.yt && s.yt.url ? <div style={{ fontSize: 12.5 }}>影片：<a href={s.yt.url} target="_blank" rel="noreferrer" style={{ color: "var(--info)" }}>{s.yt.url}</a></div> : null}
               </div>
             ) : null}
@@ -680,7 +680,7 @@ function HubComposer({ init, reload, flash, go }) {
             {s.mode === "time" ? (
               <div><label className="ad-lbl" htmlFor="hub-when">發布時間（台北 UTC+8）</label><input id="hub-when" className="ad-in" type="datetime-local" value={s.when} onChange={(e) => set("when", e.target.value)} /></div>
             ) : null}
-            <div style={{ fontSize: 12, color: "var(--text-3)", lineHeight: 1.6 }}>FB：{SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程（分鐘級準時）。IG／Threads 沒有原生排程，於預定時間前 5 分鐘內由排程器送出（每 10 分鐘一輪，尖峰可能延遲）。YouTube 公開影片核准後即上傳並由 YouTube 定時公開。</div>
+            <div style={{ fontSize: 12, color: "var(--text-3)", lineHeight: 1.6 }}>FB：{SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程（分鐘級準時）。IG／Threads 沒有原生排程，於預定時間前 5 分鐘內由排程器送出（每 2 分鐘一輪）。YouTube 公開影片核准後即上傳並由 YouTube 定時公開。</div>
             <Toggle on={s.needReview} onChange={(v) => set("needReview", v)}>發布前需審核（先送交待審核）</Toggle>
             {editable ? (
               <button className="ad-btn primary" disabled={busy} onClick={s.needReview ? submit : approve}>
@@ -946,7 +946,7 @@ function HubPlatforms({ list, meta, reload }) {
   const pcard = { ...card, padding: 16, display: "flex", flexDirection: "column", gap: 12 };
   const rules = [
     "時區固定為台北（UTC+8）",
-    "排程器每 10 分鐘執行一次（GitHub Actions · social-publish.yml）",
+    "排程器常駐輪詢、每 2 分鐘執行一次（GitHub Actions · social-publish.yml）",
     `FB 發布時間在 ${SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程`,
     "IG／Threads 以容器兩段式發布，到期前 5 分鐘內送出",
     "YouTube 公開影片核准後即上傳（可續傳）並帶 publishAt 定時公開；非公開影片到期才上傳",

@@ -16,7 +16,7 @@
 後台「社群發文 → 新增貼文」 ───────┴→ aurora_social_posts（draft，待審核）
                                         │ 你在後台編修、預覽、核准並設定時間
                                         ▼ queueState = pending
-social-publish.yml（每 10 分鐘）── scripts/social/publish-social-posts.mjs
+social-publish.yml（常駐輪詢：每 2 分鐘發文、每 6 分鐘匯入）── scripts/social/publish-social-posts.mjs
    ├─ 預定時間在 20 分鐘～29 天內 → 交給 Meta 原生排程（準時到分鐘）
    ├─ 已到期／20 分鐘內 → 立即發布
    ├─ 原生排程到期 → 對帳，標記已發布並取回貼文連結
@@ -244,12 +244,12 @@ YouTube（`yt.state`）與 FB 相同集合：`approved` → 上傳中 `publishin
 
 ## 九之二、Claude 排程素材匯入（AllenI3Aurora 產出 → PilotOne）
 
-Claude 排程任務（台指期快訊、盤前速報、極光日報／午報、熱力圖、選股雷達）不再用 Mac mini 的 Chrome 發文：成品推到本 repo 的 **`content` 分支**，`social-publish.yml` 每 10 分鐘先跑 `scripts/social/ingest-content.mjs` 匯入，再由同一個排程器發文。
+Claude 排程任務（台指期快訊、盤前速報、極光日報／午報、熱力圖、選股雷達）不再用 Mac mini 的 Chrome 發文：成品推到本 repo 的 **`content` 分支**，`social-publish.yml` 常駐輪詢每 6 分鐘先跑 `scripts/social/ingest-content.mjs` 匯入，再由同一個排程器發文。
 
 ```
 Claude 排程任務 ── git push ──→ content 分支 content/<topic>/<YYYYMMDD>/
                                    manifest.json＋fb.txt／ig.txt／threads.txt＋圖卡 PNG
-social-publish.yml（每 10 分鐘）
+social-publish.yml（常駐輪詢：每 2 分鐘發文、每 6 分鐘匯入）
    ├─ ingest-content.mjs：驗證 → PNG 轉 JPEG 推回 _publish/ → aurora_social_posts/cs_<topic>_<YYYYMMDD>
    │     一般主題：草稿 → 後台「PilotOne 審核」核准
    │     SOCIAL_AUTO_TOPICS（預設 txf-flash）且 autoPublish＋verified：直接核准、本輪發布
@@ -307,7 +307,7 @@ Allen 決定：**所有 Claude 發文排程（盤前速報、極光日報、極�
 Mac mini 產出排程 ── 寫 Drive ──→ AllenI3Aurora/<主題>/<YYYYMMDD>/（原有成品）
 Mac mini 發文排程（原時間）── 整理三平台文案＋圖卡 ──→ <YYYYMMDD>/pilotone/ 送審包
                          └─ Claude 推播「待審核」＋ PilotOne 連結
-social-publish.yml（每 10 分鐘）
+social-publish.yml（常駐輪詢：每 2 分鐘發文、每 6 分鐘匯入）
    ├─ drive-bridge.mjs：GDRIVE_SERVICE_ACCOUNT 讀送審包 → content 分支 content/<topic>/<YYYYMMDD>/
    ├─ ingest-content.mjs：驗證、轉 JPEG → aurora_social_posts/cs_<topic>_<YYYYMMDD>（草稿）
    ├─ notify-review.mjs：新草稿 → Email＋LINE 通知「PilotOne 待審核」
@@ -369,3 +369,13 @@ workflow 每次執行前也會先跑這組測試；push 到 main 時以 dry_run 
 
 - ~~**第二階段**：Instagram、Threads~~（已完成：容器兩段式發布、冪等使用 `creation_id`、Threads Token 自動續期）。~~輪播~~（已完成：FB 多圖、IG／Threads 輪播，第九之二節）。待做：Reels。
 - **第三階段**：Claude API 自動產生 FB／IG 文案草稿、「要求重寫」回饋、失敗通知信。
+
+## 附錄：常駐輪詢（2026-11-21）
+
+GitHub cron 對本 repo 嚴重節流，`*/10` 實測 2～8 小時才觸發一次，造成核准／排程到期的貼文延遲超過 1 小時。`social-publish.yml` 改為：
+
+- 任一次喚醒（cron `7,37 * * * *`、監控代理補跑、PilotOne 核准觸發、手動 dispatch）都在同一個 job 內常駐約 5.5 小時。
+- 每 2 分鐘跑 `publish-social-posts.mjs`（到期即發，目標 ≤ 10 分鐘，實際約 2～3 分鐘）；每 6 分鐘跑 Drive 橋接＋素材匯入＋審核通知。
+- 結束前以 `gh workflow run social-publish.yml`（GITHUB_TOKEN，需 `actions: write`）自我接力；concurrency 讓下一輪排隊到本輪結束立即接手。期間 cron 觸發的執行會排隊或被取消（屬正常）。
+- push 觸發與 `dry_run` 只跑單輪；手動 dispatch 可取消勾選 `loop` 改為單輪。
+- 公開 repo 的 Actions 分鐘數不計費；Token 續期仍有每日一次的門檻，不會因輪詢重複續期。

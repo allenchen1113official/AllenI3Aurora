@@ -1,5 +1,14 @@
 name: 社群自動發文（Facebook／Instagram／Threads／YouTube）
 
+# 2026-11-21 改版「常駐輪詢」：本 repo 的 GitHub cron 嚴重節流，`*/10` 實測 2～8 小時才觸發一次，
+# 核准／排程到期的貼文常拖超過 1 小時才發。改為比照 taiex-update.yml：任何一次喚醒（cron／監控代理補跑／
+# PilotOne 核准觸發／手動）都在同一個 job 內常駐：
+#   - 每 2 分鐘跑一次發文排程（publish-social-posts.mjs）→ 核准後或排程到期後 ≤ 2～3 分鐘發出
+#   - 每 6 分鐘跑一次 Drive 橋接＋素材匯入＋審核通知（送審包進 PilotOne 草稿）
+#   - 跑滿約 5.5 小時後以 workflow_dispatch 自我接力（GITHUB_TOKEN 觸發 workflow_dispatch 是 GitHub 允許的例外），
+#     concurrency 讓新的一輪排隊到這一輪結束後立即接手，全天不中斷；下列 cron 與監控代理補跑只是保險。
+#   - push 觸發與 dry_run 只跑單輪（不常駐）。
+#
 # 每 10 分鐘掃描 Firestore aurora_social_posts（queueState == 'pending'），
 # 依後台核准與排程時間發文到 Facebook 粉專、Instagram、Threads：
 #   - 預定時間在 20 分鐘～29 天內 → 交給 Meta 原生排程（分鐘級準時）
@@ -40,7 +49,8 @@ name: 社群自動發文（Facebook／Instagram／Threads／YouTube）
 # 未設定的平台自動停用；全部未設定時只會印出警告並略過，不會失敗。
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    # 只是「喚醒保險」：常駐輪詢＋自我接力正常時，這些觸發只會排隊後接棒。避開整點以降低被丟棄機率。
+    - cron: "7,37 * * * *"   # 台北每小時 :07、:37 喚醒（UTC 同分）
   push:
     branches: [main]
     paths:
@@ -52,6 +62,10 @@ on:
         description: "只列出將執行的動作（不發文、不改資料）"
         type: boolean
         default: false
+      loop:
+        description: "常駐輪詢（每 2 分鐘發文、約 5.5 小時後自我接力）；關閉則只跑單輪"
+        type: boolean
+        default: true
 
 concurrency:
   group: social-publish
@@ -59,11 +73,12 @@ concurrency:
 
 permissions:
   contents: write   # 素材匯入需把 JPEG 圖卡與匯入紀錄推回 content 分支
+  actions: write    # 常駐輪詢結束前以 workflow_dispatch 自我接力
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 30   # YouTube 影片下載＋上傳需要較長時間
+    timeout-minutes: 355   # 常駐輪詢約 5.5 小時（GitHub 上限 6 小時）＋YouTube 上傳餘裕
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -80,31 +95,12 @@ jobs:
         with:
           ref: content
           path: .content
-      - name: Drive 橋接（Claude 發文排程送審包 → content 分支）
-        if: steps.content.outcome == 'success'
-        continue-on-error: true   # Drive 讀取失敗不影響既有佇列發文
+      - name: 常駐輪詢：Drive 橋接＋素材匯入＋審核通知＋發文
         env:
           GDRIVE_SERVICE_ACCOUNT: ${{ secrets.GDRIVE_SERVICE_ACCOUNT }}
-          SOCIAL_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
-        run: |
-          git -C .content config user.name "github-actions[bot]"
-          git -C .content config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          node scripts/social/drive-bridge.mjs .content
-      - name: Claude 排程素材匯入
-        if: steps.content.outcome == 'success' && (success() || failure())
-        env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           SOCIAL_AUTO_TOPICS: ${{ vars.SOCIAL_AUTO_TOPICS }}
-          SOCIAL_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
           INGEST_RESULT: ${{ runner.temp }}/ingest-result.json
-        run: |
-          git -C .content config user.name "github-actions[bot]"
-          git -C .content config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          node scripts/social/ingest-content.mjs .content
-      - name: 審核通知（Email＋LINE）
-        if: steps.content.outcome == 'success' && (success() || failure())
-        continue-on-error: true
-        env:
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
@@ -113,12 +109,6 @@ jobs:
           PILOTONE_NOTIFY_EMAIL: ${{ secrets.PILOTONE_NOTIFY_EMAIL }}
           LINE_CHANNEL_TOKEN: ${{ secrets.LINE_CHANNEL_TOKEN }}
           LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
-          SOCIAL_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
-        run: node scripts/social/notify-review.mjs "${{ runner.temp }}/ingest-result.json"
-      - name: 執行發文排程
-        if: success() || failure()   # 素材匯入失敗仍照常處理既有佇列
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
           META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
           META_IG_USER_ID: ${{ secrets.META_IG_USER_ID }}
@@ -134,4 +124,62 @@ jobs:
           META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION }}
           META_PAGE_EXPECT_NAME: ${{ vars.META_PAGE_EXPECT_NAME }}
           SOCIAL_DRY_RUN: ${{ (github.event_name == 'push' || inputs.dry_run) && '1' || '0' }}
-        run: node scripts/social/publish-social-posts.mjs
+          # schedule／未帶 loop 的 dispatch 皆常駐；push、dry_run 或 loop=false 只跑單輪
+          SOCIAL_LOOP: ${{ (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run && inputs.loop)) && '1' || '0' }}
+          HAS_CONTENT: ${{ steps.content.outcome == 'success' && '1' || '0' }}
+          GH_TOKEN: ${{ github.token }}
+          LOOP_SECONDS: "19800"       # 常駐 5.5 小時
+          PUBLISH_EVERY: "120"        # 發文每 2 分鐘
+          INGEST_EVERY: "360"         # Drive 橋接＋匯入每 6 分鐘
+        run: |
+          if [[ "$HAS_CONTENT" == "1" ]]; then
+            for d in .content; do
+              git -C "$d" config user.name "github-actions[bot]"
+              git -C "$d" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            done
+          fi
+          tpe() { TZ=Asia/Taipei date "+%m/%d %H:%M:%S"; }
+
+          ingest_once() {
+            [[ "$HAS_CONTENT" == "1" ]] || return 0
+            # 每輪先同步 content 分支（上一輪或 Mac mini 排程可能已推新素材）
+            git -C .content fetch -q origin content && git -C .content reset -q --hard origin/content \
+              || echo "::warning::content 分支同步失敗，沿用本機版本"
+            rm -f "$INGEST_RESULT"
+            node scripts/social/drive-bridge.mjs .content || echo "::warning::Drive 橋接失敗（$(tpe)），下一輪再試"
+            node scripts/social/ingest-content.mjs .content || echo "::warning::素材匯入失敗（$(tpe)），下一輪再試"
+            node scripts/social/notify-review.mjs "$INGEST_RESULT" || echo "::warning::審核通知失敗（$(tpe)）"
+          }
+
+          publish_fail=0
+          publish_once() {
+            if node scripts/social/publish-social-posts.mjs; then publish_fail=0
+            else publish_fail=$((publish_fail+1)); echo "::warning::發文排程失敗（$(tpe)，連續 $publish_fail 次），下一輪再試"; fi
+          }
+
+          if [[ "$SOCIAL_LOOP" != "1" ]]; then
+            echo "單輪模式（$(tpe)）"
+            ingest_once; publish_once
+            exit $(( publish_fail > 0 ? 1 : 0 ))
+          fi
+
+          start=$(date +%s); last_ingest=0
+          echo "常駐輪詢開始（台北 $(tpe)）：發文每 ${PUBLISH_EVERY}s、匯入每 ${INGEST_EVERY}s，約 $((LOOP_SECONDS/60)) 分鐘後接力。"
+          while :; do
+            now=$(date +%s)
+            if (( now - last_ingest >= INGEST_EVERY )); then
+              echo "::group::匯入 $(tpe)"; ingest_once; echo "::endgroup::"; last_ingest=$(date +%s)
+            fi
+            echo "::group::發文 $(tpe)"; publish_once; echo "::endgroup::"
+            (( $(date +%s) - start >= LOOP_SECONDS )) && break
+            sleep "$PUBLISH_EVERY"
+          done
+
+          # 自我接力：新的一輪會在本輪結束後立即開始（concurrency 排隊）
+          if gh workflow run social-publish.yml --ref "${GITHUB_REF_NAME}" -R "$GITHUB_REPOSITORY"; then
+            echo "已排入下一輪常駐輪詢（台北 $(tpe)）"
+          else
+            echo "::warning::自我接力失敗，改由 cron／監控代理喚醒"
+          fi
+          # 只有最後一輪發文仍失敗才標紅，避免偶發失敗讓整個 5.5 小時的執行顯示失敗
+          exit $(( publish_fail > 0 ? 1 : 0 ))
