@@ -2,8 +2,8 @@
   "date": "2026.11.20",
   "dateLabel": "2026.11.20（最新）",
   "asOf": "2026.11.21",
-  "desc": "本期 TOP 10（取自 11/19…",
-  "summary": "本期 TOP 10（取自 11/19 最新排行名單）：敦陽科、健策、儒鴻、允強、騰輝電子-KY、台玻、定穎投控、世芯-KY、迅得、可寧衛。，11/20 盤勢重挫，10 檔全數收黑（跌幅 5.3%～10%），健策、世芯-KY、定穎投控、台玻幾近跌停，…",
+  "desc": "週五台股 TOP10 名單全數收黑…",
+  "summary": "週五台股 TOP10 名單全數收黑，跌幅介於 5.33%～9.93%，川湖(2059)、汎銓(6830)跌幅接近跌停，晶豪科(3006)亦重挫 9.33%。技術面 10 檔皆未出現 KD 黃金交叉，均線多頭排列也全數不成立，短線動能明顯降溫。，基本…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -34,6 +34,17 @@
   ],
   "top10": [
     {
+      "code": "6672",
+      "name": "騰輝電子-KY",
+      "changePct": "-5.49%",
+      "up": false,
+      "signals": [
+        "om",
+        "rev",
+        "eps"
+      ]
+    },
+    {
       "code": "2480",
       "name": "敦陽科",
       "changePct": "-6.70%",
@@ -44,12 +55,13 @@
       ]
     },
     {
-      "code": "3653",
-      "name": "健策",
-      "changePct": "-9.96%",
+      "code": "3006",
+      "name": "晶豪科",
+      "changePct": "-9.33%",
       "up": false,
       "signals": [
         "om",
+        "rev",
         "eps"
       ]
     },
@@ -63,16 +75,9 @@
       ]
     },
     {
-      "code": "2034",
-      "name": "允強",
-      "changePct": "-6.57%",
-      "up": false,
-      "signals": []
-    },
-    {
-      "code": "6672",
-      "name": "騰輝電子-KY",
-      "changePct": "-5.49%",
+      "code": "2059",
+      "name": "川湖",
+      "changePct": "-9.93%",
       "up": false,
       "signals": [
         "om",
@@ -81,36 +86,27 @@
       ]
     },
     {
-      "code": "1802",
-      "name": "台玻",
-      "changePct": "-9.88%",
+      "code": "6166",
+      "name": "凌華",
+      "changePct": "-8.04%",
       "up": false,
       "signals": [
+        "om",
+        "rev",
         "eps"
       ]
     },
     {
-      "code": "3715",
-      "name": "定穎投控",
-      "changePct": "-9.92%",
+      "code": "6830",
+      "name": "汎銓",
+      "changePct": "-9.93%",
       "up": false,
-      "signals": [
-        "rev"
-      ]
+      "signals": []
     },
     {
-      "code": "3661",
-      "name": "世芯-KY",
-      "changePct": "-10.00%",
-      "up": false,
-      "signals": [
-        "om"
-      ]
-    },
-    {
-      "code": "6438",
-      "name": "迅得",
-      "changePct": "-8.53%",
+      "code": "2395",
+      "name": "研華",
+      "changePct": "-6.14%",
       "up": false,
       "signals": [
         "om",
@@ -118,9 +114,18 @@
       ]
     },
     {
-      "code": "8422",
-      "name": "可寧衛*",
-      "changePct": "-5.52%",
+      "code": "2603",
+      "name": "長榮",
+      "changePct": "-5.67%",
+      "up": false,
+      "signals": [
+        "om"
+      ]
+    },
+    {
+      "code": "2615",
+      "name": "萬海",
+      "changePct": "-8.21%",
       "up": false,
       "signals": [
         "om"
@@ -135,5 +140,5 @@
   },
   "source": "https://drive.google.com/file/d/1QCnkztqJia72iVGSpD262OfrcdLcZCm-/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-11-21T01:57:15.373Z"
+  "updatedAt": "2026-11-21T08:48:55.260Z"
 }
