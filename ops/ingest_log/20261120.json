@@ -4,21 +4,21 @@
     {
       "id": "cs_txf-flash_20261120",
       "topic": "txf-flash",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110915533524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df_rHLzkWq_/",
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The children with IDs 18165845749500431 are invalid, nonexistent, or expired."
       }
     },
     {
@@ -64,60 +64,60 @@
     {
       "id": "cs_noon_20261120",
       "topic": "noon",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110914909524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df_rBEkkdO8/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/Df_rBemkRE9",
         "error": null
       }
     },
     {
       "id": "cs_heatmap_20261120",
       "topic": "heatmap",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110914705524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df_q_aSkQh9/",
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The children with IDs 18165845479500431 are invalid, nonexistent, or expired."
       }
     },
     {
       "id": "cs_stockradar_20261120",
       "topic": "stockradar",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122110915041524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/Df_rCmGEVy0/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/Df_rDGxkdOs",
         "error": null
       }
     },
@@ -301,5 +301,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-21T07:15:05.153Z"
+  "generatedAt": "2026-11-21T07:22:02.195Z"
 }
