@@ -1788,7 +1788,7 @@ function PodcastPanel() {
 /* =====================================================================
    社群發文 — aurora_social_posts 審核與排程（第一階段：Facebook 粉專）
    後台只負責「內容與決策」：編修、核准、排程、取消；實際呼叫 Graph API
-   由 GitHub Actions（social-publish.yml，每 10 分鐘）以伺服器端 Token 執行，
+   由 GitHub Actions（social-publish.yml，常駐輪詢每 2 分鐘）以伺服器端 Token 執行，
    Token 不會出現在前端。狀態機見 scripts/social/core.mjs。
    ===================================================================== */
 const SOC_NAV = "__social";
@@ -1797,7 +1797,7 @@ const SOC_META_DOC = "aurora_social_meta/runner";
 const SOC_NATIVE_MIN_MIN = 20; // 與 core.mjs FB_NATIVE_MIN_LEAD_MS 一致
 
 /* 核准後請排程監控代理立即觸發 social-publish.yml（寫 aurora_ops_requests 佇列，欄位須符合 firestore.rules 的
-   opsReqFields／validOpsRequest），不必等每 10 分鐘的 cron（GitHub 實際常延後）。失敗不影響核准，只是等下一輪排程。 */
+   opsReqFields／validOpsRequest），常駐輪詢期間 2 分鐘內即會處理。失敗不影響核准，只是等下一輪排程。 */
 async function socRequestPublishRun(who) {
   if (!db) return false;
   try {
@@ -2250,7 +2250,7 @@ function SocialPanel() {
                 <button className="ad-btn" onClick={approveNow} disabled={busy}>立即發布</button>
               </div>
               <div style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 10, lineHeight: 1.7 }}>
-                {SOC_NATIVE_MIN_MIN} 分鐘以後、29 天以內的時間會交給 Meta 原生排程，準時到分鐘；更近的時間由排程器下一輪直接發出（每 10 分鐘一輪，尖峰可能延遲）。超過 29 天者會先保留，進入範圍後再交給 Meta。
+                {SOC_NATIVE_MIN_MIN} 分鐘以後、29 天以內的時間會交給 Meta 原生排程，準時到分鐘；更近的時間由排程器下一輪直接發出（每 2 分鐘一輪）。超過 29 天者會先保留，進入範圍後再交給 Meta。
               </div>
             </div>
           ) : null}
