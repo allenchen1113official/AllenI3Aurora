@@ -1879,26 +1879,29 @@ function SocBadge({ r }) {
   return <span style={{ padding: "2px 9px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800, background: m.bg, color: m.color, border: "1px solid var(--border)" }}>{m.label}</span>;
 }
 
-/* Facebook 貼文樣式預覽（照片貼文：連結併入內文，與排程器送出內容一致） */
+/* Facebook 貼文樣式預覽（照片貼文：連結併入內文，與排程器送出內容一致）
+   配色採 Facebook 官方深色模式：底 #242526、主文 #E4E6EB（對比約 13:1）、次要 #B0B3B8，
+   與後台深色底融合、不刺眼；字體 Noto Sans TC 優先並開啟抗鋸齒，中文較清晰。 */
+const FBP = { bg: "#242526", line: "#3E4042", text: "#E4E6EB", sub: "#B0B3B8", faint: "#8A8D91", card: "#3A3B3C" };
 function SocFbPreview({ p }) {
   const isPhoto = !!p.imageUrl;
   const text = isPhoto ? [p.fb.caption, p.fb.link].filter(Boolean).join("\n\n") : p.fb.caption;
   return (
-    <div style={{ background: "#ffffff", color: "#050505", borderRadius: 10, maxWidth: 500, overflow: "hidden", fontFamily: "system-ui, -apple-system, 'Noto Sans TC', sans-serif", boxShadow: "0 2px 14px rgba(0,0,0,.35)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px 8px" }}>
-        <img src={SOC_SITE_BASE + "assets/avatar.jpg"} alt="" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }} />
+    <div style={{ background: FBP.bg, color: FBP.text, borderRadius: 12, width: "100%", maxWidth: 500, overflow: "hidden", border: "1px solid " + FBP.line, fontFamily: "'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, -apple-system, sans-serif", WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale", textRendering: "optimizeLegibility", boxShadow: "0 4px 18px rgba(0,0,0,.4)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 16px 10px" }}>
+        <img src={SOC_SITE_BASE + "assets/avatar.jpg"} alt="" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", background: FBP.card }} />
         <div>
-          <div style={{ fontWeight: 700, fontSize: 15 }}>艾倫報報</div>
-          <div style={{ color: "#65676b", fontSize: 12.5 }}>{p.scheduledAt ? fmtLocal(p.scheduledAt) : "立即"} · 🌐</div>
+          <div style={{ fontWeight: 700, fontSize: 15, color: FBP.text }}>艾倫報報</div>
+          <div style={{ color: FBP.sub, fontSize: 12.5 }}>{p.scheduledAt ? fmtLocal(p.scheduledAt) : "立即"} · 🌐</div>
         </div>
       </div>
-      <div style={{ padding: "0 14px 12px", fontSize: 15, lineHeight: 1.45, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{text || <span style={{ color: "#8a8d91" }}>（尚無內文）</span>}</div>
+      <div style={{ padding: "0 16px 14px", fontSize: 15, fontWeight: 400, lineHeight: 1.65, letterSpacing: ".01em", whiteSpace: "pre-wrap", wordBreak: "break-word", color: FBP.text }}>{text || <span style={{ color: FBP.faint }}>（尚無內文）</span>}</div>
       {isPhoto ? (
-        <img src={p.imageUrl} alt="" style={{ display: "block", width: "100%", background: "#f0f2f5" }} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} />
+        <img src={p.imageUrl} alt="" style={{ display: "block", width: "100%", background: FBP.card, borderTop: "1px solid " + FBP.line }} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} />
       ) : p.fb.link ? (
-        <div style={{ background: "#f0f2f5", borderTop: "1px solid #dadde1", padding: "10px 14px" }}>
-          <div style={{ color: "#65676b", fontSize: 12, textTransform: "uppercase" }}>{(() => { try { return new URL(p.fb.link).hostname; } catch (e) { return ""; } })()}</div>
-          <div style={{ fontWeight: 700, fontSize: 15 }}>{p.title || "連結預覽由 Facebook 抓取頁面 OG 標籤產生"}</div>
+        <div style={{ background: FBP.card, borderTop: "1px solid " + FBP.line, padding: "10px 16px" }}>
+          <div style={{ color: FBP.sub, fontSize: 12, textTransform: "uppercase" }}>{(() => { try { return new URL(p.fb.link).hostname; } catch (e) { return ""; } })()}</div>
+          <div style={{ fontWeight: 700, fontSize: 15, color: FBP.text }}>{p.title || "連結預覽由 Facebook 抓取頁面 OG 標籤產生"}</div>
         </div>
       ) : null}
     </div>
