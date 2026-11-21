@@ -4,6 +4,26 @@
     {
       "id": "cs_daily_20261121",
       "topic": "daily",
+      "queueState": "pending",
+      "fb": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "approved",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_noon_20261121",
+      "topic": "noon",
       "queueState": "draft",
       "fb": {
         "state": "draft",
@@ -35,7 +55,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_noon_20261121",
+      "topic": "noon",
+      "date": "20261121",
+      "status": "created",
+      "auto": false,
+      "title": "給科技投資人的 13 則午間必讀：台股暴跌 2393 點、輝達單日 -14%，AI 泡沫訊號怎麼看？｜艾倫極光午報 2026/11/21",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-21T00:20:24.192Z"
+  "generatedAt": "2026-11-21T07:15:05.153Z"
 }

@@ -4,19 +4,19 @@
     {
       "id": "cs_txf-flash_20261120",
       "topic": "txf-flash",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -64,19 +64,19 @@
     {
       "id": "cs_noon_20261120",
       "topic": "noon",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -84,19 +84,19 @@
     {
       "id": "cs_heatmap_20261120",
       "topic": "heatmap",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -104,19 +104,19 @@
     {
       "id": "cs_stockradar_20261120",
       "topic": "stockradar",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -301,5 +301,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-20T18:45:32.271Z"
+  "generatedAt": "2026-11-21T07:15:05.153Z"
 }
