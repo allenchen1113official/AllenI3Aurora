@@ -20,6 +20,26 @@
         "url": "https://www.threads.com/@allenchen1113.official/post/DgBqVZ6lhM9",
         "error": null
       }
+    },
+    {
+      "id": "cs_noon_20261122",
+      "topic": "noon",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
@@ -35,7 +55,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_noon_20261122",
+      "topic": "noon",
+      "date": "20261122",
+      "status": "created",
+      "auto": false,
+      "title": "13 則午間必讀：台股一週重挫 17.5%，為什麼 AI 晶片股正牽動你的投資組合？｜艾倫極光午報 2026/11/22",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-22T01:57:21.485Z"
+  "generatedAt": "2026-11-22T05:02:21.509Z"
 }
