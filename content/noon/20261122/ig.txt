@@ -1,0 +1,24 @@
+13 則午間必讀：台股一週重挫 17.5%，為什麼 AI 晶片股正牽動你的投資組合？｜艾倫極光午報 2026/11/22
+今日關注動態｜艾倫極光午報 2026/11/22
+
+週日午安！這週市場給了科技人一堂震撼教育👇
+📌 那斯達克 100 單日跌 5.61%，距熊市線只剩 49 點；台股加權指數一週跌 7,641 點（-17.50%）。
+📌 英偉達單日跌 14%、傳 SEC 查帳，AI 估值正從「信仰」走向「查帳」。
+📌 但技術沒停：AI 小模型、智慧交通、智慧水務仍持續落地。
+
+🤖 AI：Thinking Machines 發表 Inkling 2 Mini，5.4GB 量化版已現身
+🔗 https://thinkingmachines.ai/news/inkling-2-mini/
+🚦 智慧交通：香港智慧交通基金批 1,790 萬港元，LLM 自動生成臨時交通安排
+🔗 https://hk.on.cc/hk/bkn/cnt/news/20261111/bkn-20261111172321837-1111_00822_001.html
+💧 智慧水務：Resideo AI 水流監測，可抓每小時 4 滴的微漏
+🔗 https://www.prnewswire.com/news-releases/resideo-introduces-ai-powered-water-intelligence-with-new-first-alert-l7-smart-water-flow-monitor--shutoff-valve-302942639.html
+💻 科技：GnuPG 的 GPGME 爆嚴重漏洞，可能遠端執行，請立即更新
+🔗 https://lists.gnupg.org/pipermail/gnupg-announce/2026q4/000517.html
+📈 財經：半導體創 2001 年來最差一週，那斯達克 100 逼近熊市
+🔗 https://247wallst.com/investing/2026/11/21/the-nasdaq-100-is-now-just-49-points-from-a-bear-market/
+
+💬 你怎麼看這波修正？留言告訴我，收藏起來週一開盤前再看一次！
+⚠️ 本文僅供資訊參考，非投資建議。
+艾倫極光報報 ALLEN I³ AURORA
+
+#艾倫極光午報 #AI #人工智慧 #智慧交通 #ITS #智慧水務 #科技新聞 #財經 #美股 #台股 #英偉達 #SmartWater
