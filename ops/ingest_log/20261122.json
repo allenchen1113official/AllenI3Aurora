@@ -4,15 +4,15 @@
     {
       "id": "cs_daily_20261122",
       "topic": "daily",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122111110353524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgBqU5pFuhC/",
         "error": null
       },
       "th": {
@@ -37,5 +37,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-22T01:50:53.537Z"
+  "generatedAt": "2026-11-22T01:57:21.485Z"
 }
