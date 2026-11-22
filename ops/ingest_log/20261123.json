@@ -4,20 +4,20 @@
     {
       "id": "cs_tsm-prebrief_20261123",
       "topic": "tsm-prebrief",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111338839524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgEB5sMEXbh",
         "error": null
       }
     }
@@ -37,5 +37,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-22T23:16:23.201Z"
+  "generatedAt": "2026-11-22T23:55:14.958Z"
 }
