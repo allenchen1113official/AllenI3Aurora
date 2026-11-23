@@ -939,8 +939,11 @@ function HubPlatforms({ list, meta, reload }) {
   const broken = HUB_LIVE.filter((ch) => health[ch].ran && health[ch].configured && !health[ch].ok);
   const connected = HUB_LIVE.filter((ch) => health[ch].ok).length;
   const kv = (k, v, tone) => (
-    <div style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 13 }}>
-      <span style={{ color: "var(--text-3)" }}>{k}</span><span style={{ fontWeight: 600, textAlign: "right", color: tone || "var(--text-2)" }}>{v}</span>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, fontSize: 13, lineHeight: 1.5 }}>
+      <span style={{ color: "var(--text-3)", whiteSpace: "nowrap", flexShrink: 0 }}>{k}</span>
+      <span style={{ fontWeight: 600, textAlign: "right", color: tone || "var(--text-2)", minWidth: 0, overflowWrap: "anywhere", display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+        {Array.isArray(v) ? v.map((x) => <span key={x} style={{ whiteSpace: "nowrap" }}>{x}</span>) : v}
+      </span>
     </div>
   );
   const pcard = { ...card, padding: 16, display: "flex", flexDirection: "column", gap: 12 };
@@ -997,7 +1000,7 @@ function HubPlatforms({ list, meta, reload }) {
                   {p.live ? kv("最近發布", lastPub(p.id) ? tpMdHm(lastPub(p.id)) : "—") : kv("內容保存", list.filter((r) => r.hub && r.hub.platforms && r.hub.platforms[p.id]).length + " 篇")}
                   {p.live ? kv("排程中", pending(p.id) + " 筆") : null}
                   {p.id === "th" && h.expiresAt ? kv("Token 到期", tpMdHm(h.expiresAt), thDays != null && thDays < 7 ? "var(--warning)" : undefined) : null}
-                  {p.live && h.ran && h.configured === false ? kv("需要的 Secrets", ENV[p.id], "var(--warning)") : null}
+                  {p.live && h.ran && h.configured === false ? kv("需要的 Secrets", ENV[p.id].split("／"), "var(--warning)") : null}
                 </div>
               </article>
             );
