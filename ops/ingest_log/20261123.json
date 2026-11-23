@@ -2,6 +2,26 @@
   "date": "2026-11-23",
   "posts": [
     {
+      "id": "cs_txf-flash_20261123",
+      "topic": "txf-flash",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_tsm-prebrief_20261123",
       "topic": "tsm-prebrief",
       "queueState": "done",
@@ -101,7 +121,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_txf-flash_20261123",
+      "topic": "txf-flash",
+      "date": "20261123",
+      "status": "created",
+      "auto": false,
+      "title": "加權反彈 778.60 點、法人仍賣超 511.77 億：給期貨交易人的 3 個籌碼訊號",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-23T06:58:06.688Z"
+  "generatedAt": "2026-11-23T09:01:54.689Z"
 }
