@@ -4,19 +4,19 @@
     {
       "id": "cs_txf-flash_20261123",
       "topic": "txf-flash",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -136,5 +136,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-23T09:01:54.689Z"
+  "generatedAt": "2026-11-23T09:14:59.784Z"
 }
