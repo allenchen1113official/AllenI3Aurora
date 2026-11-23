@@ -89,6 +89,7 @@ export const CLAUDE_TASKS = [
   { id: "trig_018cCAAwpSA8wce1uVfd3PH2", name: "選股雷達｜FB＋IG＋Threads 發文", cron: "CRON_TZ=Asia/Taipei 0 23 * * 1-5",  check: "",           kind: "post", manual: true },
   // 不定時（cron 空字串）：Allen 帶股票代號手動觸發；產出推 content 分支 content/stock-<代號>/<YYYYMMDD>/ → PilotOne 審核
   { id: "trig_014UpfHCuU1p27Fg6aEE1LbE", name: "個股交易診斷｜PilotOne 送審",   cron: "",                                  check: "",           kind: "produce", onDemand: true },
+  { id: "trig_01FQDvHmuqhvUm1MbFNNq2D9", name: "常看 YouTube 重點筆記｜PilotOne 送審", cron: "CRON_TZ=Asia/Taipei 17 10,21 * * *", check: "",           kind: "post", manual: true },
   { id: "aurora-agent", tid: "trig_014J2SYkJeqeJ8S2QvSM4WAH", name: "AllenI3Aurora Agent 巡檢",      cron: "CRON_TZ=Asia/Taipei 41 7,9,19,21,23 * * *", check: "", kind: "agent", agent: true },
 ];
 
