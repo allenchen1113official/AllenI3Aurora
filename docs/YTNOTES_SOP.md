@@ -22,7 +22,7 @@ _inbox/<影片ID>/ meta.json · draft.md · draft_whisper.md · frames/ · statu
 _inbox/_done/   處理完的草稿資料夾
 詞庫/           熱詞.txt · 替換規則.tsv（錯→對，Tab 分隔） · 校正紀錄.md
 notes/          <發布日期>_<作者>_<標題>.md（Obsidian）＋同名 .txt（Drive 純文字）
-channels.tsv    常看頻道：網址<Tab>名稱<Tab>啟用(1/0)
+channels.tsv    常看頻道（手動備用）：網址<Tab>名稱<Tab>啟用(1/0)；主要清單改在後台維護
 index.json      首頁索引（merge_index.py）  索引.md  一支一行
 <YYYYMMDD>/pilotone/<影片ID>/  送審包：manifest.json（topic yt-<影片ID>）· fb/ig/threads.txt · 圖卡
 ```
@@ -36,6 +36,15 @@ bash "$HOME/Library/CloudStorage/GoogleDrive-allenchen1113.official@gmail.com/�
 ```
 
 裝 yt-dlp、ffmpeg、uv、mlx-whisper（3.12）、FunASR 虛擬環境（3.11，`~/.ytnotes/funasr-venv`）、預先下載模型（約 3.6 GB），並註冊 launchd `official.allen.ytnotes`。macOS 若問「要取用 Google Drive 中的檔案」請按允許。版本記在 `_engine/versions.txt`。
+
+## 常看頻道（後台維護）
+
+後台「YouTube 頻道 → 常看頻道」（`admin/#youtube`，`admin/youtube.jsx` 的 `FollowChannels`）新增、暫停、改名、排序、移除頻道，存在 Firestore `aurora_ytnotes/channels`（`{items:[{url,name,enabled,addedAt}], updatedAt}`；規則：公開讀、僅管理者寫、最多 50 個）。
+
+- Mac mini 的 `ytnotes.py` 每天台北 06:00 後第一次 `run` 掃頻道時，以 Firestore REST（免登入，`config.json` 的 `channels_url` 可改或設 `""` 停用）讀這份清單，與 `channels.tsv` 合併：同一頻道以後台為準，`channels.tsv` 只補後台沒有的。
+- 讀取成功會寫快取 `_engine/channels.remote.tsv`；網路失敗時改用快取，不會因斷線漏掃。
+- 網址正規化兩邊一致（`channel_key`／`channelKey`）：`@handle`、`/channel/UC…`、`/c/…`、`/user/…` 自動補 `/videos`；Shorts 另加 `…/shorts`；單支影片、播放清單不接受。
+- 後台存檔後最慢到隔天 06:00 後才生效；要馬上掃可在 Mac mini 執行 `python3 ytnotes.py scan`。
 
 ## 規則
 
@@ -53,4 +62,4 @@ bash "$HOME/Library/CloudStorage/GoogleDrive-allenchen1113.official@gmail.com/�
 
 ## 測試
 
-`node --test scripts/social/bridge.test.mjs scripts/ytnotes/ytnotes.test.mjs`
+`node --test scripts/social/bridge.test.mjs scripts/ytnotes/ytnotes.test.mjs`（含常看頻道規則白名單比對）、`python3 -m unittest scripts/ytnotes/test_channels.py`

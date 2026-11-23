@@ -1,10 +1,12 @@
 /* =====================================================================
    YouTube 頻道（後台導覽「YouTube 頻道」、admin/#youtube）
-   三分頁：
+   四分頁：
      總覽  頻道統計與訂閱走勢（youtube-sync 每日同步：aurora_youtube/channel＋history）、同步狀態
      影片  最新影片清單（aurora_youtube/videos）→ 一鍵加入電子報（YouTube 區塊）
      上傳  PilotOne 的 YouTube 貼文（aurora_social_posts 中 yt.enabled）進度一覽；
            建立／核准在「PilotOne 中控台」（狀態機 scripts/social/core.mjs 的 yt 頻道）
+     常看頻道  「常看 YouTube 重點筆記」要追的頻道（aurora_ytnotes/channels，公開讀）；
+           Mac mini 的 ytnotes.py 每天台北 06:00 後第一次執行時讀取，與 Drive notes/youtube/channels.tsv 合併（後台為準）
    日期一律台北時間。需於 admin.jsx 之後載入（共用 db、errText、SOC_COLL）。掛 window.YouTubePanel。
    ===================================================================== */
 (function () {
@@ -29,6 +31,129 @@ function Spark({ data, w = 220, h = 44 }) {
   const lo = Math.min(...pts), hi = Math.max(...pts), span = hi - lo || 1;
   const d = pts.map((v, i) => `${i ? "L" : "M"}${(i / (pts.length - 1) * (w - 4) + 2).toFixed(1)},${(h - 4 - (v - lo) / span * (h - 8)).toFixed(1)}`).join(" ");
   return <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label="訂閱走勢"><path d={d} fill="none" stroke="var(--illumination)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" /></svg>;
+}
+
+/* ---------------- 常看頻道（常看 YouTube 重點筆記） ----------------
+   網址正規化與 scripts/ytnotes/ytnotes.py 的 channel_key 一致（同一頻道不重複、@handle 補 /videos） */
+const YTN_DOC = () => db.collection("aurora_ytnotes").doc("channels");
+const YTN_MAX = 50;
+function channelKey(url) {
+  let u = String(url || "").trim().split("?")[0].split("#")[0].replace(/\/+$/, "");
+  if (!u) return "";
+  if (!/^https?:\/\//.test(u)) u = "https://www.youtube.com/" + u.replace(/^(m\.|www\.)?youtube\.com\/?/, "").replace(/^\/+/, "");
+  u = u.replace(/^https?:\/\/(m\.|www\.)?youtube\.com/, "https://www.youtube.com");
+  if (/youtube\.com\/(@[^/]+|channel\/[^/]+|c\/[^/]+|user\/[^/]+)$/.test(u)) u += "/videos";
+  return u;
+}
+/* 只接受頻道頁（可帶 /videos、/shorts、/streams），不接受單支影片或播放清單 */
+const validChannel = (k) => /^https:\/\/www\.youtube\.com\/(@[\w.%\-\u00b7\u3400-\u9fff]+|channel\/UC[\w-]{10,}|c\/[^/]+|user\/[^/]+)\/(videos|shorts|streams)$/.test(k);
+const displayUrl = (k) => k.replace(/\/videos$/, "");
+const YTN_SUGGEST = [
+  ["https://www.youtube.com/@aiexplained-official", "AI Explained", "AI 應用"],
+  ["https://www.youtube.com/@TwoMinutePapers", "Two Minute Papers", "AI 應用"],
+  ["https://www.youtube.com/@anthropic-ai", "Anthropic", "AI 應用"],
+  ["https://www.youtube.com/@AndrejKarpathy", "Andrej Karpathy", "AI 應用"],
+  ["https://www.youtube.com/@EverythingSmartHome", "Everything Smart Home", "智慧家庭"],
+  ["https://www.youtube.com/@home_assistant", "Home Assistant", "智慧家庭"],
+  ["https://www.youtube.com/@yutinghaofinance", "游庭皓的財經皓角", "理財（幾乎每天直播，量大）"],
+];
+
+function FollowChannels({ box, flash, setErr }) {
+  const [items, setItems] = useState(null);
+  const [saved, setSaved] = useState("[]");
+  const [updatedAt, setUpdatedAt] = useState("");
+  const [url, setUrl] = useState("");
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const load = useCallback(async () => {
+    try {
+      const d = await YTN_DOC().get();
+      const l = (d.exists && Array.isArray(d.data().items) ? d.data().items : []).map((x) => ({ url: channelKey(x.url), name: x.name || "", enabled: x.enabled !== false, addedAt: x.addedAt || "" }));
+      setItems(l); setSaved(JSON.stringify(l)); setUpdatedAt(d.exists ? d.data().updatedAt || "" : "");
+    } catch (ex) { setErr("讀取常看頻道失敗：" + errText(ex)); setItems([]); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  const dirty = items != null && JSON.stringify(items) !== saved;
+  const keyOf = channelKey(url);
+  const dup = items && items.some((x) => x.url === keyOf);
+  const canAdd = items && keyOf && validChannel(keyOf) && !dup && items.length < YTN_MAX;
+  const add = (u = url, n = name) => {
+    const k = channelKey(u);
+    if (!validChannel(k)) return setErr("請貼頻道網址（例：https://www.youtube.com/@handle），不是單支影片或播放清單。");
+    if (items.some((x) => x.url === k)) return setErr("這個頻道已在清單中。");
+    if (items.length >= YTN_MAX) return setErr(`最多 ${YTN_MAX} 個頻道。`);
+    setErr("");
+    setItems((l) => [...l, { url: k, name: String(n || "").trim().slice(0, 60), enabled: true, addedAt: new Date().toISOString() }]);
+    setUrl(""); setName("");
+  };
+  const patch = (i, p) => setItems((l) => l.map((x, j) => (j === i ? { ...x, ...p } : x)));
+  const move = (i, d) => setItems((l) => { const n = [...l]; const j = i + d; if (j < 0 || j >= n.length) return l; [n[i], n[j]] = [n[j], n[i]]; return n; });
+  const save = async () => {
+    setBusy(true);
+    try {
+      const at = new Date().toISOString();
+      await YTN_DOC().set({ items: items.map((x) => ({ url: x.url, name: x.name || "", enabled: !!x.enabled, addedAt: x.addedAt || at })), updatedAt: at });
+      setSaved(JSON.stringify(items)); setUpdatedAt(at);
+      flash("已儲存常看頻道 ✓ Mac mini 會在下一次每日掃描（台北 06:00 後）讀取");
+    } catch (ex) { setErr("儲存失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+  if (items == null) return <div style={{ color: "var(--text-3)" }}>載入中…</div>;
+  const on = items.filter((x) => x.enabled).length;
+  return (
+    <div>
+      <div style={{ ...box, color: "var(--text-3)", fontSize: 13, lineHeight: 1.8 }}>
+        這裡的頻道會由 Mac mini 的 <code>ytnotes.py</code> 在<b style={{ color: "var(--text-1)" }}>每天台北 06:00 後第一次執行</b>時讀取（與 Drive <code>notes/youtube/channels.tsv</code> 合併，同一頻道以這裡為準），每個頻道看最新 5 支。
+        新加入的頻道第一次只建立基準、不灌舊片，從下一支新片開始轉錄 → 每支新片一筆 PilotOne 草稿；超過 180 分鐘的影片略過。Shorts 要另加一行 <code>…/@handle/shorts</code>。
+        <div style={{ marginTop: 6 }}>建議先放 5～6 個「每週 1～2 支」的頻道，審核量約每週 5～10 篇。</div>
+      </div>
+
+      <div style={{ ...box, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+        <input className="ad-in" style={{ flex: "2 1 280px" }} placeholder="頻道網址，例：https://www.youtube.com/@handle" value={url} onChange={(e) => setUrl(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && canAdd) add(); }} />
+        <input className="ad-in" style={{ flex: "1 1 160px" }} placeholder="顯示名稱（選填）" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && canAdd) add(); }} />
+        <button className="ad-btn" onClick={() => add()} disabled={!canAdd}>＋ 加入</button>
+        {url && !canAdd ? <div style={{ width: "100%", color: "var(--illumination)", fontSize: 12 }}>{dup ? "已在清單中" : items.length >= YTN_MAX ? `最多 ${YTN_MAX} 個` : "需為頻道網址（@handle、/channel/UC…），不是單支影片"}</div> : null}
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
+        <div style={{ color: "var(--text-3)", fontSize: 12.5 }}>共 {items.length} 個・啟用 {on} 個・上次儲存 {updatedAt ? tpeFmt(updatedAt) : "—"}</div>
+        <div style={{ display: "flex", gap: 6 }}>
+          {dirty ? <button className="ad-btn ghost" onClick={load} disabled={busy}>還原</button> : null}
+          <button className="ad-btn primary" onClick={save} disabled={!dirty || busy}>{busy ? "儲存中…" : dirty ? "💾 儲存變更" : "已儲存"}</button>
+        </div>
+      </div>
+
+      {!items.length ? <div style={{ ...box, color: "var(--text-3)" }}>還沒有常看頻道。貼上網址加入，或從下方建議挑選。</div>
+        : <div style={{ display: "grid", gap: 8, marginBottom: 14 }}>
+          {items.map((x, i) => (
+            <div key={x.url} style={{ ...box, marginBottom: 0, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", opacity: x.enabled ? 1 : 0.6 }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--text-2)", fontSize: 12.5, cursor: "pointer" }}>
+                <input type="checkbox" checked={x.enabled} onChange={(e) => patch(i, { enabled: e.target.checked })} />{x.enabled ? "啟用" : "暫停"}
+              </label>
+              <input className="ad-in" style={{ flex: "1 1 160px", maxWidth: 240 }} value={x.name} placeholder="名稱" onChange={(e) => patch(i, { name: e.target.value.slice(0, 60) })} />
+              <a href={x.url} target="_blank" rel="noopener" style={{ flex: "2 1 220px", color: "var(--brand)", fontSize: 12.5, fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>{displayUrl(x.url)} ↗</a>
+              <div style={{ display: "flex", gap: 4 }}>
+                <button className="ad-btn ghost" style={{ padding: "4px 8px" }} onClick={() => move(i, -1)} disabled={!i} aria-label="上移">↑</button>
+                <button className="ad-btn ghost" style={{ padding: "4px 8px" }} onClick={() => move(i, 1)} disabled={i === items.length - 1} aria-label="下移">↓</button>
+                <button className="ad-btn ghost" style={{ padding: "4px 8px", color: "var(--danger)" }} onClick={() => { if (window.confirm(`從常看頻道移除「${x.name || displayUrl(x.url)}」？（已做好的筆記不受影響）`)) setItems((l) => l.filter((_, j) => j !== i)); }}>移除</button>
+              </div>
+            </div>
+          ))}
+        </div>}
+
+      <div style={box}>
+        <div style={{ color: "var(--text-2)", fontSize: 13.5, fontWeight: 700, marginBottom: 6 }}>建議頻道（加入前請點開確認網址正確）</div>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {YTN_SUGGEST.filter(([u]) => !items.some((x) => x.url === channelKey(u))).map(([u, n, tag]) => (
+            <span key={u} style={{ display: "inline-flex", alignItems: "center", gap: 6, border: "1px solid var(--border)", borderRadius: "var(--radius-pill)", padding: "3px 4px 3px 10px", fontSize: 12.5, color: "var(--text-2)" }}>
+              <a href={u} target="_blank" rel="noopener" style={{ color: "var(--text-1)" }}>{n}</a><span style={{ color: "var(--text-4)" }}>{tag}</span>
+              <button className="ad-btn ghost" style={{ padding: "2px 8px", fontSize: 12 }} onClick={() => add(u, n)} disabled={items.length >= YTN_MAX}>＋</button>
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function YouTubePanel() {
@@ -107,7 +232,7 @@ function YouTubePanel() {
       {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
       {toast && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{toast}</div>}
       <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-        {tabBtn("overview", "總覽")}{tabBtn("videos", `影片（${videos ? videos.length : "…"}）`)}{tabBtn("uploads", `上傳（PilotOne）${activeCount ? `・進行中 ${activeCount}` : ""}`)}
+        {tabBtn("overview", "總覽")}{tabBtn("videos", `影片（${videos ? videos.length : "…"}）`)}{tabBtn("uploads", `上傳（PilotOne）${activeCount ? `・進行中 ${activeCount}` : ""}`)}{tabBtn("follow", "常看頻道")}
       </div>
 
       {tab === "overview" && (
@@ -184,6 +309,8 @@ function YouTubePanel() {
           ))}
         </div>
       )}
+
+      {tab === "follow" && <FollowChannels box={box} flash={flash} setErr={setErr} />}
 
       {tab === "uploads" && (
         <div>

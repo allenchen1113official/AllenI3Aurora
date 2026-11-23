@@ -17,3 +17,27 @@ test("slimIndex：過濾無效網址、新到舊、限制筆數與欄位", () =>
   assert.equal(out.items[0].transcript, undefined);
   assert.deepEqual(slimIndex(null).items, []);
 });
+
+/* ---------- 常看頻道：後台寫入 payload ↔ firestore.rules 白名單（本環境無法起模擬器，改靜態比對） ---------- */
+import { readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+
+test("常看頻道：規則公開讀、僅管理者寫 channels、欄位白名單與上限和後台一致", () => {
+  const rules = readFileSync(join(ROOT, "firebase/firestore.rules"), "utf8");
+  const panel = readFileSync(join(ROOT, "admin/youtube.jsx"), "utf8");
+  const block = rules.match(/match \/aurora_ytnotes\/\{doc\} \{([\s\S]*?)\n    \}/)[1];
+  assert.match(block, /allow read: if true;/);
+  assert.match(block, /isOwner\(\) && doc == 'channels'/);
+  const allowed = [...block.match(/hasOnly\(\[([^\]]+)\]\)/)[1].matchAll(/'(\w+)'/g)].map((m) => m[1]).sort();
+  const set = panel.match(/YTN_DOC\(\)\.set\(\{ items: [\s\S]*?\), updatedAt: at \}\)/);
+  assert.ok(set, "後台以 set({ items, updatedAt }) 寫入");
+  assert.deepEqual(allowed, ["items", "updatedAt"]);
+  const max = Number(block.match(/items\.size\(\) <= (\d+)/)[1]);
+  assert.equal(Number(panel.match(/const YTN_MAX = (\d+);/)[1]), max);
+  assert.match(panel, /db\.collection\("aurora_ytnotes"\)\.doc\("channels"\)/);
+  // Mac mini 引擎讀的就是這份文件
+  const py = readFileSync(join(ROOT, "scripts/ytnotes/ytnotes.py"), "utf8");
+  assert.match(py, /projects\/alleni3aurora\/databases\/\(default\)\/documents\/aurora_ytnotes\/channels/);
+});
