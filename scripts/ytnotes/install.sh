@@ -57,7 +57,7 @@ launchctl bootstrap "gui/$(id -u)" "$PLIST"
   echo "yt-dlp $(yt-dlp --version)"; ffmpeg -version | head -1; uv --version
   echo "mlx-whisper：$(command -v mlx_whisper)"
   echo "FunASR venv：$HOMEY/funasr-venv（$("$HOMEY/funasr-venv/bin/python" -c 'import funasr,torch;print("funasr",funasr.__version__,"torch",torch.__version__)' 2>/dev/null)）"
-  echo "launchd：$PLIST（Python $PY）"
+  echo "launchd：${PLIST}（Python ${PY}）"
 } | tee "$ENGINE/versions.txt"
 echo "完成。若 macOS 跳出「要取用 Google Drive 中的檔案」請按允許。"
 echo "測試：\"$PY\" \"$ENGINE/ytnotes.py\" draft https://www.youtube.com/watch?v=<影片ID>"
