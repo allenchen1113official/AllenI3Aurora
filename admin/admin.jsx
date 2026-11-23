@@ -1883,8 +1883,54 @@ function SocBadge({ r }) {
    白底（同 Facebook 淺色模式），文字加深：主文 #1C1E21 墨黑（對比約 16:1，比純黑柔和）、次要 #4B4F56；
    中文字體 Noto Sans TC 優先、內文字重 500，白底不開灰階抗鋸齒以免筆畫變細。 */
 const FBP = { bg: "#FFFFFF", line: "#CED0D4", text: "#1C1E21", sub: "#4B4F56", faint: "#606770", card: "#F0F2F5" };
+/* 預覽用圖：與排程器 scripts/social/core.mjs imagesFor() 相同——頻道自己的 imageUrls 優先，
+   其次貼文層 imageUrls，最後退回單張 imageUrl。Claude 排程素材的 imageUrl 只是縮圖（第一張），
+   實際發布的是各頻道 imageUrls，預覽必須照這個順序取圖才會和發布結果一致。 */
+const SOC_MAX_IMAGES = { fb: 10, ig: 10, th: 20 };
+function socImagesFor(post, ch) {
+  const c = (post && post[ch]) || {};
+  const pick = Array.isArray(c.imageUrls) && c.imageUrls.length ? c.imageUrls
+    : Array.isArray(post && post.imageUrls) && post.imageUrls.length ? post.imageUrls
+    : post && post.imageUrl ? [post.imageUrl] : [];
+  return pick.map((u) => String(u || "").trim()).filter(Boolean).slice(0, SOC_MAX_IMAGES[ch] || 10);
+}
+/* FB 多圖版型：1 張滿版；2 張左右；3 張上 1 下 2；4 張以上 2×2，第 4 格疊「+N」 */
+function SocFbPhotoGrid({ urls, bg, line }) {
+  const n = urls.length;
+  const cell = (u, i, extra) => (
+    <a key={u + i} href={u} target="_blank" rel="noopener" style={{ position: "relative", display: "block", overflow: "hidden", background: bg }}>
+      <img src={u} alt={`圖 ${i + 1}`} style={{ display: "block", width: "100%", height: n === 1 ? "auto" : "100%", objectFit: n === 1 ? "contain" : "cover", objectPosition: "top center" }} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} />
+      {extra ? <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(0,0,0,.45)", color: "#fff", fontSize: 28, fontWeight: 700 }}>+{extra}</span> : null}
+    </a>
+  );
+  if (n === 1) return <div style={{ borderTop: "1px solid " + line }}>{cell(urls[0], 0)}</div>;
+  if (n === 2) return <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, height: 250, borderTop: "1px solid " + line }}>{urls.map((u, i) => cell(u, i))}</div>;
+  if (n === 3) return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "260px 170px", gap: 2, borderTop: "1px solid " + line }}>
+      <div style={{ gridColumn: "1 / span 2", display: "grid" }}>{cell(urls[0], 0)}</div>
+      {cell(urls[1], 1)}{cell(urls[2], 2)}
+    </div>
+  );
+  return <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gridAutoRows: 200, gap: 2, borderTop: "1px solid " + line }}>{urls.slice(0, 4).map((u, i) => cell(u, i, i === 3 && n > 4 ? n - 4 : 0))}</div>;
+}
+/* IG／Threads 輪播預覽：第一張大圖＋張數標記，下方依序列出全部圖卡 */
+function SocCarouselPreview({ urls }) {
+  if (!urls.length) return null;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{ position: "relative" }}>
+        <img src={urls[0]} alt="圖 1" style={{ display: "block", width: "100%", borderRadius: "var(--radius-md)", background: "var(--night-700)" }} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} />
+        {urls.length > 1 ? <span style={{ position: "absolute", top: 8, right: 8, padding: "2px 8px", borderRadius: 999, background: "rgba(0,0,0,.6)", color: "#fff", fontSize: 12 }}>1/{urls.length}</span> : null}
+      </div>
+      {urls.length > 1 ? <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        {urls.map((u, i) => <a key={u + i} href={u} target="_blank" rel="noopener"><img src={u} alt={`圖 ${i + 1}`} style={{ width: 54, height: 54, objectFit: "cover", borderRadius: 6, background: "var(--night-700)", outline: i === 0 ? "2px solid var(--brand)" : "none" }} /></a>)}
+      </div> : null}
+    </div>
+  );
+}
 function SocFbPreview({ p }) {
-  const isPhoto = !!p.imageUrl;
+  const imgs = socImagesFor(p, "fb");
+  const isPhoto = imgs.length > 0;
   const text = isPhoto ? [p.fb.caption, p.fb.link].filter(Boolean).join("\n\n") : p.fb.caption;
   return (
     <div style={{ background: FBP.bg, color: FBP.text, borderRadius: 12, width: "100%", maxWidth: 500, overflow: "hidden", border: "1px solid " + FBP.line, fontFamily: "'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, -apple-system, sans-serif", WebkitFontSmoothing: "auto", textRendering: "optimizeLegibility", boxShadow: "0 4px 18px rgba(0,0,0,.35)" }}>
@@ -1897,7 +1943,7 @@ function SocFbPreview({ p }) {
       </div>
       <div style={{ padding: "0 16px 14px", fontSize: 15.5, fontWeight: 500, lineHeight: 1.65, letterSpacing: ".01em", whiteSpace: "pre-wrap", wordBreak: "break-word", color: FBP.text }}>{text || <span style={{ color: FBP.faint }}>（尚無內文）</span>}</div>
       {isPhoto ? (
-        <img src={p.imageUrl} alt="" style={{ display: "block", width: "100%", background: FBP.card, borderTop: "1px solid " + FBP.line }} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} />
+        <SocFbPhotoGrid urls={imgs} bg={FBP.card} line={FBP.line} />
       ) : p.fb.link ? (
         <div style={{ background: FBP.card, borderTop: "1px solid " + FBP.line, padding: "10px 16px" }}>
           <div style={{ color: FBP.sub, fontSize: 12, textTransform: "uppercase" }}>{(() => { try { return new URL(p.fb.link).hostname; } catch (e) { return ""; } })()}</div>
