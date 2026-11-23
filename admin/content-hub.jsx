@@ -569,7 +569,7 @@ function HubComposer({ init, reload, flash, go }) {
   );
   const sec = { ...card, padding: 18, display: "flex", flexDirection: "column", gap: 14, minWidth: 0 };
   const len = (t) => [...(t || "")].length;
-  const preview = { title: s.title, imageUrl: s.imageUrl.trim(), scheduledAt: s.mode === "now" ? "" : tpInputToIso(s.when), fb: { caption: hubText(s, "fb"), link: s.link.trim() } };
+  const preview = { title: s.title, imageUrl: s.imageUrl.trim(), scheduledAt: s.mode === "now" ? "" : tpInputToIso(s.when), fb: { caption: hubText(s, "fb"), link: s.link.trim(), imageUrls: (s.fb && s.fb.imageUrls) || [] } };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -665,7 +665,7 @@ function HubComposer({ init, reload, flash, go }) {
             {tab === "fb" ? <FbPreview p={preview} /> : (
               <div style={{ width: "100%", padding: 14, borderRadius: "var(--radius-md)", background: "var(--night-700)", border: "1px solid var(--night-600)", display: "flex", flexDirection: "column", gap: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}><PfChip pf={pf} size={24} /><strong style={{ color: "var(--text-1)", fontSize: 13 }}>{pf.name}</strong></div>
-                {s.imageUrl ? <img src={s.imageUrl} alt="" style={{ width: "100%", borderRadius: "var(--radius-md)", background: "var(--night-700)" }} /> : null}
+                <SocCarouselPreview urls={socImagesFor({ ...s, imageUrl: s.imageUrl.trim() }, pf.id)} />
                 <div style={{ fontSize: 14.5, color: "var(--text-1)", whiteSpace: "pre-wrap", wordBreak: "break-word", lineHeight: 1.65, WebkitFontSmoothing: "antialiased" }}>{hubText(s, pf.id) || <span style={{ color: "var(--text-3)" }}>（尚無內文）</span>}</div>
               </div>
             )}
