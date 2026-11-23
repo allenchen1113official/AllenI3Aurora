@@ -98,16 +98,29 @@ Threads 用的是獨立的 API 與 Token（不能沿用 Meta 粉專 Token）。
 
 YouTube 走 Google OAuth（不是 Meta）。排程器用 **refresh token** 換 access token 後呼叫 YouTube Data API v3 上傳影片。
 
-1. Google Cloud Console → 建立（或沿用）專案 → **API 和服務 → 程式庫** 啟用「YouTube Data API v3」。
-2. **OAuth 同意畫面**：使用者類型「外部」，App 名稱自訂，範圍加入 `…/auth/youtube.upload` 與 `…/auth/youtube.readonly`，測試使用者加入自己的帳號。
-   完成後把**發布狀態改為「正式」**（僅自用不需送審，會出現「未經驗證」提醒但可繼續）；停在「測試」狀態的 refresh token **7 天就失效**。
-3. **憑證 → 建立憑證 → OAuth 用戶端 ID**，類型選「**桌面應用程式**」，記下用戶端 ID 與密鑰。
-4. 在本機取得 refresh token（會開本機 8765 埠接收回呼）：
+> 2026-11-24 實作修訂：依 Mac mini 實際操作補上新版 Console 介面名稱、Node 安裝、`redirect_uri_mismatch` 與密鑰外洩處理。
+
+1. Google Cloud Console（https://console.cloud.google.com/）→ 建立（或沿用）專案 → **API 和服務 → 程式庫** 搜尋「YouTube Data API v3」→ 啟用。
+2. **OAuth 同意畫面**（新版介面已移到「**Google Auth Platform**」，直達 https://console.cloud.google.com/auth/audience ）：
+   - 使用者類型「**外部**」（選「內部」需 Workspace 帳號，且不會出現新增測試使用者），App 名稱自訂。
+   - 範圍（新版在「資料存取」頁）加入 `…/auth/youtube.upload` 與 `…/auth/youtube.readonly`。
+   - **測試使用者**：新版在左側「**目標對象**」（Audience）→ 往下捲到「測試使用者」→「＋ Add users」→ 輸入**擁有頻道的 Google 帳號** Email → 儲存。舊版在「編輯應用程式」第 3 步。頻道若是品牌帳號，填個人 Google 帳號，授權時再選品牌頻道。
+   - 同一頁最上方「發布狀態」→「**發布應用程式**」→ 確認，狀態變「**正式版**」（In production）。僅自用不需送審，授權時會出現「Google 尚未驗證這個應用程式」，按「進階 → 前往〇〇（不安全）」繼續。停在「測試」狀態的 refresh token **7 天就失效**。
+3. **建立用戶端**：新版「Google Auth Platform → **用戶端** →＋ 建立用戶端」（直達 https://console.cloud.google.com/auth/clients ；舊版「憑證 → 建立憑證 → OAuth 用戶端 ID」）。
+   - 應用程式類型選「**電腦版應用程式**」（繁中介面對 Desktop app 的譯名；不是「網頁應用程式」），不必填重新導向 URI，記下用戶端 ID 與密鑰。
+   - ⚠️ 選成「網頁應用程式」會在授權時出現「已封鎖存取權：這個應用程式的要求無效／錯誤 400：redirect_uri_mismatch」。改法：重建一個「電腦版應用程式」用戶端並刪掉舊的（建議）；或在網頁應用程式的「已授權的重新導向 URI」加入 `http://127.0.0.1:8765/`（含結尾斜線、用 127.0.0.1 不用 localhost，儲存後等 1～5 分鐘）。
+4. 在本機（Mac mini 的 macOS「終端機」；Claude 的雲端／device_bash 環境不行，需要本機瀏覽器回呼）取得 refresh token：
+   - 需要 Node 18 以上。`node -v` 出現 `command not found: node` → `brew install node`；沒有 brew 先試 `eval "$(/opt/homebrew/bin/brew shellenv)"`，仍沒有就到 https://nodejs.org/ 下載 LTS 的 macOS .pkg 安裝，裝完重開終端機。
    ```bash
-   YT_CLIENT_ID=<用戶端ID> YT_CLIENT_SECRET=<密鑰> node scripts/social/youtube-auth.mjs
+   git clone --depth 1 https://github.com/allenchen1113official/AllenI3Aurora.git ~/aurora_tmp
+   cd ~/aurora_tmp
+   YT_CLIENT_ID='<用戶端ID>' YT_CLIENT_SECRET='<密鑰>' node scripts/social/youtube-auth.mjs
    ```
-   依指示在瀏覽器登入**擁有頻道的 Google 帳號**並同意，終端機會印出 `YT_REFRESH_TOKEN` 與頻道名稱（若顯示沒有頻道，表示登入錯帳號）。
-5. 把三個值存入 GitHub Secrets（第四節）。驗證：Actions → 社群自動發文 → Run workflow（dry_run）→ log 應顯示「YouTube: ● 正常 <頻道名稱>」。
+   打開終端機印出的授權網址（換過用戶端 ID 就要用**新印出**的網址；舊腳本先 `Ctrl+C` 停掉），登入**擁有頻道的 Google 帳號**並同意 → 瀏覽器顯示「授權完成，頻道：〇〇」→ 終端機印出 `YT_REFRESH_TOKEN`（若顯示沒有頻道，表示登入錯帳號；若報「沒有 refresh_token」，到 https://myaccount.google.com/permissions 移除此 App 後重跑）。
+5. 把三個值存入 GitHub Secrets（第四節）：網頁 https://github.com/allenchen1113official/AllenI3Aurora/settings/secrets/actions →「New repository secret」；或在 `~/aurora_tmp` 執行 `gh secret set YT_CLIENT_ID`／`gh secret set YT_CLIENT_SECRET`／`gh secret set YT_REFRESH_TOKEN`（逐一貼值，不顯示在畫面）。完成後 `rm -rf ~/aurora_tmp`。
+6. 驗證：Actions → 社群自動發文 → Run workflow（dry_run）→ log 應顯示「YouTube: ● 正常 <頻道名稱>」；排程器下一輪後 PilotOne「平台連線」的 YouTube 卡片由「尚未設定」轉「已連線」。
+
+**密鑰安全**：用戶端密鑰與 refresh token 只存 GitHub Secrets，不要貼進對話、截圖、排程 prompt 或 repo。若密鑰曾外露（例如終端機截圖），到「用戶端」頁點該用戶端 →「新增密鑰」→ 停用並刪除舊密鑰，再更新 `YT_CLIENT_SECRET`（`YT_CLIENT_ID` 不變；refresh token 綁用戶端，換密鑰不需重新授權，但重建用戶端就要重跑第 4 步）。
 
 **影片來源**：內容中控台 YouTube 分頁的「影片網址」必須是**可直接下載的 https 網址**（回應 `Content-Type: video/*`）。排程器會先把整支影片下載到 runner 暫存區再上傳（可續傳；runner 磁碟約 14 GB、本輪上限 30 分鐘，太大的檔案請先壓縮或分段）。
 - Google Drive：檔案設「知道連結的使用者可檢視」，網址用 `https://drive.usercontent.google.com/download?id=<檔案ID>&export=download&confirm=t`（一般分享連結回傳的是網頁，會被拒）。
@@ -206,6 +219,7 @@ YouTube（`yt.state`）與 FB 相同集合：`approved` → 上傳中 `publishin
 | 4、17、32、613 | 頻率限制 | 自動重試；持續發生就拉長發文間隔 |
 | 368 | 被判定為垃圾內容 | 調整內文（減少重複連結、hashtag） |
 | YouTube `invalid_grant` | refresh token 失效（同意畫面停在測試狀態 7 天到期、或使用者撤銷） | 重跑 `youtube-auth.mjs`，更新 `YT_REFRESH_TOKEN` |
+| YouTube 授權頁「錯誤 400：redirect_uri_mismatch」 | OAuth 用戶端類型是「網頁應用程式」 | 改建「電腦版應用程式」用戶端（二之三第 3 步） |
 | YouTube `quotaExceeded` | 當日配額用完 | 自動重試；隔日（台北 15:00／16:00）配額重置 |
 | YouTube `uploadLimitExceeded` | 頻道上傳數量上限（新頻道較嚴） | 到 YouTube 工作室完成頻道驗證，或減少當日上傳 |
 

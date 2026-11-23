@@ -47,6 +47,7 @@ GitHub Actions →「YouTube 頻道同步」→ Run workflow → 勾 **dry_run**
 | 訊息 | 原因 | 處理 |
 |---|---|---|
 | `invalid_grant` | refresh token 被撤銷，或 OAuth 同意畫面仍在「測試中」（7 天失效） | 同意畫面改正式版 → 依 SOCIAL_SOP 重跑 `youtube-auth.mjs` 更新 `YT_REFRESH_TOKEN` |
+| `redirect_uri_mismatch`（授權頁錯誤 400） | OAuth 用戶端建成「網頁應用程式」 | 依 SOCIAL_SOP 二之三改建「電腦版應用程式」用戶端 |
 | 這個 Google 帳號底下沒有 YouTube 頻道 | 授權時登入個人帳號 | 用官方管理者帳號重新授權 |
 | 找不到頻道 `UC…` | `YT_CHANNEL_ID` 填錯 | 依第 2B 節重新複製 |
 | `quotaExceeded` | 當日配額用完（與 PilotOne 上傳共用 10,000 單位） | 不用處理，下次排程自動恢復；同步一次僅數個單位 |
