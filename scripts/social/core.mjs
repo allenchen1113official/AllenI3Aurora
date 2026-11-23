@@ -150,10 +150,36 @@ export function createFbGraph({ token, pageId, version = "v25.0", fetchImpl = fe
 
 /* ---------- 容器頻道客戶端：介面一致 create / status / publish / permalink / checkToken ---------- */
 const normStatus = (s) => String(s || "").toUpperCase();
+const realSleep = (ms) => new Promise((r) => setTimeout(r, ms));
+export const CHILD_WAIT_MS = 90 * 1000;
+export const CHILD_POLL_MS = 3 * 1000;
+
+/* 輪播子容器建立後要等平台處理完（FINISHED）才能放進 CAROUSEL，
+   否則會回「The children with IDs … are invalid, nonexistent, or expired」。
+   getStatus(id) → 正規化後的狀態字串。子容器 ERROR／EXPIRED 或逾時都直接丟錯，不建輪播。 */
+export async function waitChildrenFinished(ids, getStatus, { sleep = realSleep, timeoutMs = CHILD_WAIT_MS, pollMs = CHILD_POLL_MS, label = "" } = {}) {
+  const pending = new Set(ids);
+  let waited = 0;
+  for (;;) {
+    for (const id of [...pending]) {
+      const { status, error } = await getStatus(id);
+      if (status === "FINISHED") pending.delete(id);
+      else if (status === "ERROR" || status === "EXPIRED") {
+        throw new GraphError(`${label}輪播第 ${ids.indexOf(id) + 1} 張圖處理失敗（${error || status}），請確認圖片為公開可下載的 https 網址`, { code: "CHILD_" + status });
+      }
+    }
+    if (!pending.size) return;
+    if (waited >= timeoutMs) {
+      throw new GraphError(`${label}輪播圖片處理逾時（${Math.round(timeoutMs / 1000)} 秒仍未完成：${[...pending].join(",")}），下次重試`, { code: "CHILD_TIMEOUT" });
+    }
+    await sleep(pollMs);
+    waited += pollMs;
+  }
+}
 
 /* Instagram 商業帳號（沿用粉專 Token，需 instagram_content_publish 權限；IG 貼文必須有圖） */
 /* host：graph.facebook.com（Facebook 登入，沿用粉專 Token）或 graph.instagram.com（Instagram 登入，IG 專用 Token） */
-export function createIgGraph({ token, igUserId, version = "v25.0", host = "graph.facebook.com", fetchImpl = fetch }) {
+export function createIgGraph({ token, igUserId, version = "v25.0", host = "graph.facebook.com", fetchImpl = fetch, sleep = realSleep }) {
   const call = makeCaller(`https://${host}/${version}`, token, fetchImpl);
   const igLogin = host === "graph.instagram.com";
   return {
@@ -163,6 +189,10 @@ export function createIgGraph({ token, igUserId, version = "v25.0", host = "grap
         // 輪播：每張圖先建子容器，再建 CAROUSEL 容器（status／publish 都對 CAROUSEL 容器）
         const children = [];
         for (const url of list) children.push((await call("POST", `${igUserId}/media`, { image_url: url, is_carousel_item: "true" })).id);
+        await waitChildrenFinished(children, async (id) => {
+          const s = await call("GET", id, { fields: "status_code,status" });
+          return { status: normStatus(s.status_code), error: s.status || null };
+        }, { sleep, label: "Instagram " });
         const r = await call("POST", `${igUserId}/media`, { media_type: "CAROUSEL", children: children.join(","), caption: text || "" });
         return { id: r.id, children };
       }
@@ -186,7 +216,7 @@ export function createIgGraph({ token, igUserId, version = "v25.0", host = "grap
 }
 
 /* Threads（獨立的長效 Token，60 天到期，可每日續期；文字上限 500 字） */
-export function createThreadsGraph({ token, userId, version = "v1.0", fetchImpl = fetch }) {
+export function createThreadsGraph({ token, userId, version = "v1.0", fetchImpl = fetch, sleep = realSleep }) {
   const call = makeCaller(`https://graph.threads.net/${version}`, token, fetchImpl);
   return {
     async create({ text, imageUrl, imageUrls }) {
@@ -194,6 +224,10 @@ export function createThreadsGraph({ token, userId, version = "v1.0", fetchImpl 
       if (list.length > 1) {
         const children = [];
         for (const url of list) children.push((await call("POST", `${userId}/threads`, { media_type: "IMAGE", image_url: url, is_carousel_item: "true" })).id);
+        await waitChildrenFinished(children, async (id) => {
+          const s = await call("GET", id, { fields: "status,error_message" });
+          return { status: normStatus(s.status), error: s.error_message || null };
+        }, { sleep, label: "Threads " });
         const r = await call("POST", `${userId}/threads`, { media_type: "CAROUSEL", children: children.join(","), text: text || "" });
         return { id: r.id, children };
       }
