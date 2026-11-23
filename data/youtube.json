@@ -1,9 +1,30 @@
 {
-  "updatedAt": "",
-  "date": "",
-  "channel": null,
-  "totals": { "videos": 0, "shorts": 0 },
+  "updatedAt": "2026-11-23T09:25:56.452Z",
+  "date": "2026.11.23",
+  "channel": {
+    "id": "UCLQxI5QCojPHFPYpIzr41tQ",
+    "title": "allenchen1113.official",
+    "handle": "@allenchen1113.official",
+    "thumb": "https://yt3.ggpht.com/ytc/AIdro_nudM7s5vhOkMHGpNJi_gu05pvD7zhkQQovNL-PuohCjTh4O8zP8SlhbbevJ3RoL5ZpYg=s800-c-k-c0x00ffffff-no-rj",
+    "subscribers": 0,
+    "hiddenSubscribers": false,
+    "views": 0,
+    "videos": 0,
+    "uploadsPlaylist": "UULQxI5QCojPHFPYpIzr41tQ",
+    "url": "https://www.youtube.com/@allenchen1113.official"
+  },
+  "totals": {
+    "videos": 0,
+    "shorts": 0
+  },
   "latest": [],
   "top": [],
-  "history": []
+  "history": [
+    {
+      "date": "2026-11-23",
+      "subscribers": 0,
+      "views": 0,
+      "videos": 0
+    }
+  ]
 }
