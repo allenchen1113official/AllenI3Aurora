@@ -100,6 +100,26 @@
         "url": "https://www.threads.com/@allenchen1113.official/post/DgFn0uQkZ4d",
         "error": null
       }
+    },
+    {
+      "id": "cs_stockradar_20261123",
+      "topic": "stockradar",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
@@ -143,6 +163,19 @@
       ]
     },
     {
+      "id": "cs_stockradar_20261123",
+      "topic": "stockradar",
+      "date": "20261123",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜台股選股雷達 2026/11/23（週一）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_tsm-prebrief_20261123",
       "topic": "tsm-prebrief",
       "date": "20261123",
@@ -169,5 +202,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-23T14:48:20.863Z"
+  "generatedAt": "2026-11-23T15:07:54.436Z"
 }
