@@ -40,6 +40,26 @@
         "url": "https://www.threads.com/@allenchen1113.official/post/DgEE5sxEQe-",
         "error": null
       }
+    },
+    {
+      "id": "cs_noon_20261123",
+      "topic": "noon",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
@@ -50,6 +70,19 @@
       "status": "created",
       "auto": false,
       "title": "今日關注動態｜艾倫極光日報 2026/11/23（週一）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_noon_20261123",
+      "topic": "noon",
+      "date": "20261123",
+      "status": "created",
+      "auto": false,
+      "title": "5 個午間訊號：輝達風暴為什麼讓那斯達克單日跌 5.28%？給科技人與投資人的 3 分鐘速讀",
       "channels": [
         "fb",
         "ig",
@@ -70,5 +103,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-23T00:28:04.448Z"
+  "generatedAt": "2026-11-23T05:01:22.336Z"
 }
