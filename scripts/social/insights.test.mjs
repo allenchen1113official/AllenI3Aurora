@@ -108,3 +108,44 @@ test("syncInsights：DRY-RUN 不寫入；未設定平台的頻道略過", async 
   assert.equal(r2.updated, 1);
   assert.equal(updates.length, 0);
 });
+
+test("FB：Token 無 pages_read_user_content 時，心情改用 insights post_reactions_by_type_total", async () => {
+  const f = routeFetch({
+    "PG_2/insights?post_reactions_by_type_total": { data: [{ name: "post_reactions_by_type_total", values: [{ value: { like: 12, love: 3 } }] }] },
+    "PG_2/insights?post_impressions_unique": { data: [{ name: "post_impressions_unique", values: [{ value: 500 }] }] },
+  });
+  const c = createInsightsClients({ metaToken: "T", fetchImpl: f });
+  const r = await c.fb("PG_2");
+  assert.deepEqual(r, { reach: 500, likes: 15, comments: 0, shares: 0, engagement: 15 });
+});
+
+test("FB：欄位與 insights 全部取不到才丟錯", async () => {
+  const c = createInsightsClients({ metaToken: "T", fetchImpl: routeFetch({}) });
+  await assert.rejects(() => c.fb("PG_3"));
+});
+
+test("IG：有 igToken 時走 graph.instagram.com；只有讚／留言也算成功", async () => {
+  const f = routeFetch({ "IGM2": { like_count: 7, comments_count: 2 } });
+  const c = createInsightsClients({ metaToken: "PAGE", igToken: "IGT", fetchImpl: f });
+  const r = await c.ig("IGM2");
+  assert.ok(f.reqs[0].startsWith("https://graph.instagram.com/v25.0/IGM2?"));
+  assert.ok(f.reqs[0].includes("access_token=IGT"));
+  assert.equal(r.reach, null);
+  assert.equal(r.engagement, 9);
+});
+
+test("syncInsights：平台權限不足後同一輪不再請求該平台，並回報 denied", async () => {
+  const pub = new Date(T0 - DAY).toISOString();
+  const posts = ["a", "b", "c"].map((id) => ({ id,
+    fb: { enabled: true, state: "published", postId: "P" + id, publishedAt: pub },
+    th: { enabled: true, state: "published", mediaId: "T" + id, publishedAt: pub } }));
+  let thCalls = 0;
+  const clients = {
+    fb: async () => ({ reach: 1, engagement: 1 }),
+    th: async () => { thCalls++; throw Object.assign(new Error("Application does not have permission for this action"), { code: 10 }); },
+  };
+  const r = await syncInsights({ store: { listPublished: async () => posts, update: async () => {} }, clients, now: T0, log: () => {} });
+  assert.equal(thCalls, 1);
+  assert.equal(r.updated, 3);
+  assert.ok(r.denied.th);
+});
