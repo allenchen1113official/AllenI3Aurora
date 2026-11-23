@@ -233,13 +233,14 @@ YouTube（`yt.state`）與 FB 相同集合：`approved` → 上傳中 `publishin
 
 | 平台 | 觸及 | 互動 | 需要的權限 |
 |------|------|------|------------|
-| Facebook | `post_impressions_unique`（取不到改用 `post_media_view`） | 心情＋留言＋分享 | `read_insights`、`pages_read_engagement` |
-| Instagram | `reach` | 讚＋留言＋分享＋收藏 | `instagram_manage_insights` |
-| Threads | `views` | 讚＋回覆＋轉發＋引用 | `threads_manage_insights` |
+| Facebook | `post_impressions_unique`（取不到改用 `post_media_view`） | 心情＋留言＋分享（無 `pages_read_user_content` 時只計心情，取自 insights `post_reactions_by_type_total`） | `read_insights`（留言／分享另需 `pages_read_user_content`） |
+| Instagram | `reach` | 讚＋留言＋分享＋收藏 | 用 `IG_TOKEN`（Instagram 登入）：讚／留言 `instagram_business_basic`；觸及／分享／收藏 `instagram_business_manage_insights` |
+| Threads | `views` | 讚＋回覆＋轉發＋引用 | `threads_manage_insights`（App 加權限後須重新產生 Token、更新 `THREADS_TOKEN`） |
 
 - Meta 不時汰換指標名稱，所以每個指標個別請求，取不到的就略過，不會中斷整批。
 - 使用與發文排程器相同的 Secrets，不需另外設定；Threads 沿用排程器續期後的 Token。
-- 某些貼文讀取失敗只記錄在 `aurora_social_meta/insights`；全部都失敗（多半是權限不足）才會讓 workflow 失敗。
+- 某平台權限不足時，該平台本輪只試一次就停用、發 workflow 警告並寫入 `aurora_social_meta/insights.denied`，其他平台照常寫入；所有平台都讀不到才讓 workflow 失敗。
+- 粉專未連結 IG，所以 IG 成效必須用 `IG_TOKEN` 讀（粉專 Token 查 IG 貼文會回「Object … does not exist」）。
 - 手動執行：Actions →「社群成效同步」→ Run workflow（可勾 dry_run 只看數字不寫入）。
 
 ## 九之二、Claude 排程素材匯入（AllenI3Aurora 產出 → PilotOne）

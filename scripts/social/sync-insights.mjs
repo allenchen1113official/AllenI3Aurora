@@ -6,13 +6,15 @@
    執行摘要寫入 aurora_social_meta/insights，後台內容中控台顯示。
 
    環境變數：與 publish-social-posts.mjs 相同（未設定的平台自動略過）
-     FIREBASE_SERVICE_ACCOUNT、META_PAGE_TOKEN、THREADS_TOKEN、META_GRAPH_VERSION
-     FB 需 Token 具 read_insights／pages_read_engagement；IG 需 instagram_manage_insights；
-     Threads 需 threads_manage_insights。缺權限的指標會被略過，不會中斷。
+     FIREBASE_SERVICE_ACCOUNT、META_PAGE_TOKEN、IG_TOKEN、THREADS_TOKEN、META_GRAPH_VERSION
+     FB 需 read_insights（心情／留言另需 pages_read_user_content，沒有時改用 insights 心情數）；
+     IG 有 IG_TOKEN 時走 Instagram 登入（讚／留言只需 instagram_business_basic，觸及等需
+     instagram_business_manage_insights）；Threads 需 threads_manage_insights。
+     缺權限的指標會被略過；某平台權限不足只停用該平台並發警告，其他平台照常寫入。
      SOCIAL_DRY_RUN = '1' 時只印出結果，不寫入。
    ===================================================================== */
 import { createInsightsClients, syncInsights } from "./insights.mjs";
-import { threadsToken } from "./threads-token.mjs";
+import { threadsToken, instagramToken } from "./threads-token.mjs";
 
 const COLL = "aurora_social_posts";
 const META_DOC = "aurora_social_meta/insights";
@@ -21,8 +23,8 @@ const env = (name) => (process.env[name] || "").trim();
 async function main() {
   const dryRun = process.env.SOCIAL_DRY_RUN === "1";
   const sa = env("FIREBASE_SERVICE_ACCOUNT");
-  const metaToken = env("META_PAGE_TOKEN") || env("FB_PAGE_TOKEN"), thSeed = env("THREADS_TOKEN");
-  if (!sa || (!metaToken && !thSeed)) {
+  const metaToken = env("META_PAGE_TOKEN") || env("FB_PAGE_TOKEN"), thSeed = env("THREADS_TOKEN"), igSeed = env("IG_TOKEN");
+  if (!sa || (!metaToken && !thSeed && !igSeed)) {
     console.log("::warning::未設定 FIREBASE_SERVICE_ACCOUNT 或任何平台 Token，略過成效同步。見 docs/SOCIAL_SOP.md。");
     return;
   }
@@ -34,7 +36,9 @@ async function main() {
 
   // 成效同步不續期 Token（交給發文排程器），只讀取目前有效的那一把
   const th = thSeed ? await threadsToken(db, thSeed, { refresh: false }) : null;
-  const clients = createInsightsClients({ metaToken, threadsToken: th && th.token, version: env("META_GRAPH_VERSION") || "v25.0" });
+  // 粉專未連結 IG：IG 貼文只能用 Instagram 登入的 Token 讀（與發文排程器相同）
+  const ig = igSeed ? await instagramToken(db, igSeed, { refresh: false }) : null;
+  const clients = createInsightsClients({ metaToken, igToken: ig && ig.token, threadsToken: th && th.token, version: env("META_GRAPH_VERSION") || "v25.0" });
   const store = {
     async listPublished() {
       const snap = await col.where("queueState", "==", "done").get();
@@ -47,14 +51,20 @@ async function main() {
   if (!dryRun) {
     await db.doc(META_DOC).set({
       lastRunAt: new Date().toISOString(),
-      scanned: r.scanned, updated: r.updated,
+      scanned: r.scanned, updated: r.updated, denied: r.denied,
       errors: r.errors.slice(0, 20).map((e) => `${e.id}:${e.ch}:${e.error}`),
     });
   }
   console.log(`掃描 ${r.scanned} 筆，更新 ${r.updated} 筆成效；讀取失敗 ${r.errors.length} 次${dryRun ? "（DRY-RUN）" : ""}`);
-  // 全部頻道都讀不到（多半是 Token 或權限）才讓 workflow 失敗；個別貼文被刪除等情況只記錄
+  const NEED = {
+    fb: "粉專 Token 需 read_insights（心情／留言另需 pages_read_user_content）",
+    ig: "IG_TOKEN 需 instagram_business_basic（觸及另需 instagram_business_manage_insights）",
+    th: "THREADS_TOKEN 需 threads_manage_insights（App 使用案例加權限後重新產生 Token，更新 Secret）",
+  };
+  for (const [ch, msg] of Object.entries(r.denied)) console.log(`::warning::${ch.toUpperCase()} 成效權限不足，本輪略過：${msg}｜${NEED[ch] || ""}`);
+  // 全部頻道都讀不到才讓 workflow 失敗；個別平台權限不足或貼文被刪除只發警告
   if (r.errors.length && !r.updated) {
-    console.log("::error::成效全部讀取失敗，請確認 Token 權限（read_insights、instagram_manage_insights、threads_manage_insights）。");
+    console.log(`::error::成效全部讀取失敗（${Object.keys(r.denied).join("、") || "非權限錯誤"}），請見上方各平台警告。`);
     process.exitCode = 1;
   }
 }
