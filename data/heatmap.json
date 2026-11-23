@@ -1,6 +1,6 @@
 {
-  "date": "2026.11.20",
-  "dateLabel": "2026.11.20（最新）",
+  "date": "2026.11.23",
+  "dateLabel": "2026.11.23",
   "asOf": "2026.11.23",
   "taiex": {
     "name": "加權指數 TAIEX",
@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "加權指數收 36,033.29 點，大跌 2,393.60 點（-6.23%），為史上第3大收盤跌點；成交 8,773.5 億元，上市跌停 180 檔。半導體與電子零組件領跌，台達電、聯發科、欣興、台光電等多檔收在跌停或逼近跌停。，權值王台積電收 …",
+  "summary": "（資料日期 2026-11-23，個股漲跌幅為Yahoo股市收盤價；150檔中147檔已查證，其餘退回類股平均），加權指數收36,811.89點，上漲778.60點（+2.16%）。半導體與電子零組件強攻，聯發科、台達電漲停，金融股普遍收黑。，焦點…",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=12S5xb6JCvkh-qyi53AzCPIM-zKfctzii&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1nG5g7gt3zktEc9Z2Rl6TePFVTooOgqyS&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1F8D74pM83vX5X8jgbcc7pw-aHkycAFb6&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=19pdBiAdN8jL3xlR3fQzxoRpjN9TCGPh_&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-11-23T01:22:22.666Z"
+  "updatedAt": "2026-11-23T11:09:25.491Z"
 }
