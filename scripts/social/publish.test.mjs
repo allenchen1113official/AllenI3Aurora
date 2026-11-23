@@ -626,15 +626,16 @@ test("FB 多圖立即發布：照片不帶 temporary，feed 不帶 published", a
 });
 
 test("IG 輪播：子容器 is_carousel_item，再建 CAROUSEL 容器帶 children 與 caption", async () => {
-  const f = seqFetch({ id: "k1" }, { id: "k2" }, { id: "k3" }, { id: "CAR" });
-  const g = createIgGraph({ token: "TKN", igUserId: "IGU", fetchImpl: f });
+  const fin = { status_code: "FINISHED" };
+  const f = seqFetch({ id: "k1" }, { id: "k2" }, { id: "k3" }, fin, fin, fin, { id: "CAR" });
+  const g = createIgGraph({ token: "TKN", igUserId: "IGU", fetchImpl: f, sleep: async () => {} });
   const r = await g.create({ text: "說明", imageUrls: ["https://a/1.jpg", "https://a/2.jpg", "https://a/3.jpg"] });
   assert.equal(r.id, "CAR");
   assert.equal(f.reqs[0].body.is_carousel_item, "true");
   assert.equal(f.reqs[0].body.caption, undefined);
-  assert.equal(f.reqs[3].body.media_type, "CAROUSEL");
-  assert.equal(f.reqs[3].body.children, "k1,k2,k3");
-  assert.equal(f.reqs[3].body.caption, "說明");
+  assert.equal(f.reqs[6].body.media_type, "CAROUSEL");
+  assert.equal(f.reqs[6].body.children, "k1,k2,k3");
+  assert.equal(f.reqs[6].body.caption, "說明");
 });
 
 test("IG 用 Instagram 登入：走 graph.instagram.com，checkToken 查 me", async () => {
@@ -646,15 +647,41 @@ test("IG 用 Instagram 登入：走 graph.instagram.com，checkToken 查 me", as
 });
 
 test("Threads 輪播：子容器 IMAGE＋is_carousel_item，再建 CAROUSEL 帶 text", async () => {
-  const f = seqFetch({ id: "t1" }, { id: "t2" }, { id: "TC" });
-  const g = createThreadsGraph({ token: "TKN", userId: "TU", fetchImpl: f });
+  const fin = { status: "FINISHED" };
+  const f = seqFetch({ id: "t1" }, { id: "t2" }, fin, fin, { id: "TC" });
+  const g = createThreadsGraph({ token: "TKN", userId: "TU", fetchImpl: f, sleep: async () => {} });
   const r = await g.create({ text: "短文", imageUrls: ["https://a/1.jpg", "https://a/2.jpg"] });
   assert.equal(r.id, "TC");
   assert.equal(f.reqs[0].body.media_type, "IMAGE");
   assert.equal(f.reqs[0].body.is_carousel_item, "true");
-  assert.equal(f.reqs[2].body.media_type, "CAROUSEL");
-  assert.equal(f.reqs[2].body.children, "t1,t2");
-  assert.equal(f.reqs[2].body.text, "短文");
+  assert.match(f.reqs[2].url, /\/t1\?fields=status%2Cerror_message/);
+  assert.equal(f.reqs[4].body.media_type, "CAROUSEL");
+  assert.equal(f.reqs[4].body.children, "t1,t2");
+  assert.equal(f.reqs[4].body.text, "短文");
+});
+
+test("Threads 輪播：子容器還在處理中時先等待，FINISHED 後才建 CAROUSEL", async () => {
+  const f = seqFetch({ id: "t1" }, { id: "t2" }, { status: "IN_PROGRESS" }, { status: "FINISHED" }, { status: "FINISHED" }, { id: "TC" });
+  const sleeps = [];
+  const g = createThreadsGraph({ token: "TKN", userId: "TU", fetchImpl: f, sleep: async (ms) => { sleeps.push(ms); } });
+  const r = await g.create({ text: "短文", imageUrls: ["https://a/1.jpg", "https://a/2.jpg"] });
+  assert.equal(r.id, "TC");
+  assert.equal(sleeps.length, 1);
+  assert.equal(f.reqs.at(-1).body.media_type, "CAROUSEL");
+});
+
+test("Threads 輪播：子容器 ERROR 時不建 CAROUSEL，丟出可讀錯誤", async () => {
+  const f = seqFetch({ id: "t1" }, { id: "t2" }, { status: "FINISHED" }, { status: "ERROR", error_message: "image download failed" });
+  const g = createThreadsGraph({ token: "TKN", userId: "TU", fetchImpl: f, sleep: async () => {} });
+  await assert.rejects(g.create({ text: "x", imageUrls: ["https://a/1.jpg", "https://a/2.jpg"] }), /第 2 張圖處理失敗（image download failed）/);
+  assert.ok(!f.reqs.some((q) => q.body && q.body.media_type === "CAROUSEL"));
+});
+
+test("Threads 輪播：子容器一直未完成 → 逾時丟錯，不建 CAROUSEL", async () => {
+  const f = seqFetch({ id: "t1" }, { id: "t2" }, { status: "IN_PROGRESS" });
+  const g = createThreadsGraph({ token: "TKN", userId: "TU", fetchImpl: f, sleep: async () => {} });
+  await assert.rejects(g.create({ text: "x", imageUrls: ["https://a/1.jpg", "https://a/2.jpg"] }), /處理逾時/);
+  assert.ok(!f.reqs.some((q) => q.body && q.body.media_type === "CAROUSEL"));
 });
 
 test("容器頻道建立時傳入頻道自己的多圖清單", async () => {
