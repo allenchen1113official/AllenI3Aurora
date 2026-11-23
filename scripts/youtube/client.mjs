@@ -53,7 +53,14 @@ export function createYouTube({ accessToken = "", apiKey = "", fetchImpl = fetch
     async uploadIds(playlistId, max = 50) {
       const ids = []; let pageToken = "";
       while (ids.length < max) {
-        const d = await get("playlistItems", { part: "contentDetails", playlistId, maxResults: String(Math.min(50, max - ids.length)), ...(pageToken ? { pageToken } : {}) });
+        let d;
+        try {
+          d = await get("playlistItems", { part: "contentDetails", playlistId, maxResults: String(Math.min(50, max - ids.length)), ...(pageToken ? { pageToken } : {}) });
+        } catch (e) {
+          // 頻道沒有任何公開影片時，YouTube 對 uploads 清單回 404 playlistNotFound（API Key 模式常見）→ 視為 0 支
+          if (!pageToken && e && (e.reason === "playlistNotFound" || e.status === 404)) return [];
+          throw e;
+        }
         for (const it of d.items || []) ids.push(it.contentDetails.videoId);
         if (!d.nextPageToken) break;
         pageToken = d.nextPageToken;

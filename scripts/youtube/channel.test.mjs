@@ -90,3 +90,11 @@ test("API Key 模式：帶 key、uploads 清單分頁、videos 每 50 支一批"
   assert.ok(urls.every((u) => /[?&]key=K/.test(u)));
   assert.equal(urls.filter((u) => u.includes("/videos")).length, 3);
 });
+
+test("uploads 清單 404 playlistNotFound（頻道尚無公開影片）視為 0 支", async () => {
+  const fetchImpl = async () => ({ ok: false, status: 404, json: async () => ({ error: { code: 404, message: "The playlist identified with the request's <code>playlistId</code> parameter cannot be found.", errors: [{ reason: "playlistNotFound" }] } }) });
+  const yt = createYouTube({ apiKey: "K", fetchImpl });
+  assert.deepEqual(await yt.uploadIds("UUxxxx", 50), []);
+  const fetch403 = async () => ({ ok: false, status: 403, json: async () => ({ error: { code: 403, message: "quota", errors: [{ reason: "quotaExceeded" }] } }) });
+  await assert.rejects(createYouTube({ apiKey: "K", fetchImpl: fetch403 }).uploadIds("UUxxxx", 50), /quota/);
+});
