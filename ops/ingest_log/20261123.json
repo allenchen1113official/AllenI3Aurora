@@ -24,20 +24,20 @@
     {
       "id": "cs_daily_20261123",
       "topic": "daily",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122111341521524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgEE5KUEc17/",
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgEE5sxEQe-",
         "error": null
       }
     }
@@ -70,5 +70,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-23T00:21:24.200Z"
+  "generatedAt": "2026-11-23T00:28:04.448Z"
 }
