@@ -1,9 +1,9 @@
 /* Drive 橋接與審核通知的行為測試（不連外部服務）：node --test scripts/social/bridge.test.mjs */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { DRIVE_PATHS, referencedFiles, needsSync, pickFile, pickFolder, q } from "./drive-bridge-core.mjs";
+import { DRIVE_PATHS, DRIVE_FAMILIES, familyTopic, referencedFiles, needsSync, pickFile, pickFolder, q } from "./drive-bridge-core.mjs";
 import { reviewItems, buildReviewMessage, lineText, REVIEW_URL } from "./notify-core.mjs";
-import { KNOWN_TOPICS } from "./ingest-core.mjs";
+import { KNOWN_TOPICS, topicInfo, docIdOf } from "./ingest-core.mjs";
 
 const manifest = () => ({
   version: 1, topic: "heatmap", date: "2026-11-19", title: "今日關注動態｜台股熱力圖．上市／上櫃 2026/11/19（週四）",
@@ -94,4 +94,17 @@ test("粉專名稱防呆：名稱不符暫停 FB；相符、* 或 Token 本身�
   assert.equal(fbNameMismatch({ ok: true, name: "陳艾倫" }, "*"), null);
   assert.equal(fbNameMismatch({ ok: false, name: null, error: "190" }, "艾倫報報"), null);
   assert.equal(fbNameMismatch(undefined, "艾倫報報"), null);
+});
+
+test("主題家族 yt：每支影片一份送審包，子代碼須為影片 ID 格式，且 ingest 認得", () => {
+  assert.deepEqual(DRIVE_FAMILIES.yt.path, ["notes", "youtube"]);
+  assert.equal(familyTopic("yt", "dQw4w9WgXcQ"), "yt-dQw4w9WgXcQ");
+  assert.equal(familyTopic("yt", "Ab_-12"), "yt-Ab_-12");
+  assert.equal(familyTopic("yt", "../x"), null);
+  assert.equal(familyTopic("yt", "a b c d e f"), null);
+  assert.equal(familyTopic("yt", ""), null);
+  assert.equal(familyTopic("nope", "dQw4w9WgXcQ"), null);
+  assert.equal(topicInfo("yt-dQw4w9WgXcQ").family, "yt");
+  assert.match(topicInfo("yt-dQw4w9WgXcQ").label, /常看 YouTube 重點筆記/);
+  assert.notEqual(docIdOf("yt-aaaaaaaaaaa", "20261123"), docIdOf("yt-bbbbbbbbbbb", "20261123"));
 });

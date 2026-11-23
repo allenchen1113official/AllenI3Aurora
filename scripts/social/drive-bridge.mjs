@@ -4,6 +4,7 @@
    用法：node scripts/social/drive-bridge.mjs <content 分支的工作目錄>
 
    讀 Drive「AllenI3Aurora/<主題資料夾>/<YYYYMMDD>/pilotone/」送審包（台北今天＋昨天），
+   以及主題家族「<家族資料夾>/<YYYYMMDD>/pilotone/<子代碼>/」（如 notes/youtube → yt-<影片ID>），
    producedAt 有變更者原樣複製到 content 分支 content/<topic>/<YYYYMMDD>/ 並推送，
    之後同一個 job 的 ingest-content.mjs 會建立 PilotOne 審核草稿。
 
@@ -18,7 +19,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { taipeiDays } from "./ingest-core.mjs";
-import { DRIVE_PATHS, PKG_DIR, MANIFEST, referencedFiles, needsSync, pickFile, pickFolder, q } from "./drive-bridge-core.mjs";
+import { DRIVE_PATHS, DRIVE_FAMILIES, familyTopic, PKG_DIR, MANIFEST, referencedFiles, needsSync, pickFile, pickFolder, q } from "./drive-bridge-core.mjs";
 
 const env = (n) => (process.env[n] || "").trim();
 const FOLDER_MIME = "application/vnd.google-apps.folder";
@@ -60,39 +61,66 @@ async function main() {
     if (!id) console.log(`Drive 橋接：找不到 ${segs.join("/")}（${topic}），略過該主題。`);
   }
 
+  const resolvePath = async (segs) => {
+    let id = root;
+    for (const s of segs) { const f = id && await childFolder(id, s); id = f ? f.id : null; }
+    return id;
+  };
   const days = taipeiDays(Date.now(), 1);
   const synced = [];
   let checked = 0;
+
+  /* 處理一份送審包資料夾 pkg（Drive folder），同步到 content/<topic>/<ymd>/ */
+  const syncPackage = async (topic, ymd, pkg) => {
+    const tag = `[${topic}/${ymd}]`;
+    checked++;
+    const files = await list(`'${q(pkg.id)}' in parents and trashed = false and mimeType != '${FOLDER_MIME}'`);
+    const mf = pickFile(files, MANIFEST);
+    if (!mf) { console.log(`::warning::${tag} Drive 送審包缺 manifest.json，略過`); return; }
+    let m;
+    try { m = JSON.parse((await download(mf.id)).toString("utf8")); }
+    catch (e) { console.log(`::warning::${tag} manifest.json 無法解析：${e.message}`); return; }
+    const outDir = join(dir, "content", topic, ymd);
+    const localPath = join(outDir, MANIFEST);
+    let local = null;
+    try { local = existsSync(localPath) ? JSON.parse(readFileSync(localPath, "utf8")) : null; } catch { local = null; }
+    const plan = needsSync(local, m);
+    if (!plan.sync) { console.log(`${tag} 略過：${plan.reason}`); return; }
+    const { files: refs, bad } = referencedFiles(m);
+    if (bad.length) { console.log(`::warning::${tag} manifest 含不安全檔名（${bad.join("、")}），略過`); return; }
+    const missing = refs.filter((n) => !pickFile(files, n));
+    if (missing.length) { console.log(`::warning::${tag} 送審包缺檔：${missing.join("、")}（Drive 可能尚未同步完成，下一輪再試）`); return; }
+    if (dryRun) { console.log(`${tag} DRY-RUN 將同步 ${refs.length + 1} 個檔案（${plan.reason}）`); synced.push(`${topic}/${ymd}`); return; }
+    mkdirSync(outDir, { recursive: true });
+    for (const n of refs) writeFileSync(join(outDir, n), await download(pickFile(files, n).id));
+    writeFileSync(localPath, JSON.stringify(m, null, 2) + "\n"); // manifest 最後寫，確保檔案齊全才會被匯入
+    console.log(`${tag} 已同步 ${refs.length + 1} 個檔案（${plan.reason}）`);
+    synced.push(`${topic}/${ymd}`);
+  };
+
   for (const [topic, tid] of Object.entries(topicFolder)) {
     if (!tid) continue;
     for (const d of days) {
-      const tag = `[${topic}/${d.ymd}]`;
       const dayF = await childFolder(tid, d.ymd);
       const pkg = dayF && await childFolder(dayF.id, PKG_DIR);
-      if (!pkg) continue;
-      checked++;
-      const files = await list(`'${q(pkg.id)}' in parents and trashed = false and mimeType != '${FOLDER_MIME}'`);
-      const mf = pickFile(files, MANIFEST);
-      if (!mf) { console.log(`::warning::${tag} Drive 送審包缺 manifest.json，略過`); continue; }
-      let m;
-      try { m = JSON.parse((await download(mf.id)).toString("utf8")); }
-      catch (e) { console.log(`::warning::${tag} manifest.json 無法解析：${e.message}`); continue; }
-      const outDir = join(dir, "content", topic, d.ymd);
-      const localPath = join(outDir, MANIFEST);
-      let local = null;
-      try { local = existsSync(localPath) ? JSON.parse(readFileSync(localPath, "utf8")) : null; } catch { local = null; }
-      const plan = needsSync(local, m);
-      if (!plan.sync) { console.log(`${tag} 略過：${plan.reason}`); continue; }
-      const { files: refs, bad } = referencedFiles(m);
-      if (bad.length) { console.log(`::warning::${tag} manifest 含不安全檔名（${bad.join("、")}），略過`); continue; }
-      const missing = refs.filter((n) => !pickFile(files, n));
-      if (missing.length) { console.log(`::warning::${tag} 送審包缺檔：${missing.join("、")}（Drive 可能尚未同步完成，下一輪再試）`); continue; }
-      if (dryRun) { console.log(`${tag} DRY-RUN 將同步 ${refs.length + 1} 個檔案（${plan.reason}）`); synced.push(`${topic}/${d.ymd}`); continue; }
-      mkdirSync(outDir, { recursive: true });
-      for (const n of refs) writeFileSync(join(outDir, n), await download(pickFile(files, n).id));
-      writeFileSync(localPath, JSON.stringify(m, null, 2) + "\n"); // manifest 最後寫，確保檔案齊全才會被匯入
-      console.log(`${tag} 已同步 ${refs.length + 1} 個檔案（${plan.reason}）`);
-      synced.push(`${topic}/${d.ymd}`);
+      if (pkg) await syncPackage(topic, d.ymd, pkg);
+    }
+  }
+
+  /* 主題家族：pilotone/<子代碼>/ 各為一份送審包 */
+  for (const [prefix, fam] of Object.entries(DRIVE_FAMILIES)) {
+    const fid = await resolvePath(fam.path);
+    if (!fid) { console.log(`Drive 橋接：找不到 ${fam.path.join("/")}（${prefix}-*），略過該家族。`); continue; }
+    for (const d of days) {
+      const dayF = await childFolder(fid, d.ymd);
+      const pkgRoot = dayF && await childFolder(dayF.id, PKG_DIR);
+      if (!pkgRoot) continue;
+      const subs = await list(`'${q(pkgRoot.id)}' in parents and mimeType = '${FOLDER_MIME}' and trashed = false`);
+      for (const name of [...new Set(subs.map((f) => f.name))]) {
+        const topic = familyTopic(prefix, name);
+        if (!topic) { console.log(`::warning::[${prefix}/${d.ymd}] 子資料夾「${name}」不是有效代碼，略過`); continue; }
+        await syncPackage(topic, d.ymd, pickFolder(subs, name));
+      }
     }
   }
 

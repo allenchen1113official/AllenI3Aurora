@@ -25,6 +25,8 @@ export const KNOWN_TOPICS = {
    不放進 KNOWN_TOPICS（那是固定主題清單，與 Drive 橋接 DRIVE_PATHS 一一對應）；個股素材直接推 content 分支。 */
 export const TOPIC_FAMILIES = [
   { re: /^stock-(\d{4,6}[A-Z]?)$/, info: (m) => ({ label: `個股交易診斷 ${m[1]}`, category: "理財", family: "stock" }) },
+  // yt-<影片ID> ＝ 常看 YouTube 重點筆記（每支影片一筆；Drive notes/youtube/<YYYYMMDD>/pilotone/<影片ID>/，見 drive-bridge-core DRIVE_FAMILIES）
+  { re: /^yt-([A-Za-z0-9_-]{6,20})$/, info: (m) => ({ label: `常看 YouTube 重點筆記 ${m[1]}`, category: "AI 應用", family: "yt" }) },
 ];
 export function topicInfo(topic) {
   if (KNOWN_TOPICS[topic]) return KNOWN_TOPICS[topic];

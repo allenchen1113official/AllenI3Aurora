@@ -22,6 +22,16 @@ export const DRIVE_PATHS = {
   stockradar: ["finance", "stockradar"],
   "tw-whale-weekly": ["finance", "whale"],
 };
+/* 主題家族：同一天可有多份送審包，各放在 pilotone/<子代碼>/ 底下，topic＝<前綴>-<子代碼>。
+   yt ＝ 常看 YouTube 重點筆記（每支影片一份；子代碼＝YouTube 影片 ID 或 IG 短碼），
+   Drive：AllenI3Aurora/notes/youtube/<YYYYMMDD>/pilotone/<影片ID>/manifest.json… */
+export const DRIVE_FAMILIES = {
+  yt: { path: ["notes", "youtube"], sub: /^[A-Za-z0-9_-]{6,20}$/ },
+};
+export function familyTopic(prefix, sub) {
+  const f = DRIVE_FAMILIES[prefix];
+  return f && f.sub.test(String(sub || "")) ? `${prefix}-${sub}` : null;
+}
 export const PKG_DIR = "pilotone";
 export const MANIFEST = "manifest.json";
 const SAFE_NAME = /^[^/\\]+$/;
