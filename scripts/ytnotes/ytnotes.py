@@ -20,7 +20,7 @@ FunASR 虛擬環境（中文，見 funasr_run.py）。安裝見 install.sh。
   status.json      {"state": "drafted"|"failed", ...}；Claude 處理完改 "done" 並移到 _inbox/_done/
 影片與音訊只放 ~/.ytnotes/tmp，用完即刪；不進雲端硬碟。
 """
-import json, os, re, shutil, subprocess, sys, time, fcntl
+import json, os, re, shutil, subprocess, sys, time, fcntl, urllib.request, urllib.error
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -40,6 +40,8 @@ CFG = {
     "scan_latest": 5,                # 每個頻道看最新幾支
     "batch_max": 20,                 # 每次 run 最多處理幾支
     "skip_longer_than_min": 180,     # 超過幾分鐘的影片不自動處理（手動 draft 不受限）
+    # 後台「YouTube 頻道 → 常看頻道」存的清單（Firestore aurora_ytnotes/channels，公開讀）；設 "" 只用 channels.tsv
+    "channels_url": "https://firestore.googleapis.com/v1/projects/alleni3aurora/databases/(default)/documents/aurora_ytnotes/channels",
 }
 
 def now_tpe():
@@ -123,29 +125,101 @@ def cmd_add(urls):
     log(f"佇列新增 {added} 支，共 {len(q)} 支")
 
 # ───────────────────────── 頻道掃描 ─────────────────────────
-def read_channels():
-    p = ROOT / "channels.tsv"
+def channel_key(url):
+    """頻道網址正規化：去尾斜線與查詢字串；@handle／channel／c／user 頁補 /videos（yt-dlp 才會列影片而不是分頁）"""
+    u = str(url or "").strip().split("?")[0].split("#")[0].rstrip("/")
+    if not u:
+        return ""
+    if not re.match(r"https?://", u):
+        u = re.sub(r"^(m\.|www\.)?youtube\.com/?", "", u)
+        u = "https://www.youtube.com/" + u.lstrip("/")
+    u = re.sub(r"^https?://(m\.|www\.)?youtube\.com", "https://www.youtube.com", u)
+    if re.search(r"youtube\.com/(@[^/]+|channel/[^/]+|c/[^/]+|user/[^/]+)$", u):
+        u += "/videos"
+    return u
+
+def parse_tsv_channels(text):
     out = []
-    if not p.exists():
-        return out
-    for line in p.read_text(encoding="utf-8").splitlines():
+    for line in (text or "").splitlines():
         if not line.strip() or line.startswith("#"):
             continue
         cols = line.split("\t")
         url = cols[0].strip()
-        enabled = (cols[2].strip() if len(cols) > 2 else "1") not in ("0", "否", "no", "off")
-        if url and enabled:
-            out.append({"url": url, "name": cols[1].strip() if len(cols) > 1 else ""})
+        if url:
+            out.append({"url": url, "name": cols[1].strip() if len(cols) > 1 else "",
+                        "enabled": (cols[2].strip() if len(cols) > 2 else "1") not in ("0", "否", "no", "off")})
     return out
+
+def _fs_value(v):
+    """Firestore REST 的型別化值 → Python 值（只處理本清單用到的型別）"""
+    if not isinstance(v, dict):
+        return None
+    if "stringValue" in v: return v["stringValue"]
+    if "booleanValue" in v: return bool(v["booleanValue"])
+    if "integerValue" in v: return int(v["integerValue"])
+    if "doubleValue" in v: return v["doubleValue"]
+    if "timestampValue" in v: return v["timestampValue"]
+    if "nullValue" in v: return None
+    if "arrayValue" in v: return [_fs_value(x) for x in (v["arrayValue"].get("values") or [])]
+    if "mapValue" in v: return {k: _fs_value(x) for k, x in (v["mapValue"].get("fields") or {}).items()}
+    return None
+
+def parse_remote_channels(doc):
+    """aurora_ytnotes/channels 文件（REST JSON）→ [{url,name,enabled}]"""
+    items = _fs_value({"mapValue": {"fields": (doc or {}).get("fields") or {}}}).get("items") or []
+    out = []
+    for it in items:
+        if isinstance(it, dict) and str(it.get("url") or "").strip():
+            out.append({"url": str(it["url"]).strip(), "name": str(it.get("name") or "").strip(),
+                        "enabled": it.get("enabled") is not False})
+    return out
+
+def merge_channels(remote, local):
+    """後台清單為主（同一頻道以後台的名稱／啟用為準）；channels.tsv 只有在後台沒有的頻道才補上"""
+    seen, out = set(), []
+    for ch in (remote or []) + (local or []):
+        k = channel_key(ch["url"])
+        if not k or k in seen:
+            continue
+        seen.add(k)
+        out.append({**ch, "url": k})
+    return out
+
+def fetch_remote_channels():
+    """讀後台清單；成功時寫快取 channels.remote.tsv，失敗時改讀快取。回傳 (清單, 來源說明)"""
+    url = CFG.get("channels_url") or ""
+    cache = ENGINE / "channels.remote.tsv"
+    if not url:
+        return [], "未設定"
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"Accept": "application/json"}), timeout=20) as r:
+            items = parse_remote_channels(json.loads(r.read().decode("utf-8")))
+        cache.write_text("# 後台「常看頻道」快取（自動產生，請到後台修改，勿手動編輯）\n" +
+                         "".join(f"{c['url']}\t{c['name']}\t{1 if c['enabled'] else 0}\n" for c in items), encoding="utf-8")
+        return items, "後台"
+    except urllib.error.HTTPError as e:
+        if e.code == 404:                     # 後台還沒存過清單
+            return [], "後台（尚無清單）"
+        err = e
+    except Exception as e:                    # 網路或格式錯誤 → 用上次的快取
+        err = e
+    log("讀取後台常看頻道失敗，改用快取：", err)
+    return (parse_tsv_channels(cache.read_text(encoding="utf-8")) if cache.exists() else []), "後台快取"
+
+def read_channels():
+    p = ROOT / "channels.tsv"
+    local = parse_tsv_channels(p.read_text(encoding="utf-8")) if p.exists() else []
+    remote, src = fetch_remote_channels()
+    merged = merge_channels(remote, local)
+    log(f"常看頻道：{src} {len(remote)} 個＋channels.tsv {len(local)} 個 → 啟用 {sum(1 for c in merged if c['enabled'])} 個")
+    return [c for c in merged if c["enabled"]]
 
 def cmd_scan():
     seen = json.loads(SEEN().read_text(encoding="utf-8")) if SEEN().exists() else {}
     q = read_queue()
     new = 0
     for ch in read_channels():
-        url = ch["url"].rstrip("/")
-        if "youtube.com/@" in url and not re.search(r"/(videos|shorts|streams)$", url):
-            url += "/videos"
+        url = ch["url"]                       # 已由 channel_key 正規化
         try:
             r = sh([YTDLP(), "--no-warnings", "--flat-playlist", "-J", "--playlist-end", str(CFG["scan_latest"]), url], timeout=120)
             entries = json.loads(r.stdout).get("entries") or []
