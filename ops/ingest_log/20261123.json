@@ -24,19 +24,19 @@
     {
       "id": "cs_daily_20261123",
       "topic": "daily",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111341521524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -70,5 +70,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-23T00:14:40.871Z"
+  "generatedAt": "2026-11-23T00:21:24.200Z"
 }
