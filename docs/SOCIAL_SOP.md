@@ -301,6 +301,8 @@ social-publish.yml（常駐輪詢：每 2 分鐘發文、每 6 分鐘匯入）
 
 ## 九之三、Drive 送審包＋人工審核通知（2026-11-18 起，全部排程改走官方 API）
 
+> 2026-11-23 新增主題家族：Drive 橋接 `DRIVE_FAMILIES` 支援「同一天多份送審包」，放在 `<家族資料夾>/<YYYYMMDD>/pilotone/<子代碼>/`。目前只有 `yt`（常看 YouTube 重點筆記，`notes/youtube`，子代碼＝影片 ID → topic `yt-<影片ID>`），見 `docs/YTNOTES_SOP.md`。
+
 Allen 決定：**所有 Claude 發文排程（盤前速報、極光日報、極光午報、台指期快訊、熱力圖、選股雷達）一律改由官方 API 發文，且全部經 PilotOne 人工審核**；未核准的貼文不會發出、也不會過期（隔天核准照樣發，核准即以當下時間立即發布）。Mac mini 上的 Chrome 不再用於發文。
 
 ```

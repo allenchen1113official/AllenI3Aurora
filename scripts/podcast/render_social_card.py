@@ -267,7 +267,7 @@ def render_card(ep, size, out_path):
     # --- 頁首 ---
     y = M
     f_kicker = F("bold", int(H * (0.020 if is_ig else 0.030)))
-    d.text((M, y), "CORNELL NOTES · 康乃爾筆記", font=f_kicker, fill=tone)
+    d.text((M, y), ep.get("kicker") or "CORNELL NOTES · 康乃爾筆記", font=f_kicker, fill=tone)
     meta = " · ".join(x for x in [ep.get("date"), ep.get("duration")] if x)
     if meta:
         f_meta = F("reg", int(H * (0.018 if is_ig else 0.027)))

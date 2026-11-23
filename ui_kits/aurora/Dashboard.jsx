@@ -711,6 +711,86 @@
     );
   }
 
+  /* ── 常看 YouTube · 重點筆記 ──────────────────────────────────────────
+     資料來源同源 data/ytnotes.json（focus-update.yml → scripts/ytnotes/update-ytnotes.mjs
+     讀 Drive notes/youtube/index.json）。Mac mini 本機下載＋轉錄（FunASR／mlx-whisper），
+     Claude 校正後寫成 Obsidian 筆記並送 PilotOne；這裡每個頻道各取最新一支、最多 5 個頻道，
+     可展開康乃爾筆記圖卡（沿用 CornellCard）；逐字稿只留在 Drive，不上網站。 */
+  const YTNOTES_JSON_URL = "/AllenI3Aurora/data/ytnotes.json";
+  const YT_TONES = ["illumination", "insight", "intelligence"];
+
+  function YouTubeNoteCard({ v, isLatest, tone }) {
+    const I = window.Icons;
+    const [open, setOpen] = React.useState(false);
+    const ep = { show: v.author, title: v.title, date: (v.date || "").replace(/-/g, "."), duration: v.duration, summary: "", cornell: v.cornell, tone };
+    const hasCornell = !!(v.cornell && ((v.cornell.rows || []).length || v.cornell.summary));
+    return (
+      <div>
+        <Card accent={tone} padding="var(--space-5)">
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+            {v.thumbnail ? (
+              <img src={v.thumbnail} alt="" loading="lazy" style={{ width: 72, height: 40, flex: "none", borderRadius: 8, objectFit: "cover", border: "1px solid var(--border)" }} />
+            ) : (
+              <span style={{ width: 40, height: 40, flex: "none", borderRadius: 12, background: `var(--${tone}-soft)`, color: `var(--${tone})`, display: "grid", placeItems: "center" }}><I.play size={20} /></span>
+            )}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <Badge tone={tone}>{v.author || "YouTube"}</Badge>
+                {isLatest ? <Badge tone="illumination" dot>最新筆記</Badge> : null}
+                <span style={{ color: "var(--text-3)", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>{[ep.date, v.duration].filter(Boolean).join(" · ")}</span>
+              </div>
+              <div style={{ color: "var(--text-1)", fontWeight: 800, fontFamily: "var(--font-display)", fontSize: 15, marginTop: 4, lineHeight: 1.3 }}>{v.title}</div>
+            </div>
+          </div>
+          {(v.summary || []).length ? (
+            <ul style={{ color: "var(--text-2)", fontSize: 13.5, lineHeight: 1.7, margin: "0 0 12px", paddingLeft: 18 }}>
+              {v.summary.slice(0, 3).map((x, i) => <li key={i}>{x}</li>)}
+            </ul>
+          ) : null}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {hasCornell ? (
+              <Button variant="secondary" size="sm" icon={<I.book size={15} />} onClick={() => setOpen((o) => !o)}>{open ? "收合筆記圖卡" : "康乃爾筆記圖卡"}</Button>
+            ) : null}
+            {v.url ? (
+              <Button variant="ghost" size="sm" iconRight={<I.ext size={14} />} onClick={() => window.open(v.url, "_blank", "noopener,noreferrer")}>前往觀看</Button>
+            ) : null}
+          </div>
+        </Card>
+        {open && hasCornell ? <div style={{ marginTop: 10 }}><CornellCard ep={ep} /></div> : null}
+      </div>
+    );
+  }
+
+  function YouTubeNotes() {
+    const [items, setItems] = React.useState([]);
+    React.useEffect(() => {
+      let alive = true;
+      fetch(YTNOTES_JSON_URL, { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          if (!alive || !d || !Array.isArray(d.items)) return;
+          const seen = new Set();
+          const latest = [];
+          d.items.forEach((v) => {      // 已依新到舊排序：每個頻道只取最新一支
+            const key = String(v.author || v.channelUrl || v.id);
+            if (!seen.has(key)) { seen.add(key); latest.push(v); }
+          });
+          setItems(latest.slice(0, 5));
+        })
+        .catch(() => {});
+      return () => { alive = false; };
+    }, []);
+    if (!items.length) return null;
+    return (
+      <div>
+        <SectionHeader kicker="YOUTUBE · 最新筆記" title="常看 YouTube · 重點筆記" style={{ marginBottom: "var(--space-4)" }} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {items.map((v, i) => <YouTubeNoteCard key={v.id} v={v} isLatest={i === 0} tone={YT_TONES[i % YT_TONES.length]} />)}
+        </div>
+      </div>
+    );
+  }
+
   /* 以官方 iframe 嵌入我的 Google 行事曆（AGENDA 模式、台北時區）。 */
   function CalendarPanel() {
     const I = window.Icons;
@@ -938,6 +1018,7 @@
           {/* Right: merged podcast notes (常聽 × 最新一集), links, annuli mini */}
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
             <PodcastNotes />
+            <YouTubeNotes />
 
             <div>
               <SectionHeader kicker="常用網站" title="快速前往" style={{ marginBottom: "var(--space-4)" }} />
