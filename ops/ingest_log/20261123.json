@@ -4,21 +4,21 @@
     {
       "id": "cs_txf-flash_20261123",
       "topic": "txf-flash",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111423547524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgFCSuTGxF4/",
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The children with IDs 18166080217500431 are invalid, nonexistent, or expired."
       }
     },
     {
@@ -136,5 +136,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-23T09:14:59.784Z"
+  "generatedAt": "2026-11-23T09:22:11.943Z"
 }
