@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <title>艾倫極光報報 ALLEN I³ AURORA</title>
+    <link>https://allenchen1113official.github.io/AllenI3Aurora/</link>
+    <atom:link href="https://allenchen1113official.github.io/AllenI3Aurora/podcast.xml" rel="self" type="application/rss+xml"/>
+    <description>艾倫報報 ALLEN I³ AURORA 的 Podcast。由 Allen 整理 AI 應用、智慧運輸系統（ITS）、智慧水資源、智慧家庭、智慧農業、無人機與台股理財的重點，用耳朵快速掌握每天值得關注的動態。內容僅供參考，非投資建議。</description>
+    <language>zh-tw</language>
+    <copyright>© 艾倫報報 ALLEN I³ AURORA</copyright>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 GMT</lastBuildDate>
+    <generator>PilotOne · 艾倫報報 ALLEN I³ AURORA</generator>
+    <image>
+      <url>https://allenchen1113official.github.io/AllenI3Aurora/assets/podcast/show-cover-3000.jpg</url>
+      <title>艾倫極光報報 ALLEN I³ AURORA</title>
+      <link>https://allenchen1113official.github.io/AllenI3Aurora/</link>
+    </image>
+    <itunes:title>艾倫極光報報 ALLEN I³ AURORA</itunes:title>
+    <itunes:subtitle>AI、智慧交通、智慧水資源、無人機與理財的每日重點</itunes:subtitle>
+    <itunes:summary>艾倫報報 ALLEN I³ AURORA 的 Podcast。由 Allen 整理 AI 應用、智慧運輸系統（ITS）、智慧水資源、智慧家庭、智慧農業、無人機與台股理財的重點，用耳朵快速掌握每天值得關注的動態。內容僅供參考，非投資建議。</itunes:summary>
+    <itunes:author>艾倫 Allen Chen</itunes:author>
+    <itunes:owner>
+      <itunes:name>Allen Chen</itunes:name>
+      <itunes:email>allenchen1113.official@gmail.com</itunes:email>
+    </itunes:owner>
+    <itunes:image href="https://allenchen1113official.github.io/AllenI3Aurora/assets/podcast/show-cover-3000.jpg"/>
+    <itunes:category text="Technology"/>
+    <itunes:category text="News">
+      <itunes:category text="Tech News"/>
+    </itunes:category>
+    <itunes:category text="Business">
+      <itunes:category text="Investing"/>
+    </itunes:category>
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:type>episodic</itunes:type>
+    <itunes:keywords>AI,ITS,智慧交通,智慧水資源,無人機,智慧家庭,台股,艾倫報報</itunes:keywords>
+    <podcast:locked owner="allenchen1113.official@gmail.com">yes</podcast:locked>
+    <podcast:guid>b80ae6e2-c0b1-5ac9-ac6d-26ff5a6c3f54</podcast:guid>
+
+  </channel>
+</rss>
