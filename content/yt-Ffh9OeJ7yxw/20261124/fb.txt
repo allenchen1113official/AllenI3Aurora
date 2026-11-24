@@ -2,7 +2,7 @@ Claude Code 用了 800 小時：獨立開發者最該補上的 5 個設定＋1 �
 
 艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/24（週二）
 
-▶ Edmund Yong〈800+ hours of Learning Claude Code in 8 minutes (2026 tutorial / unknown tricks / newest model)〉（2025-10-27・8 分 0 秒）
+📺 影片來源：Edmund Yong〈800+ hours of Learning Claude Code in 8 minutes (2026 tutorial / unknown tricks / newest model)〉（YouTube・2025-10-27・8 分 0 秒）
 
 📌 重點摘要
 • 重複講的規則交給記憶：按 # 把指令存進 CLAUDE.md（專案或全域），常用提示做成 .claude/commands 下的自訂 slash 指令，還能帶參數。

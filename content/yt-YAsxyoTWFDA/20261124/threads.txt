@@ -1,6 +1,6 @@
 用 Claude Code 1000 小時的功能排行：3 個 S 級，為什麼 /init 只拿 C
 艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24
-▶ The Coding Sloth〈I Have Spent 1000+ Hours Wit〉
+📺 影片來源：The Coding Sloth〈I Have Spent 1000+ Hours Wit〉
 
 ① 作者用 20 美元方案，最大痛點是用量限制，因此把常用功能做 S～F 分級，並分享省 token 的方法。
 ② S 級三件事：技能 skills（到 skills.sh 找，別一次裝一堆）、plan mode（大任務才用）、驗證（先寫測試再實作、跑型別檢查與 linter、截圖或瀏覽器測試）。

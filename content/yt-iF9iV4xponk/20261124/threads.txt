@@ -1,6 +1,6 @@
 Claude Code 創造者的 3 段式用法：簡單丟 GitHub、中等先規劃、困難自己開
 艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24
-▶ Anthropic〈The future of agentic coding with Claude Code〉（2025-09-02・20 分 20 秒）
+📺 影片來源：Anthropic〈The future of agentic coding〉
 
 ① 一年內寫程式的方式大翻轉：從 IDE 自動完成加聊天複製貼上，變成交給代理直接改程式碼，人負責指揮與把關。
 ② 進步來自兩邊：模型從 Sonnet 3.5 一路到 Opus 4.1 更會做代理式開發，外層的 Claude Code（系統提示、context、工具、MCP、權限）也一起演進。

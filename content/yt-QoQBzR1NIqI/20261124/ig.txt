@@ -1,7 +1,7 @@
 4 小時 Claude Code 全攻略濃縮：非工程師從安裝走到自動化上線的 7 個階段
 艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24（週二）
 
-▶ Nick Saraev〈CLAUDE CODE FULL COURSE 4 HOURS: Build & Sell (2026)〉（2026-02-12・4 小時 10 分）
+📺 影片來源：Nick Saraev〈CLAUDE CODE FULL COURSE 4 HOURS: Build & Sell (2026)〉（YouTube・2026-02-12・4 小時 10 分）
 
 📌 重點摘要
 • 定位是給非工程師的 Claude Code 完整入門；作者自述用它經營年獲利逾 400 萬美元的事業，最低需要 Pro 方案。

@@ -2,7 +2,7 @@
 
 艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/24（週二）
 
-▶ AI Master〈How to Build an AI Agent with Claude Code (Claude AI Agent Tutorial)〉（2026-06-30・22 分 7 秒）
+📺 影片來源：AI Master〈How to Build an AI Agent with Claude Code (Claude AI Agent Tutorial)〉（YouTube・2026-06-30・22 分 7 秒）
 
 📌 重點摘要
 • 使用 AI 有三個層次：聊天問答、請它產出成品，以及交出完整目標讓它自己規劃執行的代理式工作。

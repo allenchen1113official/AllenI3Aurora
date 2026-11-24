@@ -1,6 +1,6 @@
 Claude Code 作者親授 7 個實戰技巧：新人上手從 3 週縮到 3 天
 艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24
-▶ Anthropic〈Mastering Claude Code in 30 minutes〉（2025-05-22・28 分 7 秒）
+📺 影片來源：Anthropic〈Mastering Claude Code in 30 minutes〉（YouTube・2025-05-22・28 分 7 秒）
 
 ① 先從問程式碼庫開始：問用法、問 Git 歷史、問 issue；Anthropic 新人技術上手從 2～3 週縮短到 2～3 天，而且不建索引、程式碼留在本機。
 ② 動手改之前先要它腦力激盪、提出計畫並等你核可；一句「commit, push, PR」就能完成提交與開 PR。

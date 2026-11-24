@@ -2,7 +2,7 @@
 
 艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/24（週二）
 
-▶ The Coding Sloth〈I Have Spent 1000+ Hours With Claude Code. This Is What I Learned〉（2026-08-18・22 分 30 秒）
+📺 影片來源：The Coding Sloth〈I Have Spent 1000+ Hours With Claude Code. This Is What I Learned〉（YouTube・2026-08-18・22 分 30 秒）
 
 📌 重點摘要
 • 作者用 20 美元方案，最大痛點是用量限制，因此把常用功能做 S～F 分級，並分享省 token 的方法。

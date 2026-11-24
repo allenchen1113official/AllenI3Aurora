@@ -1,7 +1,7 @@
 1 分鐘看懂 Claude 兩個新成品：資料變即時儀表板、報告變動畫簡報
 艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24（週二）
 
-▶ Claude〈Introducing Claude Dashboards and Claude Motion〉（2026-10-08・1 分 22 秒）
+📺 影片來源：Claude〈Introducing Claude Dashboards and Claude Motion〉（YouTube・2026-10-08・1 分 22 秒）
 
 📌 重點摘要
 • Anthropic 推出兩種新 artifact：Claude Dashboards 接上資料平台或 CRM，做出隨資料自動更新的儀表板；Claude Motion 把報告或圖表變成短動畫。
