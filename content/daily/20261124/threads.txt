@@ -1,0 +1,17 @@
+今日關注動態｜艾倫極光日報 2026/11/24（週二）
+
+📌 今日重點：FCC 通過無人機頻譜命令，監管升溫；Alcaraz 首奪年終總決賽，台維斯盃今日開打。
+
+🌾 智慧農業：歐盟擬放寬農業無人機噴藥
+🏠 智慧家庭／IoT：HA 2026.11 內建 HACS 市集
+🚁 無人機系統：FCC 3:0 通過無人機頻譜命令
+🇮🇸 冰島旅行：強風襲擊雷克雅維克首都圈
+📷 攝影：Sony FX5 延宕數月終出貨
+🎷 薩克斯風：Tara Davidson 四重奏新作
+🎾 網球：Alcaraz 首奪年終總決賽
+
+🔗 https://www.home-assistant.io/blog/2026/11/04/release-202611/
+🔗 https://www.atptour.com/en/news/alcaraz-zverev-nitto-atp-finals-2026-sunday
+
+艾倫極光日報 ALLEN I³ AURORA
+#艾倫極光日報

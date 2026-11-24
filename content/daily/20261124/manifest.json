@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "topic": "daily",
+  "date": "2026-11-24",
+  "title": "今日關注動態｜艾倫極光日報 2026/11/24（週二）",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "DailyBrief_Canvas_FB_2026-11-24.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "Threads_Card_2026-11-24.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "Threads_Card_2026-11-24.png"
+      ]
+    }
+  },
+  "producedBy": "trig_01AhPQ5phpLMW8vyKVMnVhuj",
+  "producedAt": "2026-11-24T08:09:14+08:00"
+}

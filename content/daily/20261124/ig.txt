@@ -1,0 +1,29 @@
+今日關注動態｜艾倫極光日報 2026/11/24（週二）
+
+📌 今日重點
+無人機監管全面升溫：FCC 通過無人機頻譜命令、美國地方政府要求警用無人機更透明，歐盟也準備放寬農業噴藥無人機規定。網球方面 Alcaraz 首奪年終總決賽，台維斯盃 Final 8 今天在波隆那開打；智慧家庭則持續朝 Matter 與 Gemini 整合。
+
+🌾 智慧農業：歐盟擬放寬農業無人機噴藥規定
+🔗 https://ukragroconsult.com/en/news/eu-prepares-to-ease-rules-on-agricultural-drone-spraying/
+
+🏠 智慧家庭／IoT：Home Assistant 2026.11：HACS 內建為「Marketplace」
+🔗 https://www.home-assistant.io/blog/2026/11/04/release-202611/
+
+🚁 無人機系統：FCC 以 3:0 通過無人機頻譜命令
+🔗 https://dronexl.co/2026/11/20/fcc-drone-spectrum-order-adopted-trusty-800-mhz-air-ground-drones/
+
+🇮🇸 冰島旅行：強風襲擊雷克雅維克首都圈
+🔗 https://www.icelandreview.com/news/storm-damage-capital-region-november-22-2026/
+
+📷 攝影：Sony FX5 延宕數月終於出貨
+🔗 https://petapixel.com/2026/11/16/after-months-of-delays-the-sony-fx5-is-finally-shipping-to-customers/
+
+🎷 薩克斯風：Tara Davidson《The Reflection Of An Echo》
+🔗 https://jazzjournal.co.uk/2026/11/10/new-releases-october-november-2026-t-y/
+
+🎾 網球：Alcaraz 6-2、7-6(7) 擊敗 Zverev，首奪 ATP 年終總決賽
+🔗 https://www.atptour.com/en/news/alcaraz-zverev-nitto-atp-finals-2026-sunday
+
+艾倫極光日報 ALLEN I³ AURORA
+
+#艾倫極光日報 #智慧農業 #SmartHome #IoT #無人機 #冰島旅行 #攝影 #薩克斯風 #網球 #Matter
