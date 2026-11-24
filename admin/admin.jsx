@@ -2401,12 +2401,13 @@ const MON_NAV = "__monitor"; // 排程監控（admin/schedule-monitor.jsx）
 const VLOG_NAV = "__vlog"; // Vlog 影片系列（admin/vlog.jsx）
 const YT_NAV = "__youtube"; // YouTube 頻道（admin/youtube.jsx）
 const PN_NAV = "__podnotes"; // Podcast 重點筆記（admin/podnotes.jsx）
+const DP_NAV = "__dailypick"; // 極光日報・每日來一股 分析順序（admin/dailypick.jsx）
 function Console({ user }) {
-  const [active, setActive] = useState(() => (location.hash === "#monitor" ? MON_NAV : location.hash === "#vlog" ? VLOG_NAV : location.hash === "#youtube" ? YT_NAV : location.hash === "#podnotes" ? PN_NAV : NL_NAV));
+  const [active, setActive] = useState(() => (location.hash === "#monitor" ? MON_NAV : location.hash === "#vlog" ? VLOG_NAV : location.hash === "#youtube" ? YT_NAV : location.hash === "#podnotes" ? PN_NAV : location.hash === "#dailypick" ? DP_NAV : NL_NAV));
   const sec = SECTIONS.find((s) => s.id === active);
   const HubPanel = window.ContentHubPanel; // admin/content-hub.jsx 於本檔之後載入
   const MonPanel = window.ScheduleMonitorPanel; // admin/schedule-monitor.jsx 於本檔之後載入
-  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: HUB_NAV, label: "PilotOne 中控台" }, { id: SOC_NAV, label: "PilotOne 審核" }, { id: PC_NAV, label: "Podcast 節目" }, { id: PN_NAV, label: "Podcast 重點筆記" }, { id: VLOG_NAV, label: "Vlog 影片系列" }, { id: YT_NAV, label: "YouTube 頻道" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, { id: MON_NAV, label: "排程監控" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
+  const NAV = [{ id: NL_NAV, label: "電子報" }, { id: HUB_NAV, label: "PilotOne 中控台" }, { id: SOC_NAV, label: "PilotOne 審核" }, { id: PC_NAV, label: "Podcast 節目" }, { id: PN_NAV, label: "Podcast 重點筆記" }, { id: VLOG_NAV, label: "Vlog 影片系列" }, { id: YT_NAV, label: "YouTube 頻道" }, { id: DP_NAV, label: "每日來一股" }, { id: SUB_NAV, label: "訂閱用戶" }, { id: CAMP_NAV, label: "寄送紀錄" }, { id: MON_NAV, label: "排程監控" }, ...SECTIONS, { id: WEALTH_NAV, label: "財富自由指數" }];
   return (
     <div>
       <header style={{ borderBottom: "1px solid var(--border)", background: "var(--night-850)", position: "sticky", top: 0, zIndex: 20 }}>
@@ -2425,7 +2426,7 @@ function Console({ user }) {
           {NAV.map((s) => {
             const on = s.id === active;
             return (
-              <button key={s.id} onClick={() => { setActive(s.id); try { history.replaceState(null, "", s.id === MON_NAV ? "#monitor" : s.id === VLOG_NAV ? "#vlog" : s.id === YT_NAV ? "#youtube" : s.id === PN_NAV ? "#podnotes" : location.pathname); } catch {} }}
+              <button key={s.id} onClick={() => { setActive(s.id); try { history.replaceState(null, "", s.id === MON_NAV ? "#monitor" : s.id === VLOG_NAV ? "#vlog" : s.id === YT_NAV ? "#youtube" : s.id === PN_NAV ? "#podnotes" : s.id === DP_NAV ? "#dailypick" : location.pathname); } catch {} }}
                 style={{ textAlign: "left", cursor: "pointer", padding: "10px 12px", borderRadius: "var(--radius-md)", fontSize: 14, fontFamily: "var(--font-display)", fontWeight: 700,
                   border: "1px solid " + (on ? "var(--border-aurora)" : "transparent"), background: on ? "var(--brand-soft)" : "transparent", color: on ? "var(--text-1)" : "var(--text-3)" }}>
                 {s.label}
@@ -2446,6 +2447,7 @@ function Console({ user }) {
             : active === VLOG_NAV ? (window.VlogPanel ? <window.VlogPanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)
             : active === YT_NAV ? (window.YouTubePanel ? <window.YouTubePanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)
             : active === PN_NAV ? (window.PodNotesPanel ? <window.PodNotesPanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)
+            : active === DP_NAV ? (window.DailyPickPanel ? <window.DailyPickPanel /> : <div style={{ color: "var(--text-3)" }}>載入中…</div>)
             : active === SUB_NAV ? <SubscribersPanel />
             : active === CAMP_NAV ? <CampaignsPanel />
             : active === WEALTH_NAV ? <WealthPanel />

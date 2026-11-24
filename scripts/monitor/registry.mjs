@@ -33,6 +33,7 @@ export const WORKFLOWS = {
   "social-publish.yml":         { label: "PilotOne 社群發文",     category: "社群",     dispatch: true,  autoRetry: false, catchUp: true, inputs: DRY_RUN },
   "social-insights.yml":        { label: "社群成效同步",          category: "社群",     dispatch: true,  autoRetry: true, catchUp: true,  inputs: DRY_RUN },
   "youtube-sync.yml":           { label: "YouTube 頻道同步",      category: "資料同步", dispatch: true,  autoRetry: true, catchUp: true,  inputs: DRY_RUN },
+  "dailypick-queue.yml":        { label: "每日來一股 分析順序",   category: "資料同步", dispatch: true,  autoRetry: true, catchUp: true },
   "subscriber-mail.yml":        { label: "訂閱確認／歡迎信",      category: "電子報",   dispatch: true,  autoRetry: false, catchUp: true, inputs: DRY_RUN },
   "newsletter-send.yml":        { label: "寄送本期電子報",        category: "電子報",   dispatch: false, autoRetry: false,
                                   reason: "寄信不可逆，請到 GitHub Actions 頁依 dry_run → test_to → 正式 的順序手動執行。" },
@@ -68,6 +69,8 @@ export const DATA_CHECKS = [
     source: "annuli-update 01:00" },
   { key: "exercise",   label: "運動資料",           file: "data/exercise.json",           type: "age",  field: "updatedAt", warnHours: 8,  failHours: 30,
     source: "exercise-update（需 GARMIN_* Secrets）" },
+  { key: "dailypick",  label: "每日來一股 分析順序", file: "data/dailypick/queue.json",  type: "age",  field: "updatedAt", warnHours: 30, failHours: 80,
+    source: "dailypick-queue 16:47（週一至週五）" },
   { key: "youtube",    label: "YouTube 頻道快照",   file: "data/youtube.json",            type: "age",  field: "updatedAt", warnHours: 14, failHours: 38,
     source: "youtube-sync 06:23／18:23（需 YT_* Secrets）" },
 ];
@@ -92,6 +95,8 @@ export const CLAUDE_TASKS = [
   { id: "trig_01FQDvHmuqhvUm1MbFNNq2D9", name: "常看 YouTube 重點筆記｜PilotOne 送審", cron: "CRON_TZ=Asia/Taipei 17 10,21 * * *", check: "",           kind: "post", manual: true },
   // 2026-11-24：常聽 Podcast 重點筆記（Mac mini 轉錄草稿 → 康乃爾筆記＋三平台文案＋莫蘭迪藍圖卡 → Drive notes/podcast 送審包；每次先同步 Drive 上的引擎）
   { id: "trig_01BHPcUndhA9rdPUWyxAELGW", name: "常聽 Podcast 重點筆記｜PilotOne 送審", cron: "CRON_TZ=Asia/Taipei 23 11,22 * * *", check: "",           kind: "post", manual: true },
+  // 2026-11-24：極光日報・每日來一股（依 data/dailypick/queue.json 順序取下一檔 → StockAdvisor 12 面向評分＋莫蘭迪金圖卡＋三平台文案；分析完追加 data/dailypick/history.json）
+  { id: "trig_018R4XEwmQjjXz4oVd4k4Lg5", name: "極光日報・每日來一股",        cron: "CRON_TZ=Asia/Taipei 41 17 * * 1-5", check: "",           kind: "produce" },
   { id: "aurora-agent", tid: "trig_014J2SYkJeqeJ8S2QvSM4WAH", name: "AllenI3Aurora Agent 巡檢",      cron: "CRON_TZ=Asia/Taipei 41 7,9,19,21,23 * * *", check: "", kind: "agent", agent: true },
 ];
 
