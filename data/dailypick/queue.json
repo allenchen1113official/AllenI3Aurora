@@ -1,7 +1,7 @@
 {
  "date": "2026-11-25",
  "asof": "2026-11-24",
- "updatedAt": "2026-11-24T17:58:53.676Z",
+ "updatedAt": "2026-11-24T19:22:21.457Z",
  "rule": "指定下一檔 → 優先組（上市市值前 100＋上櫃市值前 50，依市值）→ 其餘上市櫃普通股（依市值）；已分析不重複、略過者排除",
  "counts": {
   "total": 1987,
@@ -97,7 +97,7 @@
  ],
  "newToday": [],
  "items": [
-{"code":"2330","name":"台積電","market":"TWSE","industry":"半導體業","mcap":526427,"close":2030,"tier":1,"marketRank":1,"status":"done","pinned":0,"analyzedAt":"2026-11-24","score":69.8,"light":"黃燈","rating":"中性","folder":"daily_pick/20261124","addedAt":"2026-11-24","isNew":false,"listed":"1994-09-05","rank":1},
+{"code":"2330","name":"台積電","market":"TWSE","industry":"半導體業","mcap":526427,"close":2030,"tier":1,"marketRank":1,"status":"done","pinned":0,"analyzedAt":"2026-11-24","score":69.9,"light":"黃燈","rating":"中性","folder":"daily_pick/20261124","addedAt":"2026-11-24","isNew":false,"listed":"1994-09-05","rank":1},
 {"code":"2454","name":"聯發科","market":"TWSE","industry":"半導體業","mcap":59141,"close":3685,"tier":1,"marketRank":2,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"2001-07-23","rank":2},
 {"code":"2317","name":"鴻海","market":"TWSE","industry":"其他電子業","mcap":28996,"close":206,"tier":1,"marketRank":3,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"1991-06-18","rank":3},
 {"code":"2308","name":"台達電","market":"TWSE","industry":"電子零組件業","mcap":25716,"close":990,"tier":1,"marketRank":4,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"1988-12-19","rank":4},
