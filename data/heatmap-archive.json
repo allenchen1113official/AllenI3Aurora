@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261123",
+    "kind": "熱力圖",
+    "date": "2026.11.23",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.11.23",
+    "cover": "https://drive.google.com/thumbnail?id=1nG5g7gt3zktEc9Z2Rl6TePFVTooOgqyS&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1nG5g7gt3zktEc9Z2Rl6TePFVTooOgqyS&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1nG5g7gt3zktEc9Z2Rl6TePFVTooOgqyS&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=19pdBiAdN8jL3xlR3fQzxoRpjN9TCGPh_&sz=w1600",
+    "summary": "（資料日期 2026-11-23，個股漲跌幅為Yahoo股市收盤價；150檔中147檔已查證，其餘退回類股平均），加權指數收36,811.89點，上漲778.60點（+2.16%）。半導體與電子零組件強攻，聯發科、台達電漲停，金融股普遍收黑。，焦點…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261120",
     "kind": "熱力圖",
     "date": "2026.11.20",

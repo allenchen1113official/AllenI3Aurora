@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-24T10:24:05+08:00",
+ "updatedAt": "2026-11-24T21:26:31+08:00",
  "items": [
   {
    "id": "en0GuyhieQk",
@@ -128,6 +128,51 @@
      }
     ],
     "summary": "代理的聰明在說明書而不在工具，先把一個流程跑穩再加下一個。"
+   },
+   "added": "20261124"
+  },
+  {
+   "id": "C2GpeepcmYs",
+   "title": "Claude Code Crash Course For Developers",
+   "author": "Traversy Media",
+   "channelUrl": "https://www.youtube.com/channel/UC29ju8bIPH5as8OGnQzwJyA",
+   "url": "https://www.youtube.com/watch?v=C2GpeepcmYs",
+   "date": "2026-06-22",
+   "duration": "1 小時 3 分",
+   "category": "AI 應用",
+   "headline": "Claude Code 63 分鐘速成濃縮成 5 個重點：Traversy 教你管好權限、脈絡與 CLAUDE.md，再用 Skills／MCP／子代理加速",
+   "thumbnail": "https://i.ytimg.com/vi/C2GpeepcmYs/hqdefault.jpg",
+   "summary": [
+    "Claude Code 在你的電腦上直接讀寫檔、跑指令；作者偏好在 VS Code 擴充套件裡用，能看見每一筆差異，而不是閉著眼 vibe coding。",
+    "訂閱也有額度：/usage 看 5 小時與每週用量，/model 切換模型、/effort 調思考強度，越高越耗 token，Pro 方案要更節制。",
+    "Shift+Tab 切換一般／自動接受編輯／計畫／自動模式；/permissions 可設 allow／ask／deny，並分專案、本機、使用者三種範圍。",
+    "脈絡要管理：/context 檢查用量，一個功能做完就 commit 再 /clear；常駐規範寫進 CLAUDE.md（/init 自動產生），保持精簡、指向其他文件。",
+    "可重用流程寫成 Skill（如 commit 訊息格式）、用 MCP 接外部工具（Playwright 開瀏覽器測試），子代理有獨立脈絡，只把摘要帶回主對話。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "模型與額度",
+      "note": "/model 選 Opus／Sonnet／Haiku 等，/usage 看額度、/effort 調強度；強度與模型越高越耗 token"
+     },
+     {
+      "cue": "模式與權限",
+      "note": "Shift+Tab 循環四種模式；/permissions 設 git push 一律詢問、rm -rf 一律拒絕，可存專案或使用者層級"
+     },
+     {
+      "cue": "脈絡管理",
+      "note": "/context 查用量，功能完成即 commit＋/clear；用 sessions 紀錄或 CLAUDE.md 保留跨對話記憶"
+     },
+     {
+      "cue": "計畫模式",
+      "note": "先規劃不改檔，會提問並列出幾種重構方案，確認後才實作"
+     },
+     {
+      "cue": "Skills／MCP／子代理",
+      "note": "Skill 是可重用流程；MCP 接 Playwright 等外部工具；子代理有獨立脈絡，只回傳摘要"
+     }
+    ],
+    "summary": "不必自己敲每一行，但要看懂每一行：用模式、權限與脈絡管理把 Claude Code 變成看得見、管得住的開發夥伴。"
    },
    "added": "20261124"
   },
@@ -308,6 +353,51 @@
      }
     ],
     "summary": "先學會問、再學會分級交辦；程式碼不再珍貴，點子與判斷才是。"
+   },
+   "added": "20261124"
+  },
+  {
+   "id": "SUysp3sJHbA",
+   "title": "Claude Code Tutorial #1 - Introduction & Setup",
+   "author": "Net Ninja",
+   "channelUrl": "https://www.youtube.com/channel/UCW5YeuERMmlnqo4oq8vwUpg",
+   "url": "https://www.youtube.com/watch?v=SUysp3sJHbA",
+   "date": "2025-08-21",
+   "duration": "10 分 10 秒",
+   "category": "AI 應用",
+   "headline": "Claude Code 新手 5 步上手：為什麼 Net Ninja 堅持「不 vibe coding」，還是能把 AI 用到位？",
+   "thumbnail": "https://i.ytimg.com/vi/SUysp3sJHbA/hqdefault.jpg",
+   "summary": [
+    "Claude Code 是 Anthropic 的終端機代理式寫程式工具，不綁編輯器，能讀懂整個專案、改檔、跑指令，也能接 GitHub 做 PR 審查與處理 issue。",
+    "安裝只要一行 npm install -g @anthropic-ai/claude-code，Windows 現在可直接在終端機裝，不必再透過 WSL；需要 Pro 或 Max 訂閱，免費方案不含 Claude Code（錄影當時）。",
+    "第一次啟動依序選主題、登入訂閱帳號、確認信任資料夾，接手陌生專案時先請它「摘要這個專案」最省時間。",
+    "建議在 VS Code 內的終端機執行，會自動裝擴充套件，提供差異檢視、選取文字當脈絡、感知目前分頁等功能。",
+    "作者主張小範圍任務、邊做邊檢查：先用 /terminal-setup 設定換行鍵，再讓 Claude 開新分支（claude-edits），避免弄壞主線。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "它是什麼",
+      "note": "住在終端機的代理式寫程式工具，能分析、規劃、撰寫與修改程式碼，對專案脈絡理解力強"
+     },
+     {
+      "cue": "安裝與方案",
+      "note": "npm 全域安裝；Pro 方案用量約每 5 小時重置，Opus 耗額度快，日常預設用 Sonnet"
+     },
+     {
+      "cue": "首次啟動",
+      "note": "選主題 → 以訂閱登入 → 信任資料夾 → 先請它摘要專案"
+     },
+     {
+      "cue": "VS Code 整合",
+      "note": "自動安裝擴充套件：差異檢視、選取文字當脈絡、快捷鍵、作用中分頁感知"
+     },
+     {
+      "cue": "安全習慣",
+      "note": "先用可丟棄專案或版本控制；讓 Claude 開新分支，每個 bash 指令都會先徵求同意"
+     }
+    ],
+    "summary": "把 Claude Code 當成一起寫程式的夥伴而非代工，小步前進、隨時檢查，程式碼才會乾淨好維護。"
    },
    "added": "20261124"
   },
