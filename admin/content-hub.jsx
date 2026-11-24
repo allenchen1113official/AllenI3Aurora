@@ -285,49 +285,120 @@ function HubPerformance({ list, ins }) {
   );
 }
 
-/* 內容表格（儀表板「最近發布」與內容庫共用） */
+/* 依容器實際寬度切換版型（後台側欄展開／收合、手機皆適用，不依賴視窗寬） */
+function useBoxWidth() {
+  const [w, setW] = useState(0);
+  const [el, setEl] = useState(null);
+  useEffect(() => {
+    if (!el) return undefined;
+    const upd = () => setW(el.clientWidth || 0);
+    upd();
+    if (typeof ResizeObserver === "undefined") { window.addEventListener("resize", upd); return () => window.removeEventListener("resize", upd); }
+    const ro = new ResizeObserver(upd); ro.observe(el);
+    return () => ro.disconnect();
+  }, [el]);
+  return [setEl, w];
+}
+
+/* 內容表格（儀表板「最近發布」與內容庫共用）
+   RWD：寬 ≥ 1040 完整表格；760–1039 精簡表格（分類併入標題下方、觸及／互動合併為「成效」）；
+   < 760 改為卡片清單。表格模式的操作欄固定於右側，橫向捲動時不會被截斷。 */
 function HubTable({ rows, openPost, empty, compact, selected, onToggle, onToggleAll }) {
+  const [boxRef, bw] = useBoxWidth();
+  const mode = !bw ? "full" : bw < (compact ? 600 : 760) ? "card" : bw < (compact ? 820 : 1040) ? "slim" : "full";
+  const slim = mode === "slim";
   const th = { textAlign: "left", fontWeight: 600, color: "var(--text-3)", fontSize: 12, padding: "9px 10px", borderBottom: "1px solid var(--border)", whiteSpace: "nowrap" };
   const td = { padding: "11px 10px", borderBottom: "1px solid var(--border-subtle)", verticalAlign: "middle", fontSize: 13.5, color: "var(--text-2)" };
-  if (!rows.length) return <div style={{ ...muted, padding: "18px 0" }}>{empty}</div>;
+  const stick = { position: "sticky", right: 0, background: "var(--night-800)", boxShadow: "-8px 0 10px -8px rgba(0,0,0,.6)" };
+  const actLabel = (st) => st === "review" ? "審核" : st === "draft" || st === "rejected" ? "繼續編輯" : st === "failed" ? "查看重試" : "檢視";
+  const thumb = (r, size) => r.imageUrl
+    ? <img src={r.imageUrl} alt="" style={{ width: size, height: size, borderRadius: "var(--radius-md)", objectFit: "cover", flex: "none", background: "var(--night-700)" }} />
+    : <span aria-hidden="true" style={{ width: size, height: size, borderRadius: "var(--radius-md)", flex: "none", background: "var(--aurora-gradient-soft)" }} />;
+  const sub = (r, err, withCat) => err || [(withCat && r.hub && r.hub.category) || "", hubArchived(r) ? "已封存" : "", "更新於 " + tpMdHm(r.updatedAt || r.createdAt)].filter(Boolean).join(" · ");
+  const ellip = { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
+  if (!rows.length) return <div ref={boxRef} style={{ ...muted, padding: "18px 0" }}>{empty}</div>;
+
+  if (mode === "card") {
+    const allOn = rows.length > 0 && rows.every((r) => selected && selected.has(r.id));
+    return (
+      <div ref={boxRef} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {selected ? <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "var(--text-3)", padding: "2px 4px" }}>
+          <input type="checkbox" checked={allOn} onChange={(e) => onToggleAll(rows.map((r) => r.id), e.target.checked)} />全選本頁（{rows.length} 筆）</label> : null}
+        {rows.map((r) => {
+          const st = hubStatus(r);
+          const err = st === "failed" ? hubError(r) : "";
+          const on = selected && selected.has(r.id);
+          return (
+            <article key={r.id} style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-lg, 14px)", padding: 12, display: "flex", flexDirection: "column", gap: 10,
+              background: on ? "var(--brand-soft)" : "var(--night-800)" }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                {selected ? <input type="checkbox" style={{ marginTop: 4 }} aria-label={"選取「" + (r.title || "未命名") + "」"} checked={on} onChange={() => onToggle(r.id)} /> : null}
+                {!compact ? thumb(r, 44) : null}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0, flex: 1 }}>
+                  <strong style={{ color: "var(--text-1)", fontWeight: 600, fontSize: 14, lineHeight: 1.45, overflowWrap: "anywhere",
+                    display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{r.title || "（未命名）"}</strong>
+                  <span style={{ fontSize: 12, color: err ? "var(--danger)" : "var(--text-3)", overflowWrap: "anywhere" }}>{sub(r, err, !compact)}</span>
+                </div>
+                <span style={{ flex: "none" }}><HubTag r={r} /></span>
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 14px" }}>
+                <PfRow r={r} all={!compact} />
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-2)" }}>🕒 {tpMdHm(hubWhen(r))}</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-3)" }} title={r.stats ? statsTip(r) : "成效每日同步（發布後 30 天內）"}>
+                  觸及 {fmtN(r.stats && r.stats.reach)} · 互動 {fmtN(r.stats && r.stats.engagement)}</span>
+                <button className={"ad-btn" + (st === "review" ? " primary" : " ghost")} style={{ padding: "7px 14px", fontSize: 13, whiteSpace: "nowrap", marginLeft: "auto" }} onClick={() => openPost(r)}>
+                  {actLabel(st)}</button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
-    <div style={{ overflowX: "auto" }}>
-      <table style={{ borderCollapse: "collapse", width: "100%", minWidth: compact ? 680 : 900 }}>
+    <div ref={boxRef} style={{ overflowX: "auto" }}>
+      <table style={{ borderCollapse: "collapse", width: "100%", minWidth: slim ? 0 : (compact ? 680 : 900) }}>
         <thead><tr>
           {selected ? <th style={{ ...th, width: 34 }}><input type="checkbox" aria-label="全選本頁" checked={rows.length > 0 && rows.every((r) => selected.has(r.id))}
             onChange={(e) => onToggleAll(rows.map((r) => r.id), e.target.checked)} /></th> : null}
-          <th style={th}>內容</th>{compact ? null : <th style={th}>分類</th>}<th style={th}>{compact ? "平台" : "平台發布狀態"}</th>
-          <th style={th}>{compact ? "發布時間" : "排程 / 發布時間"}</th>
-          <th style={{ ...th, textAlign: "right" }}>觸及</th><th style={{ ...th, textAlign: "right" }}>互動</th>
-          <th style={th}>狀態</th><th style={th}></th>
+          <th style={th}>內容</th>{compact || slim ? null : <th style={th}>分類</th>}<th style={th}>{compact || slim ? "平台" : "平台發布狀態"}</th>
+          <th style={th}>{compact || slim ? "發布時間" : "排程 / 發布時間"}</th>
+          {slim ? <th style={{ ...th, textAlign: "right" }}>成效</th>
+            : <><th style={{ ...th, textAlign: "right" }}>觸及</th><th style={{ ...th, textAlign: "right" }}>互動</th></>}
+          <th style={th}>狀態</th><th style={{ ...th, ...stick }}></th>
         </tr></thead>
         <tbody>{rows.map((r) => {
           const st = hubStatus(r);
           const err = st === "failed" ? hubError(r) : "";
+          const on = selected && selected.has(r.id);
+          const tip = r.stats ? statsTip(r) : "成效每日同步（發布後 30 天內）";
           return (
-            <tr key={r.id} style={selected && selected.has(r.id) ? { background: "var(--brand-soft)" } : undefined}>
-              {selected ? <td style={td}><input type="checkbox" aria-label={"選取「" + (r.title || "未命名") + "」"} checked={selected.has(r.id)} onChange={() => onToggle(r.id)} /></td> : null}
-              <td style={{ ...td, maxWidth: 340 }}>
+            <tr key={r.id} style={on ? { background: "var(--brand-soft)" } : undefined}>
+              {selected ? <td style={td}><input type="checkbox" aria-label={"選取「" + (r.title || "未命名") + "」"} checked={on} onChange={() => onToggle(r.id)} /></td> : null}
+              <td style={{ ...td, maxWidth: slim ? 280 : 340 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  {!compact ? (r.imageUrl
-                    ? <img src={r.imageUrl} alt="" style={{ width: 42, height: 42, borderRadius: "var(--radius-md)", objectFit: "cover", flex: "none", background: "var(--night-700)" }} />
-                    : <span aria-hidden="true" style={{ width: 42, height: 42, borderRadius: "var(--radius-md)", flex: "none", background: "var(--aurora-gradient-soft)" }} />) : null}
+                  {!compact ? thumb(r, slim ? 36 : 42) : null}
                   <div style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 0 }}>
-                    <strong style={{ color: "var(--text-1)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.title || "（未命名）"}</strong>
-                    {!compact ? <span style={{ fontSize: 12, color: err ? "var(--danger)" : "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {err || ((hubArchived(r) ? "已封存 · " : "") + "更新於 " + tpMdHm(r.updatedAt || r.createdAt))}</span> : null}
+                    <strong style={{ color: "var(--text-1)", fontWeight: 600, ...ellip }} title={r.title || ""}>{r.title || "（未命名）"}</strong>
+                    {!compact ? <span style={{ fontSize: 12, color: err ? "var(--danger)" : "var(--text-3)", ...ellip }}>{sub(r, err, slim)}</span> : null}
                   </div>
                 </div>
               </td>
-              {compact ? null : <td style={{ ...td, whiteSpace: "nowrap" }}>{(r.hub && r.hub.category) || "—"}</td>}
-              <td style={td}><PfRow r={r} all={!compact} /></td>
+              {compact || slim ? null : <td style={{ ...td, whiteSpace: "nowrap" }}>{(r.hub && r.hub.category) || "—"}</td>}
+              <td style={td}><PfRow r={r} all={!compact && !slim} /></td>
               <td style={{ ...td, fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>{tpMdHm(hubWhen(r))}</td>
-              <td style={{ ...td, fontFamily: "var(--font-mono)", textAlign: "right" }} title={r.stats ? statsTip(r) : "成效每日同步（發布後 30 天內）"}>{fmtN(r.stats && r.stats.reach)}</td>
-              <td style={{ ...td, fontFamily: "var(--font-mono)", textAlign: "right" }} title={r.stats ? statsTip(r) : undefined}>{fmtN(r.stats && r.stats.engagement)}</td>
-              <td style={td}><HubTag r={r} /></td>
-              <td style={{ ...td, textAlign: "right" }}>
+              {slim
+                ? <td style={{ ...td, fontFamily: "var(--font-mono)", textAlign: "right", whiteSpace: "nowrap", fontSize: 12.5 }} title={tip}>
+                    {fmtN(r.stats && r.stats.reach)} / {fmtN(r.stats && r.stats.engagement)}</td>
+                : <>
+                    <td style={{ ...td, fontFamily: "var(--font-mono)", textAlign: "right" }} title={tip}>{fmtN(r.stats && r.stats.reach)}</td>
+                    <td style={{ ...td, fontFamily: "var(--font-mono)", textAlign: "right" }} title={r.stats ? statsTip(r) : undefined}>{fmtN(r.stats && r.stats.engagement)}</td>
+                  </>}
+              <td style={{ ...td, whiteSpace: "nowrap" }}><HubTag r={r} /></td>
+              <td style={{ ...td, ...stick, textAlign: "right", background: on ? "linear-gradient(var(--brand-soft), var(--brand-soft)), var(--night-800)" : stick.background }}>
                 <button className={"ad-btn" + (st === "review" ? " primary" : " ghost")} style={{ padding: "6px 11px", fontSize: 12.5, whiteSpace: "nowrap" }} onClick={() => openPost(r)}>
-                  {st === "review" ? "審核" : st === "draft" || st === "rejected" ? "繼續編輯" : st === "failed" ? "查看重試" : "檢視"}
+                  {actLabel(st)}
                 </button>
               </td>
             </tr>
