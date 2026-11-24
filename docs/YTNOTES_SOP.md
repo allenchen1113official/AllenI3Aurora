@@ -10,6 +10,7 @@
 | 校正、筆記、圖卡、文案、送審包 | Claude（對話中丟連結，或每日排程） | `make_package.py`、`merge_index.py`、`scripts/podcast/render_social_card.py` |
 | 送審包 → PilotOne 草稿 | `social-publish.yml`（Drive 橋接主題家族 `yt-<影片ID>`） | `scripts/social/drive-bridge*.mjs`、`ingest-core.mjs` |
 | 首頁區塊 | `focus-update.yml`（每 3 小時） | `scripts/ytnotes/update-ytnotes.mjs` → `data/ytnotes.json` → `Dashboard.jsx` `YouTubeNotes` |
+| 轉錄進度面板 | Mac mini 寫進度檔 → `social-publish.yml` 每 2 分鐘同步 | `ytnotes.py`（`progress.json`）→ `scripts/ytnotes/sync-progress.mjs` → Firestore `aurora_ops/ytnotes_progress` → PilotOne 中控台「YouTube 轉錄」 |
 
 > Claude 的 device_bash 是 Mac mini 上的 Linux VM，連不到 YouTube、也跑不了 mlx-whisper，所以下載與轉錄一定在 macOS 本體由 launchd 執行；Claude 只讀寫 Drive 上的草稿與成品。
 
@@ -17,7 +18,8 @@
 
 ```
 _engine/        ytnotes.py · funasr_run.py · install.sh · make_package.py · merge_index.py · render_social_card.py
-                config.json（選用） · queue.txt（待處理網址） · seen.json · failed.txt · run.log · versions.txt
+                config.json（選用） · queue.txt（待處理網址，純文字一行一個；不是 Google 文件） · seen.json · failed.txt · run.log · versions.txt
+                progress.json（轉錄進度，引擎自動覆寫，勿手動編輯）
 _inbox/<影片ID>/ meta.json · draft.md · draft_whisper.md · frames/ · status.json（drafted → done）
 _inbox/_done/   處理完的草稿資料夾
 詞庫/           熱詞.txt · 替換規則.tsv（錯→對，Tab 分隔） · 校正紀錄.md
@@ -56,10 +58,19 @@ bash "$HOME/Library/CloudStorage/GoogleDrive-allenchen1113.official@gmail.com/�
 - 頻道掃描：新加入的頻道第一次只建立基準（不灌舊片）；超過 180 分鐘的影片不自動處理；每輪最多 20 支；下載失敗記進 `failed.txt` 後跳過（先 `brew upgrade yt-dlp`）。
 - 一次只跑一個轉錄（檔案鎖）；FunASR 約吃 3 GB 記憶體。
 
+## 轉錄進度面板（PilotOne 中控台 → 「YouTube 轉錄」分頁；儀表板也有一張小卡）
+
+- **進度檔**：`ytnotes.py` 在每次 `run` 開始／結束、每支影片換階段（讀取資訊 → 下載音訊 → 判斷語言 → 轉錄 → 第二意見〔中文 ≤15 分鐘〕→ 寫入草稿），以及轉錄等長步驟每 60 秒（心跳）原子覆寫 `_engine/progress.json`。只含標題、階段、時間、錯誤摘要，不含逐字稿。手動 `add` 或 `progress` 時若 launchd 的 run 正在跑（持有檔案鎖），不會蓋掉它寫的「處理中」狀態。`python3 ytnotes.py progress` 可立即重產並印出。
+- **同步**：`social-publish.yml` 常駐輪詢每 2 分鐘跑 `scripts/ytnotes/sync-progress.mjs`：以 `GDRIVE_SERVICE_ACCOUNT`（唯讀）讀進度檔，白名單精簡後寫 Firestore `aurora_ops/ytnotes_progress`（規則：管理者唯讀、僅服務帳戶寫，不需改規則）；內容沒變就不寫；失敗只印警告，不影響發文。
+- **面板狀態**：排隊中 → 轉錄中（顯示目前階段與已耗時；轉錄沒有百分比）→ 草稿完成（等 Claude 筆記排程 10:17／21:17）→ 已送審（`_inbox/_done`，14 天內）→ 對照 PilotOne 草稿 `cs_yt-<影片ID>_<日期>` 的審核／發布狀態；失敗附 `failed.txt` 原因。
+- **健康警示**：同步超過 15 分鐘沒更新 →「同步中斷」（social-publish 停了，看排程監控）；轉錄中超過 10 分鐘沒心跳 →「可能卡住」（Mac mini 睡眠、離線或 Drive 暫停同步）；閒置超過 35 分鐘沒回報 →「引擎沒回報」（launchd 沒在跑，重跑 `install.sh`）。
+- **時效**：Mac mini 寫檔 → Google Drive 上傳（通常 1 分鐘內）→ 最慢 2 分鐘同步 → 面板即時更新（onSnapshot）。
+- **更新引擎**：repo 的 `scripts/ytnotes/ytnotes.py` 改版後，要複製到 Drive `notes/youtube/_engine/ytnotes.py`（launchd 跑的是 Drive 上那份；下一次 15 分鐘喚醒即生效，不必重裝）。
+
 ## 送審
 
 `make_package.py` 產生 `manifest.json`（`topic: "yt-<影片ID>"`、`autoPublish: false`、`verified: true`），FB 用 1200×630、IG／Threads 用 1080×1080 康乃爾筆記圖卡（艾倫報報品牌鎖定）。Drive 橋接讀台北今天＋昨天的 `notes/youtube/<YYYYMMDD>/pilotone/*/`，同一天每支影片各一筆草稿（`cs_yt-<影片ID>_<YYYYMMDD>`），Allen 在 PilotOne 核准後才發布。
 
 ## 測試
 
-`node --test scripts/social/bridge.test.mjs scripts/ytnotes/ytnotes.test.mjs`（含常看頻道規則白名單比對）、`python3 -m unittest scripts/ytnotes/test_channels.py`
+`node --test scripts/social/bridge.test.mjs scripts/ytnotes/ytnotes.test.mjs scripts/ytnotes/progress.test.mjs`（含常看頻道規則白名單比對、進度檔精簡與引擎↔同步↔面板↔規則↔workflow 接線）、`python3 -m unittest scripts/ytnotes/test_channels.py scripts/ytnotes/test_progress.py`（進度檔內容、心跳、run 流程、檔案鎖協調）

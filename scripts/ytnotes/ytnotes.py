@@ -11,6 +11,7 @@ FunASR 虛擬環境（中文，見 funasr_run.py）。安裝見 install.sh。
   python3 ytnotes.py scan                    # 只掃頻道、把新片排入佇列
   python3 ytnotes.py draft <網址>            # 立即處理一支（略過佇列）
   python3 ytnotes.py status                  # 佇列與收件匣狀態
+  python3 ytnotes.py progress                # 重新產生並印出 _engine/progress.json
 
 產出（給 Claude 校正）：ROOT/_inbox/<影片ID>/
   meta.json        標題、作者、頻道、發布日期、長度、網址、語言、轉錄方式、是否短影音
@@ -19,6 +20,11 @@ FunASR 虛擬環境（中文，見 funasr_run.py）。安裝見 install.sh。
   frames/*.jpg     短影音（≤60 秒）的畫面截圖 3～5 張
   status.json      {"state": "drafted"|"failed", ...}；Claude 處理完改 "done" 並移到 _inbox/_done/
 影片與音訊只放 ~/.ytnotes/tmp，用完即刪；不進雲端硬碟。
+
+進度檔：ROOT/_engine/progress.json（PilotOne 中控台「YouTube 轉錄」面板的資料來源）
+  每次 run 開始／結束、每支影片換階段時，以及轉錄等長時間步驟每 60 秒（心跳）覆寫一次；
+  social-publish.yml 每 2 分鐘以 scripts/ytnotes/sync-progress.mjs 讀入 Firestore aurora_ops/ytnotes_progress。
+  內容只有標題、階段、時間與錯誤摘要，不含逐字稿。格式見 build_progress()。
 """
 import json, os, re, shutil, subprocess, sys, time, fcntl, urllib.request, urllib.error
 from datetime import datetime, timezone, timedelta
@@ -73,8 +79,23 @@ YTDLP = lambda: which("yt-dlp")
 FFMPEG = lambda: which("ffmpeg")
 WHISPER = lambda: which("mlx_whisper")
 
+HEARTBEAT_SEC = 60
+
 def sh(cmd, timeout=None, check=True):
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+    """執行外部指令；等待期間每 HEARTBEAT_SEC 秒刷新一次進度檔（轉錄長片時面板才知道引擎還活著）"""
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    deadline = time.time() + timeout if timeout else None
+    while True:
+        wait = HEARTBEAT_SEC if deadline is None else max(0.1, min(HEARTBEAT_SEC, deadline - time.time()))
+        try:
+            out, err = p.communicate(timeout=wait)
+            break
+        except subprocess.TimeoutExpired:
+            if deadline is not None and time.time() >= deadline:
+                p.kill(); p.communicate()
+                raise subprocess.TimeoutExpired(cmd, timeout)
+            heartbeat()
+    r = subprocess.CompletedProcess(cmd, p.returncode, out, err)
     if check and r.returncode != 0:
         raise RuntimeError(f"{Path(cmd[0]).name} 失敗（{r.returncode}）：{(r.stderr or r.stdout)[-800:]}")
     return r
@@ -92,6 +113,150 @@ def ts(sec):
 def safe(s, n=60):
     s = re.sub(r'[\\/:*?"<>|\n\r\t]+', " ", str(s or "")).strip()
     return s[:n].strip() or "untitled"
+
+# ───────────────────────── 進度檔 ─────────────────────────
+PROGRESS = lambda: ENGINE / "progress.json"
+STAGES = {          # 階段代碼 → 中文（面板直接顯示 label，代碼供程式判斷）
+    "scan": "掃描常看頻道", "meta": "讀取影片資訊", "download": "下載音訊", "lang": "判斷語言",
+    "transcribe": "轉錄中", "second": "第二意見轉錄", "write": "寫入草稿",
+}
+RUN = {"state": "idle", "startedAt": None, "endedAt": None, "processed": 0}
+CUR = {}            # 目前處理中的影片 {id,url,title,author,durationSec,lang,stage,startedAt,stageAt}
+_LAST_BEAT = [0.0]
+
+def _iso(t=None):
+    return (t or now_tpe()).isoformat(timespec="seconds")
+
+def _read_json(p):
+    try:
+        return json.loads(Path(p).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+def _item(d, state_override=None):
+    """收件匣資料夾 → 進度項目（只取顯示用欄位，不含逐字稿）"""
+    st, meta = _read_json(d / "status.json"), _read_json(d / "meta.json")
+    state = state_override or st.get("state") or "unknown"
+    it = {"id": d.name, "url": meta.get("url") or f"https://www.youtube.com/watch?v={d.name}",
+          "title": meta.get("title") or "", "author": meta.get("author") or "", "state": state,
+          "at": st.get("at") or meta.get("drafted_at") or "", "durationSec": int(meta.get("duration_sec") or 0),
+          "draftSeconds": int(meta.get("draft_seconds") or 0), "lang": meta.get("language") or "",
+          "transcriber": meta.get("transcriber") or ""}
+    if st.get("error"):
+        it["error"] = str(st["error"])[-300:]
+    if st.get("package"):
+        it["package"] = str(st["package"])
+    return it
+
+def build_progress(now=None, done_days=14, done_max=20, log_lines=12):
+    """組出 progress.json 內容。
+    {version, updatedAt, host, engine:{state,startedAt,endedAt,processed,batchMax,intervalSec},
+     current:{…,stage,stageLabel}|null, queue:[{id,url}], items:[{id,url,title,author,state,at,…}],
+     failures:[{at,url,id,error}], log:[…]}
+    items：處理中 → 佇列 → 收件匣（drafted／failed）→ 近 done_days 天已送審（done，最多 done_max 筆）"""
+    now = now or now_tpe()
+    q = read_queue()
+    cur = dict(CUR) if CUR else None
+    if cur:
+        cur["stageLabel"] = STAGES.get(cur.get("stage"), cur.get("stage") or "")
+    items, seen = [], set()
+    if cur and cur.get("id"):
+        items.append({**{k: cur.get(k) for k in ("id", "url", "title", "author", "durationSec", "lang")},
+                      "state": "processing", "stage": cur.get("stage"), "stageLabel": cur["stageLabel"],
+                      "at": cur.get("stageAt") or cur.get("startedAt") or ""})
+        seen.add(cur["id"])
+    queue = []
+    for u in q[:50]:
+        k = video_key(u)
+        queue.append({"id": k, "url": u})
+        if k and k not in seen:
+            prev = INBOX / k
+            it = _item(prev, "queued") if prev.is_dir() else {"id": k, "url": u, "title": "", "author": "", "state": "queued", "at": ""}
+            it.pop("error", None)
+            items.append(it); seen.add(k)
+    if INBOX.exists():
+        live = [d for d in INBOX.iterdir() if d.is_dir() and d.name not in ("_done",) and not d.name.startswith(".")]
+        for d in sorted(live, key=lambda x: x.name):
+            if d.name not in seen and (d / "status.json").exists():
+                items.append(_item(d)); seen.add(d.name)
+        done_dir = INBOX / "_done"
+        if done_dir.is_dir():
+            cutoff = now - timedelta(days=done_days)
+            done = []
+            for d in done_dir.iterdir():
+                if not d.is_dir() or d.name in seen:
+                    continue
+                it = _item(d, "done")
+                try:
+                    t = datetime.fromisoformat(it["at"]) if it["at"] else datetime.fromtimestamp(d.stat().st_mtime, TPE)
+                except ValueError:
+                    t = datetime.fromtimestamp(d.stat().st_mtime, TPE)
+                if t.tzinfo is None:
+                    t = t.replace(tzinfo=TPE)
+                if t >= cutoff:
+                    done.append((t, it))
+            items += [it for _, it in sorted(done, key=lambda x: x[0], reverse=True)[:done_max]]
+    failures = []
+    fp = ENGINE / "failed.txt"
+    if fp.exists():
+        cutoff = (now - timedelta(days=7)).strftime("%Y-%m-%d %H:%M")
+        for line in fp.read_text(encoding="utf-8", errors="ignore").splitlines()[-30:]:
+            cols = line.split("\t")
+            if len(cols) >= 2 and cols[0] >= cutoff:
+                failures.append({"at": cols[0], "url": cols[1], "id": video_key(cols[1]), "error": (cols[2] if len(cols) > 2 else "")[:300]})
+    logs = []
+    lp = ENGINE / "run.log"
+    if lp.exists():
+        logs = [l[:300] for l in lp.read_text(encoding="utf-8", errors="ignore").splitlines()[-log_lines:]]
+    return {
+        "version": 1, "updatedAt": _iso(now), "host": os.uname().nodename if hasattr(os, "uname") else "",
+        "engine": {**RUN, "batchMax": CFG.get("batch_max"), "intervalSec": 900},
+        "current": cur, "queue": queue, "items": items[:80], "failures": failures[-10:], "log": logs,
+    }
+
+def _lock_busy():
+    """另一個 run 正持有檔案鎖？（手動 add／progress 時不可蓋掉執行中那一個寫的「處理中」狀態）"""
+    try:
+        with open(HOME / "run.lock", "a") as f:
+            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(f, fcntl.LOCK_UN)
+        return False
+    except BlockingIOError:
+        return True
+    except OSError:
+        return False
+
+def write_progress(force=False):
+    """原子覆寫 progress.json；寫不進去（雲端硬碟暫時不可用）也不影響轉錄。
+    force：持鎖的 run 自己收尾時用（此時 state 已是 idle，但鎖還在自己手上）"""
+    if not force and RUN["state"] != "running" and _lock_busy():
+        return
+    try:
+        ENGINE.mkdir(parents=True, exist_ok=True)
+        tmp = ENGINE / ".progress.json.tmp"
+        tmp.write_text(json.dumps(build_progress(), ensure_ascii=False, indent=1), encoding="utf-8")
+        os.replace(tmp, PROGRESS())
+        _LAST_BEAT[0] = time.time()
+    except Exception as e:          # noqa: BLE001 — 進度檔絕不可讓轉錄失敗
+        print("寫入進度檔失敗：", e, flush=True)
+
+def heartbeat():
+    """長時間步驟的心跳：處理中且距上次寫入超過 HEARTBEAT_SEC 才寫"""
+    if RUN["state"] == "running" and time.time() - _LAST_BEAT[0] >= HEARTBEAT_SEC - 1:
+        write_progress()
+
+def set_stage(stage, **info):
+    """更新目前影片的階段並立即寫進度檔"""
+    t = _iso()
+    if not CUR.get("startedAt"):
+        CUR["startedAt"] = t
+    CUR.update({k: v for k, v in info.items() if v is not None})
+    CUR["stage"], CUR["stageAt"] = stage, t
+    write_progress()
+
+def clear_stage():
+    CUR.clear()
+    write_progress()
 
 # ───────────────────────── 佇列 ─────────────────────────
 QUEUE = lambda: ENGINE / "queue.txt"
@@ -123,6 +288,7 @@ def cmd_add(urls):
             log("無法辨識的網址，略過：", u)
     write_queue(q)
     log(f"佇列新增 {added} 支，共 {len(q)} 支")
+    write_progress()
 
 # ───────────────────────── 頻道掃描 ─────────────────────────
 def channel_key(url):
@@ -215,6 +381,8 @@ def read_channels():
     return [c for c in merged if c["enabled"]]
 
 def cmd_scan():
+    if RUN["state"] == "running":
+        set_stage("scan", title="掃描常看頻道")
     seen = json.loads(SEEN().read_text(encoding="utf-8")) if SEEN().exists() else {}
     q = read_queue()
     new = 0
@@ -247,6 +415,8 @@ def cmd_scan():
     SEEN().write_text(json.dumps(seen, ensure_ascii=False, indent=1), encoding="utf-8")
     (ENGINE / "last_scan.txt").write_text(now_tpe().strftime("%Y%m%d"), encoding="utf-8")
     log(f"頻道掃描完成：排入 {new} 支新片")
+    if CUR.get("stage") == "scan":
+        clear_stage()
 
 # ───────────────────────── 轉錄 ─────────────────────────
 def whisper_json(audio, outdir, language=None, clip=None):
@@ -318,6 +488,8 @@ def draft(url, force=False):
     shutil.rmtree(work, ignore_errors=True); work.mkdir(parents=True)
     out.mkdir(parents=True, exist_ok=True)
     t_start = time.time()
+    CUR.clear()
+    set_stage("meta", id=key, url=url)
     try:
         info = json.loads(sh(ytdlp_base() + ["-J", url], timeout=180).stdout)
         dur = float(info.get("duration") or 0)
@@ -332,6 +504,7 @@ def draft(url, force=False):
             "thumbnail": info.get("thumbnail"), "description": (info.get("description") or "")[:2000],
             "drafted_at": now_tpe().isoformat(timespec="seconds"),
         }
+        set_stage("download", title=meta["title"] or "", author=meta["author"] or "", durationSec=int(dur))
         # 1. 下載（一律最低畫質；長片只抓音訊）
         if short:
             sh(ytdlp_base() + ["-f", "bv*+ba/b", "-S", "res:480", "-o", str(work / "media.%(ext)s"), url], timeout=900)
@@ -346,6 +519,7 @@ def draft(url, force=False):
             for i in range(n):
                 t = max(0.5, dur * (i + 0.5) / n)
                 sh([FFMPEG(), "-y", "-loglevel", "error", "-ss", f"{t:.2f}", "-i", str(media), "-frames:v", "1", "-vf", "scale=480:-2", str(fr / f"frame_{i + 1}.jpg")], check=False)
+        set_stage("lang")
         # 2. 判斷語言：中段 30 秒
         start = max(0, dur / 2 - 15) if dur > 40 else 0
         lid = whisper_json(wav, work / "lid", clip=(start, min(30, dur or 30)))
@@ -353,6 +527,7 @@ def draft(url, force=False):
         if len(re.sub(r"\s", "", lid.get("text") or "")) < 8 or lang not in ("zh", "en"):   # 聽到的話太少 → 看標題語言
             lang = "zh" if re.search(r"[一-鿿]", meta["title"] or "") else "en"
         meta["language"] = lang
+        set_stage("transcribe", lang=lang)
         # 3. 轉成草稿
         if lang == "zh":
             hot = DICT / "熱詞.txt"; rep = DICT / "替換規則.tsv"
@@ -362,6 +537,7 @@ def draft(url, force=False):
             (out / "draft.md").write_text(segs_to_md(segs), encoding="utf-8")
             meta["transcriber"] = "FunASR paraformer-zh＋fsmn-vad＋ct-punc＋cam++，OpenCC s2twp"
             if dur <= 15 * 60:
+                set_stage("second")
                 w = whisper_json(wav, work / "w2", language="zh")
                 (out / "draft_whisper.md").write_text(segs_to_md(w.get("segments") or []), encoding="utf-8")
                 meta["transcriber"] += "；whisper-large-v3-turbo 第二意見"
@@ -377,6 +553,7 @@ def draft(url, force=False):
                 w = whisper_json(wav, work / "w", language="en")
                 (out / "draft.md").write_text(segs_to_md(w.get("segments") or []), encoding="utf-8")
                 meta["transcriber"] = "mlx-whisper large-v3-turbo"
+        set_stage("write")
         meta["draft_seconds"] = int(time.time() - t_start)
         (out / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
         st.write_text(json.dumps({"state": "drafted", "at": now_tpe().isoformat(timespec="seconds")}, ensure_ascii=False), encoding="utf-8")
@@ -387,6 +564,8 @@ def draft(url, force=False):
         raise
     finally:
         shutil.rmtree(work, ignore_errors=True)      # 暫存一律刪除
+        CUR.clear()
+        write_progress()
     return out
 
 # ───────────────────────── run／status ─────────────────────────
@@ -397,7 +576,17 @@ def cmd_run():
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)   # 一次只跑一個（FunASR 約吃 3 GB 記憶體）
     except BlockingIOError:
-        print("另一個 run 正在執行，略過"); return
+        print("另一個 run 正在執行，略過"); return      # 進度檔由執行中的那一個負責更新
+    RUN.update(state="running", startedAt=_iso(), endedAt=None, processed=0)
+    write_progress()
+    try:
+        _run_batch()
+    finally:
+        RUN.update(state="idle", endedAt=_iso())
+        CUR.clear()
+        write_progress(force=True)
+
+def _run_batch():
     last = (ENGINE / "last_scan.txt").read_text().strip() if (ENGINE / "last_scan.txt").exists() else ""
     if now_tpe().hour >= int(CFG["scan_hour"]) and last != now_tpe().strftime("%Y%m%d"):
         cmd_scan()
@@ -416,6 +605,8 @@ def cmd_run():
             q = q[1:]
         write_queue(q)
         done += 1
+        RUN["processed"] = done
+        write_progress()          # 佇列已移除這支 → 面板不會短暫把剛完成的影片顯示成「排隊中」
     if done:
         log(f"本輪處理 {done} 支，佇列剩 {len(q)} 支")
 
@@ -439,6 +630,8 @@ def main():
     elif a[0] == "scan": cmd_scan()
     elif a[0] == "draft": [draft(u, force="--force" in a) for u in a[1:] if not u.startswith("--")]
     elif a[0] == "status": cmd_status()
+    elif a[0] == "progress":
+        write_progress(); print(PROGRESS().read_text(encoding="utf-8") if PROGRESS().exists() else "{}")
     else: print(__doc__)
 
 if __name__ == "__main__":

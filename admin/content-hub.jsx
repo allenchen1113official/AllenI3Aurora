@@ -238,6 +238,8 @@ function HubDashboard({ list, meta, ins, go, openPost }) {
 
       <HubPerformance list={list} ins={ins} />
 
+      <HubYtProgressCard go={go} />
+
       <section style={{ ...card, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
         <SecHead title="最近發布" action="前往內容庫" onAction={() => go("library")} />
         <HubTable rows={recent} openPost={openPost} empty="尚無已發布內容。" compact />
@@ -1032,11 +1034,215 @@ function HubPlatforms({ list, meta, reload }) {
 }
 
 /* =====================================================================
-   主元件：頂部分頁切換五個畫面，共用同一份 aurora_social_posts 資料
+   06 YouTube 轉錄進度（常看 YouTube 重點筆記）
+   資料：Firestore aurora_ops/ytnotes_progress（管理者唯讀）← social-publish.yml 每 2 分鐘
+   以 scripts/ytnotes/sync-progress.mjs 讀 Drive notes/youtube/_engine/progress.json（Mac mini ytnotes.py 寫）。
+   流程：排隊中 → 轉錄中（各階段）→ 草稿完成（等 Claude 筆記排程 10:17／21:17）→ 已送審 → PilotOne 審核／發布。
+   ===================================================================== */
+const YTP_DOC = "aurora_ops/ytnotes_progress";
+const YTP_NOTE_TIMES = [[10, 17], [21, 17]]; // Claude 排程 trig_01FQDvHmuqhvUm1MbFNNq2D9（CRON_TZ=Asia/Taipei 17 10,21 * * *）
+const YTP_STEPS = [["meta", "讀取資訊"], ["download", "下載音訊"], ["lang", "判斷語言"], ["transcribe", "轉錄"], ["second", "第二意見"], ["write", "寫入草稿"]];
+const YTP_ST = {
+  processing: { label: "轉錄中", color: "var(--info)", bg: "var(--info-soft)" },
+  queued:     { label: "排隊中", color: "var(--text-3)", bg: "var(--night-700)" },
+  drafted:    { label: "草稿完成", color: "var(--illumination)", bg: "var(--illumination-soft)" },
+  done:       { label: "已送審", color: "var(--intelligence)", bg: "var(--intelligence-soft)" },
+  failed:     { label: "失敗", color: "var(--danger)", bg: "var(--danger-soft)" },
+};
+const ytpAgo = (iso, now) => {
+  const t = Date.parse(iso || ""); if (!isFinite(t)) return "—";
+  const m = Math.max(0, Math.round((now - t) / 60000));
+  return m < 1 ? "剛剛" : m < 60 ? m + " 分鐘前" : m < 1440 ? Math.floor(m / 60) + " 小時 " + (m % 60) + " 分前" : Math.floor(m / 1440) + " 天前";
+};
+/* 經過多久（不帶「前」）：已處理 N 分鐘 */
+const ytpFor = (iso, now) => { const t = Date.parse(iso || ""); if (!isFinite(t)) return "—"; const m = Math.max(0, Math.round((now - t) / 60000));
+  return m < 1 ? "不到 1 分鐘" : m < 60 ? m + " 分鐘" : Math.floor(m / 60) + " 小時 " + (m % 60) + " 分"; };
+const ytpDur = (sec) => { sec = Number(sec) || 0; if (!sec) return "—"; const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+  return h ? h + ":" + p2(m) + ":" + p2(s) : m + ":" + p2(s); };
+/* 下一次 Claude 筆記排程（台北時間） */
+function ytpNextNote(now) {
+  const base = tpMidnight(now);
+  for (let d = 0; d < 2; d++) for (const [h, m] of YTP_NOTE_TIMES) { const t = base + d * DAY + (h * 60 + m) * 60000; if (t > now) return t; }
+  return base + DAY + (YTP_NOTE_TIMES[0][0] * 60 + YTP_NOTE_TIMES[0][1]) * 60000;
+}
+/* 健康判斷：引擎心跳（running 每 60 秒、idle 每 15 分鐘）＋伺服器同步（每 2 分鐘） */
+function ytpHealth(p, now) {
+  if (!p) return { tone: "rejected", label: "尚無資料", tip: "Mac mini 引擎更新後，第一次執行就會出現進度。" };
+  const beat = now - Date.parse(p.updatedAt || ""), sync = now - Date.parse(p.syncedAt || "");
+  if (!(sync < 15 * 60000)) return { tone: "failed", label: "同步中斷", tip: "超過 15 分鐘沒有同步：social-publish 常駐輪詢可能停了（看「排程監控」）。" };
+  const running = p.engine && p.engine.state === "running";
+  if (running && !(beat < 10 * 60000)) return { tone: "failed", label: "可能卡住", tip: "轉錄中但超過 10 分鐘沒有心跳：Mac mini 可能睡眠、離線，或 Google Drive 暫停同步。" };
+  if (!running && !(beat < 35 * 60000)) return { tone: "failed", label: "引擎沒回報", tip: "超過 35 分鐘沒有回報：launchd 可能沒在跑，請在 Mac mini 執行 _engine/install.sh。" };
+  return running ? { tone: "scheduled", label: "執行中", tip: "Mac mini 正在處理佇列。" } : { tone: "published", label: "閒置・待命", tip: "每 15 分鐘檢查一次佇列。" };
+}
+/* 對照 PilotOne 草稿：ingest 建立的 id 為 cs_yt-<影片ID>_<YYYYMMDD> */
+function ytpPost(list, id) {
+  const pre = "cs_yt-" + id + "_";
+  return (list || []).filter((r) => String(r.id).startsWith(pre)).sort((a, b) => String(b.id).localeCompare(String(a.id)))[0] || null;
+}
+
+function YtpTag({ st, text }) {
+  const m = YTP_ST[st] || YTP_ST.queued;
+  return <span style={{ padding: "2px 10px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800, whiteSpace: "nowrap", background: m.bg, color: m.color, border: "1px solid var(--border)" }}>{text || m.label}</span>;
+}
+function YtpSteps({ cur }) {
+  const steps = YTP_STEPS.filter(([k]) => k !== "second" || cur.stage === "second" || cur.lang === "zh");
+  const at = steps.findIndex(([k]) => k === cur.stage);
+  return (
+    <ol aria-label="轉錄階段" style={{ display: "flex", flexWrap: "wrap", gap: 6, listStyle: "none", margin: 0, padding: 0 }}>
+      {steps.map(([k, l], i) => {
+        const done = at > i, on = at === i;
+        return <li key={k} aria-current={on ? "step" : undefined} style={{ padding: "3px 10px", borderRadius: "var(--radius-pill)", fontSize: 12, fontWeight: on ? 800 : 500,
+          border: "1px solid " + (on ? "var(--info)" : "var(--border)"), background: on ? "var(--info-soft)" : done ? "var(--night-700)" : "transparent",
+          color: on ? "var(--info)" : done ? "var(--text-2)" : "var(--text-4)" }}>{done ? "✓ " : ""}{l}</li>;
+      })}
+    </ol>
+  );
+}
+
+function useYtProgress() {
+  const [p, setP] = useState(undefined);
+  const [err, setErr] = useState("");
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const off = db.doc(YTP_DOC).onSnapshot((d) => { setP(d.exists ? d.data() : null); setErr(""); }, (ex) => { setErr("讀取轉錄進度失敗：" + errText(ex)); setP(null); });
+    const t = setInterval(() => setNow(Date.now()), 30000);
+    return () => { off(); clearInterval(t); };
+  }, []);
+  return { p, err, now };
+}
+
+/* 儀表板小卡：狀態＋計數＋目前處理中 */
+function HubYtProgressCard({ go }) {
+  const { p, err, now } = useYtProgress();
+  const h = ytpHealth(p, now), c = (p && p.counts) || {}, cur = p && p.current && p.current.id ? p.current : null;
+  return (
+    <section style={{ ...card, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+      <SecHead title="YouTube 轉錄進度" action="查看全部" onAction={() => go("ytp")} />
+      {err ? <div style={{ color: "var(--danger)", fontSize: 13 }}>{err}</div> : p === undefined ? <div style={muted}>載入中…</div> : (
+        <>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            <StTag st={h.tone} text={h.label} />
+            <span style={muted} title={h.tip}>{p ? "Mac mini 最後回報 " + ytpAgo(p.updatedAt, now) : h.tip}</span>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {["processing", "queued", "drafted", "done", "failed"].map((k) => <YtpTag key={k} st={k} text={YTP_ST[k].label + " " + (c[k] || 0)} />)}
+          </div>
+          {cur ? <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <span style={{ fontSize: 13.5, fontWeight: 600, color: "var(--text-1)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cur.title || cur.id}</span>
+            <span style={muted}>{cur.stageLabel || cur.stage} · 已 {ytpFor(cur.startedAt, now)}{cur.durationSec ? " · 片長 " + ytpDur(cur.durationSec) : ""}</span>
+          </div> : c.drafted ? <div style={muted}>{c.drafted} 支草稿等下一次筆記排程（{tpHm(new Date(ytpNextNote(now)).toISOString())}）</div> : null}
+        </>
+      )}
+    </section>
+  );
+}
+
+/* 完整面板 */
+function HubYtProgress({ list }) {
+  const { p, err, now } = useYtProgress();
+  const [filter, setFilter] = useState("all");
+  if (err) return <div style={{ color: "var(--danger)", fontSize: 13 }}>{err}</div>;
+  if (p === undefined) return <div style={{ color: "var(--text-3)" }}>載入中…</div>;
+  const h = ytpHealth(p, now);
+  if (!p) return (
+    <section style={{ ...card, padding: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+      <h3 style={h2s}>YouTube 轉錄進度</h3>
+      <div style={muted}>{h.tip}資料來源：Drive notes/youtube/_engine/progress.json → {YTP_DOC}（每 2 分鐘同步）。</div>
+    </section>
+  );
+  const items = p.items || [], c = p.counts || {}, cur = p.current && p.current.id ? p.current : null;
+  const rows = filter === "all" ? items : items.filter((x) => x.state === filter);
+  const next = ytpNextNote(now), e = p.engine || {};
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <section aria-label="轉錄概況" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 14 }}>
+        <Kpi label="Mac mini 引擎" value={<StTag st={h.tone} text={h.label} />} sub={<span title={h.tip}>最後回報 {ytpAgo(p.updatedAt, now)}{p.host ? " · " + p.host : ""}</span>} />
+        <Kpi label="排隊中" value={c.queued || 0} sub={e.state === "running" ? `本輪已處理 ${e.processed || 0} 支` : e.endedAt ? "上一輪結束 " + ytpAgo(e.endedAt, now) : "每 15 分鐘檢查佇列"} />
+        <Kpi label="草稿完成・待筆記" value={c.drafted || 0} sub={"下一次筆記排程 " + tpMdHm(new Date(next).toISOString())} />
+        <Kpi label="已送審（14 日）" value={c.done || 0} sub={"失敗 " + (c.failed || 0) + " · 同步 " + ytpAgo(p.syncedAt, now)} tone={c.failed ? "var(--danger)" : undefined} />
+      </section>
+
+      {h.tone === "failed" ? <div role="alert" style={{ ...card, padding: "12px 16px", borderColor: "var(--danger)", background: "var(--danger-soft)", color: "var(--danger)", fontSize: 13.5 }}>{h.tip}</div> : null}
+
+      <section style={{ ...card, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+        <SecHead title="目前處理中" />
+        {cur ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+              <a href={cur.url} target="_blank" rel="noopener" style={{ fontSize: 15, fontWeight: 700, color: "var(--text-1)" }}>{cur.title || cur.id}</a>
+              <span style={muted}>{cur.author}{cur.durationSec ? " · 片長 " + ytpDur(cur.durationSec) : ""}{cur.lang ? " · " + (cur.lang === "zh" ? "中文" : "英文") : ""}</span>
+            </div>
+            <YtpSteps cur={cur} />
+            <span style={muted}>此階段開始 {ytpAgo(cur.stageAt, now)} · 這支已處理 {ytpFor(cur.startedAt, now)}（轉錄無百分比，心跳每 60 秒更新）</span>
+          </div>
+        ) : p.current && p.current.stage === "scan" ? <div style={muted}>正在掃描常看頻道…</div>
+          : <div style={muted}>{c.queued ? "佇列有影片，等 launchd 下一次喚醒（每 15 分鐘）。" : "目前沒有正在轉錄的影片。"}</div>}
+      </section>
+
+      <section style={{ ...card, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+          <h3 style={h2s}>影片清單</h3>
+          <div role="group" aria-label="篩選狀態" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            <Pill on={filter === "all"} onClick={() => setFilter("all")}>全部 {items.length}</Pill>
+            {["processing", "queued", "drafted", "done", "failed"].map((k) => c[k] ? <Pill key={k} on={filter === k} onClick={() => setFilter(k)}>{YTP_ST[k].label} {c[k]}</Pill> : null)}
+          </div>
+        </div>
+        {rows.length === 0 ? <div style={{ ...muted, padding: "12px 0" }}>沒有符合的影片。佇列在 Drive notes/youtube/_engine/queue.txt（一行一個網址）。</div> : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead><tr style={{ textAlign: "left", color: "var(--text-3)" }}>
+                {["狀態", "影片", "片長", "時間", "PilotOne"].map((t) => <th key={t} scope="col" style={{ padding: "8px 10px", borderBottom: "1px solid var(--border)", fontWeight: 600, whiteSpace: "nowrap" }}>{t}</th>)}
+              </tr></thead>
+              <tbody>{rows.map((x) => {
+                const post = ytpPost(list, x.id), pst = post ? hubStatus(post) : null;
+                const note = x.state === "processing" ? (x.stageLabel || "") : x.state === "drafted" ? "等 " + tpHm(new Date(next).toISOString()) + " 筆記排程"
+                  : x.state === "failed" ? String(x.error || "").slice(-120) : x.state === "done" && !post ? "等 Drive 橋接（約 10～20 分鐘）" : "";
+                return (
+                  <tr key={x.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td style={{ padding: "9px 10px", whiteSpace: "nowrap" }}><YtpTag st={x.state} /></td>
+                    <td style={{ padding: "9px 10px", minWidth: 220 }}>
+                      <a href={x.url} target="_blank" rel="noopener" style={{ color: "var(--text-1)", fontWeight: 600 }}>{x.title || x.id}</a>
+                      <div style={{ fontSize: 12, color: x.state === "failed" ? "var(--danger)" : "var(--text-3)" }}>{[x.author, note].filter(Boolean).join(" · ")}</div>
+                    </td>
+                    <td style={{ padding: "9px 10px", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>{ytpDur(x.durationSec)}{x.draftSeconds ? <div style={{ fontSize: 11.5, color: "var(--text-3)" }}>轉 {ytpDur(x.draftSeconds)}</div> : null}</td>
+                    <td style={{ padding: "9px 10px", whiteSpace: "nowrap", color: "var(--text-3)" }}>{x.at ? tpMdHm(x.at) : "—"}</td>
+                    <td style={{ padding: "9px 10px", whiteSpace: "nowrap" }}>{post ? <StTag st={pst} /> : <span style={muted}>—</span>}</td>
+                  </tr>
+                );
+              })}</tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      {(p.failures || []).length ? (
+        <section style={{ ...card, padding: 18, display: "flex", flexDirection: "column", gap: 8 }}>
+          <SecHead title="近 7 天失敗紀錄（failed.txt）" />
+          {p.failures.slice().reverse().map((f, i) => (
+            <div key={i} style={{ fontSize: 12.5, color: "var(--text-2)" }}>
+              <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>{f.at}</span> · <a href={f.url} target="_blank" rel="noopener">{f.id || f.url}</a> · <span style={{ color: "var(--danger)" }}>{f.error}</span>
+            </div>
+          ))}
+          <div style={muted}>下載失敗多半是 yt-dlp 過舊：在 Mac mini 執行 brew upgrade yt-dlp，再把網址加回 queue.txt。</div>
+        </section>
+      ) : null}
+
+      <details style={{ ...card, padding: "12px 18px" }}>
+        <summary style={{ cursor: "pointer", color: "var(--text-2)", fontSize: 13.5 }}>引擎紀錄（run.log 最後 {(p.log || []).length} 行）</summary>
+        <pre style={{ whiteSpace: "pre-wrap", fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-3)", margin: "10px 0 0" }}>{(p.log || []).join("\n") || "（無）"}</pre>
+      </details>
+      <div style={muted}>資料來源：Mac mini ytnotes.py → Drive notes/youtube/_engine/progress.json → {YTP_DOC}（social-publish 每 2 分鐘同步，畫面即時更新）。</div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   主元件：頂部分頁切換六個畫面，共用同一份 aurora_social_posts 資料
    ===================================================================== */
 const HUB_VIEWS = [
   { id: "dash", label: "儀表板" }, { id: "calendar", label: "排程日曆" }, { id: "compose", label: "建立內容" },
-  { id: "library", label: "內容庫" }, { id: "platforms", label: "平台連線" },
+  { id: "library", label: "內容庫" }, { id: "platforms", label: "平台連線" }, { id: "ytp", label: "YouTube 轉錄" },
 ];
 
 function ContentHubPanel() {
@@ -1091,6 +1297,7 @@ function ContentHubPanel() {
         : view === "calendar" ? <HubCalendar list={live} openPost={openPost} newPost={newPost} />
         : view === "compose" ? <HubComposer init={draft} reload={load} flash={flash} go={go} />
         : view === "library" ? <HubLibrary list={list} openPost={openPost} query={query} setQuery={setQuery} reload={load} />
+        : view === "ytp" ? <HubYtProgress list={list} />
         : <HubPlatforms list={live} meta={meta} reload={load} />}
     </div>
   );
