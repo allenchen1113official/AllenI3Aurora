@@ -128,12 +128,14 @@ async function main() {
   for (const w of toWrite) {
     const tag = `[${w.f.topic}/${w.f.ymd}]`;
     const urlOf = (img) => `https://raw.githubusercontent.com/${repo}/${sha}/content/${w.f.topic}/${w.f.ymd}/_publish/${encodeURIComponent(w.jpgName(img))}`;
-    const doc = buildPost(w.m, w.f, w.v.channels, { urlOf, auto: w.autoOk, nowIso });
+    // Podcast 音檔直接放在 content 分支時（非 Drive 指標）：排程器從 raw 網址下載
+    const rawOf = (name) => `https://raw.githubusercontent.com/${repo}/${sha}/content/${w.f.topic}/${w.f.ymd}/${encodeURIComponent(name)}`;
+    const doc = buildPost(w.m, w.f, w.v.channels, { urlOf, rawOf, auto: w.autoOk, nowIso });
     if (w.plan.action === "update") delete doc.createdAt;
     const how = w.autoOk ? "自動發布（已核准）" : "草稿，待後台審核";
     if (dryRun) {
       console.log(`${tag} DRY-RUN 將${w.plan.action === "create" ? "建立" : "更新"} ${w.id}：${how}；` +
-        Object.entries(w.v.channels).map(([c, x]) => `${c} ${x.images.length} 張圖／${[...x.caption].length} 字`).join("，"));
+        Object.entries(w.v.channels).map(([c, x]) => c === "pc" ? `pc 音檔 ${x.audio}${x.stub ? "（Drive）" : ""}／${[...x.caption].length} 字` : `${c} ${x.images.length} 張圖／${[...x.caption].length} 字`).join("，"));
     } else {
       await col.doc(w.id).set(doc, { merge: w.plan.action === "update" });
       console.log(`${tag} 已${w.plan.action === "create" ? "建立" : "更新"} ${w.id}：${how}`);

@@ -1,0 +1,16 @@
+{
+  "title": "艾倫極光報報 ALLEN I³ AURORA",
+  "subtitle": "AI、智慧交通、智慧水資源、無人機與理財的每日重點",
+  "description": "艾倫報報 ALLEN I³ AURORA 的 Podcast。由 Allen 整理 AI 應用、智慧運輸系統（ITS）、智慧水資源、智慧家庭、智慧農業、無人機與台股理財的重點，用耳朵快速掌握每天值得關注的動態。內容僅供參考，非投資建議。",
+  "author": "艾倫 Allen Chen",
+  "owner": { "name": "Allen Chen", "email": "allenchen1113.official@gmail.com" },
+  "language": "zh-tw",
+  "categories": [["Technology"], ["News", "Tech News"], ["Business", "Investing"]],
+  "explicit": false,
+  "type": "episodic",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/",
+  "feedUrl": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.xml",
+  "image": "https://allenchen1113official.github.io/AllenI3Aurora/assets/podcast/show-cover-3000.jpg",
+  "copyright": "© 艾倫報報 ALLEN I³ AURORA",
+  "keywords": ["AI", "ITS", "智慧交通", "智慧水資源", "無人機", "智慧家庭", "台股", "艾倫報報"]
+}

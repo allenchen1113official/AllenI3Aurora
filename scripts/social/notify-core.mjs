@@ -5,7 +5,7 @@
 import { topicInfo } from "./ingest-core.mjs";
 
 export const REVIEW_URL = "https://allenchen1113official.github.io/AllenI3Aurora/admin/pilotone/#review";
-const CH_LABEL = { fb: "FB", ig: "IG", th: "Threads" };
+const CH_LABEL = { fb: "FB", ig: "IG", th: "Threads", pc: "Podcast" };
 
 /* 匯入結果 → 需要人工審核的項目（新建或重產、且非自動發布） */
 export function reviewItems(results) {

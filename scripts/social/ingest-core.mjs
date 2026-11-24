@@ -27,6 +27,8 @@ export const TOPIC_FAMILIES = [
   { re: /^stock-(\d{4,6}[A-Z]?)$/, info: (m) => ({ label: `個股交易診斷 ${m[1]}`, category: "理財", family: "stock" }) },
   // yt-<影片ID> ＝ 常看 YouTube 重點筆記（每支影片一筆；Drive notes/youtube/<YYYYMMDD>/pilotone/<影片ID>/，見 drive-bridge-core DRIVE_FAMILIES）
   { re: /^yt-([A-Za-z0-9_-]{6,20})$/, info: (m) => ({ label: `常看 YouTube 重點筆記 ${m[1]}`, category: "AI 應用", family: "yt" }) },
+  // pc-<子代碼> ＝ 自有 Podcast 節目單集（Drive podcast/episodes/<YYYYMMDD>/pilotone/<子代碼>/，見 drive-bridge-core DRIVE_FAMILIES.pc）
+  { re: /^pc-([A-Za-z0-9_-]{2,40})$/, info: (m) => ({ label: `Podcast 單集 ${m[1]}`, category: "AI 應用", family: "pc" }) },
 ];
 export function topicInfo(topic) {
   if (KNOWN_TOPICS[topic]) return KNOWN_TOPICS[topic];
@@ -36,8 +38,11 @@ export function topicInfo(topic) {
 // 2026-11-18 Allen 決定：所有主題（含台指期快訊）一律經 PilotOne 人工審核；要開放自動發布請設 Repo Variable SOCIAL_AUTO_TOPICS
 export const DEFAULT_AUTO_TOPICS = [];
 export const LIMITS = { ig: 2200, th: 500, igHashtags: 30, maxImages: { fb: 10, ig: 10, th: 20 } };
-export const CHANNEL_FILES = { fb: "fb.txt", ig: "ig.txt", th: "threads.txt" };
-const MANIFEST_CH = { fb: "fb", ig: "ig", threads: "th" }; // manifest.platforms 的 key → PilotOne 頻道
+export const CHANNEL_FILES = { fb: "fb.txt", ig: "ig.txt", th: "threads.txt", pc: "podcast.txt" };
+const MANIFEST_CH = { fb: "fb", ig: "ig", threads: "th", podcast: "pc" }; // manifest.platforms 的 key → PilotOne 頻道
+const AUDIO_RE = /\.(mp3|m4a|mp4|aac|wav)$/i;
+export const DRIVE_STUB = ".drive.json"; // Drive 橋接對音檔只寫指標檔（drive-bridge-core 同名常數）
+const EP_TYPES = ["full", "trailer", "bonus"];
 const IMG_RE = /\.(png|jpe?g)$/i;
 
 export const docIdOf = (topic, ymd) => `cs_${topic}_${ymd}`;
@@ -80,13 +85,14 @@ export function validateManifest(m, folder, files) {
   if (!keys.length) errors.push("platforms 沒有任何平台");
   for (const k of keys) {
     const ch = MANIFEST_CH[k];
-    if (!ch) { errors.push(`不支援的平台「${k}」（只接受 fb、ig、threads）`); continue; }
+    if (!ch) { errors.push(`不支援的平台「${k}」（只接受 fb、ig、threads、podcast）`); continue; }
     const p = plats[k] || {};
     const capName = p.caption || CHANNEL_FILES[ch];
     let caption = "";
     if (!files.has(capName)) errors.push(`${k}：找不到文案檔 ${capName}`);
     else caption = String(files.text(capName) || "").replace(/\r\n/g, "\n").trim();
     if (files.has(capName) && !caption) errors.push(`${k}：文案檔 ${capName} 是空的`);
+    if (ch === "pc") { channels.pc = podcastChannel(k, p, caption, m, files, errors); continue; }
     if (caption && !caption.includes(slash)) errors.push(`${k}：文案未包含當日日期 ${slash}`);
     if (ch === "ig" && len(caption) > LIMITS.ig) errors.push(`ig：文案 ${len(caption)} 字元，超過 ${LIMITS.ig}`);
     if (ch === "ig" && countHashtags(caption) > LIMITS.igHashtags) errors.push(`ig：hashtag ${countHashtags(caption)} 個，超過 ${LIMITS.igHashtags}`);
@@ -103,6 +109,26 @@ export function validateManifest(m, folder, files) {
   return { ok: errors.length === 0, errors, channels };
 }
 
+/* Podcast（platforms.podcast）：show notes＋音檔（直接放檔，或 Drive 橋接的 <音檔>.drive.json 指標）。
+   不要求文案含日期（集數標題另給）；集數長度可由 duration（秒）指定，否則排程器自動解析。 */
+function podcastChannel(k, p, caption, m, files, errors) {
+  const audio = String(p.audio || "");
+  let stub = null;
+  if (!audio) errors.push(`${k}：缺少 audio（音檔檔名，MP3／M4A）`);
+  else if (!AUDIO_RE.test(audio)) errors.push(`${k}：音檔 ${audio} 不是 MP3／M4A／AAC／WAV`);
+  else if (files.has(audio + DRIVE_STUB)) {
+    try { stub = JSON.parse(files.text(audio + DRIVE_STUB)); } catch { stub = null; }
+    if (!stub || !stub.id) errors.push(`${k}：音檔指標 ${audio}${DRIVE_STUB} 無效`);
+  } else if (!files.has(audio)) errors.push(`${k}：找不到音檔 ${audio}`);
+  const title = String(p.title || m.title || "").trim();
+  if ([...title].length > 255) errors.push(`${k}：集數標題超過 255 字`);
+  const duration = p.duration == null || p.duration === "" ? null : Number(p.duration);
+  if (duration != null && !(duration > 0)) errors.push(`${k}：duration 需為正數秒數`);
+  const episodeType = p.episodeType || "full";
+  if (!EP_TYPES.includes(episodeType)) errors.push(`${k}：episodeType 只接受 ${EP_TYPES.join("／")}`);
+  return { caption, images: [], audio, stub, title, duration, explicit: p.explicit === true, episodeType };
+}
+
 /* 是否可自動發布：主題在白名單，且 manifest 宣告 autoPublish 與 verified 皆為 true */
 export function isAutoPublish(m, autoTopics = DEFAULT_AUTO_TOPICS) {
   return !!(m && autoTopics.includes(m.topic) && m.autoPublish === true && m.verified === true);
@@ -112,7 +138,7 @@ export function isAutoPublish(m, autoTopics = DEFAULT_AUTO_TOPICS) {
  * 組出 aurora_social_posts 文件（欄位與後台「建立內容」相同，另加頻道 imageUrls）。
  *   urlOf(file) → 該圖片已轉 JPEG 的公開 https 網址
  */
-export function buildPost(m, folder, channels, { urlOf, auto, nowIso }) {
+export function buildPost(m, folder, channels, { urlOf, rawOf = () => "", auto, nowIso }) {
   const t = topicInfo(folder.topic) || { category: "生活" };
   const ch = (id) => {
     const c = channels[id];
@@ -123,6 +149,10 @@ export function buildPost(m, folder, channels, { urlOf, auto, nowIso }) {
     return base;
   };
   const fb = ch("fb"), ig = ch("ig"), th = ch("th");
+  const p = channels.pc;
+  const pc = { enabled: !!p, caption: p ? p.caption : "", state: p ? (auto ? "approved" : "draft") : "draft", attempts: 0, error: null,
+    ...(p ? { title: p.title, audioName: p.audio, audioDriveId: p.stub ? p.stub.id : "", audioUrl: p.stub ? "" : rawOf(p.audio),
+      duration: p.duration, explicit: p.explicit, episodeType: p.episodeType, link: String(m.link || "").trim() } : {}) };
   const first = fb.imageUrls[0] || ig.imageUrls[0] || th.imageUrls[0] || "";
   return {
     title: String(m.title).trim(),
@@ -132,14 +162,14 @@ export function buildPost(m, folder, channels, { urlOf, auto, nowIso }) {
     queueState: auto ? "pending" : "draft",
     source: { type: "claude-schedule", topic: folder.topic, date: m.date, producedBy: m.producedBy || null, producedAt: m.producedAt || null,
       manifestPath: `content/${folder.topic}/${folder.ymd}/manifest.json`, autoPublish: !!auto },
-    fb, ig, th,
+    fb, ig, th, pc,
     yt: { enabled: false, caption: "", state: "draft", attempts: 0, error: null, videoId: null },
     lock: { by: null, at: null },
     review: auto ? { approvedAt: nowIso, by: "auto:claude-schedule" } : { approvedAt: null, by: null },
     // 後台「建立內容」編輯器讀 hub：主稿＝FB 文案，IG／Threads 以逐平台覆寫保留原文，避免編修時被主稿蓋掉
     hub: { stage: "review", body: fb.caption, hashtags: "", category: t.category,
-      platforms: { fb: !!channels.fb, ig: !!channels.ig, th: !!channels.th, yt: false, pc: false },
-      variants: { fb: "", ig: ig.caption, th: th.caption, yt: "", pc: "" } },
+      platforms: { fb: !!channels.fb, ig: !!channels.ig, th: !!channels.th, yt: false, pc: !!p },
+      variants: { fb: "", ig: ig.caption, th: th.caption, yt: "", pc: pc.caption } },
     createdAt: nowIso,
     updatedAt: nowIso,
   };
@@ -152,7 +182,7 @@ export function planIngest(existing, m) {
   const src = existing.source || {};
   if (src.type !== "claude-schedule") return { action: "skip", reason: "同 id 文件不是 Claude 排程素材，不覆蓋" };
   if (src.producedAt && m.producedAt && src.producedAt === m.producedAt) return { action: "skip", reason: "素材未變更" };
-  const busy = ["fb", "ig", "th"].some((c) => existing[c] && existing[c].enabled && !UNTOUCHED.includes(existing[c].state));
+  const busy = ["fb", "ig", "th", "pc"].some((c) => existing[c] && existing[c].enabled && !UNTOUCHED.includes(existing[c].state));
   if (busy) return { action: "skip", reason: "已核准、發布中或已發布，不覆蓋（如需改稿請在後台處理）" };
   return { action: "update" };
 }
@@ -162,8 +192,8 @@ export function postSummary(id, d) {
   const ch = (c) => {
     const x = d && d[c];
     if (!x || !x.enabled) return null;
-    const url = x.permalink || (c === "fb" && x.postId ? `https://www.facebook.com/${x.postId}` : null);
+    const url = x.permalink || (c === "fb" && x.postId ? `https://www.facebook.com/${x.postId}` : null) || (c === "pc" && x.url) || null;
     return { state: x.state || "draft", url, error: x.error || null };
   };
-  return { id, topic: d && d.source ? d.source.topic : null, queueState: d ? d.queueState : null, fb: ch("fb"), ig: ch("ig"), th: ch("th") };
+  return { id, topic: d && d.source ? d.source.topic : null, queueState: d ? d.queueState : null, fb: ch("fb"), ig: ch("ig"), th: ch("th"), ...(d && d.pc && d.pc.enabled ? { pc: ch("pc") } : {}) };
 }

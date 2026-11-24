@@ -5,7 +5,8 @@
    實際送出由 social-publish.yml 處理：Facebook、Instagram、Threads、YouTube 由排程器自動發布
    （各頻道狀態存在 fb／ig／th／yt 欄位，狀態機見 scripts/social/core.mjs；
    yt 另有 title／videoUrl／privacy／tags，影片以可直接下載的 https 網址提供）；
-   Podcast 先存草稿與微調內容，待串接後啟用。
+   Podcast（pc，2026-11-24 串接）：pc 欄位含 title／audioUrl（https 或 Google Drive 連結）／audioDriveId，
+   排程器把音檔上傳 GitHub Releases、集數寫入 aurora_podcast_feed，build-show-feed.mjs 產生 podcast.xml。
    需於 admin.jsx 之後載入（共用 db、auth、errText、socFbState、SocFbPreview…）。
    ===================================================================== */
 (function () {
@@ -17,7 +18,7 @@ const HUB_PF = [
   { id: "ig", short: "IG", name: "Instagram 商業帳號", color: "#C13584", live: true, api: "Instagram Graph API（沿用 Meta Token，或 IG_TOKEN 每日自動續期）", formats: "單張圖片 · 輪播（最多 10 張，必須有圖）", limit: 2200 },
   { id: "th", short: "TH", name: "Threads", color: "#101010", live: true, api: "Threads API（長效 Token 每日自動續期）", formats: "文字 · 單張圖片 · 輪播（最多 20 張）", limit: 500 },
   { id: "yt", short: "YT", name: "YouTube 頻道", color: "#FF0000", live: true, api: "YouTube Data API（OAuth refresh token 存於 Secrets）", formats: "影片 · Shorts（公開可下載的影片網址）", limit: 5000 },
-  { id: "pc", short: "PC", name: "Podcast（RSS 託管）", color: "#7C3AED", phase: "第二階段", api: "RSS 託管", formats: "音檔 · Show notes" },
+  { id: "pc", short: "PC", name: "Podcast（RSS 託管）", color: "#7C3AED", live: true, api: "GitHub Releases 託管音檔＋podcast.xml（GitHub Pages）", formats: "MP3／M4A 音檔 · Show notes · 集數自動編號", limit: 4000 },
 ];
 const HUB_RESERVED = [
   ["TT", "TikTok", "第二階段"], ["LN", "LINE 官方帳號", "第二階段"], ["X", "X", "第二階段"], ["RED", "小紅書", "第二階段"],
@@ -35,7 +36,10 @@ const HUB_ST = {
   rejected:  { label: "已退回", color: "var(--text-4)",       bg: "var(--night-700)" },
 };
 const HUB_ORDER = ["draft", "review", "scheduled", "published", "failed"];
-const HUB_LIVE = ["fb", "ig", "th", "yt"]; // 排程器會發布的頻道
+const HUB_LIVE = ["fb", "ig", "th", "yt", "pc"]; // 排程器會發布的頻道
+const PC_FEED_URL = "https://allenchen1113official.github.io/AllenI3Aurora/podcast.xml";
+/* Google Drive 分享連結 → 檔案 id（與 scripts/social/podcast.mjs driveIdOf 相同規則） */
+const hubDriveId = (url) => { const u = String(url || ""); if (!/^https:\/\/(drive|docs)\.google\.com\/|^https:\/\/drive\.usercontent\.google\.com\//i.test(u)) return ""; const m = u.match(/\/d\/([A-Za-z0-9_-]{20,})/) || u.match(/[?&]id=([A-Za-z0-9_-]{20,})/); return m ? m[1] : ""; };
 const YT_PRIVACY = [["public", "公開（可定時公開）"], ["unlisted", "不公開（有連結者可看）"], ["private", "私人"]];
 const YT_TITLE_MAX = 100;
 /* hashtag 字串 → YouTube 標籤陣列（去掉 #，最多 50 個） */
@@ -528,7 +532,7 @@ function hubImgsOf(r) {
 function hubBlank() {
   return { __new: true, id: null, title: "", body: "", hashtags: "", category: HUB_CATS[0], imageUrl: "", link: "", note: "", imgs: { fb: [], ig: [], th: [] }, imgPool: [],
     platforms: { fb: true, ig: false, th: false, yt: false, pc: false }, variants: { fb: "", ig: "", th: "", yt: "", pc: "" },
-    ytTitle: "", videoUrl: "", ytPrivacy: "public",
+    ytTitle: "", videoUrl: "", ytPrivacy: "public", pcTitle: "", audioUrl: "",
     fb: { state: "draft" }, queueState: "draft", scheduledAt: "", mode: "time", when: "", needReview: true };
 }
 function hubFromPost(r) {
@@ -543,10 +547,11 @@ function hubFromPost(r) {
     category: h.category || HUB_CATS[0], imageUrl: r.imageUrl || "", link: (r.fb && r.fb.link) || hubDefaultLink(r), note: r.note || "",
     imgs, imgPool: hubUniq([...imgs.fb, ...imgs.ig, ...imgs.th, r.imageUrl || ""]), source: r.source || null,
     platforms: Object.assign({ ig: false, th: false, yt: false, pc: false }, h.platforms || {},
-      { fb: !!(r.fb && r.fb.enabled !== false), ig: chWanted(r, "ig"), th: chWanted(r, "th"), yt: chWanted(r, "yt") }),
-    variants: Object.assign({ fb: "", ig: "", th: "", yt: "", pc: "" }, r.hub ? {} : { ig: own("ig"), th: own("th") }, h.variants || {}),
+      { fb: !!(r.fb && r.fb.enabled !== false), ig: chWanted(r, "ig"), th: chWanted(r, "th"), yt: chWanted(r, "yt"), pc: chWanted(r, "pc") }),
+    variants: Object.assign({ fb: "", ig: "", th: "", yt: "", pc: "" }, r.hub ? {} : { ig: own("ig"), th: own("th"), pc: own("pc") }, h.variants || {}),
     ytTitle: (r.yt && r.yt.title) || "", videoUrl: (r.yt && r.yt.videoUrl) || "", ytPrivacy: (r.yt && r.yt.privacy) || "public",
-    hub: r.hub || null, fb: Object.assign({ state: "draft" }, r.fb || {}), ig: r.ig || null, th: r.th || null, yt: r.yt || null, queueState: r.queueState || "draft", scheduledAt: r.scheduledAt || "",
+    pcTitle: (r.pc && r.pc.title) || "", audioUrl: (r.pc && (r.pc.audioUrl || (r.pc.audioDriveId ? `https://drive.google.com/file/d/${r.pc.audioDriveId}/view` : ""))) || "",
+    hub: r.hub || null, fb: Object.assign({ state: "draft" }, r.fb || {}), ig: r.ig || null, th: r.th || null, yt: r.yt || null, pc: r.pc || null, queueState: r.queueState || "draft", scheduledAt: r.scheduledAt || "",
     mode: "time", when: isoToTpInput(r.scheduledAt), needReview: false };
 }
 /* 縮圖：有圖卡時取第一張圖卡，否則用主稿圖片網址 */
@@ -636,6 +641,8 @@ function HubComposer({ init, reload, flash, go }) {
   /* YouTube 專屬欄位：標題（預設主稿標題）、影片網址、可見度、標籤（由 hashtag 轉換） */
   const ytFields = () => ({ title: (s.ytTitle || s.title).trim().slice(0, YT_TITLE_MAX), videoUrl: s.videoUrl.trim(), privacy: s.ytPrivacy || "public", tags: hubTags(s.hashtags) });
   /* 已發布的頻道維持原狀；失敗的保留錯誤供參考，重新核准時才清除 */
+  /* Podcast 專屬欄位：集數標題（預設主稿標題）、音檔（https 或 Drive 連結；Drive 走服務帳戶下載） */
+  const pcFields = () => ({ title: (s.pcTitle || s.title).trim().slice(0, 255), audioUrl: s.audioUrl.trim(), audioDriveId: hubDriveId(s.audioUrl), link: s.link.trim() });
   const keepState = (ch) => { const x = chState(s, ch); return x === "published" || x === "failed" ? x : "draft"; };
   const save = async (stage) => {
     setBusy(true); setErr("");
@@ -649,14 +656,16 @@ function HubComposer({ init, reload, flash, go }) {
           ig: { enabled: !!s.platforms.ig, caption: hubText(s, "ig"), imageUrls: s.imgs.ig, state: "draft", attempts: 0, error: null },
           th: { enabled: !!s.platforms.th, caption: hubText(s, "th"), imageUrls: s.imgs.th, state: "draft", attempts: 0, error: null },
           yt: { enabled: !!s.platforms.yt, caption: hubText(s, "yt"), ...ytFields(), state: "draft", attempts: 0, error: null, videoId: null },
+          pc: { enabled: !!s.platforms.pc, caption: hubText(s, "pc"), ...pcFields(), state: "draft", attempts: 0, error: null },
           lock: { by: null, at: null }, hub: hubField(stage), createdAt: now, updatedAt: now,
         });
         id = ref.id;
       } else {
         const upd = { title: s.title, imageUrl: hubThumb(s), "fb.enabled": !!s.platforms.fb, "fb.caption": hubText(s, "fb"), "fb.link": s.link.trim(), hub: hubField(stage), updatedAt: now };
         for (const [ch] of HUB_IMG_CH) upd[ch + ".imageUrls"] = s.imgs[ch]; // 圖卡欄位（人工換圖）
-        for (const ch of ["ig", "th", "yt"]) Object.assign(upd, { [ch + ".enabled"]: !!s.platforms[ch], [ch + ".caption"]: hubText(s, ch), [ch + ".state"]: keepState(ch) });
+        for (const ch of ["ig", "th", "yt", "pc"]) Object.assign(upd, { [ch + ".enabled"]: !!s.platforms[ch], [ch + ".caption"]: hubText(s, ch), [ch + ".state"]: keepState(ch) });
         for (const [k, v] of Object.entries(ytFields())) upd["yt." + k] = v;
+        for (const [k, v] of Object.entries(pcFields())) upd["pc." + k] = v;
         if (s.queueState === "rejected") upd.queueState = "draft"; // 退回後重新編修，回到佇列
         await db.collection(SOC_COLL).doc(id).update(upd);
       }
@@ -672,7 +681,7 @@ function HubComposer({ init, reload, flash, go }) {
   const validate = () => {
     if (!s.title.trim()) return "請填寫標題。";
     if (!chosen.length) return "請至少選擇一個發布平台。";
-    if (!toSend.length) return "請至少啟用 Facebook、Instagram、Threads 或 YouTube 其中之一（Podcast 尚未串接，只會保存內容）。";
+    if (!toSend.length) return "請至少啟用 Facebook、Instagram、Threads、YouTube 或 Podcast 其中之一。";
     const img = s.imageUrl.trim();
     if (img && !/^https:\/\//i.test(img)) return "圖片需為 https:// 開頭的公開網址（平台會直接下載）。";
     if (s.link && !/^https?:\/\//i.test(s.link.trim())) return "連結需為完整網址（https://…）。";
@@ -686,6 +695,11 @@ function HubComposer({ init, reload, flash, go }) {
       if (!(s.ytTitle || s.title).trim()) return "YouTube 影片標題不可空白。";
       if ([...(s.ytTitle || s.title).trim()].length > YT_TITLE_MAX) return `YouTube 標題超過 ${YT_TITLE_MAX} 字上限。`;
       if (/[<>]/.test(s.ytTitle || s.title)) return "YouTube 標題不可包含 < 或 > 符號。";
+    }
+    if (toSend.includes("pc")) {
+      if (!/^https:\/\//i.test(s.audioUrl.trim())) return "Podcast 需要音檔網址（https 的 MP3／M4A，或 Google Drive 分享連結），請在 Podcast 分頁填寫或取消 PC。";
+      if (!(s.pcTitle || s.title).trim()) return "Podcast 集數標題不可空白。";
+      if (!hubText(s, "pc")) return "Podcast 需要 show notes（主稿或 Podcast 分頁的說明）。";
     }
     for (const ch of toSend) {
       const pf = HUB_PF.find((p) => p.id === ch);
@@ -716,7 +730,7 @@ function HubComposer({ init, reload, flash, go }) {
     setBusy(true);
     try {
       const upd = { scheduledAt: iso, queueState: "pending", "review.approvedAt": new Date().toISOString(), "review.by": who, lock: { by: null, at: null }, updatedAt: new Date().toISOString() };
-      for (const ch of toSend) Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null }, ch === "fb" ? {} : ch === "yt" ? { "yt.uploadUri": null } : { [ch + ".containerId"]: null });
+      for (const ch of toSend) Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null }, ch === "fb" || ch === "pc" ? {} : ch === "yt" ? { "yt.uploadUri": null } : { [ch + ".containerId"]: null });
       await db.collection(SOC_COLL).doc(id).update(upd);
       if (window.socRequestPublishRun) await window.socRequestPublishRun(who); // 請監控代理立即觸發 social-publish.yml
       await reload();
@@ -804,6 +818,17 @@ function HubComposer({ init, reload, flash, go }) {
             {pf.live && s[pf.id] && s[pf.id].error ? <div style={{ fontSize: 12.5, color: "var(--danger)", lineHeight: 1.6 }}>上次錯誤：{String(s[pf.id].error.message || s[pf.id].error)}</div> : null}
             {pf.id === "ig" && s.platforms.ig ? <div style={{ fontSize: 12, color: socImagesFor(hubWithImgs(s), "ig").length ? "var(--text-3)" : "var(--warning)", lineHeight: 1.6 }}>
               {s.imgs.ig.length ? `IG 會發布「圖卡」欄位的 ${s.imgs.ig.length} 張圖卡（多張為輪播）。` : s.imageUrl.trim() ? "IG 會使用主稿圖片；Meta 官方保證支援 JPEG，PNG 若被拒會顯示在錯誤訊息。" : "IG 貼文必須有圖片，請在「圖卡」加入圖卡或填寫主稿圖片網址。"}</div> : null}
+            {pf.id === "pc" ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div><label className="ad-lbl" htmlFor="hub-pc-audio">音檔（https 的 MP3／M4A，或 Google Drive 分享連結）</label>
+                  <input id="hub-pc-audio" className="ad-in" value={s.audioUrl} onChange={(e) => set("audioUrl", e.target.value)} placeholder="https://drive.google.com/file/d/…/view 或 https://…/episode.mp3" />
+                  <div style={{ ...muted, fontSize: 11.5, marginTop: 5, lineHeight: 1.6 }}>{hubDriveId(s.audioUrl) ? "Drive 檔案：排程器以服務帳戶下載，檔案需在 AllenI3Aurora 資料夾內（或分享給服務帳戶）。" : "排程器下載後上傳到 GitHub Releases（單檔 ≤ 500 MB），長度自動偵測，集數自動編號。"}</div></div>
+                <div><label className="ad-lbl" htmlFor="hub-pc-title">集數標題（留空沿用主稿標題）</label>
+                  <input id="hub-pc-title" className="ad-in" value={s.pcTitle} onChange={(e) => set("pcTitle", e.target.value)} placeholder={s.title || "集數標題"} /></div>
+                <div style={{ ...muted, fontSize: 11.5, lineHeight: 1.6 }}>主稿上方的「連結」會成為本集網頁連結。訂閱網址（送 Apple／Spotify 一次即可）：<a href={PC_FEED_URL} target="_blank" rel="noreferrer" style={{ color: "var(--info)" }}>{PC_FEED_URL}</a></div>
+                {s.pc && s.pc.enclosureUrl ? <div style={{ fontSize: 12.5 }}>已上架{s.pc.episode ? `第 ${s.pc.episode} 集` : ""}：<a href={s.pc.enclosureUrl} target="_blank" rel="noreferrer" style={{ color: "var(--info)" }}>音檔</a></div> : null}
+              </div>
+            ) : null}
             {pf.id === "yt" ? (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <div><label className="ad-lbl" htmlFor="hub-yt-video">影片網址（https，可直接下載的影片檔）</label>
@@ -849,7 +874,7 @@ function HubComposer({ init, reload, flash, go }) {
             {s.mode === "time" ? (
               <div><label className="ad-lbl" htmlFor="hub-when">發布時間（台北 UTC+8）</label><input id="hub-when" className="ad-in" type="datetime-local" value={s.when} onChange={(e) => set("when", e.target.value)} /></div>
             ) : null}
-            <div style={{ fontSize: 12, color: "var(--text-3)", lineHeight: 1.6 }}>FB：{SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程（分鐘級準時）。IG／Threads 沒有原生排程，於預定時間前 5 分鐘內由排程器送出（每 2 分鐘一輪）。YouTube 公開影片核准後即上傳並由 YouTube 定時公開。</div>
+            <div style={{ fontSize: 12, color: "var(--text-3)", lineHeight: 1.6 }}>FB：{SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程（分鐘級準時）。IG／Threads 沒有原生排程，於預定時間前 5 分鐘內由排程器送出（每 2 分鐘一輪）。YouTube 公開影片核准後即上傳並由 YouTube 定時公開。Podcast 於預定時間前 5 分鐘內上架並更新 podcast.xml。</div>
             <Toggle on={s.needReview} onChange={(v) => set("needReview", v)}>發布前需審核（先送交待審核）</Toggle>
             {editable ? (
               <button className="ad-btn primary" disabled={busy} onClick={s.needReview ? submit : approve}>
@@ -875,14 +900,14 @@ const hubArchived = (r) => !!(r.hub && r.hub.archived);
 const hubSendable = (r) => HUB_LIVE.filter((ch) => (ch === "fb" ? !!(r.fb && r.fb.enabled !== false) : chOn(r, ch)) && chState(r, ch) !== "published");
 const hubBusy = (r) => HUB_LIVE.some((ch) => chOn(r, ch) && HUB_ACTIVE.includes(chState(r, ch)));
 const hubAnyPublished = (r) => HUB_LIVE.some((ch) => chOn(r, ch) && chState(r, ch) === "published");
-const HUB_LIMITS = { ig: 2200, th: 500, yt: 5000 };
+const HUB_LIMITS = { ig: 2200, th: 500, yt: 5000, pc: 4000 };
 
 /* 核准前檢查（與建立內容頁相同規則），回傳錯誤訊息或空字串 */
 function hubApproveCheck(r, iso) {
   if (hubArchived(r)) return "已封存";
   if (hubBusy(r)) return "已在排程中";
   const send = hubSendable(r);
-  if (!send.length) return hubAnyPublished(r) ? "已全部發布" : "沒有啟用可發布的平台（FB／IG／Threads／YouTube）";
+  if (!send.length) return hubAnyPublished(r) ? "已全部發布" : "沒有啟用可發布的平台（FB／IG／Threads／YouTube／Podcast）";
   const t = Date.parse(iso || "");
   if (!isFinite(t)) return "沒有排程時間（請在批次列選擇時間）";
   if (t < Date.now() - 60000) return "排程時間已過（請在批次列選擇新時間）";
@@ -894,6 +919,7 @@ function hubApproveCheck(r, iso) {
   if (send.includes("th") && !cap("th") && !img) return "Threads 缺少文字或圖片";
   if (send.includes("yt") && !/^https:\/\//i.test(String((r.yt && r.yt.videoUrl) || "").trim())) return "YouTube 缺少影片網址";
   if (send.includes("yt") && !String((r.yt && r.yt.title) || r.title || "").trim()) return "YouTube 缺少標題";
+  if (send.includes("pc") && !/^https:\/\//i.test(String((r.pc && r.pc.audioUrl) || "").trim()) && !(r.pc && r.pc.audioDriveId)) return "Podcast 缺少音檔";
   for (const ch of send) if (HUB_LIMITS[ch] && [...cap(ch)].length > HUB_LIMITS[ch]) return `${ch.toUpperCase()} 超過 ${HUB_LIMITS[ch]} 字`;
   return "";
 }
@@ -906,7 +932,7 @@ const HUB_OPS = {
       const why = hubApproveCheck(r, when); if (why) return why;
       const now = new Date().toISOString();
       const upd = { scheduledAt: new Date(Date.parse(when)).toISOString(), queueState: "pending", "review.approvedAt": now, "review.by": who, lock: { by: null, at: null }, updatedAt: now };
-      for (const ch of hubSendable(r)) Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null }, ch === "fb" ? {} : ch === "yt" ? { "yt.uploadUri": null } : { [ch + ".containerId"]: null });
+      for (const ch of hubSendable(r)) Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null }, ch === "fb" || ch === "pc" ? {} : ch === "yt" ? { "yt.uploadUri": null } : { [ch + ".containerId"]: null });
       await db.collection(SOC_COLL).doc(r.id).update(upd);
       return "";
     },
@@ -948,6 +974,7 @@ const HUB_OPS = {
         source: { type: "copy", from: r.id },
         fb: ch("fb", { link: (r.fb && r.fb.link) || "", postId: null }), ig: ch("ig"), th: ch("th"),
         yt: ch("yt", { title: (r.yt && r.yt.title) || "", videoUrl: (r.yt && r.yt.videoUrl) || "", privacy: (r.yt && r.yt.privacy) || "public", tags: (r.yt && r.yt.tags) || [], videoId: null }),
+        pc: ch("pc", { title: (r.pc && r.pc.title) || "", audioUrl: (r.pc && r.pc.audioUrl) || "", audioDriveId: (r.pc && r.pc.audioDriveId) || "", link: (r.pc && r.pc.link) || "" }),
         lock: { by: null, at: null }, hub: { ...(r.hub || {}), stage: "draft", archived: false }, createdAt: now, updatedAt: now,
       });
       return "";
@@ -1102,7 +1129,7 @@ function HubPlatforms({ list, meta, reload }) {
   const health = Object.fromEntries(HUB_LIVE.map((ch) => [ch, hubChannelHealth(meta, ch)]));
   const pending = (ch) => list.filter((r) => chOn(r, ch) && HUB_ACTIVE.includes(chState(r, ch))).length;
   const lastPub = (ch) => list.map((r) => chOn(r, ch) && chState(r, ch) === "published" && r[ch].publishedAt).filter(Boolean).sort().pop();
-  const ENV = { fb: "META_PAGE_TOKEN／META_PAGE_ID", ig: "META_IG_USER_ID（沿用 META_PAGE_TOKEN）", th: "THREADS_USER_ID／THREADS_TOKEN", yt: "YT_CLIENT_ID／YT_CLIENT_SECRET／YT_REFRESH_TOKEN" };
+  const ENV = { fb: "META_PAGE_TOKEN／META_PAGE_ID", ig: "META_IG_USER_ID（沿用 META_PAGE_TOKEN）", th: "THREADS_USER_ID／THREADS_TOKEN", yt: "YT_CLIENT_ID／YT_CLIENT_SECRET／YT_REFRESH_TOKEN", pc: "GH_TOKEN（workflow 內建 GITHUB_TOKEN）／GDRIVE_SERVICE_ACCOUNT" };
   const thExp = health.th.expiresAt ? Date.parse(health.th.expiresAt) : NaN;
   const thDays = isFinite(thExp) ? Math.floor((thExp - Date.now()) / DAY) : null;
   const broken = HUB_LIVE.filter((ch) => health[ch].ran && health[ch].configured && !health[ch].ok);
@@ -1122,6 +1149,7 @@ function HubPlatforms({ list, meta, reload }) {
     `FB 發布時間在 ${SOC_NATIVE_MIN_MIN} 分鐘～29 天內交給 Meta 原生排程`,
     "IG／Threads 以容器兩段式發布，到期前 5 分鐘內送出",
     "YouTube 公開影片核准後即上傳（可續傳）並帶 publishAt 定時公開；非公開影片到期才上傳",
+    "Podcast 到期前 5 分鐘內上架：音檔存 GitHub Releases、集數寫入 podcast.xml（重送不會重複集數）",
     "結果不明不重送，避免重複發文；失敗可在內容庫重新核准",
     "某平台 Token 失效時只暫停該平台，其他平台照常發布",
     "Threads Token 每日自動續期，60 天到期日隨之順延",
@@ -1168,6 +1196,8 @@ function HubPlatforms({ list, meta, reload }) {
                   {kv("支援格式", p.formats)}
                   {p.live ? kv("最近發布", lastPub(p.id) ? tpMdHm(lastPub(p.id)) : "—") : kv("內容保存", list.filter((r) => r.hub && r.hub.platforms && r.hub.platforms[p.id]).length + " 篇")}
                   {p.live ? kv("排程中", pending(p.id) + " 筆") : null}
+                  {p.id === "pc" ? kv("訂閱網址", <a href={PC_FEED_URL} target="_blank" rel="noreferrer" style={{ color: "var(--info)" }}>podcast.xml ↗</a>) : null}
+                  {p.id === "pc" ? kv("已上架", list.filter((r) => chOn(r, "pc") && chState(r, "pc") === "published").length + " 集") : null}
                   {p.id === "th" && h.expiresAt ? kv("Token 到期", tpMdHm(h.expiresAt), thDays != null && thDays < 7 ? "var(--warning)" : undefined) : null}
                   {p.live && h.ran && h.configured === false ? kv("需要的 Secrets", ENV[p.id].split("／"), "var(--warning)") : null}
                 </div>

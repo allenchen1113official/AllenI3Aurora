@@ -1967,6 +1967,25 @@ function SocChannelReview({ p }) {
     </div>
   );
 }
+/* 審核用：Podcast 單集（音檔試聽＋show notes；核准後上傳 GitHub Releases 並寫入 podcast.xml） */
+function SocPodcastReview({ p }) {
+  const pc = p && p.pc;
+  if (!pc || !pc.enabled) return null;
+  const drive = pc.audioDriveId ? `https://drive.google.com/file/d/${pc.audioDriveId}/view` : "";
+  const src = pc.enclosureUrl || pc.audioUrl || "";
+  const mmss = (x) => (x ? `${Math.floor(x / 60)} 分 ${Math.round(x % 60)} 秒` : "自動偵測");
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ fontWeight: 800, color: "var(--text-1)", fontSize: 14 }}>{pc.title || p.title || "（未命名集數）"}</div>
+      <div style={{ fontSize: 12, color: "var(--text-3)" }}>長度：{mmss(pc.duration)}{pc.episode ? `・第 ${pc.episode} 集` : ""}・狀態：{pc.state || "draft"}{pc.error ? <span style={{ color: "var(--danger, #e66)" }}>・{String(pc.error.message || pc.error)}</span> : null}</div>
+      {src && /^https:/.test(src) && !/drive\.google|usercontent\.google/.test(src) ? <audio controls preload="none" src={src} style={{ width: "100%" }} /> : null}
+      {drive ? <a href={drive} target="_blank" rel="noopener" style={{ fontSize: 12.5, color: "var(--info)" }}>在 Google Drive 試聽音檔（{pc.audioName || "音檔"}）↗</a> : null}
+      {!src && !drive ? <div style={{ fontSize: 12, color: "var(--warning)" }}>尚未指定音檔。</div> : null}
+      <div style={{ whiteSpace: "pre-wrap", fontSize: 13, lineHeight: 1.7, color: "var(--text-2)", background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", padding: "10px 12px", maxHeight: 260, overflow: "auto" }}>{pc.caption || "（無 show notes）"}</div>
+      <div style={{ fontSize: 11.5, color: "var(--text-4)", lineHeight: 1.6 }}>核准後於預定時間前 5 分鐘內上架：音檔存 GitHub Releases、集數寫入 podcast.xml（Apple／Spotify 數小時內抓到）。RSS 上架後各平台會留存，請確認內容再核准。</div>
+    </div>
+  );
+}
 function SocFbPreview({ p }) {
   const imgs = socImagesFor(p, "fb");
   const isPhoto = imgs.length > 0;
@@ -2025,6 +2044,7 @@ function SocialPanel() {
       queueState: r.queueState || "draft", note: r.note || "", source: r.source || { type: "manual" },
       fb: Object.assign({ enabled: true, caption: "", link: "", state: "draft", attempts: 0 }, r.fb || {}),
       ig: r.ig || null, th: r.th || null, // 內容中控台建立的 IG／Threads 頻道，核准與撤回時一併處理
+      pc: r.pc || null, // Podcast 單集（Drive 送審包或中控台建立），核准與撤回時一併處理
     });
     setWhen(isoToLocalInput(r.scheduledAt));
     setErr(""); setToast("");
@@ -2066,7 +2086,9 @@ function SocialPanel() {
   };
 
   const validate = () => {
-    if (!sel.fb.enabled) return "第一階段只支援 Facebook，請勾選「發布到 Facebook 粉專」。";
+    const pcOn = !!(sel.pc && sel.pc.enabled && sel.pc.state !== "published");
+    if (pcOn && !/^https:\/\//i.test(String(sel.pc.audioUrl || "").trim()) && !sel.pc.audioDriveId) return "Podcast 缺少音檔（https 網址或 Drive 檔案），請到 PilotOne 中控台的 Podcast 分頁補上。";
+    if (!sel.fb.enabled) return pcOn ? "" : "請勾選「發布到 Facebook 粉專」（Podcast 單集請到 PilotOne 中控台編修）。";
     if (!(sel.fb.caption || "").trim() && !(sel.imageUrl || "").trim()) return "請至少填寫貼文內文或圖片。";
     if (sel.imageUrl && !/^https:\/\//i.test(sel.imageUrl.trim())) return "圖片需為 https:// 開頭的公開網址（Meta 會直接下載）。";
     if (sel.fb.link && !/^https?:\/\//i.test(sel.fb.link.trim())) return "連結需為完整網址（https://…）。";
@@ -2085,8 +2107,8 @@ function SocialPanel() {
         "review.approvedAt": new Date().toISOString(), "review.by": who, lock: { by: null, at: null },
         updatedAt: new Date().toISOString(),
       };
-      for (const ch of ["ig", "th"]) if (sel[ch] && sel[ch].enabled && sel[ch].state !== "published") {
-        Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null, [ch + ".containerId"]: null });
+      for (const ch of ["ig", "th", "pc"]) if (sel[ch] && sel[ch].enabled && sel[ch].state !== "published") {
+        Object.assign(upd, { [ch + ".state"]: "approved", [ch + ".attempts"]: 0, [ch + ".error"]: null }, ch === "pc" ? {} : { [ch + ".containerId"]: null });
       }
       await db.collection(SOC_COLL).doc(id).update(upd);
       setSel((s) => ({ ...s, scheduledAt: iso, queueState: "pending", fb: { ...s.fb, state: "approved", attempts: 0, error: null } }));
@@ -2120,7 +2142,7 @@ function SocialPanel() {
         const lockAt = Date.parse((d.lock && d.lock.at) || "");
         if ((d.fb && d.fb.state) !== "approved" || (d.lock && d.lock.by && isFinite(lockAt) && Date.now() - lockAt < 15 * 60000)) return false;
         const upd = { queueState: "draft", "fb.state": "draft", updatedAt: new Date().toISOString() };
-        for (const ch of ["ig", "th"]) if (d[ch] && d[ch].state === "approved") upd[ch + ".state"] = "draft";
+        for (const ch of ["ig", "th", "pc"]) if (d[ch] && d[ch].state === "approved") upd[ch + ".state"] = "draft";
         tx.update(ref, upd);
         return true;
       });
@@ -2137,7 +2159,7 @@ function SocialPanel() {
     try {
       const upd = { queueState: "pending", "fb.state": "cancel_requested", updatedAt: new Date().toISOString() };
       // 尚未發出的 IG／Threads 一併取消（排程器退回草稿）
-      for (const ch of ["ig", "th"]) if (sel[ch] && ["approved", "processing"].includes(sel[ch].state)) upd[ch + ".state"] = "cancel_requested";
+      for (const ch of ["ig", "th", "pc"]) if (sel[ch] && ["approved", "processing"].includes(sel[ch].state)) upd[ch + ".state"] = "cancel_requested";
       await db.collection(SOC_COLL).doc(sel.id).update(upd);
       setSel((s) => ({ ...s, queueState: "pending", fb: { ...s.fb, state: "cancel_requested" } }));
       await load(); flash("已送出取消請求，約 10 分鐘內完成");
@@ -2326,6 +2348,12 @@ function SocialPanel() {
             <div style={{ ...box, background: "var(--night-850)" }}>
               <div className="ad-lbl" style={{ marginBottom: 10 }}>Instagram／Threads 預覽（圖卡＋文案一併審核）</div>
               <SocChannelReview p={sel} />
+            </div>
+          ) : null}
+          {sel.pc && sel.pc.enabled ? (
+            <div style={{ ...box, background: "var(--night-850)" }}>
+              <div className="ad-lbl" style={{ marginBottom: 10 }}>Podcast 單集（RSS 託管）</div>
+              <SocPodcastReview p={sel} />
             </div>
           ) : null}
 

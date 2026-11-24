@@ -24,6 +24,11 @@
    20 分鐘以後 → 立即上傳並帶 publishAt（影片先 private，YouTube 到時自動公開）；
    已到期或 unlisted／private → 到期時直接上傳。上傳可續傳（yt.uploadUri）。
      yt.state 與 fb.state 相同集合。
+
+   Podcast（pc，RSS 託管）：到期前 5 分鐘內由排程器發布 —— 音檔上傳 GitHub Releases、
+   集數寫入 Firestore aurora_podcast_feed，RSS（podcast.xml）由 build-show-feed.mjs 產生。
+   發布動作冪等（同一筆貼文沿用同一附件與 guid），所以「送出後未回寫」直接重送即可。
+     pc.state 'draft' | 'approved' | 'publishing' | 'cancel_requested' | 'published' | 'failed' | 'skipped'
    ===================================================================== */
 
 export const FB_NATIVE_MIN_LEAD_MS = 20 * 60 * 1000;          // Meta 要求至少 10 分鐘後；留 buffer
@@ -36,10 +41,10 @@ export const CONTAINER_TTL_MS = 23 * 60 * 60 * 1000;     // 容器 24 小時後�
 
 export const YT_NATIVE_MAX_LEAD_MS = 365 * 24 * 60 * 60 * 1000; // YouTube publishAt 沒有明文上限，保守取一年
 
-export const CHANNELS = ["fb", "ig", "th", "yt"];
+export const CHANNELS = ["fb", "ig", "th", "yt", "pc"];
 export const CONTAINER_CHANNELS = ["ig", "th"];
 export const NATIVE_CHANNELS = ["fb", "yt"];
-export const CHANNEL_LABEL = { fb: "Facebook 粉專", ig: "Instagram", th: "Threads", yt: "YouTube" };
+export const CHANNEL_LABEL = { fb: "Facebook 粉專", ig: "Instagram", th: "Threads", yt: "YouTube", pc: "Podcast" };
 
 /* 多圖：頻道自己的 imageUrls 優先，其次貼文層 imageUrls，最後退回單張 imageUrl（舊資料相容）。
    FB 多圖貼文、IG 輪播最多 10 張，Threads 輪播最多 20 張。 */
@@ -332,6 +337,24 @@ export function planContainer(post, ch, now) {
   }
 }
 
+/* Podcast（pc）下一步：到期前 5 分鐘內發布；結果不明（鎖過期仍 publishing）直接重送（發布冪等） */
+export function planPodcast(post, now) {
+  const c = chOf(post, "pc");
+  if (!c.enabled) return "skip";
+  const due = parseTime(post.scheduledAt);
+  switch (c.state) {
+    case "approved":
+      if (isFinite(due) && now - due > OVERDUE_MS) return "overdue";
+      return !isFinite(due) || due - now <= CONTAINER_LEAD_MS ? "publish_now" : "wait";
+    case "publishing":
+      return lockFresh(post, now) ? "wait" : "publish_now";
+    case "cancel_requested":
+      return "cancel";
+    default:
+      return "noop";
+  }
+}
+
 const IDLE = ["wait", "noop", "skip"];
 const NEEDS_GRAPH = ["create", "check", "recover"];
 const NATIVE_NEEDS_GRAPH = ["publish_now", "schedule_native", "reconcile"];
@@ -348,6 +371,8 @@ export function planPost(post, now, { graphs = {}, paused = [] } = {}) {
     if (NEEDS_GRAPH.includes(a) && !graphs[ch]) a = "unconfigured";
     plan[ch] = a;
   }
+  plan.pc = planPodcast(post, now);
+  if (plan.pc === "publish_now" && !graphs.pc) plan.pc = "unconfigured";
   for (const ch of paused) if (!IDLE.includes(plan[ch])) plan[ch] = "wait";
   return plan;
 }
@@ -359,6 +384,7 @@ const ACTIVE = {
   ig: ["approved", "processing", "publishing", "cancel_requested"],
   th: ["approved", "processing", "publishing", "cancel_requested"],
   yt: ["approved", "publishing", "scheduled", "cancel_requested"],
+  pc: ["approved", "publishing", "cancel_requested"],
 };
 export function nextQueueState(post) {
   const en = CHANNELS.filter((ch) => chOf(post, ch).enabled);
@@ -477,6 +503,37 @@ async function runYt(act, cur, { graphs, save, now, log, tag }) {
   return {};
 }
 
+/* Podcast：下載音檔 → GitHub Releases 附件 → aurora_podcast_feed 集數（RSS 另由 build-show-feed.mjs 產生） */
+async function runPc(act, cur, { graphs, save, now, log, tag }) {
+  const g = graphs.pc;
+  const pc = chOf(cur, "pc");
+  if (act === "publish_now") {
+    await save("pc", { state: "publishing" });
+    const r = await g.publish({
+      id: cur.id, title: pc.title || cur.title || "", notes: pc.caption || "", link: pc.link || "",
+      audioUrl: pc.audioUrl || "", audioDriveId: pc.audioDriveId || "", audioName: pc.audioName || "",
+      duration: pc.duration || null, explicit: !!pc.explicit, episodeType: pc.episodeType || "full", now,
+    });
+    await save("pc", { state: "published", guid: r.guid, url: r.url, enclosureUrl: r.enclosureUrl, duration: r.duration, episode: r.episode, error: null, publishedAt: iso(now) });
+    log(`${tag} Podcast 已上架第 ${r.episode || "-"} 集 → ${r.url}`);
+    return { postId: r.guid, feedChanged: true };
+  }
+  if (act === "cancel") {
+    await save("pc", { state: "draft", error: null });
+    log(`${tag} Podcast 已取消，退回草稿`);
+    return {};
+  }
+  if (act === "unconfigured") {
+    await save("pc", { state: "failed", error: "排程器尚未設定 Podcast（缺少 GH_TOKEN／GITHUB_REPOSITORY，無法上傳 GitHub Releases），未發布。見 docs/PODCAST_RSS_SOP.md，設定後重新核准。" });
+    return {};
+  }
+  if (act === "overdue") {
+    await save("pc", { state: "failed", error: "預定時間已逾期超過 24 小時，為避免發出過時內容未自動上架。請確認後重設時間再核准。" });
+    return {};
+  }
+  return {};
+}
+
 /* IG／Threads：建立容器 → 確認 FINISHED → 發布 */
 async function runContainer(ch, act, cur, { graphs, save, now, log, tag }) {
   const g = graphs[ch];
@@ -566,7 +623,7 @@ export async function processPost(post, { store, graph, graphs = {}, paused = []
   const tag = `[${post.id}]`;
   const all = { ...graphs, fb: graph };
   const plan = planPost(post, now, { graphs: all, paused });
-  const primary = (p) => (p.fb !== "skip" ? p.fb : ["ig", "th", "yt"].map((ch) => p[ch]).find((a) => a !== "skip") || "skip");
+  const primary = (p) => (p.fb !== "skip" ? p.fb : ["ig", "th", "yt", "pc"].map((ch) => p[ch]).find((a) => a !== "skip") || "skip");
   const busy = CHANNELS.filter((ch) => !IDLE.includes(plan[ch]));
 
   if (!busy.length) {
@@ -602,7 +659,7 @@ export async function processPost(post, { store, graph, graphs = {}, paused = []
     if (IDLE.includes(act)) continue;
     const ctx = { graph, graphs, save, now, log, tag };
     try {
-      results[ch] = { action: act, ...(ch === "fb" ? await runFb(act, cur, ctx) : ch === "yt" ? await runYt(act, cur, ctx) : await runContainer(ch, act, cur, ctx)) };
+      results[ch] = { action: act, ...(ch === "fb" ? await runFb(act, cur, ctx) : ch === "yt" ? await runYt(act, cur, ctx) : ch === "pc" ? await runPc(act, cur, ctx) : await runContainer(ch, act, cur, ctx)) };
     } catch (e) {
       const c = chOf(cur, ch);
       const attempts = (c.attempts || 0) + 1;
@@ -640,6 +697,7 @@ export async function processPost(post, { store, graph, graphs = {}, paused = []
     } : {}),
     ...(results.fb && results.fb.postId ? { postId: results.fb.postId } : {}),
     ...(results.fb && "published" in results.fb ? { published: results.fb.published } : {}),
+    ...(results.pc && results.pc.feedChanged ? { feedChanged: true } : {}),
   };
 }
 
@@ -655,5 +713,6 @@ export async function runOnce({ store, graph, graphs = {}, paused = [], now = Da
     authFailed: results.some((r) => r.auth),
     authChannels,
     failed: results.filter((r) => r.error && !r.retry).length,
+    feedChanged: results.some((r) => r.feedChanged),
   };
 }

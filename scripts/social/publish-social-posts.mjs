@@ -21,12 +21,18 @@
      YT_CLIENT_ID / YT_CLIENT_SECRET / YT_REFRESH_TOKEN
                                YouTube Data API 的 OAuth 用戶端與 refresh token
                                （以 scripts/social/youtube-auth.mjs 取得）
+     GH_TOKEN／GITHUB_REPOSITORY
+                               Podcast（pc）：音檔上傳本 repo 的 GitHub Releases（workflow 的 GITHUB_TOKEN，需 contents: write）
+     GDRIVE_SERVICE_ACCOUNT    （選用）Podcast 音檔在 Drive 時以此唯讀服務帳戶下載
+     PODCAST_FEED_FLAG         （選用）本輪有集數上架時寫入此檔，workflow 隨後重建 podcast.xml
      META_GRAPH_VERSION        選填，預設 v25.0
      SOCIAL_DRY_RUN            '1' 時只列出將執行的動作，不呼叫發文 API、不改資料
    ===================================================================== */
 import { runOnce, createFbGraph, createIgGraph, createThreadsGraph, LOCK_STALE_MS, isAuthError, CHANNEL_LABEL , fbNameMismatch } from "./core.mjs";
 import { threadsToken, instagramToken } from "./threads-token.mjs";
 import { createYouTubeClient } from "./youtube.mjs";
+import { createPodcastClient } from "./podcast.mjs";
+import { writeFileSync } from "node:fs";
 
 const COLL = "aurora_social_posts";
 const META_DOC = "aurora_social_meta/runner";
@@ -42,12 +48,13 @@ async function main() {
   const thUserId = env("THREADS_USER_ID"), thSeed = env("THREADS_TOKEN");
   const version = env("META_GRAPH_VERSION") || "v25.0";
   const yt = { clientId: env("YT_CLIENT_ID"), clientSecret: env("YT_CLIENT_SECRET"), refreshToken: env("YT_REFRESH_TOKEN") };
-  const configured = { fb: !!(metaToken && pageId), ig: !!((igSeed || metaToken) && igUserId), th: !!(thUserId && thSeed), yt: !!(yt.clientId && yt.clientSecret && yt.refreshToken) };
+  const ghToken = env("GH_TOKEN") || env("GITHUB_TOKEN"), ghRepo = env("GITHUB_REPOSITORY");
+  const configured = { fb: !!(metaToken && pageId), ig: !!((igSeed || metaToken) && igUserId), th: !!(thUserId && thSeed), yt: !!(yt.clientId && yt.clientSecret && yt.refreshToken), pc: !!(ghToken && ghRepo) };
   if (!sa) {
     console.log("::warning::未設定 FIREBASE_SERVICE_ACCOUNT，略過本輪。設定方式見 docs/SOCIAL_SOP.md。");
     return;
   }
-  if (!configured.fb && !configured.ig && !configured.th && !configured.yt) {
+  if (!configured.fb && !configured.ig && !configured.th && !configured.yt && !configured.pc) {
     console.log("::warning::尚未設定任何社群平台的 Secrets（Meta、Threads 或 YouTube），略過本輪。見 docs/SOCIAL_SOP.md。");
     return;
   }
@@ -94,6 +101,25 @@ async function main() {
     clients.th = createThreadsGraph({ token: thToken.token, userId: thUserId });
   }
   if (configured.yt) clients.yt = createYouTubeClient(yt);
+  if (configured.pc) {
+    const feedCol = db.collection("aurora_podcast_feed");
+    const feed = {
+      async get(id) { const s = await feedCol.doc(id).get(); return s.exists ? s.data() : null; },
+      async list() { return (await feedCol.get()).docs.map((d) => d.data()); },
+      async set(id, doc) { await feedCol.doc(id).set(doc); },
+    };
+    let driveDownload = null;
+    const gsa = env("GDRIVE_SERVICE_ACCOUNT");
+    if (gsa) {
+      driveDownload = async (fileId) => {
+        const { google } = await import("googleapis");
+        const auth = new google.auth.GoogleAuth({ credentials: JSON.parse(gsa), scopes: ["https://www.googleapis.com/auth/drive.readonly"] });
+        const drive = google.drive({ version: "v3", auth });
+        return Buffer.from((await drive.files.get({ fileId, alt: "media", supportsAllDrives: true }, { responseType: "arraybuffer" })).data);
+      };
+    }
+    clients.pc = createPodcastClient({ repo: ghRepo, token: ghToken, feed, driveDownload });
+  }
   for (const ch of Object.keys(clients)) {
     try { health[ch] = { ok: true, name: (await clients[ch].checkToken()).name || null, error: null }; }
     catch (e) { health[ch] = { ok: false, name: null, error: e.message }; }
@@ -125,6 +151,7 @@ async function main() {
         ig: { ...chMeta("ig"), login: igSeed ? "instagram" : "facebook", expiresAt: igToken ? igToken.expiresAt : null, refreshError: igToken ? igToken.refreshError : null },
         th: { ...chMeta("th"), expiresAt: thToken ? thToken.expiresAt : null, refreshError: thToken ? thToken.refreshError : null },
         yt: chMeta("yt"),
+        pc: { ...chMeta("pc"), feedUrl: "https://allenchen1113official.github.io/AllenI3Aurora/podcast.xml" },
       },
       processed: summary.total,
       actions: summary.results.map((r) => `${r.id}:${r.action}${r.error ? "!" : ""}`).slice(0, 50),
@@ -132,6 +159,7 @@ async function main() {
     }, { merge: true });
   }
 
+  if (summary.feedChanged && !dryRun && env("PODCAST_FEED_FLAG")) writeFileSync(env("PODCAST_FEED_FLAG"), new Date().toISOString() + "\n");
   console.log(`本輪處理 ${summary.total} 筆；不可重試失敗 ${summary.failed} 筆${dryRun ? "（DRY-RUN）" : ""}`);
   for (const ch of Object.keys(health)) console.log(`  ${CHANNEL_LABEL[ch]}: ${health[ch].ok ? "● 正常 " + (health[ch].name || "") : "✕ " + health[ch].error}`);
   if (igToken && igToken.expiresAt) console.log(`  Instagram Token 到期：${igToken.expiresAt}${igToken.refreshError ? `（續期失敗：${igToken.refreshError}）` : ""}`);

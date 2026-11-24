@@ -108,3 +108,17 @@ test("主題家族 yt：每支影片一份送審包，子代碼須為影片 ID �
   assert.match(topicInfo("yt-dQw4w9WgXcQ").label, /常看 YouTube 重點筆記/);
   assert.notEqual(docIdOf("yt-aaaaaaaaaaa", "20261123"), docIdOf("yt-bbbbbbbbbbb", "20261123"));
 });
+
+test("Podcast 送審包：音檔列入引用檔、pc 家族子代碼、指標檔內容", async () => {
+  const { AUDIO_NAME, driveStub } = await import("./drive-bridge-core.mjs");
+  const m = { version: 1, topic: "pc-ep001", platforms: { podcast: { caption: "podcast.txt", audio: "episode.mp3" } } };
+  assert.deepEqual(referencedFiles(m).files.sort(), ["episode.mp3", "podcast.txt"]);
+  assert.equal(AUDIO_NAME.test("episode.mp3"), true);
+  assert.equal(AUDIO_NAME.test("card.png"), false);
+  assert.equal(familyTopic("pc", "daily-1124"), "pc-daily-1124");
+  assert.equal(familyTopic("pc", "a"), null);
+  assert.deepEqual(DRIVE_FAMILIES.pc.path, ["podcast", "episodes"]);
+  assert.deepEqual(driveStub({ id: "x", name: "episode.mp3", size: "99", mimeType: "audio/mpeg", modifiedTime: "t", trashed: false }),
+    { id: "x", name: "episode.mp3", size: 99, mimeType: "audio/mpeg", modifiedTime: "t" });
+  assert.equal(topicInfo("pc-ep001").label, "Podcast 單集 ep001");
+});
