@@ -1,0 +1,90 @@
+name: 常聽 Podcast 重點筆記（音檔→逐字稿→筆記→PilotOne）
+
+# 音檔 → FunASR／Whisper 逐字稿 → Claude 摘要＋康乃爾筆記＋三平台文案 → 莫蘭迪藍圖卡 → PilotOne 送審（content 分支）。
+# 逐字稿只寫 Firestore aurora_podcast_transcripts（管理者唯讀），不進 repo、不印在日誌。SOP：docs/PODNOTES_SOP.md
+on:
+  schedule:
+    - cron: "17 2 * * *"     # 台北每日 10:17（早上發布的節目）
+    - cron: "47 5 * * *"     # 台北每日 13:47
+    - cron: "17 12 * * *"    # 台北每日 20:17（傍晚發布的節目）
+    - cron: "47 14 * * *"    # 台北每日 22:47
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "只處理這個節目代碼的最新一集（如 yutinghao、zhaohua、ailanren；留空＝全部啟用節目）"
+        required: false
+        default: ""
+      force:
+        description: "已處理過也重做（重新轉錄與寫筆記）"
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths:
+      - "scripts/podnotes/pipeline.py"
+      - "scripts/podnotes/prompt.md"
+      - ".github/workflows/podnotes.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: podnotes
+  cancel-in-progress: false
+
+jobs:
+  podnotes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    steps:
+      - uses: actions/checkout@v4
+      - name: 取出 content 分支（PilotOne 送審包）
+        uses: actions/checkout@v4
+        with:
+          ref: content
+          path: _content
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: 模型快取（FunASR／Whisper）
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/modelscope
+            ~/.cache/huggingface
+          key: podnotes-models-v1
+      - name: 安裝轉錄與圖卡相依
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null
+          python -m pip install -q --upgrade pip
+          pip install -q torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install -q "funasr>=1.1" modelscope opencc faster-whisper pillow google-cloud-firestore
+      - name: 管線測試
+        run: python -m unittest scripts/podnotes/test_pipeline.py scripts/podnotes/test_package.py scripts/ytnotes/test_podcast.py
+      - name: 音檔 → 逐字稿 → 筆記 → 送審包
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PODNOTES_MODEL: ${{ vars.PODNOTES_MODEL }}
+          EPISODE: ${{ inputs.episode }}
+          FORCE: ${{ inputs.force && '--force' || '' }}
+        run: python scripts/podnotes/pipeline.py --content-dir _content --episode "$EPISODE" $FORCE
+      - name: 提交前台筆記與圖卡（main）
+        run: |
+          git config user.name "aurora-bot"
+          git config user.email "aurora-bot@users.noreply.github.com"
+          git add data/podnotes.json assets/podnotes
+          if git diff --cached --quiet; then echo "前台無變動"; exit 0; fi
+          git commit -q -m "chore(podnotes): 常聽 Podcast 重點筆記更新 [skip ci]"
+          for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0; sleep 5; done
+          exit 1
+      - name: 提交 PilotOne 送審包（content）
+        working-directory: _content
+        run: |
+          git config user.name "aurora-bot"
+          git config user.email "aurora-bot@users.noreply.github.com"
+          git add content
+          if git diff --cached --quiet; then echo "無新送審包"; exit 0; fi
+          git commit -q -m "content: 常聽 Podcast 重點筆記"
+          for i in 1 2 3; do git pull -q --rebase origin content && git push -q origin HEAD:content && exit 0; sleep 5; done
+          exit 1
