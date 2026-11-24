@@ -553,12 +553,18 @@
   /* 各節目（show）→ 該節目最新一集。 */
   function latestEpisodeByShow() {
     const map = new Map();
-    (window.KIT.podcastEpisodes || [])
+    // 後台／內建集數＋官方 RSS 最新一集（aurora-data.js 的 rssEpisodes）；同節目取日期新者，
+    // 同日時後台編修的集數（含康乃爾筆記）優先於 RSS。
+    (window.KIT.podcastEpisodes || []).concat((window.AURORA && window.AURORA.rssEpisodes) || [])
       .filter((e) => e && (!e.status || e.status === "published"))
       .forEach((e) => {
-        const key = String(e.show || "").trim();
+        // 節目名互相包含者視為同一節目（如「Lex Fridman」與 RSS 的「Lex Fridman Podcast」）
+        const raw = String(e.show || "").trim().toLowerCase();
+        let key = raw;
+        map.forEach((_, k) => { if (key === raw && k && raw && (k.includes(raw) || raw.includes(k))) key = k; });
         const cur = map.get(key);
-        if (!cur || epNewer(cur, e) > 0) map.set(key, e);
+        const d = cur ? epNewer(cur, e) : 1;
+        if (!cur || d > 0 || (d === 0 && cur.source === "rss" && e.source !== "rss")) map.set(key, e);
       });
     return map;
   }
@@ -654,7 +660,10 @@
             </div>
           </div>
           {ep.summary ? (
-            <p style={{ color: "var(--text-2)", fontSize: 13.5, lineHeight: 1.7, margin: "0 0 12px", whiteSpace: "pre-wrap" }}>{ep.summary}</p>
+            <div style={{ margin: "0 0 12px" }}>
+              {ep.source === "rss" ? <div style={{ fontSize: 11, letterSpacing: ".08em", fontWeight: 700, color: "var(--text-3)", marginBottom: 4 }}>本集重點 · 節目說明</div> : null}
+              <p style={{ color: "var(--text-2)", fontSize: 13.5, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{ep.summary}</p>
+            </div>
           ) : null}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {hasCornell ? (
@@ -680,7 +689,7 @@
       <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
         <span style={{ width: 40, height: 40, flex: "none", borderRadius: 12, background: `var(--${p.tone}-soft)`, color: `var(--${p.tone})`, display: "grid", placeItems: "center" }}><I.headphones size={20} /></span>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.title}</div>
+          <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{String(p.title || "").replace(/\s*\|\s*Podcast on Spotify\s*$/i, "").trim()}</div>
           <div style={{ color: "var(--text-3)", fontSize: 12 }}>{p.meta}</div>
         </div>
         <IconButton size="sm" variant="ghost" label={hasUrl ? "前往收聽" : "播放"}>{hasUrl ? <I.ext size={16} /> : <I.play size={16} />}</IconButton>
