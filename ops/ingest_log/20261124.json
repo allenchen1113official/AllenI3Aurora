@@ -122,6 +122,26 @@
       }
     },
     {
+      "id": "cs_dailypick_20261124",
+      "topic": "dailypick",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_pn-ailanren-20261124_20261124",
       "topic": "pn-ailanren-20261124",
       "queueState": "done",
@@ -397,6 +417,19 @@
       ]
     },
     {
+      "id": "cs_dailypick_20261124",
+      "topic": "dailypick",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "極光日報・每日來一股｜台積電 2330 12 面向健檢 2026/11/24",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_heatmap_20261124",
       "topic": "heatmap",
       "date": "20261124",
@@ -631,5 +664,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T17:03:01.007Z"
+  "generatedAt": "2026-11-24T18:33:14.595Z"
 }
