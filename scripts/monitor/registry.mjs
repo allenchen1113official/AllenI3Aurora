@@ -95,7 +95,7 @@ export const CLAUDE_TASKS = [
   { id: "trig_01FQDvHmuqhvUm1MbFNNq2D9", name: "常看 YouTube 重點筆記｜PilotOne 送審", cron: "CRON_TZ=Asia/Taipei 17 10,21 * * *", check: "",           kind: "post", manual: true },
   // 常聽 Podcast 重點筆記：2026-11-24 改由 GitHub Actions podnotes.yml 處理（排程監控自動解析其 cron），原 Claude 排程 trig_01BHPcUndhA9rdPUWyxAELGW 已停用
   // 2026-11-24：極光日報・每日來一股（依 data/dailypick/queue.json 順序取下一檔 → StockAdvisor 12 面向評分＋莫蘭迪金圖卡＋三平台文案；分析完追加 data/dailypick/history.json）
-  { id: "trig_014g7ZgDMTzq5LY75tV9V7KG", name: "極光日報・每日來一股",        cron: "CRON_TZ=Asia/Taipei 41 17 * * 1-5", check: "",           kind: "produce" },
+  { id: "trig_01AvzcAubP2YPje9PTMJ7JEA", name: "極光日報・每日來一股",        cron: "CRON_TZ=Asia/Taipei 0 15 * * *", check: "",           kind: "produce" },
   { id: "aurora-agent", tid: "trig_014J2SYkJeqeJ8S2QvSM4WAH", name: "AllenI3Aurora Agent 巡檢",      cron: "CRON_TZ=Asia/Taipei 41 7,9,19,21,23 * * *", check: "", kind: "agent", agent: true },
 ];
 

@@ -8,7 +8,7 @@
 | 後台設定 | Firestore `aurora_dailypick/overrides` | `pin`（指定下一檔，依序）、`skip`（不分析）；公開讀、管理者寫 |
 | 後台頁 | `admin/#dailypick`（`admin/dailypick.jsx`） | 分析順序／分析紀錄／新增股票、指定與略過、下載 CSV |
 | 更新程式 | `scripts/dailypick/update-queue.mjs`（純邏輯 `core.mjs`） | 測試 `node --test scripts/dailypick/dailypick.test.mjs` |
-| 分析引擎 | StockAdvisor repo `daily_pick/`、`skills/aurora-daily-pick/SKILL.md` | Claude 排程 `trig_014g7ZgDMTzq5LY75tV9V7KG`（台北 17:41，週一至週五） |
+| 分析引擎 | StockAdvisor repo `daily_pick/`、`skills/aurora-daily-pick/SKILL.md` | Claude Code 雲端排程 `trig_01AvzcAubP2YPje9PTMJ7JEA`（台北每日 15:00，週末／休市自動結束；舊排程 `trig_014g7ZgDMTzq5LY75tV9V7KG` 已停用） |
 
 ## 順序規則
 1. 後台「指定下一檔」（依指定順序）
