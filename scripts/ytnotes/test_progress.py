@@ -22,7 +22,8 @@ class Base(unittest.TestCase):
         (root / "_engine").mkdir(parents=True); (root / "_inbox" / "_done").mkdir(parents=True); home.mkdir()
         self.patches = [mock.patch.object(Y, "ROOT", root), mock.patch.object(Y, "ENGINE", root / "_engine"),
                         mock.patch.object(Y, "INBOX", root / "_inbox"), mock.patch.object(Y, "HOME", home),
-                        mock.patch.object(Y, "TMP", home / "tmp")]
+                        mock.patch.object(Y, "TMP", home / "tmp"),
+                        mock.patch.dict(Y.CFG, {"podcast_feeds_url": "", "podcast_root": ""})]   # 測試不連網、不碰真實 notes/podcast
         for p in self.patches: p.start()
         self.root, self.home = root, home
         Y.RUN.update(state="idle", startedAt=None, endedAt=None, processed=0); Y.CUR.clear()

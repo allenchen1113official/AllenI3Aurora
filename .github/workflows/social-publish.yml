@@ -96,7 +96,7 @@ jobs:
       - name: 行為測試
         run: |
           node --test scripts/social/publish.test.mjs scripts/social/youtube.test.mjs scripts/social/podcast.test.mjs scripts/social/ingest.test.mjs scripts/social/bridge.test.mjs scripts/podcast/show-feed.test.mjs scripts/ytnotes/progress.test.mjs
-          python3 -m unittest scripts/ytnotes/test_progress.py scripts/ytnotes/test_channels.py
+          python3 -m unittest scripts/ytnotes/test_progress.py scripts/ytnotes/test_channels.py scripts/ytnotes/test_podcast.py
       - name: 安裝 firebase-admin、sharp、googleapis、nodemailer
         run: npm install --no-save --no-audit --no-fund firebase-admin@13 sharp@0.34 googleapis@144 nodemailer@6
       - name: 取出 content 分支（Claude 排程素材）

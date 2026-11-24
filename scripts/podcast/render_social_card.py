@@ -77,6 +77,22 @@ THEMES = {
     },
 }
 THEMES["morandi-indigo"]["brand_grad"] = ((104, 114, 160), (164, 156, 196))
+# morandi-blue：莫蘭迪藍色系（常聽 Podcast 重點筆記用）——灰藍頁首帶＋霧藍白底、低彩度霧藍強調
+THEMES["morandi-blue"] = {
+    "bg": (234, 238, 241),          # 霧藍白
+    "panel": (219, 228, 234),       # 淺灰藍
+    "border": (188, 202, 212),
+    "rule": (208, 218, 225),
+    "text1": (36, 54, 70),          # 深石板藍
+    "text2": (62, 80, 95),
+    "text3": (110, 125, 138),
+    "accent": (86, 120, 148),       # 莫蘭迪霧藍
+    "glow": False,
+    "band": {"fill": (82, 109, 132), "stripe": (156, 181, 197),     # 灰藍頁首帶＋淺霧藍細線
+             "title": (246, 245, 241), "kicker": (198, 216, 228), "meta": (180, 199, 212)},
+    "brand_grad": ((92, 124, 152), (152, 180, 198)), "brand_mark": (250, 249, 246),
+    "brand_text": (36, 54, 70), "brand_sub": (110, 125, 138),
+}
 
 GSTATIC = {
     "NotoSansTC-Regular.ttf": "https://fonts.gstatic.com/s/notosanstc/v39/-nFuOG829Oofr2wohFbTp9ifNAn722rq0MXz70e1_Co.ttf",

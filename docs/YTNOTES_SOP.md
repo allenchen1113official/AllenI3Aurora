@@ -1,5 +1,7 @@
 # 常看 YouTube 重點筆記 SOP
 
+> 2026-11-24 起同一引擎也處理「常聽 Podcast 重點筆記」（RSS 音檔），見 `docs/PODNOTES_SOP.md`；共用 `_engine/`、詞庫、檔案鎖與進度檔。
+
 影片在 Mac mini 本機下載、轉錄（免費、不上傳影片到任何 AI 服務）→ Claude 校正成逐字稿與重點筆記 → Obsidian 筆記＋Drive 純文字副本 → 品牌圖卡與 FB／IG／Threads 文案送 PilotOne 審核 → 首頁「常看 YouTube · 重點筆記」。
 
 ## 架構

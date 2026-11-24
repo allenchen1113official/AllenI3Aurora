@@ -550,12 +550,15 @@
   // 遞減排序比較器：b 較新（日期大、同日 sort 大）時回傳正值。
   const epNewer = (a, b) => (epDateNum(b.date) - epDateNum(a.date)) || ((Number(b.sort) || 0) - (Number(a.sort) || 0));
 
+  // 同日優先序：逐字稿整理的重點筆記（notes）＞ 後台／內建集數 ＞ RSS 節目說明
+  const epRank = (x) => (x && x.source === "notes" ? 2 : x && x.source === "rss" ? 0 : 1);
+
   /* 各節目（show）→ 該節目最新一集。 */
   function latestEpisodeByShow() {
     const map = new Map();
     // 後台／內建集數＋官方 RSS 最新一集（aurora-data.js 的 rssEpisodes）；同節目取日期新者，
     // 同日時後台編修的集數（含康乃爾筆記）優先於 RSS。
-    (window.KIT.podcastEpisodes || []).concat((window.AURORA && window.AURORA.rssEpisodes) || [])
+    (window.KIT.podcastEpisodes || []).concat((window.AURORA && window.AURORA.podNotes) || [], (window.AURORA && window.AURORA.rssEpisodes) || [])
       .filter((e) => e && (!e.status || e.status === "published"))
       .forEach((e) => {
         // 節目名互相包含者視為同一節目（如「Lex Fridman」與 RSS 的「Lex Fridman Podcast」）
@@ -564,7 +567,7 @@
         map.forEach((_, k) => { if (key === raw && k && raw && (k.includes(raw) || raw.includes(k))) key = k; });
         const cur = map.get(key);
         const d = cur ? epNewer(cur, e) : 1;
-        if (!cur || d > 0 || (d === 0 && cur.source === "rss" && e.source !== "rss")) map.set(key, e);
+        if (!cur || d > 0 || (d === 0 && epRank(e) > epRank(cur))) map.set(key, e);
       });
     return map;
   }
@@ -592,7 +595,7 @@
       return { p, ep };
     });
     byShow.forEach((ep) => { if (!used.has(ep)) items.push({ p: null, ep }); });
-    const withEp = items.filter((x) => x.ep).sort((a, b) => epNewer(a.ep, b.ep));
+    const withEp = items.filter((x) => x.ep).sort((a, b) => epNewer(a.ep, b.ep) || (epRank(b.ep) - epRank(a.ep)));
     const linkOnly = items.filter((x) => !x.ep);
     return withEp.concat(linkOnly);
   }
@@ -641,12 +644,27 @@
   }
 
   /* 單一節目最新一集卡：繁中摘要，可展開康乃爾筆記圖卡；isLatest 標記全站最新一集。 */
+  /* 社群連結 …/podcast.html?pn=<集數ID>#pn-<集數ID> → 該集展開圖卡並捲動到位 */
+  const pnFocusId = () => { try { return new URLSearchParams(window.location.search).get("pn") || ""; } catch (e) { return ""; } };
+  const SITE_ROOT = "/AllenI3Aurora/";
+
   function PodcastEpisodeCard({ ep, isLatest }) {
     const I = window.Icons;
+    const focus = !!ep.id && pnFocusId() === ep.id;
     const [openCard, setOpenCard] = React.useState(false);
+    const [openSocial, setOpenSocial] = React.useState(focus);
+    const ref = React.useRef(null);
+    React.useEffect(() => {
+      if (!focus || !ref.current) return;
+      const t = setTimeout(() => { try { ref.current.scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 400);
+      return () => clearTimeout(t);
+    }, [focus]);
     const hasCornell = !!(ep.cornell && ((Array.isArray(ep.cornell.rows) && ep.cornell.rows.length) || ep.cornell.summary));
+    const cards = ep.cards || {};
+    const hasSocial = !!(cards.ig || cards.fb);
+    const list = Array.isArray(ep.summaryList) ? ep.summaryList.filter(Boolean) : [];
     return (
-      <div>
+      <div id={ep.id ? "pn-" + ep.id : undefined} ref={ref} style={{ scrollMarginTop: 80 }}>
         <Card accent={ep.tone || "insight"} padding="var(--space-5)">
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
             <span style={{ width: 40, height: 40, flex: "none", borderRadius: 12, background: `var(--${ep.tone || "insight"}-soft)`, color: `var(--${ep.tone || "insight"})`, display: "grid", placeItems: "center" }}><I.headphones size={20} /></span>
@@ -659,7 +677,15 @@
               <div style={{ color: "var(--text-1)", fontWeight: 800, fontFamily: "var(--font-display)", fontSize: 15, marginTop: 4, lineHeight: 1.3 }}>{ep.title}</div>
             </div>
           </div>
-          {ep.summary ? (
+          {list.length ? (
+            <div style={{ margin: "0 0 12px" }}>
+              <div style={{ fontSize: 11, letterSpacing: ".08em", fontWeight: 700, color: "var(--text-3)", marginBottom: 4 }}>本集重點 · 逐字稿整理</div>
+              {ep.headline ? <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 14, lineHeight: 1.5, marginBottom: 6 }}>{ep.headline}</div> : null}
+              <ul style={{ color: "var(--text-2)", fontSize: 13.5, lineHeight: 1.7, margin: 0, paddingLeft: 18 }}>
+                {list.slice(0, 5).map((x, i) => <li key={i}>{x}</li>)}
+              </ul>
+            </div>
+          ) : ep.summary ? (
             <div style={{ margin: "0 0 12px" }}>
               {ep.source === "rss" ? <div style={{ fontSize: 11, letterSpacing: ".08em", fontWeight: 700, color: "var(--text-3)", marginBottom: 4 }}>本集重點 · 節目說明</div> : null}
               <p style={{ color: "var(--text-2)", fontSize: 13.5, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{ep.summary}</p>
@@ -671,12 +697,30 @@
                 {openCard ? "收合筆記圖卡" : "康乃爾筆記圖卡"}
               </Button>
             ) : null}
+            {hasSocial ? (
+              <Button variant="secondary" size="sm" icon={I.image ? <I.image size={15} /> : <I.book size={15} />} onClick={() => setOpenSocial((v) => !v)}>
+                {openSocial ? "收合社群圖卡" : "社群圖卡"}
+              </Button>
+            ) : null}
             {ep.url ? (
               <Button variant="ghost" size="sm" iconRight={<I.ext size={14} />} onClick={() => window.open(ep.url, "_blank", "noopener,noreferrer")}>前往收聽</Button>
             ) : null}
           </div>
         </Card>
         {openCard && hasCornell ? <div style={{ marginTop: 10 }}><CornellCard ep={ep} /></div> : null}
+        {openSocial && hasSocial ? (
+          <div style={{ marginTop: 10 }}>
+            <a href={SITE_ROOT + (cards.ig || cards.fb)} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
+              <img src={SITE_ROOT + (cards.ig || cards.fb)} alt={`${ep.show || ""}〈${ep.title || ""}〉康乃爾筆記社群圖卡`} loading="lazy"
+                style={{ width: "100%", maxWidth: 560, display: "block", margin: "0 auto", borderRadius: 14, border: "1px solid var(--border)" }} />
+            </a>
+            {cards.fb && cards.ig ? (
+              <div style={{ textAlign: "center", marginTop: 6 }}>
+                <a href={SITE_ROOT + cards.fb} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-3)", fontSize: 12.5, textDecoration: "none" }}>橫式版（FB 1200×630）↗</a>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     );
   }
@@ -730,7 +774,7 @@
     );
   }
   /* 供 podcast.html（全部清單頁）重用同一份合併邏輯與卡片。 */
-  window.AuroraPodcast = { mergedPodcastList, PodcastEpisodeCard, PodcastLinkCard };
+  window.AuroraPodcast = { mergedPodcastList, PodcastEpisodeCard, PodcastLinkCard, pnFocusId };
 
   /* ── 常看 YouTube · 重點筆記 ──────────────────────────────────────────
      資料來源同源 data/ytnotes.json（focus-update.yml → scripts/ytnotes/update-ytnotes.mjs

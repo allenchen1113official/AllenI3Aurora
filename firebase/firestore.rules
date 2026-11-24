@@ -10,8 +10,8 @@ rules_version = '2';
 // 若要更換管理者 email，改下方 OWNER_EMAIL。
 // 未列出的其他 collection 一律拒絕（預設安全）。
 // ---------------------------------------------------------------------
-// 規則版次：r13
-// 最後更新：2026-11-23 11:49（台北，commit 時間）· r13 新增常看 YouTube 頻道清單：aurora_ytnotes/channels（公開讀供 Mac mini 引擎讀取、管理者寫，最多 50 個）
+// 規則版次：r14
+// 最後更新：2026-11-24 14:06（台北，commit 時間）· r14 新增常聽 Podcast 重點筆記：aurora_podnotes/shows（啟用節目，公開讀供 Mac mini 引擎讀取、管理者寫，最多 30 個）、aurora_podcast_transcripts（逐字稿，管理者唯讀、前端不可寫）
 // 版次規則：每次修改本檔，「規則版次」+1 並更新「最後更新」（部署 workflow 會檢查）。
 //   註：首行 rules_version = '2' 是 Firestore 規則「語法版本」，只接受 '1' 或 '2'，
 //       不可拿來遞增，改成 '3' 會導致整份規則部署失敗。
@@ -50,6 +50,17 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['items', 'updatedAt'])
         && request.resource.data.items is list && request.resource.data.items.size() <= 50;
     }
+
+    // 常聽 Podcast 重點筆記的啟用節目（後台「Podcast 重點筆記」）：公開讀（Mac mini 的 ytnotes.py 以 REST 免登入讀取），
+    // 僅管理者寫、只有 shows 一份文件、最多 30 個節目，每個節目只存代碼與開關。
+    match /aurora_podnotes/{doc} {
+      allow read: if true;
+      allow write: if isOwner() && doc == 'shows'
+        && request.resource.data.keys().hasOnly(['items', 'updatedAt'])
+        && request.resource.data.items is list && request.resource.data.items.size() <= 30;
+    }
+    // 常聽 Podcast 逐字稿：不公開，僅管理者可讀（後台瀏覽）；由 focus-update.yml 以服務帳戶（Admin SDK）從 Drive 同步。
+    match /aurora_podcast_transcripts/{doc} { allow read: if isOwner(); allow write: if false; }
 
     // 社群發文佇列（FB／IG 草稿、審核、排程）：不公開，僅管理者可讀寫。
     // 發文排程器（GitHub Actions）以服務帳戶經 Admin SDK 存取，不受本規則限制。

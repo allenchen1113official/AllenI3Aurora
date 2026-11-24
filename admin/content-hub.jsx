@@ -508,11 +508,14 @@ function HubCalendar({ list, openPost, newPost }) {
 /* =====================================================================
    03 建立內容 — 主稿 → 逐平台微調 → 排程與審核
    ===================================================================== */
-/* Claude 排程素材（如常看 YouTube 筆記 yt-<影片ID>）的預設連結：網站上該支重點筆記 */
+/* Claude 排程素材的預設連結：網站上該則重點筆記（常看 YouTube yt-<影片ID>、常聽 Podcast pn-<集數ID>） */
 const HUB_SITE = "https://allenchen1113official.github.io/AllenI3Aurora/";
 function hubDefaultLink(r) {
-  const m = /^yt-(.+)$/.exec(String((r && r.source && r.source.topic) || ""));
-  return m ? `${HUB_SITE}?yt=${encodeURIComponent(m[1])}#ytnotes` : "";
+  const topic = String((r && r.source && r.source.topic) || "");
+  const m = /^yt-(.+)$/.exec(topic);
+  if (m) return `${HUB_SITE}?yt=${encodeURIComponent(m[1])}#ytnotes`;
+  const p = /^pn-(.+)$/.exec(topic);
+  return p ? `${HUB_SITE}podcast.html?pn=${encodeURIComponent(p[1])}#pn-${p[1]}` : "";
 }
 /* 把貼文文案結尾的 hashtag 段拆出來：{ body, tags }；結尾不是純 hashtag 段時 tags 為空（避免重複） */
 function hubSplitTags(text) {
