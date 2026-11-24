@@ -118,7 +118,8 @@ export function cleanShowNotes(html, max = 260, maxLines = 0) {
    全被扣光時退回「主題：<標題>」（去日期與【系列名】）。 */
 export function latestSummary(items, latest, cfg = {}) {
   const others = new Set();
-  items.filter((x) => x !== latest).slice(0, 6).forEach((x) => showNoteLines(x.description).forEach((l) => others.add(l)));
+  const key = (x) => (x.guid || "") + "|" + x.title + "|" + x.pubDate;
+  items.filter((x) => key(x) !== key(latest)).slice(0, 6).forEach((x) => showNoteLines(x.description).forEach((l) => others.add(l)));
   const own = showNoteLines(latest.description).filter((l) => !others.has(l));
   const sum = composeSummary(own, cfg.maxChars || 260, cfg.maxLines || 0);
   if (sum) return sum;
