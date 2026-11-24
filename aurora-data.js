@@ -39,12 +39,21 @@
   }
   window.AURORA.episodeVisible = episodeVisible;
 
+  /* 常聽 Podcast 各節目最新一集（官方 RSS，focus-update.yml → scripts/podcast/update-feeds.mjs
+     產出同源 data/podcast-episodes.json）。不覆蓋 KIT，由 Dashboard.jsx 與 Firestore／內建集數合併：
+     同節目以日期新者為準。讀取失敗即為空陣列。 */
+  window.AURORA.rssEpisodes = [];
+  var rssReady = (window.fetch ? fetch("/AllenI3Aurora/data/podcast-episodes.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { if (d && Array.isArray(d.items)) window.AURORA.rssEpisodes = d.items.filter(episodeVisible); })
+    .catch(function () {}) : Promise.resolve());
+
   var cfg = window.FIREBASE_CONFIG;
   var ok = cfg && cfg.apiKey && cfg.projectId && window.firebase && window.firebase.firestore;
 
   if (!ok) {
     window.AURORA.configured = false;
-    window.AURORA.ready = Promise.resolve(null);
+    window.AURORA.ready = rssReady.then(function () { return null; });
     return;
   }
 
@@ -64,9 +73,11 @@
         if (arr.length) out[key] = arr;
       }));
       window.AURORA.data = out;
+      await rssReady;
       return out;
     } catch (e) {
       console.warn("[aurora] 讀取 Firebase 失敗，改用內建預設資料：", e);
+      await rssReady;
       return null;
     }
   })();
