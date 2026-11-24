@@ -184,7 +184,7 @@
     {
       "id": "cs_yt-iF9iV4xponk_20261124",
       "topic": "yt-iF9iV4xponk",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122111615457524851",
@@ -196,8 +196,8 @@
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgHEZrvlb4b",
         "error": null
       }
     }
@@ -334,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T04:15:02.942Z"
+  "generatedAt": "2026-11-24T04:21:52.164Z"
 }
