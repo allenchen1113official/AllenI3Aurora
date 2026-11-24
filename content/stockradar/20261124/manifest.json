@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "topic": "stockradar",
+  "date": "2026-11-24",
+  "title": "今日關注動態｜台股選股雷達 2026/11/24（週二）",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "StockRadar_Top10_Facebook_2026-11-24.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "StockRadar_Top10_Instagram_2026-11-24.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "StockRadar_Top10_Instagram_2026-11-24.png"
+      ]
+    }
+  },
+  "producedBy": "trig_018cCAAwpSA8wce1uVfd3PH2",
+  "producedAt": "2026-11-24T23:05:10+08:00"
+}
