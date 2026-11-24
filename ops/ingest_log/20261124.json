@@ -84,7 +84,7 @@
     {
       "id": "cs_tw-whale-weekly_20261124",
       "topic": "tw-whale-weekly",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122111710251524851",
@@ -96,8 +96,8 @@
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgH_cc4kbB-",
         "error": null
       }
     },
@@ -433,5 +433,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T12:50:56.847Z"
+  "generatedAt": "2026-11-24T12:57:51.203Z"
 }
