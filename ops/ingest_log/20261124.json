@@ -44,19 +44,19 @@
     {
       "id": "cs_yt-6eBSHbLKuN0_20261124",
       "topic": "yt-6eBSHbLKuN0",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -334,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T03:12:45.913Z"
+  "generatedAt": "2026-11-24T03:53:24.123Z"
 }
