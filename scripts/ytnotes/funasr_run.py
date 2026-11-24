@@ -39,6 +39,8 @@ def main():
                       disable_update=True, log_level="ERROR")
     hot = load_hot(arg("--hotwords"))
     kw = {"batch_size_s": 300}
+    if "--no-spk" in sys.argv:
+        kw["sentence_timestamp"] = True     # 沒有 cam++ 時 FunASR 預設不回 sentence_info，要明確要求逐句時間戳
     if hot:
         kw["hotword"] = hot
     res = model.generate(input=wav, **kw)
