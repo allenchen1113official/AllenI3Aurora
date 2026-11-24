@@ -1,11 +1,11 @@
 /* =====================================================================
    Podcast 重點筆記（後台導覽「Podcast 重點筆記」、admin/#podnotes）
-   常聽 Podcast 每集：Mac mini 轉錄 → Claude 校正逐字稿、康乃爾筆記、三平台文案、莫蘭迪藍圖卡 → PilotOne 審核。
+   常聽 Podcast 每集：GitHub Actions 下載音檔 → FunASR 逐字稿 → Claude API 摘要、康乃爾筆記、三平台文案 → 莫蘭迪藍圖卡 → PilotOne 審核。
    三分頁：
      筆記    已完成的集數（同源 data/podnotes.json）：重點、康乃爾筆記、社群圖卡、PilotOne 草稿連結；
              點開可讀逐字稿（Firestore aurora_podcast_transcripts，管理者唯讀；不在前台公開）
-     轉錄    Mac mini 引擎進度中屬於 Podcast 的集數（aurora_ops/ytnotes_progress，與「YouTube 轉錄」同一份）
-     啟用節目 勾選要做逐字稿＋筆記＋送審的節目（aurora_podnotes/shows，公開讀；Mac mini 每 30 分鐘讀一次），
+     處理進度 雲端管線（.github/workflows/podnotes.yml）每集的階段：已轉錄／筆記完成／失敗（aurora_podcast_transcripts 的 stage）
+     啟用節目 勾選要做逐字稿＋筆記＋送審的節目（aurora_podnotes/shows；雲端管線每次執行時讀取），
              節目清單與 RSS 來自網站 scripts/podcast/feeds.json；後台沒設定的節目看 feeds.json 的 notes 欄位
    需於 admin.jsx 之後載入（共用 db、errText）。掛 window.PodNotesPanel。
    ===================================================================== */
@@ -49,7 +49,7 @@ function ShowsTab() {
     try {
       const items = feeds.map((s) => ({ code: s.code, enabled: on(s) }));
       await SHOWS_DOC().set({ items, updatedAt: new Date().toISOString() });
-      setMsg("已儲存 ✓ Mac mini 引擎最慢 30 分鐘內讀到新設定（只處理 36 小時內發布的集數，不會補做舊集）。");
+      setMsg("已儲存 ✓ 下一次雲端管線（台北 10:17／13:47／20:17／22:47）生效；只處理 36 小時內發布的集數，不會補做舊集。");
       await load();
     } catch (e) { setMsg("儲存失敗：" + errText(e)); }
     setBusy(false);
@@ -58,7 +58,7 @@ function ShowsTab() {
   return (
     <div>
       <div style={{ color: "var(--text-4)", fontSize: 12.5, lineHeight: 1.7, marginBottom: 12 }}>
-        勾選的節目，每天最新 1 集會在 Mac mini 自動轉錄，再由 Claude 整理康乃爾筆記、三平台文案與圖卡送 PilotOne 審核。
+        勾選的節目，每天最新 1 集會由 GitHub Actions 下載音檔轉成逐字稿，再由 Claude 整理康乃爾筆記、三平台文案與圖卡送 PilotOne 審核。
         節目與 RSS 在 <code>scripts/podcast/feeds.json</code> 維護（新增節目請在那裡補 RSS 與代碼）。
         {remote == null ? "　目前沿用 feeds.json 的預設值（尚未在後台存過）。" : ""}
       </div>
@@ -82,29 +82,36 @@ function ShowsTab() {
   );
 }
 
-/* ---------------- 轉錄進度（Podcast 部分） ---------------- */
+/* ---------------- 處理進度（雲端管線 podnotes.yml 寫在 aurora_podcast_transcripts 的 stage） ---------------- */
+const STAGE = { transcribed: "已轉錄・待寫筆記", noted: "筆記完成・已送審", failed: "失敗" };
+const STAGE_COLOR = { transcribed: "var(--intelligence)", noted: "var(--success)", failed: "var(--danger)" };
 function ProgressTab() {
-  const [doc, setDoc] = useState(undefined);
-  useEffect(() => db.doc("aurora_ops/ytnotes_progress").onSnapshot((s) => setDoc(s.exists ? s.data() : null), () => setDoc(null)), []);
-  if (doc === undefined) return <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>;
-  const items = ((doc && doc.items) || []).filter((x) => POD_ID.test(x.id || ""));
-  const cur = doc && doc.current && POD_ID.test(doc.current.id || "") ? doc.current : null;
+  const [rows, setRows] = useState(undefined);
+  useEffect(() => {
+    db.collection(TR_COLL).orderBy("syncedAt", "desc").limit(30).get()
+      .then((q) => setRows(q.docs.map((d) => ({ id: d.id, ...d.data() }))))
+      .catch((e) => setRows({ error: errText(e) }));
+  }, []);
+  if (rows === undefined) return <div style={{ color: "var(--text-3)", padding: 20 }}>載入中…</div>;
+  if (rows.error) return <div style={{ color: "var(--danger)", padding: 12 }}>讀取失敗：{rows.error}</div>;
   return (
     <div>
-      <div style={{ color: "var(--text-4)", fontSize: 12.5, marginBottom: 12 }}>
-        引擎最後回報：{doc ? tpeFmt(doc.updatedAt) : "—"}（台北）· 與 PilotOne 中控台「YouTube 轉錄」同一份進度檔；Claude 筆記排程每天 11:23／22:23 處理「草稿完成」的集數。
+      <div style={{ color: "var(--text-4)", fontSize: 12.5, marginBottom: 12, lineHeight: 1.7 }}>
+        GitHub Actions「常聽 Podcast 重點筆記」每天台北 10:17／13:47／20:17／22:47 執行：下載音檔 → FunASR 逐字稿 → Claude 摘要與康乃爾筆記 → 圖卡與三平台文案 → PilotOne 送審。
+        「已轉錄・待寫筆記」表示還沒設定 ANTHROPIC_API_KEY 或上一輪寫筆記失敗，下一輪會自動補做。
       </div>
-      {cur ? <div style={{ ...box, borderColor: "var(--illumination)" }}>▶ {cur.author}〈{cur.title}〉— {cur.stageLabel || cur.stage}</div> : null}
-      {items.length === 0 ? <div style={{ color: "var(--text-3)", padding: 12 }}>目前沒有 Podcast 集數在處理（引擎每 30 分鐘讀一次 RSS）。</div> : (
+      {rows.length === 0 ? <div style={{ color: "var(--text-3)", padding: 12 }}>還沒有處理過任何一集。</div> : (
         <div style={{ display: "grid", gap: 8 }}>
-          {items.map((x) => (
+          {rows.map((x) => (
             <div key={x.id} style={{ ...box, marginBottom: 0, padding: "12px 16px" }}>
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                <span style={{ ...chip(false), color: ST_COLOR[x.state] || "var(--text-2)" }}>{ST[x.state] || x.state}</span>
-                <span style={{ color: "var(--text-3)", fontSize: 12, fontFamily: "var(--font-mono)" }}>{x.id}{x.at ? " · " + tpeFmt(x.at) : ""}</span>
+                <span style={{ ...chip(false), color: STAGE_COLOR[x.stage] || "var(--text-2)" }}>{STAGE[x.stage] || x.stage || "—"}</span>
+                <span style={{ color: "var(--text-3)", fontSize: 12, fontFamily: "var(--font-mono)" }}>{x.id} · {tpeFmt(x.notedAt || x.syncedAt)}{x.chars ? ` · 逐字稿 ${x.chars.toLocaleString()} 字` : ""}{x.corrections ? ` · 校正 ${x.corrections} 處` : ""}</span>
               </div>
-              <div style={{ color: "var(--text-1)", fontWeight: 700, marginTop: 6 }}>{x.author}〈{x.title || "（讀取中）"}〉</div>
-              {x.error ? <div style={{ color: "var(--danger)", fontSize: 12, marginTop: 4, whiteSpace: "pre-wrap" }}>{x.error}</div> : null}
+              <div style={{ color: "var(--text-1)", fontWeight: 700, marginTop: 6 }}>{x.show}〈{x.title}〉</div>
+              {x.headline ? <div style={{ color: "var(--text-2)", fontSize: 13, marginTop: 2 }}>{x.headline}</div> : null}
+              {x.error ? <div style={{ color: "var(--danger)", fontSize: 12, marginTop: 4, whiteSpace: "pre-wrap" }}>（第 {x.attempts || 1} 次）{x.error}</div> : null}
+              {Array.isArray(x.check) && x.check.length ? <div style={{ color: "var(--illumination)", fontSize: 12, marginTop: 4 }}>待核對：{x.check.join("；")}</div> : null}
             </div>
           ))}
         </div>
@@ -165,13 +172,13 @@ function EpisodeDetail({ ep, onBack }) {
           {tr && tr.transcript ? <button className="ad-btn ghost" onClick={copy}>複製全文</button> : null}
         </div>
         {tr === undefined ? <div style={{ color: "var(--text-3)" }}>載入中…</div>
-          : tr === null ? <div style={{ color: "var(--text-4)" }}>逐字稿尚未同步（focus-update 每 3 小時從 Drive notes/podcast/transcripts/ 同步）。</div>
+          : tr === null ? <div style={{ color: "var(--text-4)" }}>找不到這集的逐字稿。</div>
           : tr.error ? <div style={{ color: "var(--danger)" }}>讀取失敗：{tr.error}</div>
           : (
             <div style={{ maxHeight: 520, overflow: "auto", background: "var(--night-850)", borderRadius: "var(--radius-md)", padding: "12px 14px",
               color: "var(--text-2)", fontSize: 13.5, lineHeight: 1.8, whiteSpace: "pre-wrap" }}>
               {shown.length ? shown.join("\n\n") : "（沒有符合的段落）"}
-              {tr.truncated ? "\n\n…（逐字稿過長，後台僅存前 25 萬字；全文在 Drive 筆記）" : ""}
+              {tr.truncated ? "\n\n…（逐字稿過長，後台僅存前 25 萬字）" : ""}
             </div>
           )}
         {tr && tr.transcriber ? <div style={{ color: "var(--text-4)", fontSize: 11.5, marginTop: 6 }}>轉錄：{tr.transcriber}</div> : null}
@@ -198,7 +205,7 @@ function NotesTab() {
           {shows.map((s) => <button key={s} className="ad-btn ghost" style={{ padding: "6px 12px", fontSize: 12.5, ...(show === s ? { background: "var(--brand-soft)", color: "var(--text-1)" } : {}) }} onClick={() => setShow(s)}>{s}</button>)}
         </div>
       ) : null}
-      {list.length === 0 ? <div style={{ color: "var(--text-3)", padding: 12 }}>還沒有完成的筆記。啟用節目後，Mac mini 轉錄完成、Claude 筆記排程（11:23／22:23）處理後會出現在這裡。</div> : (
+      {list.length === 0 ? <div style={{ color: "var(--text-3)", padding: 12 }}>還沒有完成的筆記。雲端管線每天台北 10:17／13:47／20:17／22:47 處理啟用節目的最新一集，完成後會出現在這裡。</div> : (
         <div style={{ display: "grid", gap: 10 }}>
           {list.map((x) => (
             <button key={x.id} onClick={() => setSel(x)} style={{ ...box, marginBottom: 0, textAlign: "left", cursor: "pointer", display: "flex", gap: 14, alignItems: "center" }}>
@@ -226,7 +233,7 @@ function PodNotesPanel() {
     <div>
       <h2 style={{ fontFamily: "var(--font-display)", color: "var(--text-1)", fontSize: 22, margin: "0 0 4px" }}>Podcast 重點筆記</h2>
       <div style={{ color: "var(--text-3)", fontSize: 12.5, marginBottom: 14 }}>常聽節目逐字稿 → 康乃爾筆記 → FB／IG／Threads 文案與莫蘭迪藍圖卡 → PilotOne 審核發布。SOP：docs/PODNOTES_SOP.md</div>
-      <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>{t("notes", "筆記與逐字稿")}{t("progress", "轉錄進度")}{t("shows", "啟用節目")}</div>
+      <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>{t("notes", "筆記與逐字稿")}{t("progress", "處理進度")}{t("shows", "啟用節目")}</div>
       {tab === "notes" ? <NotesTab /> : tab === "progress" ? <ProgressTab /> : <ShowsTab />}
     </div>
   );

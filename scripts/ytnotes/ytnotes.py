@@ -21,7 +21,7 @@ FunASR 虛擬環境（中文，見 funasr_run.py）。安裝見 install.sh。
   status.json      {"state": "drafted"|"failed", ...}；Claude 處理完改 "done" 並移到 _inbox/_done/
 影片與音訊只放 ~/.ytnotes/tmp，用完即刪；不進雲端硬碟。
 
-常聽 Podcast 重點筆記（同一引擎、同一把檔案鎖；2026-11-24 起）：
+常聽 Podcast 重點筆記（本機備用路線；2026-11-24 起預設停用，改由 GitHub Actions podnotes.yml 處理，見 docs/PODNOTES_SOP.md）：
   python3 ytnotes.py podscan                 # 讀啟用節目的官方 RSS，把「每節目每天最新 1 集」排入 Podcast 佇列
   python3 ytnotes.py poddraft <節目代碼>     # 立即處理該節目最新一集（略過啟用判斷，測試用）
   run 每次都會先處理 YouTube 佇列，再處理 Podcast 佇列；距上次 podscan 超過 podcast_scan_min 分鐘就重掃。
@@ -57,8 +57,9 @@ CFG = {
     "skip_longer_than_min": 180,     # 超過幾分鐘的影片不自動處理（手動 draft 不受限）
     # 後台「YouTube 頻道 → 常看頻道」存的清單（Firestore aurora_ytnotes/channels，公開讀）；設 "" 只用 channels.tsv
     "channels_url": "https://firestore.googleapis.com/v1/projects/alleni3aurora/databases/(default)/documents/aurora_ytnotes/channels",
-    # 常聽 Podcast 重點筆記：節目清單（網站上的 feeds.json）與後台啟用設定（aurora_podnotes/shows，公開讀）；feeds_url 設 "" 停用
-    "podcast_feeds_url": "https://allenchen1113official.github.io/AllenI3Aurora/scripts/podcast/feeds.json",
+    # 常聽 Podcast 重點筆記：2026-11-24 起改由 GitHub Actions（podnotes.yml）在雲端處理，Mac mini 預設不掃 Podcast。
+    # 要改回本機處理才填網站 feeds.json：https://allenchen1113official.github.io/AllenI3Aurora/scripts/podcast/feeds.json
+    "podcast_feeds_url": "",
     "podnotes_shows_url": "https://firestore.googleapis.com/v1/projects/alleni3aurora/databases/(default)/documents/aurora_podnotes/shows",
     "podcast_root": "",              # 留空＝ROOT 的兄弟資料夾 notes/podcast
     "podcast_scan_min": 30,          # 每隔幾分鐘重讀一次 RSS
