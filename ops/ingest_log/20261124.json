@@ -144,7 +144,7 @@
     {
       "id": "cs_pn-yutinghao-20261124_20261124",
       "topic": "pn-yutinghao-20261124",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122111742435524851",
@@ -156,8 +156,8 @@
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgISxL5kQgn",
         "error": null
       }
     },
@@ -631,5 +631,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T15:39:56.577Z"
+  "generatedAt": "2026-11-24T15:47:03.194Z"
 }
