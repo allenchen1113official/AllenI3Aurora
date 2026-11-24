@@ -64,3 +64,13 @@ test("免責聲明與追蹤行移除；maxLines 只取首行", () => {
   assert.equal(cleanShowNotes("<p>反彈該跑還是買？</p><p>節目內容純屬主持人與來賓個人經驗分享，非個股推薦。投資人須自行謹慎判斷</p><p>追蹤 IG：@x</p>"), "反彈該跑還是買？");
   assert.equal(cleanShowNotes("<p>靠 GTA VI 的籃球和路人打發時間</p><p>聖誕節、跨年快到了，想給另一半一個驚喜的</p>", 260, 1), "靠 GTA VI 的籃球和路人打發時間");
 });
+
+test("最新一集與清單是不同物件時（實際流程），本集內容仍保留、只扣跨集樣板", async () => {
+  const { latestSummary, parseItems } = await import("./feeds-core.mjs");
+  const xml = `<rss><channel>
+<item><title>EP2 新集</title><pubDate>Tue, 24 Nov 2026 00:30:00 GMT</pubDate><description><![CDATA[<p>本集聊 Agent 設計模式</p><p>節目固定介紹文字</p>]]></description></item>
+<item><title>EP1 舊集</title><pubDate>Mon, 23 Nov 2026 00:30:00 GMT</pubDate><description><![CDATA[<p>上集內容</p><p>節目固定介紹文字</p>]]></description></item>
+</channel></rss>`;
+  const all = parseItems(xml);
+  assert.equal(latestSummary(all, parseLatestItem(xml)), "本集聊 Agent 設計模式");
+});
