@@ -82,6 +82,7 @@ def plan(shows, states, now, only=None, force=False, max_age_h=36):
         else:
             eps = Y.pick_episodes(show, items, now, set(), max_age_h)[-1:]   # 每節目每次只取最新一天
         for ep in eps:
+            ep["asr"] = show.get("asr") or ""          # feeds.json 可逐節目指定轉錄器（whisper：中英夾雜的節目）
             st = states.get(ep["id"]) or {}
             stage = st.get("stage")
             if force:
@@ -158,6 +159,41 @@ def download(url, dest, max_mb=600):
     return n
 
 
+def load_replace():
+    p = HERE / "dict" / "替換規則.tsv"
+    out = []
+    if p.exists():
+        for l in p.read_text(encoding="utf-8").splitlines():
+            if l.strip() and not l.startswith("#") and "\t" in l:
+                a, b = l.split("\t", 1)
+                if a.strip():
+                    out.append((a.strip(), b.strip()))
+    return out
+
+
+def whisper(wav, lang):
+    """faster-whisper（英文，或 feeds.json asr=whisper 的中英夾雜節目）；中文轉台灣繁體並套替換規則"""
+    from faster_whisper import WhisperModel
+    name = os.environ.get("PODNOTES_WHISPER", "large-v3-turbo")
+    model = WhisperModel(name, device="cpu", compute_type="int8", cpu_threads=os.cpu_count() or 4)
+    hot = HERE / "dict" / "熱詞.txt"
+    prompt = None
+    if lang == "zh" and hot.exists():          # 用熱詞當起始提示，提高專有名詞與繁體輸出的機率
+        words = [w.split("#")[0].strip() for w in hot.read_text(encoding="utf-8").splitlines()]
+        prompt = "以下是台灣繁體中文的財經與科技節目：" + "、".join(w for w in words if w)[:200]
+    it, _ = model.transcribe(str(wav), language=lang, vad_filter=True, initial_prompt=prompt, condition_on_previous_text=False)
+    segs = [{"start": s.start, "end": s.end, "text": s.text} for s in it]
+    if lang == "zh":
+        import opencc
+        cc, reps = opencc.OpenCC("s2twp"), load_replace()
+        for s in segs:
+            t = cc.convert(s["text"])
+            for a, b in reps:
+                t = t.replace(a, b)
+            s["text"] = t
+    return segs, f"faster-whisper {name}" + ("，OpenCC s2twp" if lang == "zh" else "")
+
+
 def transcribe(ep, work):
     """→ (逐字稿 markdown, 秒數, 語言, 轉錄器)"""
     media = work / "media.bin"
@@ -169,15 +205,11 @@ def transcribe(ep, work):
     lang = ep.get("lang") if ep.get("lang") in ("zh", "en") else ("zh" if re.search(r"[一-鿿]", ep.get("title") or "") else "en")
     log(f"  音檔 {mb:.1f} MB、{dur / 60:.1f} 分鐘、語言 {lang}")
     t0 = time.time()
-    if lang == "zh":
+    if lang == "zh" and ep.get("asr") != "whisper":
         segs, spk = funasr(wav, work, dur)
         engine = "FunASR paraformer-zh＋fsmn-vad＋ct-punc" + ("＋cam++" if spk else "（分段）") + "，OpenCC s2twp"
     else:
-        from faster_whisper import WhisperModel
-        model = WhisperModel(os.environ.get("PODNOTES_WHISPER", "large-v3-turbo"), device="cpu", compute_type="int8")
-        it, _ = model.transcribe(str(wav), language="en", vad_filter=True)
-        segs = [{"start": s.start, "end": s.end, "text": s.text} for s in it]
-        engine = f"faster-whisper {os.environ.get('PODNOTES_WHISPER', 'large-v3-turbo')}"
+        segs, engine = whisper(wav, lang)
     md = Y.segs_to_md(segs)
     if len(re.sub(r"\s|\[[\d:]+\]|〔說話者\d+〕", "", md)) < 200:
         raise RuntimeError("逐字稿太短，可能辨識失敗")
