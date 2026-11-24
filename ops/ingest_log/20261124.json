@@ -2,6 +2,26 @@
   "date": "2026-11-24",
   "posts": [
     {
+      "id": "cs_txf-flash_20261124",
+      "topic": "txf-flash",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_tsm-prebrief_20261124",
       "topic": "tsm-prebrief",
       "queueState": "done",
@@ -230,6 +250,19 @@
       ]
     },
     {
+      "id": "cs_txf-flash_20261124",
+      "topic": "txf-flash",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "加權大漲 3,310.46 點、法人卻賣超 1,230.11 億：給期貨交易人的 3 個籌碼訊號",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_yt-6eBSHbLKuN0_20261124",
       "topic": "yt-6eBSHbLKuN0",
       "date": "20261124",
@@ -334,5 +367,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T04:21:52.164Z"
+  "generatedAt": "2026-11-24T09:00:17.475Z"
 }
