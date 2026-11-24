@@ -5,6 +5,8 @@ name: 社群自動發文（Facebook／Instagram／Threads／YouTube）
 # PilotOne 核准觸發／手動）都在同一個 job 內常駐：
 #   - 每 2 分鐘跑一次發文排程（publish-social-posts.mjs）→ 核准後或排程到期後 ≤ 2～3 分鐘發出
 #   - 每 6 分鐘跑一次 Drive 橋接＋素材匯入＋審核通知（送審包進 PilotOne 草稿）
+#   - 每 2 分鐘同步一次常看 YouTube 轉錄進度（Drive notes/youtube/_engine/progress.json → Firestore aurora_ops/ytnotes_progress，
+#     PilotOne 中控台「YouTube 轉錄」面板；scripts/ytnotes/sync-progress.mjs，失敗不影響發文）
 #   - 跑滿約 5.5 小時後以 workflow_dispatch 自我接力（GITHUB_TOKEN 觸發 workflow_dispatch 是 GitHub 允許的例外），
 #     concurrency 讓新的一輪排隊到這一輪結束後立即接手，全天不中斷；下列 cron 與監控代理補跑只是保險。
 #   - push 觸發與 dry_run 只跑單輪（不常駐）。
@@ -56,6 +58,7 @@ on:
     paths:
       - ".github/workflows/social-publish.yml"
       - "scripts/social/**"
+      - "scripts/ytnotes/sync-progress.mjs"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -85,7 +88,9 @@ jobs:
         with:
           node-version: 20
       - name: 行為測試
-        run: node --test scripts/social/publish.test.mjs scripts/social/youtube.test.mjs scripts/social/ingest.test.mjs scripts/social/bridge.test.mjs
+        run: |
+          node --test scripts/social/publish.test.mjs scripts/social/youtube.test.mjs scripts/social/ingest.test.mjs scripts/social/bridge.test.mjs scripts/ytnotes/progress.test.mjs
+          python3 -m unittest scripts/ytnotes/test_progress.py scripts/ytnotes/test_channels.py
       - name: 安裝 firebase-admin、sharp、googleapis、nodemailer
         run: npm install --no-save --no-audit --no-fund firebase-admin@13 sharp@0.34 googleapis@144 nodemailer@6
       - name: 取出 content 分支（Claude 排程素材）
@@ -151,6 +156,11 @@ jobs:
             node scripts/social/notify-review.mjs "$INGEST_RESULT" || echo "::warning::審核通知失敗（$(tpe)）"
           }
 
+          # 常看 YouTube 轉錄進度 → aurora_ops/ytnotes_progress（只讀 Drive、只寫這一份文件；dry_run 只印不寫）
+          progress_once() {
+            node scripts/ytnotes/sync-progress.mjs || echo "::warning::轉錄進度同步失敗（$(tpe)），下一輪再試"
+          }
+
           publish_fail=0
           publish_once() {
             if node scripts/social/publish-social-posts.mjs; then publish_fail=0
@@ -159,7 +169,7 @@ jobs:
 
           if [[ "$SOCIAL_LOOP" != "1" ]]; then
             echo "單輪模式（$(tpe)）"
-            ingest_once; publish_once
+            ingest_once; publish_once; progress_once
             exit $(( publish_fail > 0 ? 1 : 0 ))
           fi
 
@@ -171,6 +181,7 @@ jobs:
               echo "::group::匯入 $(tpe)"; ingest_once; echo "::endgroup::"; last_ingest=$(date +%s)
             fi
             echo "::group::發文 $(tpe)"; publish_once; echo "::endgroup::"
+            echo "::group::轉錄進度 $(tpe)"; progress_once; echo "::endgroup::"
             (( $(date +%s) - start >= LOOP_SECONDS )) && break
             sleep "$PUBLISH_EVERY"
           done
