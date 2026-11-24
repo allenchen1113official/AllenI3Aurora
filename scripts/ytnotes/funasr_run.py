@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 FunASR 中文轉錄（在 ~/.ytnotes/funasr-venv 的 Python 3.11 執行，由 ytnotes.py 呼叫）
-  python funasr_run.py <audio.wav> <out.json> [--hotwords 熱詞.txt] [--replace 替換規則.tsv]
+  python funasr_run.py <audio.wav> <out.json> [--hotwords 熱詞.txt] [--replace 替換規則.tsv] [--no-spk]
+  --no-spk：不載入 cam++ 說話者辨識（省記憶體；雲端管線切段轉錄時用，各段說話者編號對不起來）
 模型：paraformer-zh（SeACo，支援熱詞）＋ fsmn-vad 斷句 ＋ ct-punc 標點 ＋ cam++ 說話者辨識；
 轉完套替換規則、OpenCC s2twp（台灣繁體用語）。輸出 [{start, end, text, spk}]（秒）。
 """
@@ -33,7 +34,8 @@ def main():
     from funasr import AutoModel
     import opencc
     cc = opencc.OpenCC("s2twp")
-    model = AutoModel(model="paraformer-zh", vad_model="fsmn-vad", punc_model="ct-punc", spk_model="cam++",
+    kw_model = {} if "--no-spk" in sys.argv else {"spk_model": "cam++"}
+    model = AutoModel(model="paraformer-zh", vad_model="fsmn-vad", punc_model="ct-punc", **kw_model,
                       disable_update=True, log_level="ERROR")
     hot = load_hot(arg("--hotwords"))
     kw = {"batch_size_s": 300}

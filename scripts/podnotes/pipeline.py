@@ -101,8 +101,44 @@ def plan(shows, states, now, only=None, force=False, max_age_h=36):
 def sh(cmd, timeout=None):
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
     if r.returncode != 0:
-        raise RuntimeError(f"{Path(cmd[0]).name} 失敗：{(r.stderr or r.stdout)[-800:]}")
+        why = "被系統終止（多半是記憶體不足）" if r.returncode in (-9, 137) else f"結束碼 {r.returncode}"
+        tail = re.sub(r"\s+", " ", (r.stderr or r.stdout or ""))[-600:]
+        raise RuntimeError(f"{Path(cmd[1] if Path(cmd[0]).name.startswith('python') and len(cmd) > 1 else cmd[0]).name} 失敗（{why}）：{tail}")
     return r.stdout
+
+
+CHUNK_SEC = 600          # 超過 SINGLE_MAX 秒的音檔切成 10 分鐘一段、逐段獨立程序轉錄（避免記憶體不足）
+SINGLE_MAX = 1200
+
+
+def offset_segs(segs, offset):
+    return [dict(s, start=round(float(s.get("start") or 0) + offset, 2), end=round(float(s.get("end") or 0) + offset, 2), spk=None)
+            for s in segs]
+
+
+def funasr(wav, work, dur):
+    """中文 FunASR：≤20 分鐘整段（含說話者辨識）；更長切 10 分鐘一段（不做說話者辨識）"""
+    base = [sys.executable, str(REPO / "scripts" / "ytnotes" / "funasr_run.py")]
+    extra = []
+    for flag, p in (("--hotwords", HERE / "dict" / "熱詞.txt"), ("--replace", HERE / "dict" / "替換規則.tsv")):
+        if p.exists():
+            extra += [flag, str(p)]
+    if dur <= SINGLE_MAX:
+        out = work / "funasr.json"
+        sh(base + [str(wav), str(out)] + extra, timeout=5400)
+        return json.loads(out.read_text(encoding="utf-8")), "cam++"
+    parts = work / "parts"; parts.mkdir()
+    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav), "-f", "segment", "-segment_time", str(CHUNK_SEC), "-c", "copy",
+        str(parts / "p%03d.wav")], timeout=600)
+    segs = []
+    files = sorted(parts.glob("p*.wav"))
+    for i, f in enumerate(files):
+        out = work / f"funasr_{i:03d}.json"
+        sh(base + [str(f), str(out), "--no-spk"] + extra, timeout=3600)
+        segs += offset_segs(json.loads(out.read_text(encoding="utf-8")), i * CHUNK_SEC)
+        f.unlink()
+    log(f"  分 {len(files)} 段轉錄完成")
+    return segs, ""
 
 
 def download(url, dest, max_mb=600):
@@ -134,14 +170,8 @@ def transcribe(ep, work):
     log(f"  音檔 {mb:.1f} MB、{dur / 60:.1f} 分鐘、語言 {lang}")
     t0 = time.time()
     if lang == "zh":
-        out = work / "funasr.json"
-        args = [sys.executable, str(REPO / "scripts" / "ytnotes" / "funasr_run.py"), str(wav), str(out)]
-        for flag, p in (("--hotwords", HERE / "dict" / "熱詞.txt"), ("--replace", HERE / "dict" / "替換規則.tsv")):
-            if p.exists():
-                args += [flag, str(p)]
-        sh(args, timeout=5400)
-        segs = json.loads(out.read_text(encoding="utf-8"))
-        engine = "FunASR paraformer-zh＋fsmn-vad＋ct-punc＋cam++，OpenCC s2twp"
+        segs, spk = funasr(wav, work, dur)
+        engine = "FunASR paraformer-zh＋fsmn-vad＋ct-punc" + ("＋cam++" if spk else "（分段）") + "，OpenCC s2twp"
     else:
         from faster_whisper import WhisperModel
         model = WhisperModel(os.environ.get("PODNOTES_WHISPER", "large-v3-turbo"), device="cpu", compute_type="int8")

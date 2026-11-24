@@ -102,5 +102,16 @@ class IndexTest(unittest.TestCase):
         self.assertEqual(sorted(f.name for f in cards.iterdir()), ["yutinghao-20261124_IG.png"])
 
 
+class ChunkTest(unittest.TestCase):
+    def test_offset_segs_shifts_time_and_drops_speaker(self):
+        out = P.offset_segs([{"start": 1.5, "end": 3, "text": "a", "spk": 0}], 600)
+        self.assertEqual(out, [{"start": 601.5, "end": 603.0, "text": "a", "spk": None}])
+
+    def test_sh_reports_oom_kill(self):
+        with self.assertRaises(RuntimeError) as cm:
+            P.sh([sys.executable, "-c", "import os,signal; os.kill(os.getpid(), signal.SIGKILL)"])
+        self.assertIn("記憶體不足", str(cm.exception))
+
+
 if __name__ == "__main__":
     unittest.main()
