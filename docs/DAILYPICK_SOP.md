@@ -20,8 +20,8 @@
 母體第一次出現的代號記 `addedAt`、當日標 `isNew`（第一次建立清單時不算新增）。
 
 ## 每日流程（台北時間）
-- 16:47 `dailypick-queue.yml` 重算清單（06:13 補位；監控代理丟棄時自動補跑）
-- 17:41 Claude 排程讀 `queue.json` 的 `next`，並以 REST 讀後台 `overrides` 再套一次（剛儲存的指定立即生效）→ 分析 → 追加 `history.json` 推送 main → 觸發本 workflow 立即重排
+- 16:47 `dailypick-queue.yml` 重算清單；17:23 再算一次（套用 16:47 後才儲存的後台指定／略過）；06:13 補位；監控代理丟棄時自動補跑
+- 17:41 Claude 排程（StockAdvisor `python3 -m daily_pick.pick`）以 GitHub API 讀 `queue.json` 取第一檔待分析（能連到 Firestore 時再套一次後台設定；雲端環境通常連不到，所以後台設定請 17:20 前儲存）→ 分析 → `python3 -m daily_pick.record` 追加 `history.json` 推送 main → 觸發本 workflow 立即重排
 - 資料量不足（上市 < 700 或上櫃 < 500 檔有市值）時不覆寫清單
 
 ## history.json 格式

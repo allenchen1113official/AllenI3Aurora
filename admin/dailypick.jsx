@@ -74,7 +74,7 @@ function DailyPickPanel() {
     setBusy(true); setMsg("");
     try {
       await OV_DOC().set({ pin: draft.pin, skip: draft.skip, updatedAt: new Date().toISOString() });
-      setMsg("已儲存 ✓ 每日來一股取下一檔時會直接套用；清單順序於下次更新（交易日 16:47 或分析完成後）重排。");
+      setMsg("已儲存 ✓ 清單於下次更新時重排（交易日 16:47、17:23，或分析完成後）；17:20 前儲存可在當天 17:41 的分析生效。");
       await load();
     } catch (e) { setMsg("儲存失敗：" + errText(e)); }
     setBusy(false);
@@ -147,7 +147,7 @@ function DailyPickPanel() {
       </div>
       <div style={{ color: "var(--text-4)", fontSize: 12.5, lineHeight: 1.7, marginBottom: 12 }}>
         順序：<b>指定下一檔</b> → <b>優先組</b>（上市市值前 100＋上櫃市值前 50，依市值由大到小）→ 其餘上市櫃普通股（依市值）。已分析的股票不再重複；略過者不分析。
-        清單每個交易日 16:47 自動更新（新上市／轉上市櫃會標「新增」），Claude 排程「極光日報・每日來一股」17:41 取下一檔分析。
+        清單每個交易日 16:47／17:23 自動更新（新上市／轉上市櫃會標「新增」），Claude 排程「極光日報・每日來一股」17:41 取下一檔分析。
       </div>
       {err && <div style={{ ...box, color: "var(--danger)" }}>{err}</div>}
 
