@@ -1928,6 +1928,31 @@ function SocCarouselPreview({ urls }) {
     </div>
   );
 }
+/* 審核用：IG／Threads 圖卡＋文案預覽（Claude 排程素材每個平台各有圖卡與文案，審核時一併檢視） */
+const SOC_CH_LIMIT = { ig: 2200, th: 500 };
+function SocChannelReview({ p }) {
+  const chans = [["ig", "Instagram"], ["th", "Threads"]].filter(([c]) => p && p[c] && p[c].enabled);
+  if (!chans.length) return null;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      {chans.map(([c, label]) => {
+        const urls = socImagesFor(p, c);
+        const cap = String(p[c].caption || "");
+        const over = cap.length > SOC_CH_LIMIT[c];
+        return (
+          <div key={c}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+              <span className="ad-lbl" style={{ margin: 0 }}>{label} 圖卡與文案</span>
+              <span style={{ fontSize: 11.5, color: over ? "var(--danger, #e66)" : "var(--text-4)" }}>{cap.length} / {SOC_CH_LIMIT[c]} 字{p[c].state ? `・${p[c].state}` : ""}</span>
+            </div>
+            {urls.length ? <SocCarouselPreview urls={urls} /> : <div style={{ fontSize: 12, color: c === "ig" ? "var(--warning)" : "var(--text-4)" }}>{c === "ig" ? "IG 貼文必須有圖卡，目前沒有圖。" : "無圖卡（純文字貼文）"}</div>}
+            <div style={{ marginTop: 8, whiteSpace: "pre-wrap", fontSize: 13, lineHeight: 1.7, color: "var(--text-2)", background: "var(--night-800)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", padding: "10px 12px", maxHeight: 320, overflow: "auto" }}>{cap || "（無文案）"}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 function SocFbPreview({ p }) {
   const imgs = socImagesFor(p, "fb");
   const isPhoto = imgs.length > 0;
@@ -2272,10 +2297,10 @@ function SocialPanel() {
               </div>
             ) : null}
           </div>
-          <div style={{ ...box, opacity: 0.55 }}>
+          {(sel.ig && sel.ig.enabled) || (sel.th && sel.th.enabled) ? null : <div style={{ ...box, opacity: 0.55 }}>
             <div style={{ fontWeight: 800, color: "var(--text-2)", fontFamily: "var(--font-display)", fontSize: 14 }}>Instagram（第二階段開放）</div>
             <div style={{ color: "var(--text-4)", fontSize: 12, marginTop: 4 }}>IG 需兩段式容器發布且無原生排程，下一階段加入。</div>
-          </div>
+          </div>}
         </div>
 
         <div>
@@ -2283,6 +2308,12 @@ function SocialPanel() {
             <div className="ad-lbl" style={{ marginBottom: 10 }}>Facebook 預覽</div>
             <SocFbPreview p={sel} />
           </div>
+          {(sel.ig && sel.ig.enabled) || (sel.th && sel.th.enabled) ? (
+            <div style={{ ...box, background: "var(--night-850)" }}>
+              <div className="ad-lbl" style={{ marginBottom: 10 }}>Instagram／Threads 預覽（圖卡＋文案一併審核）</div>
+              <SocChannelReview p={sel} />
+            </div>
+          ) : null}
 
           {isOwnerUser && (editable || sel.__new) ? (
             <div style={box}>
