@@ -126,8 +126,8 @@
       "topic": "yt-YAsxyoTWFDA",
       "queueState": "pending",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "scheduled",
+        "url": "https://www.facebook.com/122111613711524851",
         "error": null
       },
       "ig": {
@@ -146,8 +146,8 @@
       "topic": "yt-bcM9dP_uXJU",
       "queueState": "pending",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "scheduled",
+        "url": "https://www.facebook.com/122111613765524851",
         "error": null
       },
       "ig": {
@@ -334,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T04:00:46.363Z"
+  "generatedAt": "2026-11-24T04:07:38.410Z"
 }
