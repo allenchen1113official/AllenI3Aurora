@@ -109,6 +109,19 @@ test("主題家族 yt：每支影片一份送審包，子代碼須為影片 ID �
   assert.notEqual(docIdOf("yt-aaaaaaaaaaa", "20261123"), docIdOf("yt-bbbbbbbbbbb", "20261123"));
 });
 
+test("主題家族 pn：常聽 Podcast 重點筆記每集一份，子代碼＝<節目代碼>-<YYYYMMDD>，且 ingest 認得", () => {
+  assert.deepEqual(DRIVE_FAMILIES.pn.path, ["notes", "podcast"]);
+  assert.equal(familyTopic("pn", "yutinghao-20261124"), "pn-yutinghao-20261124");
+  assert.equal(familyTopic("pn", "ai-lanren-20261124"), "pn-ai-lanren-20261124");
+  assert.equal(familyTopic("pn", "Yutinghao-20261124"), null);
+  assert.equal(familyTopic("pn", "yutinghao-2026112"), null);
+  assert.equal(familyTopic("pn", "../x-20261124"), null);
+  assert.equal(topicInfo("pn-yutinghao-20261124").family, "pn");
+  assert.match(topicInfo("pn-yutinghao-20261124").label, /常聽 Podcast 重點筆記 yutinghao-20261124/);
+  assert.equal(topicInfo("pn-Bad"), null);
+  assert.notEqual(docIdOf("pn-zhaohua-20261124", "20261124"), docIdOf("pn-yutinghao-20261124", "20261124"));
+});
+
 test("Podcast 送審包：音檔列入引用檔、pc 家族子代碼、指標檔內容", async () => {
   const { AUDIO_NAME, driveStub } = await import("./drive-bridge-core.mjs");
   const m = { version: 1, topic: "pc-ep001", platforms: { podcast: { caption: "podcast.txt", audio: "episode.mp3" } } };

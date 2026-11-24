@@ -30,6 +30,9 @@ export const DRIVE_FAMILIES = {
   // pc ＝ 自有 Podcast 節目單集（每集一份；子代碼自訂英數，如 ep012、daily-1124），
   // Drive：AllenI3Aurora/podcast/episodes/<YYYYMMDD>/pilotone/<子代碼>/（manifest＋podcast.txt＋音檔）
   pc: { path: ["podcast", "episodes"], sub: /^[A-Za-z0-9_-]{2,40}$/ },
+  // pn ＝ 常聽 Podcast 重點筆記（他人節目每集一份；子代碼＝<節目代碼>-<YYYYMMDD>，如 yutinghao-20261124），
+  // Drive：AllenI3Aurora/notes/podcast/<YYYYMMDD>/pilotone/<集數ID>/（scripts/podnotes/make_package.py 產出）
+  pn: { path: ["notes", "podcast"], sub: /^[a-z0-9][a-z0-9-]{1,30}-\d{8}$/ },
 };
 /* 音檔不推進 git（content 分支會暴肥）：橋接只寫 <檔名>.drive.json 指向 Drive 檔案，
    發布時由排程器以服務帳戶直接從 Drive 下載後上傳 GitHub Releases。 */

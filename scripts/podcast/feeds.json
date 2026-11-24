@@ -1,13 +1,13 @@
 {
- "_comment": "常聽 Podcast 的官方 RSS（update-feeds.mjs 每 3 小時抓各節目最新一集）。show 須能與後台「常聽 Podcast」標題互相包含（Dashboard.jsx findEpisodeForShow）。feed 留空則以 iTunes 搜尋 term 解析。maxLines：摘要只取前 N 行（股癌首行為主題、其後多為業配）。",
+ "_comment": "常聽 Podcast 的官方 RSS（update-feeds.mjs 每 3 小時抓各節目最新一集）。show 須能與後台「常聽 Podcast」標題互相包含（Dashboard.jsx findEpisodeForShow）。feed 留空則以 iTunes 搜尋 term 解析。maxLines：摘要只取前 N 行（股癌首行為主題、其後多為業配）。 code：節目代碼（英數小寫，集數ID＝<code>-<YYYYMMDD>）；lang：zh／en（轉錄語言）；notes：預設是否做逐字稿＋康乃爾筆記＋送審（後台「Podcast 重點筆記」的設定優先）。Mac mini 引擎從網站讀這份檔案。",
  "shows": [
-  { "show": "財經一路發", "tone": "insight", "feed": "https://feed.firstory.me/rss/user/ckuydilxj0ys508026gxkhbp4", "page": "https://open.spotify.com/show/16vk9uoUXgbtWqIMbwyHsa" },
-  { "show": "兆華與股惑仔", "tone": "intelligence", "feed": "https://feeds.soundon.fm/podcasts/91be014b-9f55-4bf3-a910-b232eda82d11.xml", "page": "https://open.spotify.com/show/6cMUsVRnTCrCqo4rs8LBjQ" },
-  { "show": "AI懶人報", "tone": "illumination", "feed": "https://feeds.soundon.fm/podcasts/ca974d36-6fcc-46fc-a339-ba7ed8902c80.xml", "page": "https://open.spotify.com/show/4tW0IXnjRP0i3Qz8Ui6EcD" },
-  { "show": "游庭皓的財經皓角", "tone": "insight", "feed": "https://feeds.soundcloud.com/users/soundcloud:users:735679489/sounds.rss", "page": "https://open.spotify.com/show/1HOGxT9M7a6kpcDi4q27Q7" },
-  { "show": "Lex Fridman Podcast", "tone": "illumination", "feed": "https://lexfridman.com/feed/podcast/", "page": "https://lexfridman.com/podcast/" },
-  { "show": "Acquired", "tone": "intelligence", "feed": "https://feeds.transistor.fm/acquired", "page": "https://open.spotify.com/show/7Fj0XEuUQLUqoMZQdsLXqp" },
-  { "show": "股癌 Gooaye", "tone": "insight", "maxLines": 1, "feed": "https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml", "page": "https://open.firstory.me/user/stocks" },
-  { "show": "曼報 Manny's Newsletter Radio", "tone": "intelligence", "feed": "", "term": "曼報 Manny", "page": "https://open.spotify.com/show/0jMy3OygUQts67tHIYcufS" }
+  {"show": "財經一路發", "tone": "insight", "feed": "https://feed.firstory.me/rss/user/ckuydilxj0ys508026gxkhbp4", "page": "https://open.spotify.com/show/16vk9uoUXgbtWqIMbwyHsa", "code": "caijing", "lang": "zh", "notes": false},
+  {"show": "兆華與股惑仔", "tone": "intelligence", "feed": "https://feeds.soundon.fm/podcasts/91be014b-9f55-4bf3-a910-b232eda82d11.xml", "page": "https://open.spotify.com/show/6cMUsVRnTCrCqo4rs8LBjQ", "code": "zhaohua", "lang": "zh", "notes": true},
+  {"show": "AI懶人報", "tone": "illumination", "feed": "https://feeds.soundon.fm/podcasts/ca974d36-6fcc-46fc-a339-ba7ed8902c80.xml", "page": "https://open.spotify.com/show/4tW0IXnjRP0i3Qz8Ui6EcD", "code": "ailanren", "lang": "zh", "notes": true},
+  {"show": "游庭皓的財經皓角", "tone": "insight", "feed": "https://feeds.soundcloud.com/users/soundcloud:users:735679489/sounds.rss", "page": "https://open.spotify.com/show/1HOGxT9M7a6kpcDi4q27Q7", "code": "yutinghao", "lang": "zh", "notes": true},
+  {"show": "Lex Fridman Podcast", "tone": "illumination", "feed": "https://lexfridman.com/feed/podcast/", "page": "https://lexfridman.com/podcast/", "code": "lex", "lang": "en", "notes": false},
+  {"show": "Acquired", "tone": "intelligence", "feed": "https://feeds.transistor.fm/acquired", "page": "https://open.spotify.com/show/7Fj0XEuUQLUqoMZQdsLXqp", "code": "acquired", "lang": "en", "notes": false},
+  {"show": "股癌 Gooaye", "tone": "insight", "maxLines": 1, "feed": "https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml", "page": "https://open.firstory.me/user/stocks", "code": "gooaye", "lang": "zh", "notes": false},
+  {"show": "曼報 Manny's Newsletter Radio", "tone": "intelligence", "feed": "", "term": "曼報 Manny", "page": "https://open.spotify.com/show/0jMy3OygUQts67tHIYcufS", "code": "manny", "lang": "zh", "notes": false}
  ]
 }

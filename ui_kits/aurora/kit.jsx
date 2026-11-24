@@ -27,6 +27,7 @@ const Icons = {
   link: mkIcon(<><path d="M9 15 15 9"/><path d="M11 6.5 13 4.5a4 4 0 0 1 6 6l-2 2"/><path d="M13 17.5 11 19.5a4 4 0 0 1-6-6l2-2"/></>),
   bulb: mkIcon(<><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></>),
   bookmark: mkIcon(<><path d="M6 3h12v18l-6-4-6 4z"/></>),
+  image: mkIcon(<><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M21 16l-5-5-8 8"/></>),
   arrow: mkIcon(<path d="M5 12h14M13 6l6 6-6 6"/>, { w: 2.2 }),
   play: mkIcon(<><path d="M7 4v16l13-8z" fill="currentColor" stroke="none"/></>),
   ext: mkIcon(<><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/></>),

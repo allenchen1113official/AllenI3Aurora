@@ -29,6 +29,8 @@ export const TOPIC_FAMILIES = [
   { re: /^yt-([A-Za-z0-9_-]{6,20})$/, info: (m) => ({ label: `常看 YouTube 重點筆記 ${m[1]}`, category: "AI 應用", family: "yt" }) },
   // pc-<子代碼> ＝ 自有 Podcast 節目單集（Drive podcast/episodes/<YYYYMMDD>/pilotone/<子代碼>/，見 drive-bridge-core DRIVE_FAMILIES.pc）
   { re: /^pc-([A-Za-z0-9_-]{2,40})$/, info: (m) => ({ label: `Podcast 單集 ${m[1]}`, category: "AI 應用", family: "pc" }) },
+  // pn-<節目代碼>-<YYYYMMDD> ＝ 常聽 Podcast 重點筆記（他人節目每集一筆；Drive notes/podcast/<YYYYMMDD>/pilotone/<集數ID>/，見 DRIVE_FAMILIES.pn）
+  { re: /^pn-([a-z0-9][a-z0-9-]{1,30}-\d{8})$/, info: (m) => ({ label: `常聽 Podcast 重點筆記 ${m[1]}`, category: "理財", family: "pn" }) },
 ];
 export function topicInfo(topic) {
   if (KNOWN_TOPICS[topic]) return KNOWN_TOPICS[topic];

@@ -41,7 +41,7 @@
     <a class="back" href="/AllenI3Aurora/#podcast">← 回首頁</a>
   </div>
   <h1>常聽 Podcast · 重點筆記</h1>
-  <p class="dek">常聽節目各自最新一集，整理成繁中摘要與康乃爾筆記，新到舊排列；尚無筆記的節目附收聽連結。</p>
+  <p class="dek">常聽節目各自最新一集，由逐字稿整理成繁中重點、康乃爾筆記與社群圖卡，新到舊排列；尚無筆記的節目附節目說明與收聽連結。</p>
   <div id="root"><div class="empty">載入中…</div></div>
 </div>
 <!-- kit.jsx 提供 KIT 內建預設與 Icons；Dashboard.jsx 匯出 window.AuroraPodcast（與首頁同一份合併邏輯與卡片） -->
@@ -51,12 +51,26 @@
 function PodcastAll() {
   const P = window.AuroraPodcast;
   const list = React.useMemo(P.mergedPodcastList, []);
-  if (!list.length) return <div className="empty">筆記整理中，敬請期待。</div>;
+  // 歷期重點筆記：不在「各節目最新一集」裡的逐字稿筆記（社群貼文連到較舊集數時也找得到）
+  const shown = new Set(list.map((x) => x.ep && x.ep.id).filter(Boolean));
+  const past = ((window.AURORA && window.AURORA.podNotes) || []).filter((e) => !shown.has(e.id));
+  if (!list.length && !past.length) return <div className="empty">筆記整理中，敬請期待。</div>;
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      {list.map((x, i) => x.ep
-        ? <P.PodcastEpisodeCard key={i} ep={x.ep} isLatest={i === 0} />
-        : <P.PodcastLinkCard key={i} p={x.p} />)}
+    <div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {list.map((x, i) => x.ep
+          ? <P.PodcastEpisodeCard key={i} ep={x.ep} isLatest={i === 0} />
+          : <P.PodcastLinkCard key={i} p={x.p} />)}
+      </div>
+      {past.length ? (
+        <div style={{ marginTop: 34 }}>
+          <h2 style={{ fontFamily: "var(--font-display, system-ui)", fontWeight: 900, color: "var(--text-1)", fontSize: 20, margin: "0 0 6px" }}>歷期重點筆記</h2>
+          <p style={{ color: "var(--text-3)", fontSize: 13.5, margin: "0 0 14px" }}>由逐字稿整理的康乃爾筆記與社群圖卡，新到舊排列。</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {past.map((e) => <P.PodcastEpisodeCard key={e.id} ep={e} isLatest={false} />)}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

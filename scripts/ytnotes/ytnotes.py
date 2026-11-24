@@ -21,6 +21,15 @@ FunASR 虛擬環境（中文，見 funasr_run.py）。安裝見 install.sh。
   status.json      {"state": "drafted"|"failed", ...}；Claude 處理完改 "done" 並移到 _inbox/_done/
 影片與音訊只放 ~/.ytnotes/tmp，用完即刪；不進雲端硬碟。
 
+常聽 Podcast 重點筆記（同一引擎、同一把檔案鎖；2026-11-24 起）：
+  python3 ytnotes.py podscan                 # 讀啟用節目的官方 RSS，把「每節目每天最新 1 集」排入 Podcast 佇列
+  python3 ytnotes.py poddraft <節目代碼>     # 立即處理該節目最新一集（略過啟用判斷，測試用）
+  run 每次都會先處理 YouTube 佇列，再處理 Podcast 佇列；距上次 podscan 超過 podcast_scan_min 分鐘就重掃。
+  節目清單＝網站 scripts/podcast/feeds.json（RSS、代碼、語言），啟用與否以後台「Podcast 重點筆記」
+  （Firestore aurora_podnotes/shows，公開讀）為準，後台沒設定的節目看 feeds.json 的 notes 欄位。
+  產出：PODROOT/_inbox/<節目代碼>-<YYYYMMDD>/（meta.json、draft.md、status.json，格式同 YouTube）；
+  PODROOT 預設為 ROOT 的兄弟資料夾 notes/podcast。音檔只放 ~/.ytnotes/tmp，用完即刪。
+
 進度檔：ROOT/_engine/progress.json（PilotOne 中控台「YouTube 轉錄」面板的資料來源）
   每次 run 開始／結束、每支影片換階段時，以及轉錄等長時間步驟每 60 秒（心跳）覆寫一次；
   social-publish.yml 每 2 分鐘以 scripts/ytnotes/sync-progress.mjs 讀入 Firestore aurora_ops/ytnotes_progress。
@@ -48,6 +57,13 @@ CFG = {
     "skip_longer_than_min": 180,     # 超過幾分鐘的影片不自動處理（手動 draft 不受限）
     # 後台「YouTube 頻道 → 常看頻道」存的清單（Firestore aurora_ytnotes/channels，公開讀）；設 "" 只用 channels.tsv
     "channels_url": "https://firestore.googleapis.com/v1/projects/alleni3aurora/databases/(default)/documents/aurora_ytnotes/channels",
+    # 常聽 Podcast 重點筆記：節目清單（網站上的 feeds.json）與後台啟用設定（aurora_podnotes/shows，公開讀）；feeds_url 設 "" 停用
+    "podcast_feeds_url": "https://allenchen1113official.github.io/AllenI3Aurora/scripts/podcast/feeds.json",
+    "podnotes_shows_url": "https://firestore.googleapis.com/v1/projects/alleni3aurora/databases/(default)/documents/aurora_podnotes/shows",
+    "podcast_root": "",              # 留空＝ROOT 的兄弟資料夾 notes/podcast
+    "podcast_scan_min": 30,          # 每隔幾分鐘重讀一次 RSS
+    "podcast_max_age_h": 36,         # 只處理多少小時內發布的集數（避免新啟用節目灌入舊集）
+    "podcast_max_mb": 600,           # 音檔大小上限
 }
 
 def now_tpe():
@@ -137,7 +153,8 @@ def _item(d, state_override=None):
     """收件匣資料夾 → 進度項目（只取顯示用欄位，不含逐字稿）"""
     st, meta = _read_json(d / "status.json"), _read_json(d / "meta.json")
     state = state_override or st.get("state") or "unknown"
-    it = {"id": d.name, "url": meta.get("url") or f"https://www.youtube.com/watch?v={d.name}",
+    is_pod = bool(re.match(r"^[a-z0-9][a-z0-9-]{1,30}-\d{8}$", d.name))     # 常聽 Podcast 集數（<節目代碼>-<YYYYMMDD>）
+    it = {"id": d.name, "url": meta.get("url") or meta.get("audio_url") or ("" if is_pod else f"https://www.youtube.com/watch?v={d.name}"),
           "title": meta.get("title") or "", "author": meta.get("author") or "", "state": state,
           "at": st.get("at") or meta.get("drafted_at") or "", "durationSec": int(meta.get("duration_sec") or 0),
           "draftSeconds": int(meta.get("draft_seconds") or 0), "lang": meta.get("language") or "",
@@ -196,6 +213,17 @@ def build_progress(now=None, done_days=14, done_max=20, log_lines=12):
                 if t >= cutoff:
                     done.append((t, it))
             items += [it for _, it in sorted(done, key=lambda x: x[0], reverse=True)[:done_max]]
+    pin = podinbox()
+    if pin.exists():                                    # 常聽 Podcast：收件匣與近期已送審（與 YouTube 共用面板）
+        for d in sorted(x for x in pin.iterdir() if x.is_dir() and not x.name.startswith((".", "_"))):
+            if d.name not in seen and (d / "status.json").exists():
+                items.append(_item(d)); seen.add(d.name)
+        pdone = pin / "_done"
+        if pdone.is_dir():
+            cutoff = now - timedelta(days=done_days)
+            for d in sorted(pdone.iterdir(), key=lambda x: x.name, reverse=True)[:done_max]:
+                if d.is_dir() and d.name not in seen and datetime.fromtimestamp(d.stat().st_mtime, TPE) >= cutoff:
+                    items.append(_item(d, "done")); seen.add(d.name)
     failures = []
     fp = ENGINE / "failed.txt"
     if fp.exists():
@@ -473,6 +501,46 @@ def manual_subs(info, prefixes):
             return lang
     return None
 
+def transcribe(wav, work, out, meta, dur, info=None, url=None, lang_hint=None):
+    """音訊 → out/draft.md（＋中文 ≤15 分鐘的 draft_whisper.md）；寫入 meta 的 language、transcriber。
+    YouTube 與 Podcast 共用。info／url 只有 YouTube 才有（英文先找人工字幕）；lang_hint 為節目設定的語言。"""
+    set_stage("lang")
+    lang = lang_hint if lang_hint in ("zh", "en") else ""
+    if not lang:
+        # 判斷語言：中段 30 秒
+        start = max(0, dur / 2 - 15) if dur > 40 else 0
+        lid = whisper_json(wav, work / "lid", clip=(start, min(30, dur or 30)))
+        lang = lid.get("language") or ""
+        if len(re.sub(r"\s", "", lid.get("text") or "")) < 8 or lang not in ("zh", "en"):   # 聽到的話太少 → 看標題語言
+            lang = "zh" if re.search(r"[一-鿿]", meta.get("title") or "") else "en"
+    meta["language"] = lang
+    set_stage("transcribe", lang=lang)
+    if lang == "zh":
+        hot = DICT / "熱詞.txt"; rep = DICT / "替換規則.tsv"
+        sh([CFG["funasr_python"], str(HERE / "funasr_run.py"), str(wav), str(work / "funasr.json"),
+            "--hotwords", str(hot), "--replace", str(rep)], timeout=7200)
+        segs = json.loads((work / "funasr.json").read_text(encoding="utf-8"))
+        (out / "draft.md").write_text(segs_to_md(segs), encoding="utf-8")
+        meta["transcriber"] = "FunASR paraformer-zh＋fsmn-vad＋ct-punc＋cam++，OpenCC s2twp"
+        if dur <= 15 * 60:
+            set_stage("second")
+            w = whisper_json(wav, work / "w2", language="zh")
+            (out / "draft_whisper.md").write_text(segs_to_md(w.get("segments") or []), encoding="utf-8")
+            meta["transcriber"] += "；whisper-large-v3-turbo 第二意見"
+    else:
+        lang_sub = manual_subs(info, ["en"]) if info else None
+        if lang_sub:
+            sh(ytdlp_base() + ["--skip-download", "--write-subs", "--sub-langs", lang_sub, "--sub-format", "vtt",
+                               "-o", str(work / "subs.%(ext)s"), url], timeout=300)
+            vtt = next(work.glob("subs*.vtt"))
+            (out / "draft.md").write_text(segs_to_md(parse_vtt(vtt)), encoding="utf-8")
+            meta["transcriber"] = f"YouTube 人工字幕（{lang_sub}）"
+        else:
+            w = whisper_json(wav, work / "w", language="en")
+            (out / "draft.md").write_text(segs_to_md(w.get("segments") or []), encoding="utf-8")
+            meta["transcriber"] = "mlx-whisper large-v3-turbo"
+    return lang
+
 def draft(url, force=False):
     load_cfg()
     key = video_key(url)
@@ -519,40 +587,7 @@ def draft(url, force=False):
             for i in range(n):
                 t = max(0.5, dur * (i + 0.5) / n)
                 sh([FFMPEG(), "-y", "-loglevel", "error", "-ss", f"{t:.2f}", "-i", str(media), "-frames:v", "1", "-vf", "scale=480:-2", str(fr / f"frame_{i + 1}.jpg")], check=False)
-        set_stage("lang")
-        # 2. 判斷語言：中段 30 秒
-        start = max(0, dur / 2 - 15) if dur > 40 else 0
-        lid = whisper_json(wav, work / "lid", clip=(start, min(30, dur or 30)))
-        lang = lid.get("language") or ""
-        if len(re.sub(r"\s", "", lid.get("text") or "")) < 8 or lang not in ("zh", "en"):   # 聽到的話太少 → 看標題語言
-            lang = "zh" if re.search(r"[一-鿿]", meta["title"] or "") else "en"
-        meta["language"] = lang
-        set_stage("transcribe", lang=lang)
-        # 3. 轉成草稿
-        if lang == "zh":
-            hot = DICT / "熱詞.txt"; rep = DICT / "替換規則.tsv"
-            sh([CFG["funasr_python"], str(HERE / "funasr_run.py"), str(wav), str(work / "funasr.json"),
-                "--hotwords", str(hot), "--replace", str(rep)], timeout=7200)
-            segs = json.loads((work / "funasr.json").read_text(encoding="utf-8"))
-            (out / "draft.md").write_text(segs_to_md(segs), encoding="utf-8")
-            meta["transcriber"] = "FunASR paraformer-zh＋fsmn-vad＋ct-punc＋cam++，OpenCC s2twp"
-            if dur <= 15 * 60:
-                set_stage("second")
-                w = whisper_json(wav, work / "w2", language="zh")
-                (out / "draft_whisper.md").write_text(segs_to_md(w.get("segments") or []), encoding="utf-8")
-                meta["transcriber"] += "；whisper-large-v3-turbo 第二意見"
-        else:
-            lang_sub = manual_subs(info, ["en"])
-            if lang_sub:
-                sh(ytdlp_base() + ["--skip-download", "--write-subs", "--sub-langs", lang_sub, "--sub-format", "vtt",
-                                   "-o", str(work / "subs.%(ext)s"), url], timeout=300)
-                vtt = next(work.glob("subs*.vtt"))
-                (out / "draft.md").write_text(segs_to_md(parse_vtt(vtt)), encoding="utf-8")
-                meta["transcriber"] = f"YouTube 人工字幕（{lang_sub}）"
-            else:
-                w = whisper_json(wav, work / "w", language="en")
-                (out / "draft.md").write_text(segs_to_md(w.get("segments") or []), encoding="utf-8")
-                meta["transcriber"] = "mlx-whisper large-v3-turbo"
+        transcribe(wav, work, out, meta, dur, info=info, url=url)
         set_stage("write")
         meta["draft_seconds"] = int(time.time() - t_start)
         (out / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -567,6 +602,283 @@ def draft(url, force=False):
         CUR.clear()
         write_progress()
     return out
+
+# ───────────────────────── 常聽 Podcast 重點筆記 ─────────────────────────
+import xml.etree.ElementTree as ET
+from email.utils import parsedate_to_datetime
+
+PODQ = lambda: ENGINE / "pod_queue.json"          # [{id, code, show, title, url, audio_url, published, pub_iso, duration_sec, lang, description}]
+PODSEEN = lambda: ENGINE / "pod_seen.json"        # {集數ID: {"state": "queued"|"failed", "attempts": n, "at": …}}
+POD_ID = re.compile(r"^[a-z0-9][a-z0-9-]{1,30}-\d{8}$")
+ITUNES = "{http://www.itunes.com/dtds/podcast-1.0.dtd}"
+UA = "Mozilla/5.0 (Macintosh) AllenI3Aurora-podnotes/1.0"
+
+def podroot():
+    """notes/podcast（Drive）；測試時隨 ROOT 一起換到暫存目錄"""
+    return Path(os.environ.get("PODNOTES_ROOT") or CFG.get("podcast_root") or (ROOT.parent / "podcast"))
+
+def podinbox():
+    return podroot() / "_inbox"
+
+def _get(url, timeout=30, accept="*/*"):
+    with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept}), timeout=timeout) as r:
+        return r.read()
+
+def parse_duration(v):
+    """itunes:duration：秒數或 hh:mm:ss → 秒"""
+    s = str(v or "").strip()
+    if not s:
+        return 0
+    try:
+        if s.isdigit():
+            return int(s)
+        n = 0
+        for part in s.split(":"):
+            n = n * 60 + int(float(part))
+        return n
+    except ValueError:
+        return 0
+
+def parse_rss(xml_bytes):
+    """RSS → [{title, link, audio_url, pub (aware datetime), duration_sec, description, guid}]，新到舊"""
+    root = ET.fromstring(xml_bytes)
+    out = []
+    for it in root.iter("item"):
+        g = lambda tag: (it.findtext(tag) or "").strip()
+        enc = it.find("enclosure")
+        audio = (enc.get("url") if enc is not None else "") or ""
+        try:
+            pub = parsedate_to_datetime(g("pubDate"))
+            if pub.tzinfo is None:
+                pub = pub.replace(tzinfo=timezone.utc)
+        except (TypeError, ValueError):
+            continue
+        if not audio.startswith("http"):
+            continue
+        desc = g("description") or g(ITUNES + "summary")
+        out.append({"title": g("title"), "link": g("link"), "audio_url": audio, "pub": pub, "guid": g("guid"),
+                    "duration_sec": parse_duration(it.findtext(ITUNES + "duration")),
+                    "description": re.sub(r"<[^>]+>", " ", desc)[:2000]})
+    return sorted(out, key=lambda x: x["pub"], reverse=True)
+
+def parse_remote_shows(doc):
+    """aurora_podnotes/shows 文件（REST JSON）→ {代碼: {"enabled": bool}}"""
+    items = _fs_value({"mapValue": {"fields": (doc or {}).get("fields") or {}}}).get("items") or []
+    return {str(it.get("code")).strip(): {"enabled": it.get("enabled") is True}
+            for it in items if isinstance(it, dict) and str(it.get("code") or "").strip()}
+
+def merge_shows(feeds, remote):
+    """feeds.json 的節目 × 後台啟用設定 → 啟用中的節目（後台有設定以後台為準，否則看 feeds.json 的 notes）"""
+    out = []
+    for f in feeds:
+        code = str(f.get("code") or "").strip()
+        if not code or not f.get("feed"):
+            continue
+        on = remote[code]["enabled"] if code in remote else bool(f.get("notes"))
+        if on:
+            out.append(f)
+    return out
+
+def read_podcast_shows():
+    """讀網站 feeds.json 與後台啟用設定；成功時寫快取，網路失敗時改用快取（不因斷線漏掃）"""
+    cache = ENGINE / "podcast_shows.cache.json"
+    try:
+        feeds = json.loads(_get(CFG["podcast_feeds_url"], accept="application/json").decode("utf-8")).get("shows") or []
+        remote, src = {}, "feeds.json"
+        url = CFG.get("podnotes_shows_url") or ""
+        if url:
+            try:
+                remote = parse_remote_shows(json.loads(_get(url, accept="application/json").decode("utf-8")))
+                src = "後台＋feeds.json"
+            except urllib.error.HTTPError as e:
+                if e.code != 404:
+                    raise
+                src = "feeds.json（後台尚無設定）"
+        shows = merge_shows(feeds, remote)
+        cache.write_text(json.dumps(shows, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:                    # noqa: BLE001
+        log("讀取 Podcast 節目設定失敗，改用快取：", e)
+        shows, src = (json.loads(cache.read_text(encoding="utf-8")) if cache.exists() else []), "快取"
+    log(f"常聽 Podcast：{src} → 啟用 {len(shows)} 個節目（{'、'.join(s.get('show','') for s in shows)}）")
+    return shows
+
+def tpe_ymd(dt):
+    return dt.astimezone(TPE).strftime("%Y%m%d")
+
+def pick_episodes(show, items, now, done, max_age_h=36):
+    """每節目每天最新 1 集：max_age_h 內發布、依台北日期分組取最新、集數ID 未做過。回傳 [集數 dict]（舊到新）"""
+    code = show["code"]
+    picked, dates = [], set()
+    for it in items:                                   # 已新到舊
+        if now - it["pub"] > timedelta(hours=max_age_h):
+            break
+        ymd = tpe_ymd(it["pub"])
+        if ymd in dates:
+            continue                                   # 同一天只取最新那一集
+        dates.add(ymd)
+        eid = f"{code}-{ymd}"
+        if eid in done or not POD_ID.match(eid):
+            continue
+        picked.append({"id": eid, "code": code, "show": show.get("show") or code, "title": it["title"],
+                       "url": it["link"] if it["link"].startswith("http") else (show.get("page") or ""),
+                       "audio_url": it["audio_url"], "published": it["pub"].astimezone(TPE).strftime("%Y-%m-%d"),
+                       "pub_iso": it["pub"].astimezone(TPE).isoformat(timespec="seconds"), "duration_sec": it["duration_sec"],
+                       "lang": show.get("lang") or "", "description": it["description"], "guid": it["guid"]})
+    return list(reversed(picked))
+
+def read_podq():
+    try:
+        return json.loads(PODQ().read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+
+def write_podq(q):
+    PODQ().write_text(json.dumps(q, ensure_ascii=False, indent=1), encoding="utf-8")
+
+def pod_done_ids():
+    """已排入、已有草稿、已送審或已放棄（失敗 ≥2 次）的集數ID"""
+    done = {e["id"] for e in read_podq()}
+    for d in (podinbox(), podinbox() / "_done"):
+        if d.is_dir():
+            done |= {x.name for x in d.iterdir() if x.is_dir() and not x.name.startswith((".", "_"))}
+    seen = _read_json(PODSEEN())
+    done |= {k for k, v in seen.items() if isinstance(v, dict) and (v.get("state") != "failed" or int(v.get("attempts") or 0) >= 2)}
+    return done
+
+def cmd_podscan(force=False):
+    if not CFG.get("podcast_feeds_url"):
+        return 0
+    stamp = ENGINE / "last_podscan.txt"
+    if not force and stamp.exists():
+        try:
+            if time.time() - float(stamp.read_text().strip()) < int(CFG["podcast_scan_min"]) * 60:
+                return 0
+        except ValueError:
+            pass
+    stamp.write_text(str(time.time()), encoding="utf-8")
+    if RUN["state"] == "running":
+        set_stage("scan", title="掃描常聽 Podcast")
+    q, done, new, now = read_podq(), pod_done_ids(), 0, now_tpe()
+    for show in read_podcast_shows():
+        try:
+            items = parse_rss(_get(show["feed"], timeout=40, accept="application/rss+xml, application/xml, */*"))
+        except Exception as e:                # noqa: BLE001
+            log("Podcast RSS 讀取失敗：", show.get("show"), e)
+            continue
+        for ep in pick_episodes(show, items, now, done, int(CFG["podcast_max_age_h"])):
+            if ep["duration_sec"] > CFG["skip_longer_than_min"] * 60:
+                log(f"超過 {CFG['skip_longer_than_min']} 分鐘，略過自動處理：", ep["show"], ep["title"]); continue
+            q.append(ep); done.add(ep["id"]); new += 1
+            log("Podcast 排入：", ep["id"], ep["show"], ep["title"])
+    write_podq(q)
+    log(f"Podcast 掃描完成：排入 {new} 集，佇列 {len(q)} 集")
+    if CUR.get("stage") == "scan":
+        clear_stage()
+    return new
+
+def download_audio(url, dest, max_mb=600):
+    """串流下載音檔（不經 yt-dlp）；超過上限即中止"""
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    n, cap = 0, int(max_mb) * 1024 * 1024
+    with urllib.request.urlopen(req, timeout=60) as r, open(dest, "wb") as f:
+        while True:
+            chunk = r.read(1 << 20)
+            if not chunk:
+                break
+            n += len(chunk)
+            if n > cap:
+                raise RuntimeError(f"音檔超過 {max_mb} MB 上限")
+            f.write(chunk)
+            heartbeat()
+    if n < 10 * 1024:
+        raise RuntimeError(f"音檔太小（{n} bytes），可能不是音訊")
+    return n
+
+def draft_podcast(ep, force=False):
+    """一集 Podcast → podinbox()/<集數ID>/（meta.json、draft.md、status.json）"""
+    load_cfg()
+    eid = ep["id"]
+    if not POD_ID.match(eid):
+        raise RuntimeError(f"集數ID 格式不符：{eid}")
+    out = podinbox() / eid
+    st = out / "status.json"
+    if not force and ((st.exists() and _read_json(st).get("state") in ("drafted", "done")) or (podinbox() / "_done" / eid).exists()):
+        log("已有草稿，略過：", eid); return out
+    work = TMP / ("pod-" + eid)
+    shutil.rmtree(work, ignore_errors=True); work.mkdir(parents=True)
+    out.mkdir(parents=True, exist_ok=True)
+    t_start = time.time()
+    CUR.clear()
+    set_stage("download", id=eid, url=ep.get("url") or ep["audio_url"], title=ep.get("title") or "", author=ep.get("show") or "",
+              durationSec=int(ep.get("duration_sec") or 0))
+    try:
+        ext = re.search(r"\.(mp3|m4a|aac|mp4|wav|ogg)(?:\?|$)", ep["audio_url"], re.I)
+        media = work / ("media." + (ext.group(1).lower() if ext else "mp3"))
+        download_audio(ep["audio_url"], media, CFG.get("podcast_max_mb", 600))
+        wav = work / "audio.wav"
+        sh([FFMPEG(), "-y", "-loglevel", "error", "-i", str(media), "-vn", "-ac", "1", "-ar", "16000", str(wav)], timeout=1800)
+        media.unlink(missing_ok=True)
+        dur = max(0.0, (wav.stat().st_size - 44) / 32000.0)          # 16 kHz、16-bit、單聲道
+        meta = {"id": eid, "kind": "podcast", "code": ep["code"], "show": ep["show"], "author": ep["show"],
+                "title": ep["title"], "url": ep.get("url") or "", "audio_url": ep["audio_url"], "guid": ep.get("guid") or "",
+                "published": ep["published"], "pub_iso": ep.get("pub_iso") or "", "duration_sec": int(dur or ep.get("duration_sec") or 0),
+                "description": ep.get("description") or "", "drafted_at": now_tpe().isoformat(timespec="seconds")}
+        transcribe(wav, work, out, meta, dur, lang_hint=ep.get("lang"))
+        set_stage("write")
+        meta["draft_seconds"] = int(time.time() - t_start)
+        (out / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+        st.write_text(json.dumps({"state": "drafted", "at": now_tpe().isoformat(timespec="seconds")}, ensure_ascii=False), encoding="utf-8")
+        log(f"Podcast 草稿完成：{eid}｜{meta['show']}｜{meta['title']}｜{meta['language']}｜{int(dur)}s｜耗時 {meta['draft_seconds']}s")
+    except Exception as e:
+        st.write_text(json.dumps({"state": "failed", "error": str(e)[-1500:], "at": now_tpe().isoformat(timespec="seconds")}, ensure_ascii=False), encoding="utf-8")
+        log("Podcast 失敗：", eid, e)
+        raise
+    finally:
+        shutil.rmtree(work, ignore_errors=True)      # 音檔與暫存一律刪除
+        CUR.clear()
+        write_progress()
+    return out
+
+def _run_podcast_batch(budget):
+    """處理 Podcast 佇列（最多 budget 集）；失敗記 failed.txt 與 pod_seen（最多自動重試 1 次）"""
+    try:
+        cmd_podscan()
+    except Exception as e:                    # noqa: BLE001 — 掃描失敗不影響 YouTube
+        log("Podcast 掃描失敗：", e)
+    q, done = read_podq(), 0
+    while q and done < budget:
+        ep = q[0]
+        seen = _read_json(PODSEEN())
+        try:
+            draft_podcast(ep)
+            seen[ep["id"]] = {"state": "drafted", "at": _iso()}
+        except Exception as e:                # noqa: BLE001
+            prev = seen.get(ep["id"]) or {}
+            seen[ep["id"]] = {"state": "failed", "attempts": int(prev.get("attempts") or 0) + 1, "at": _iso(), "error": str(e)[:300]}
+            with open(ENGINE / "failed.txt", "a", encoding="utf-8") as f:
+                f.write(f"{now_tpe():%Y-%m-%d %H:%M}\tpodcast:{ep['id']} {ep.get('audio_url','')}\t{str(e)[:300]}\n")
+            if seen[ep["id"]]["attempts"] < 2:            # 失敗的收件匣資料夾移除，下次掃描可再排一次
+                shutil.rmtree(podinbox() / ep["id"], ignore_errors=True)
+        PODSEEN().write_text(json.dumps(dict(list(seen.items())[-400:]), ensure_ascii=False, indent=1), encoding="utf-8")
+        q = [x for x in read_podq() if x.get("id") != ep["id"]]
+        write_podq(q)
+        done += 1
+        RUN["processed"] = RUN.get("processed", 0) + 1
+        write_progress()
+    if done:
+        log(f"Podcast 本輪處理 {done} 集，佇列剩 {len(q)} 集")
+    return done
+
+def cmd_poddraft(code):
+    """手動：立即處理某節目最新一集（不看啟用設定與時間窗，測試用）"""
+    feeds = json.loads(_get(CFG["podcast_feeds_url"], accept="application/json").decode("utf-8")).get("shows") or []
+    show = next((f for f in feeds if f.get("code") == code), None)
+    if not show:
+        raise SystemExit(f"feeds.json 沒有節目代碼 {code}")
+    items = parse_rss(_get(show["feed"], timeout=40))
+    eps = pick_episodes(show, items[:1], items[0]["pub"] if items else now_tpe(), set(), 10 ** 6)
+    for ep in eps:
+        draft_podcast(ep, force=True)
 
 # ───────────────────────── run／status ─────────────────────────
 def cmd_run():
@@ -609,6 +921,7 @@ def _run_batch():
         write_progress()          # 佇列已移除這支 → 面板不會短暫把剛完成的影片顯示成「排隊中」
     if done:
         log(f"本輪處理 {done} 支，佇列剩 {len(q)} 支")
+    _run_podcast_batch(max(1, CFG["batch_max"] - done))
 
 def cmd_status():
     q = read_queue()
@@ -621,6 +934,10 @@ def cmd_status():
 def main():
     for p in (ENGINE, INBOX, TMP, DICT):
         p.mkdir(parents=True, exist_ok=True)
+    try:
+        podinbox().mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
     a = sys.argv[1:]
     if not a:
         print(__doc__); return
@@ -630,6 +947,8 @@ def main():
     elif a[0] == "scan": cmd_scan()
     elif a[0] == "draft": [draft(u, force="--force" in a) for u in a[1:] if not u.startswith("--")]
     elif a[0] == "status": cmd_status()
+    elif a[0] == "podscan": cmd_podscan(force=True); print(json.dumps(read_podq(), ensure_ascii=False, indent=1))
+    elif a[0] == "poddraft": [cmd_poddraft(c) for c in a[1:]]
     elif a[0] == "progress":
         write_progress(); print(PROGRESS().read_text(encoding="utf-8") if PROGRESS().exists() else "{}")
     else: print(__doc__)

@@ -48,6 +48,23 @@
     .then(function (d) { if (d && Array.isArray(d.items)) window.AURORA.rssEpisodes = d.items.filter(episodeVisible); })
     .catch(function () {}) : Promise.resolve());
 
+  /* 常聽 Podcast 重點筆記（Mac mini 轉錄 → Claude 校正與康乃爾筆記 → focus-update.yml →
+     scripts/podnotes/update-podnotes.mjs 產出同源 data/podnotes.json；不含逐字稿）。
+     轉成與 KIT.podcastEpisodes 相同欄位的集數（source:"notes"），由 Dashboard.jsx 合併：同節目同日優先於 RSS 節目說明。 */
+  window.AURORA.podNotes = [];
+  var notesReady = (window.fetch ? fetch("/AllenI3Aurora/data/podnotes.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d || !Array.isArray(d.items)) return;
+      window.AURORA.podNotes = d.items.map(function (x) {
+        return { id: x.id, show: x.show, title: x.title, date: x.date, duration: x.duration, url: x.url, tone: "intelligence",
+          status: "published", source: "notes", headline: x.headline || "", summaryList: Array.isArray(x.summary) ? x.summary : [],
+          summary: "", cornell: x.cornell || null, cards: x.cards || {}, category: x.category || "" };
+      });
+    })
+    .catch(function () {}) : Promise.resolve());
+  rssReady = Promise.all([rssReady, notesReady]);
+
   var cfg = window.FIREBASE_CONFIG;
   var ok = cfg && cfg.apiKey && cfg.projectId && window.firebase && window.firebase.firestore;
 
