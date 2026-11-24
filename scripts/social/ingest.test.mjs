@@ -157,3 +157,19 @@ test("主題家族 stock-<代號>：個股交易診斷，同日多檔各自一�
   assert.match(doc.note, /個股交易診斷 6274/);
   assert.equal(doc.source.manifestPath, "content/stock-6274/20261116/manifest.json");
 });
+
+test("manifest.link 帶入 FB 連結，非 https 會被擋下", () => {
+  const folder = { topic: "yt-abc123", ymd: "20261124" };
+  const files = { has: (n) => ["fb.txt", "ig.txt", "c.png"].includes(n), text: () => "標題 2026/11/24 #AI" };
+  const m = { version: 1, topic: "yt-abc123", date: "2026-11-24", title: "T", link: "https://allenchen1113official.github.io/AllenI3Aurora/?yt=abc123#ytnotes",
+    platforms: { fb: { caption: "fb.txt", images: ["c.png"] }, ig: { caption: "ig.txt", images: ["c.png"] } } };
+  const v = validateManifest(m, folder, files);
+  assert.equal(v.ok, true, v.errors.join("；"));
+  const doc = buildPost(m, folder, v.channels, { urlOf: (x) => "https://x/" + x, auto: false, nowIso: "2026-11-24T03:00:00Z" });
+  assert.equal(doc.fb.link, m.link);
+  assert.equal(doc.ig.link, undefined);
+  const bad = validateManifest({ ...m, link: "http://x" }, folder, files);
+  assert.ok(bad.errors.some((e) => e.includes("link")));
+  const none = buildPost({ ...m, link: undefined }, folder, v.channels, { urlOf: (x) => "https://x/" + x, auto: false, nowIso: "x" });
+  assert.equal(none.fb.link, "");
+});

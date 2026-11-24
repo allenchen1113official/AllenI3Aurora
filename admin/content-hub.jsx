@@ -504,25 +504,115 @@ function HubCalendar({ list, openPost, newPost }) {
 /* =====================================================================
    03 建立內容 — 主稿 → 逐平台微調 → 排程與審核
    ===================================================================== */
+/* Claude 排程素材（如常看 YouTube 筆記 yt-<影片ID>）的預設連結：網站上該支重點筆記 */
+const HUB_SITE = "https://allenchen1113official.github.io/AllenI3Aurora/";
+function hubDefaultLink(r) {
+  const m = /^yt-(.+)$/.exec(String((r && r.source && r.source.topic) || ""));
+  return m ? `${HUB_SITE}?yt=${encodeURIComponent(m[1])}#ytnotes` : "";
+}
+/* 把貼文文案結尾的 hashtag 段拆出來：{ body, tags }；結尾不是純 hashtag 段時 tags 為空（避免重複） */
+function hubSplitTags(text) {
+  const t = String(text || "").replace(/\r\n/g, "\n").trimEnd();
+  const parts = t.split(/\n[ \t]*\n/);
+  const last = parts.length > 1 ? parts[parts.length - 1] : "";
+  if (last && /^\s*(#[^\s#]+\s*)+$/.test(last)) return { body: parts.slice(0, -1).join("\n\n").trimEnd(), tags: last.trim().split(/\s+/).join(" ") };
+  return { body: t, tags: "" };
+}
+const HUB_IMG_CH = [["fb", "Facebook"], ["ig", "Instagram"], ["th", "Threads"]];
+const hubUniq = (a) => a.map((u) => String(u || "").trim()).filter((u, i, x) => u && x.indexOf(u) === i);
+function hubImgsOf(r) {
+  const o = {};
+  for (const [c] of HUB_IMG_CH) o[c] = hubUniq((r && r[c] && Array.isArray(r[c].imageUrls)) ? r[c].imageUrls : []);
+  return o;
+}
 function hubBlank() {
-  return { __new: true, id: null, title: "", body: "", hashtags: "", category: HUB_CATS[0], imageUrl: "", link: "", note: "",
+  return { __new: true, id: null, title: "", body: "", hashtags: "", category: HUB_CATS[0], imageUrl: "", link: "", note: "", imgs: { fb: [], ig: [], th: [] }, imgPool: [],
     platforms: { fb: true, ig: false, th: false, yt: false, pc: false }, variants: { fb: "", ig: "", th: "", yt: "", pc: "" },
     ytTitle: "", videoUrl: "", ytPrivacy: "public",
     fb: { state: "draft" }, queueState: "draft", scheduledAt: "", mode: "time", when: "", needReview: true };
 }
 function hubFromPost(r) {
   const h = r.hub || {};
-  return { __new: false, id: r.id, title: r.title || "", body: h.body != null ? h.body : (r.fb && r.fb.caption) || "", hashtags: h.hashtags || "",
-    category: h.category || HUB_CATS[0], imageUrl: r.imageUrl || "", link: (r.fb && r.fb.link) || "", note: r.note || "",
+  // 尚未在中控台編修過（如 Claude 排程素材）：FB 文案拆成主稿＋Hashtag，IG／Threads 保留各自文案為微調
+  const sp = r.hub ? null : hubSplitTags((r.fb && r.fb.caption) || "");
+  const fbCap = String((r.fb && r.fb.caption) || "").trim();
+  const own = (c) => { const x = r[c] && r[c].enabled !== false ? String(r[c].caption || "").trim() : ""; return x && x !== fbCap ? x : ""; };
+  const imgs = hubImgsOf(r);
+  return { __new: false, id: r.id, title: r.title || "", body: h.body != null ? h.body : sp ? sp.body : "", hashtags: h.hashtags || (sp ? sp.tags : ""),
+    category: h.category || HUB_CATS[0], imageUrl: r.imageUrl || "", link: (r.fb && r.fb.link) || hubDefaultLink(r), note: r.note || "",
+    imgs, imgPool: hubUniq([...imgs.fb, ...imgs.ig, ...imgs.th, r.imageUrl || ""]), source: r.source || null,
     platforms: Object.assign({ ig: false, th: false, yt: false, pc: false }, h.platforms || {},
       { fb: !!(r.fb && r.fb.enabled !== false), ig: chWanted(r, "ig"), th: chWanted(r, "th"), yt: chWanted(r, "yt") }),
-    variants: Object.assign({ fb: "", ig: "", th: "", yt: "", pc: "" }, h.variants || {}),
+    variants: Object.assign({ fb: "", ig: "", th: "", yt: "", pc: "" }, r.hub ? {} : { ig: own("ig"), th: own("th") }, h.variants || {}),
     ytTitle: (r.yt && r.yt.title) || "", videoUrl: (r.yt && r.yt.videoUrl) || "", ytPrivacy: (r.yt && r.yt.privacy) || "public",
     hub: r.hub || null, fb: Object.assign({ state: "draft" }, r.fb || {}), ig: r.ig || null, th: r.th || null, yt: r.yt || null, queueState: r.queueState || "draft", scheduledAt: r.scheduledAt || "",
     mode: "time", when: isoToTpInput(r.scheduledAt), needReview: false };
 }
+/* 縮圖：有圖卡時取第一張圖卡，否則用主稿圖片網址 */
+const hubThumb = (s) => (s.imgs.fb[0] || s.imgs.ig[0] || s.imgs.th[0] || s.imageUrl || "").trim();
+/* 預覽／驗證用：把圖卡欄位套回貼文結構（與排程器 imagesFor 同順序） */
+const hubWithImgs = (s) => ({ ...s, imageUrl: s.imageUrl.trim(), fb: { ...(s.fb || {}), imageUrls: s.imgs.fb }, ig: { ...(s.ig || {}), imageUrls: s.imgs.ig }, th: { ...(s.th || {}), imageUrls: s.imgs.th } });
 const hubMaster = (s) => [s.body.trim(), s.hashtags.trim()].filter(Boolean).join("\n\n");
 const hubText = (s, id) => (s.variants[id] || "").trim() || hubMaster(s);
+
+/* 圖卡欄位：逐平台列出要發布的圖卡，可人工換圖（從本篇圖卡、站內圖卡或自訂網址選）、移除、加圖 */
+const hubImgName = (u) => { try { return decodeURIComponent(String(u).split("?")[0].split("/").pop()) || u; } catch (e) { return u; } };
+function HubCardPicker({ s, setS }) {
+  const [custom, setCustom] = useState({}); // "ch:i" → 自訂網址輸入中
+  const chans = HUB_IMG_CH.filter(([c]) => s.platforms[c]);
+  const picks = SOC_IMAGE_PICKS.map((x) => ({ url: SOC_SITE_BASE + x.path, label: "站內 · " + x.label }));
+  const nice = (u) => { const n = hubImgName(u); return /_FB\.(jpe?g|png)$/i.test(n) ? "本篇 FB 圖卡（1200×630）" : /_IG\.(jpe?g|png)$/i.test(n) ? "本篇 IG 圖卡（1080×1080）" : "本篇 · " + n; };
+  const pool = hubUniq([...s.imgPool, ...s.imgs.fb, ...s.imgs.ig, ...s.imgs.th]).map((u) => ({ url: u, label: nice(u) }));
+  const options = [...pool, ...picks.filter((x) => !pool.some((y) => y.url === x.url))];
+  const setCh = (c, arr) => setS((x) => ({ ...x, imgs: { ...x.imgs, [c]: arr } }));
+  const put = (c, i, url) => { const a = [...s.imgs[c]]; a[i] = url; setCh(c, a); };
+  const thumb = { width: "100%", height: "auto", maxHeight: 200, objectFit: "contain", borderRadius: 8, background: "var(--night-700)", border: "1px solid var(--border)", display: "block" };
+  return (
+    <div>
+      <label className="ad-lbl">圖卡（各平台實際發布的圖；可人工換圖）</label>
+      {!chans.length ? <div style={{ ...muted, fontSize: 12 }}>請先在右側啟用 Facebook／Instagram／Threads。</div> : null}
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {chans.map(([c, label]) => (
+          <div key={c} style={{ padding: 10, borderRadius: "var(--radius-md)", background: "var(--night-850)", border: "1px solid var(--border)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <strong style={{ fontSize: 12.5, color: "var(--text-2)" }}>{label}（{s.imgs[c].length} 張）</strong>
+              <button type="button" className="ad-btn ghost" style={{ padding: "3px 9px", fontSize: 11.5 }} onClick={() => setCh(c, [...s.imgs[c], (options[0] && options[0].url) || ""])}>＋ 加圖卡</button>
+            </div>
+            {!s.imgs[c].length ? <div style={{ ...muted, fontSize: 12 }}>{s.imageUrl.trim() ? "未指定圖卡，沿用上方「圖片網址」。" : c === "ig" ? "IG 必須有圖：請按「＋ 加圖卡」。" : "未附圖（純文字貼文）。"}</div> : null}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              {s.imgs[c].map((u, i) => {
+                const k = c + ":" + i;
+                const inList = options.some((o) => o.url === u);
+                return (
+                  <div key={k} style={{ display: "flex", flexDirection: "column", gap: 6, width: 220 }}>
+                    <a href={u} target="_blank" rel="noopener"><img src={u} alt={`${label} 圖卡 ${i + 1}`} style={thumb} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} /></a>
+                    <select className="ad-in" style={{ fontSize: 12, padding: "5px 8px" }} value={custom[k] != null ? "__custom" : inList ? u : "__current"}
+                      onChange={(e) => { const v = e.target.value; if (v === "__custom") setCustom((m) => ({ ...m, [k]: u })); else { setCustom((m) => { const n = { ...m }; delete n[k]; return n; }); if (v !== "__current") put(c, i, v); } }}>
+                      {!inList ? <option value="__current">{hubImgName(u) || "（空白）"}</option> : null}
+                      {options.map((o) => <option key={o.url} value={o.url}>{o.label}</option>)}
+                      <option value="__custom">自訂網址…</option>
+                    </select>
+                    {custom[k] != null ? (
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <input className="ad-in" style={{ fontSize: 12, padding: "5px 8px" }} value={custom[k]} onChange={(e) => setCustom((m) => ({ ...m, [k]: e.target.value }))} placeholder="https://…" />
+                        <button type="button" className="ad-btn" style={{ padding: "4px 9px", fontSize: 11.5, whiteSpace: "nowrap" }} onClick={() => { put(c, i, custom[k].trim()); setCustom((m) => { const n = { ...m }; delete n[k]; return n; }); }}>套用</button>
+                      </div>
+                    ) : null}
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <span style={{ ...muted, fontSize: 11, flex: 1 }}>第 {i + 1} 張</span>
+                      {i > 0 ? <button type="button" style={{ ...linkBtn, fontSize: 11.5 }} onClick={() => { const a = [...s.imgs[c]]; [a[i - 1], a[i]] = [a[i], a[i - 1]]; setCh(c, a); }}>← 前移</button> : null}
+                      <button type="button" style={{ ...linkBtn, fontSize: 11.5, color: "var(--danger)" }} onClick={() => setCh(c, s.imgs[c].filter((_, j) => j !== i))}>移除</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function HubComposer({ init, reload, flash, go }) {
   const [s, setS] = useState(init);
@@ -553,16 +643,17 @@ function HubComposer({ init, reload, flash, go }) {
       let id = s.id;
       if (s.__new) {
         const ref = await db.collection(SOC_COLL).add({
-          title: s.title, imageUrl: s.imageUrl.trim(), note: s.note, scheduledAt: "", queueState: "draft", source: { type: "hub" },
-          fb: { enabled: !!s.platforms.fb, caption: hubText(s, "fb"), link: s.link.trim(), state: "draft", attempts: 0, error: null, postId: null },
-          ig: { enabled: !!s.platforms.ig, caption: hubText(s, "ig"), state: "draft", attempts: 0, error: null },
-          th: { enabled: !!s.platforms.th, caption: hubText(s, "th"), state: "draft", attempts: 0, error: null },
+          title: s.title, imageUrl: hubThumb(s), note: s.note, scheduledAt: "", queueState: "draft", source: { type: "hub" },
+          fb: { enabled: !!s.platforms.fb, caption: hubText(s, "fb"), link: s.link.trim(), imageUrls: s.imgs.fb, state: "draft", attempts: 0, error: null, postId: null },
+          ig: { enabled: !!s.platforms.ig, caption: hubText(s, "ig"), imageUrls: s.imgs.ig, state: "draft", attempts: 0, error: null },
+          th: { enabled: !!s.platforms.th, caption: hubText(s, "th"), imageUrls: s.imgs.th, state: "draft", attempts: 0, error: null },
           yt: { enabled: !!s.platforms.yt, caption: hubText(s, "yt"), ...ytFields(), state: "draft", attempts: 0, error: null, videoId: null },
           lock: { by: null, at: null }, hub: hubField(stage), createdAt: now, updatedAt: now,
         });
         id = ref.id;
       } else {
-        const upd = { title: s.title, imageUrl: s.imageUrl.trim(), "fb.enabled": !!s.platforms.fb, "fb.caption": hubText(s, "fb"), "fb.link": s.link.trim(), hub: hubField(stage), updatedAt: now };
+        const upd = { title: s.title, imageUrl: hubThumb(s), "fb.enabled": !!s.platforms.fb, "fb.caption": hubText(s, "fb"), "fb.link": s.link.trim(), hub: hubField(stage), updatedAt: now };
+        for (const [ch] of HUB_IMG_CH) upd[ch + ".imageUrls"] = s.imgs[ch]; // 圖卡欄位（人工換圖）
         for (const ch of ["ig", "th", "yt"]) Object.assign(upd, { [ch + ".enabled"]: !!s.platforms[ch], [ch + ".caption"]: hubText(s, ch), [ch + ".state"]: keepState(ch) });
         for (const [k, v] of Object.entries(ytFields())) upd["yt." + k] = v;
         if (s.queueState === "rejected") upd.queueState = "draft"; // 退回後重新編修，回到佇列
@@ -584,9 +675,10 @@ function HubComposer({ init, reload, flash, go }) {
     const img = s.imageUrl.trim();
     if (img && !/^https:\/\//i.test(img)) return "圖片需為 https:// 開頭的公開網址（平台會直接下載）。";
     if (s.link && !/^https?:\/\//i.test(s.link.trim())) return "連結需為完整網址（https://…）。";
-    if (toSend.includes("fb") && !hubText(s, "fb") && !img) return "Facebook 貼文至少需要內文或圖片。";
-    if (toSend.includes("ig") && !img) return "Instagram 貼文必須有圖片，請填寫圖片網址或取消 IG。";
-    if (toSend.includes("th") && !hubText(s, "th") && !img) return "Threads 貼文至少需要文字或圖片。";
+    if (toSend.includes("fb") && !hubText(s, "fb") && !socImagesFor(hubWithImgs(s), "fb").length) return "Facebook 貼文至少需要內文或圖片。";
+    if (toSend.includes("ig") && !socImagesFor(hubWithImgs(s), "ig").length) return "Instagram 貼文必須有圖片，請在「圖卡」加入圖卡或填寫圖片網址，或取消 IG。";
+    for (const [ch, label] of HUB_IMG_CH) if (s.imgs[ch].some((u) => !/^https:\/\//i.test(u))) return `${label} 圖卡網址需為 https:// 開頭的公開網址。`;
+    if (toSend.includes("th") && !hubText(s, "th") && !socImagesFor(hubWithImgs(s), "th").length) return "Threads 貼文至少需要文字或圖片。";
     if (toSend.includes("yt")) {
       const v = s.videoUrl.trim();
       if (!/^https:\/\//i.test(v)) return "YouTube 需要影片網址（https://，可直接下載的影片檔），請在 YouTube 分頁填寫或取消 YT。";
@@ -642,7 +734,7 @@ function HubComposer({ init, reload, flash, go }) {
   );
   const sec = { ...card, padding: 18, display: "flex", flexDirection: "column", gap: 14, minWidth: 0 };
   const len = (t) => [...(t || "")].length;
-  const preview = { title: s.title, imageUrl: s.imageUrl.trim(), scheduledAt: s.mode === "now" ? "" : tpInputToIso(s.when), fb: { caption: hubText(s, "fb"), link: s.link.trim(), imageUrls: (s.fb && s.fb.imageUrls) || [] } };
+  const preview = { title: s.title, imageUrl: s.imageUrl.trim(), scheduledAt: s.mode === "now" ? "" : tpInputToIso(s.when), fb: { caption: hubText(s, "fb"), link: s.link.trim(), imageUrls: s.imgs.fb } };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -677,8 +769,11 @@ function HubComposer({ init, reload, flash, go }) {
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 6 }}>
               {SOC_IMAGE_PICKS.map((x) => <button key={x.path} type="button" className="ad-btn ghost" style={{ padding: "4px 9px", fontSize: 11.5 }} onClick={() => set("imageUrl", SOC_SITE_BASE + x.path)}>{x.label}</button>)}
             </div></div>
-          <div><label className="ad-lbl" htmlFor="hub-link">連結（選填）</label><input id="hub-link" className="ad-in" value={s.link} onChange={(e) => set("link", e.target.value)} placeholder="https://…" /></div>
-          <div><label className="ad-lbl" htmlFor="hub-tags">標籤 / Hashtag</label><input id="hub-tags" className="ad-in" value={s.hashtags} onChange={(e) => set("hashtags", e.target.value)} placeholder="#智慧家庭 #自動化" /></div>
+          <HubCardPicker s={s} setS={setS} />
+          <div><label className="ad-lbl" htmlFor="hub-link">連結（選填）</label><input id="hub-link" className="ad-in" value={s.link} onChange={(e) => set("link", e.target.value)} placeholder="https://…" />
+            <div style={{ ...muted, fontSize: 11.5, marginTop: 5, lineHeight: 1.6 }}>Facebook 會把連結接在內文最後。{hubDefaultLink(s) ? <>常看 YouTube 筆記預設連到網站該支重點筆記：<button type="button" style={linkBtn} onClick={() => set("link", hubDefaultLink(s))}>套用預設</button></> : null}</div></div>
+          <div><label className="ad-lbl" htmlFor="hub-tags">標籤 / Hashtag</label><input id="hub-tags" className="ad-in" value={s.hashtags} onChange={(e) => set("hashtags", e.target.value)} placeholder="#智慧家庭 #自動化" />
+            <div style={{ ...muted, fontSize: 11.5, marginTop: 5 }}>{s.hashtags.trim() ? `${s.hashtags.trim().split(/\s+/).length} 個（自動取自文案結尾，會接在主稿後面）` : "多個標籤以空白分隔，會接在主稿後面"}</div></div>
           <div><label className="ad-lbl" htmlFor="hub-cat">內容分類</label>
             <select id="hub-cat" className="ad-in" value={s.category} onChange={(e) => set("category", e.target.value)}>{HUB_CATS.map((c) => <option key={c}>{c}</option>)}</select></div>
         </section>
@@ -706,8 +801,8 @@ function HubComposer({ init, reload, flash, go }) {
               <Toggle on={s.platforms[pf.id]} onChange={(v) => setPf(pf.id, v)}>啟用</Toggle>
             </div>
             {pf.live && s[pf.id] && s[pf.id].error ? <div style={{ fontSize: 12.5, color: "var(--danger)", lineHeight: 1.6 }}>上次錯誤：{String(s[pf.id].error.message || s[pf.id].error)}</div> : null}
-            {pf.id === "ig" && s.platforms.ig ? <div style={{ fontSize: 12, color: s.imageUrl.trim() ? "var(--text-3)" : "var(--warning)", lineHeight: 1.6 }}>
-              {s.imageUrl.trim() ? "IG 會使用主稿圖片；Meta 官方保證支援 JPEG，PNG 若被拒會顯示在錯誤訊息。" : "IG 貼文必須有圖片，請在主稿填寫圖片網址。"}</div> : null}
+            {pf.id === "ig" && s.platforms.ig ? <div style={{ fontSize: 12, color: socImagesFor(hubWithImgs(s), "ig").length ? "var(--text-3)" : "var(--warning)", lineHeight: 1.6 }}>
+              {s.imgs.ig.length ? `IG 會發布「圖卡」欄位的 ${s.imgs.ig.length} 張圖卡（多張為輪播）。` : s.imageUrl.trim() ? "IG 會使用主稿圖片；Meta 官方保證支援 JPEG，PNG 若被拒會顯示在錯誤訊息。" : "IG 貼文必須有圖片，請在「圖卡」加入圖卡或填寫主稿圖片網址。"}</div> : null}
             {pf.id === "yt" ? (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <div><label className="ad-lbl" htmlFor="hub-yt-video">影片網址（https，可直接下載的影片檔）</label>
@@ -738,7 +833,7 @@ function HubComposer({ init, reload, flash, go }) {
             {tab === "fb" ? <FbPreview p={preview} /> : (
               <div style={{ width: "100%", padding: 14, borderRadius: "var(--radius-md)", background: "var(--night-700)", border: "1px solid var(--night-600)", display: "flex", flexDirection: "column", gap: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}><PfChip pf={pf} size={24} /><strong style={{ color: "var(--text-1)", fontSize: 13 }}>{pf.name}</strong></div>
-                <SocCarouselPreview urls={socImagesFor({ ...s, imageUrl: s.imageUrl.trim() }, pf.id)} />
+                {socImagesFor(hubWithImgs(s), pf.id).length ? <SocCarouselPreview urls={socImagesFor(hubWithImgs(s), pf.id)} /> : <div style={{ fontSize: 12, color: "var(--text-3)" }}>（此平台沒有附圖）</div>}
                 <div style={{ fontSize: 14.5, color: "var(--text-1)", whiteSpace: "pre-wrap", wordBreak: "break-word", lineHeight: 1.65, WebkitFontSmoothing: "antialiased" }}>{hubText(s, pf.id) || <span style={{ color: "var(--text-3)" }}>（尚無內文）</span>}</div>
               </div>
             )}
