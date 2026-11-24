@@ -1,4 +1,4 @@
-name: 社群自動發文（Facebook／Instagram／Threads／YouTube）
+name: 社群自動發文（Facebook／Instagram／Threads／YouTube／Podcast）
 
 # 2026-11-21 改版「常駐輪詢」：本 repo 的 GitHub cron 嚴重節流，`*/10` 實測 2～8 小時才觸發一次，
 # 核准／排程到期的貼文常拖超過 1 小時才發。改為比照 taiex-update.yml：任何一次喚醒（cron／監控代理補跑／
@@ -17,6 +17,9 @@ name: 社群自動發文（Facebook／Instagram／Threads／YouTube）
 #   - 已到期 → 立即發布；原生排程到期後回頭對帳、撤銷請求則刪除 Meta 端排程
 #   - IG／Threads 無原生排程：到期前 5 分鐘內以容器兩段式發布
 #   - YouTube：核准後即上傳（可續傳），公開影片帶 publishAt 由 YouTube 定時公開
+#   - Podcast（RSS 託管，2026-11-24）：到期前 5 分鐘內把音檔上傳本 repo 的 GitHub Releases（podcast-<年>），
+#     集數寫 Firestore aurora_podcast_feed；本輪有上架就跑 scripts/podcast/build-show-feed.mjs 重建 podcast.xml
+#     （GitHub Contents API 提交到 main，GitHub Pages 提供訂閱網址）。見 docs/PODCAST_RSS_SOP.md。
 # 狀態機與重試規則見 scripts/social/core.mjs；設定步驟見 docs/SOCIAL_SOP.md。
 #
 # 0. Drive 橋接（scripts/social/drive-bridge.mjs，2026-11-18 起）：Mac mini 上的 Claude 發文排程不再用 Chrome 發文，
@@ -59,6 +62,9 @@ on:
       - ".github/workflows/social-publish.yml"
       - "scripts/social/**"
       - "scripts/ytnotes/sync-progress.mjs"
+      - "scripts/podcast/show-feed-core.mjs"
+      - "scripts/podcast/build-show-feed.mjs"
+      - "scripts/podcast/show.json"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -89,7 +95,7 @@ jobs:
           node-version: 20
       - name: 行為測試
         run: |
-          node --test scripts/social/publish.test.mjs scripts/social/youtube.test.mjs scripts/social/ingest.test.mjs scripts/social/bridge.test.mjs scripts/ytnotes/progress.test.mjs
+          node --test scripts/social/publish.test.mjs scripts/social/youtube.test.mjs scripts/social/podcast.test.mjs scripts/social/ingest.test.mjs scripts/social/bridge.test.mjs scripts/podcast/show-feed.test.mjs scripts/ytnotes/progress.test.mjs
           python3 -m unittest scripts/ytnotes/test_progress.py scripts/ytnotes/test_channels.py
       - name: 安裝 firebase-admin、sharp、googleapis、nodemailer
         run: npm install --no-save --no-audit --no-fund firebase-admin@13 sharp@0.34 googleapis@144 nodemailer@6
@@ -106,6 +112,7 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           SOCIAL_AUTO_TOPICS: ${{ vars.SOCIAL_AUTO_TOPICS }}
           INGEST_RESULT: ${{ runner.temp }}/ingest-result.json
+          PODCAST_FEED_FLAG: ${{ runner.temp }}/podcast-feed-dirty
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
@@ -161,18 +168,27 @@ jobs:
             node scripts/ytnotes/sync-progress.mjs || echo "::warning::轉錄進度同步失敗（$(tpe)），下一輪再試"
           }
 
+          # Podcast RSS：有集數上架（排程器寫旗標）就重建 podcast.xml；失敗保留旗標，下一輪再試
+          feed_once() {
+            [[ "${1:-}" == "force" || -f "$PODCAST_FEED_FLAG" ]] || return 0
+            if node scripts/podcast/build-show-feed.mjs; then rm -f "$PODCAST_FEED_FLAG"
+            else echo "::warning::podcast.xml 更新失敗（$(tpe)），下一輪再試"; fi
+          }
+
           publish_fail=0
           publish_once() {
             if node scripts/social/publish-social-posts.mjs; then publish_fail=0
             else publish_fail=$((publish_fail+1)); echo "::warning::發文排程失敗（$(tpe)，連續 $publish_fail 次），下一輪再試"; fi
+            feed_once
           }
 
           if [[ "$SOCIAL_LOOP" != "1" ]]; then
             echo "單輪模式（$(tpe)）"
-            ingest_once; publish_once; progress_once
+            ingest_once; publish_once; feed_once force; progress_once
             exit $(( publish_fail > 0 ? 1 : 0 ))
           fi
 
+          feed_once force   # 每次常駐開始時對齊一次（後台隱藏集數、改 show.json 等）
           start=$(date +%s); last_ingest=0
           echo "常駐輪詢開始（台北 $(tpe)）：發文每 ${PUBLISH_EVERY}s、匯入每 ${INGEST_EVERY}s，約 $((LOOP_SECONDS/60)) 分鐘後接力。"
           while :; do

@@ -173,3 +173,47 @@ test("manifest.link 帶入 FB 連結，非 https 會被擋下", () => {
   const none = buildPost({ ...m, link: undefined }, folder, v.channels, { urlOf: (x) => "https://x/" + x, auto: false, nowIso: "x" });
   assert.equal(none.fb.link, "");
 });
+
+test("Podcast：platforms.podcast＋Drive 音檔指標 → pc 頻道草稿（音檔走 Drive id）、hub 勾選 pc", () => {
+  const f = { topic: "pc-daily1124", ymd: "20261124" };
+  const m = { version: 1, topic: "pc-daily1124", date: "2026-11-24", title: "艾倫極光日報 Podcast｜2026/11/24", producedAt: "2026-11-24T08:30:00+08:00",
+    link: "https://allenchen1113official.github.io/AllenI3Aurora/daily.html",
+    platforms: { podcast: { caption: "podcast.txt", audio: "episode.mp3", duration: 912 }, fb: { caption: "fb.txt", images: [] } } };
+  const files = fileSet({ "podcast.txt": "本集重點\nhttps://example.com", "fb.txt": "艾倫極光日報 Podcast 2026/11/24 上架", "episode.mp3.drive.json": JSON.stringify({ id: "1DriveFileIdAbcdefghijklmnop", name: "episode.mp3", size: 123 }) });
+  const v = validateManifest(m, f, files);
+  assert.equal(v.ok, true, v.errors.join());
+  assert.equal(topicInfo("pc-daily1124").family, "pc");
+  const doc = buildPost(m, f, v.channels, { urlOf: (x) => x, rawOf: (x) => "raw:" + x, auto: false, nowIso: "2026-11-24T00:40:00.000Z" });
+  assert.equal(doc.pc.enabled, true);
+  assert.equal(doc.pc.state, "draft");
+  assert.equal(doc.pc.audioDriveId, "1DriveFileIdAbcdefghijklmnop");
+  assert.equal(doc.pc.audioUrl, "");
+  assert.equal(doc.pc.duration, 912);
+  assert.equal(doc.pc.title, m.title);
+  assert.equal(doc.pc.link, m.link);
+  assert.equal(doc.hub.platforms.pc, true);
+  assert.equal(doc.hub.variants.pc, "本集重點\nhttps://example.com");
+  assert.equal(nextQueueState(doc), "draft");
+  // 核准後排程器會處理 pc
+  const approved = { ...doc, queueState: "pending", scheduledAt: "2026-11-24T00:40:00.000Z", pc: { ...doc.pc, state: "approved" } };
+  assert.equal(planPost(approved, Date.parse("2026-11-24T00:40:00Z"), { graphs: { pc: {} } }).pc, "publish_now");
+  // 已上架的 pc 不被重產覆蓋
+  assert.equal(planIngest({ source: { type: "claude-schedule", producedAt: "old" }, pc: { enabled: true, state: "published" } }, m).action, "skip");
+});
+
+test("Podcast：音檔直接放 content 分支 → raw 網址；缺音檔、格式錯、episodeType 錯都擋下", () => {
+  const f = { topic: "pc-ep001", ymd: "20261124" };
+  const base = { version: 1, topic: "pc-ep001", date: "2026-11-24", title: "EP001", platforms: { podcast: { audio: "ep.m4a" } } };
+  let v = validateManifest(base, f, fileSet({ "podcast.txt": "notes", "ep.m4a": "bin" }));
+  assert.equal(v.ok, true, v.errors.join());
+  const doc = buildPost(base, f, v.channels, { urlOf: (x) => x, rawOf: (x) => "raw:" + x, auto: false, nowIso: "x" });
+  assert.equal(doc.pc.audioUrl, "raw:ep.m4a");
+  assert.equal(doc.fb.enabled, false);
+  v = validateManifest({ ...base, platforms: { podcast: { audio: "ep.m4a", episodeType: "x" } } }, f, fileSet({ "podcast.txt": "notes" }));
+  assert.ok(v.errors.some((e) => /找不到音檔/.test(e)));
+  assert.ok(v.errors.some((e) => /episodeType/.test(e)));
+  v = validateManifest({ ...base, platforms: { podcast: { audio: "ep.ogg" } } }, f, fileSet({ "podcast.txt": "notes" }));
+  assert.ok(v.errors.some((e) => /不是 MP3/.test(e)));
+  v = validateManifest({ ...base, platforms: { podcast: {} } }, f, fileSet({ "podcast.txt": "notes" }));
+  assert.ok(v.errors.some((e) => /缺少 audio/.test(e)));
+});

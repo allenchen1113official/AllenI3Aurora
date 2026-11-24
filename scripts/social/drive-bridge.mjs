@@ -19,7 +19,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { taipeiDays } from "./ingest-core.mjs";
-import { DRIVE_PATHS, DRIVE_FAMILIES, familyTopic, PKG_DIR, MANIFEST, referencedFiles, needsSync, pickFile, pickFolder, q } from "./drive-bridge-core.mjs";
+import { DRIVE_PATHS, DRIVE_FAMILIES, familyTopic, PKG_DIR, MANIFEST, referencedFiles, needsSync, pickFile, pickFolder, q, AUDIO_NAME, DRIVE_STUB, driveStub } from "./drive-bridge-core.mjs";
 
 const env = (n) => (process.env[n] || "").trim();
 const FOLDER_MIME = "application/vnd.google-apps.folder";
@@ -92,7 +92,11 @@ async function main() {
     if (missing.length) { console.log(`::warning::${tag} 送審包缺檔：${missing.join("、")}（Drive 可能尚未同步完成，下一輪再試）`); return; }
     if (dryRun) { console.log(`${tag} DRY-RUN 將同步 ${refs.length + 1} 個檔案（${plan.reason}）`); synced.push(`${topic}/${ymd}`); return; }
     mkdirSync(outDir, { recursive: true });
-    for (const n of refs) writeFileSync(join(outDir, n), await download(pickFile(files, n).id));
+    for (const n of refs) {
+      const f = pickFile(files, n);
+      if (AUDIO_NAME.test(n)) writeFileSync(join(outDir, n + DRIVE_STUB), JSON.stringify(driveStub(f), null, 2) + "\n"); // 音檔只留 Drive 指標
+      else writeFileSync(join(outDir, n), await download(f.id));
+    }
     writeFileSync(localPath, JSON.stringify(m, null, 2) + "\n"); // manifest 最後寫，確保檔案齊全才會被匯入
     console.log(`${tag} 已同步 ${refs.length + 1} 個檔案（${plan.reason}）`);
     synced.push(`${topic}/${ymd}`);

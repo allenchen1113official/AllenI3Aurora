@@ -314,6 +314,10 @@ social-publish.yml（常駐輪詢：每 2 分鐘發文、每 6 分鐘匯入）
 
 測試：`node --test scripts/social/ingest.test.mjs`（10 項匯入規則）；多圖用戶端測試在 `publish.test.mjs`。
 
+## 九之四、Podcast（RSS 託管，2026-11-24 起）
+
+PilotOne 第五個頻道 `pc`：核准後到期前 5 分鐘內，音檔上傳本 repo 的 GitHub Releases、集數寫入 `aurora_podcast_feed`，並重建 `podcast.xml`（訂閱網址 https://allenchen1113official.github.io/AllenI3Aurora/podcast.xml）。不需新增 Secret。Drive 送審包以 `platforms.podcast`（`podcast.txt`＋`audio`）提供，單集主題家族 `pc-<子代碼>`。完整流程、送 Apple／Spotify 的一次性步驟與排錯見 **`docs/PODCAST_RSS_SOP.md`**。
+
 ## 九之三、Drive 送審包＋人工審核通知（2026-11-18 起，全部排程改走官方 API）
 
 > 2026-11-23 新增主題家族：Drive 橋接 `DRIVE_FAMILIES` 支援「同一天多份送審包」，放在 `<家族資料夾>/<YYYYMMDD>/pilotone/<子代碼>/`。目前只有 `yt`（常看 YouTube 重點筆記，`notes/youtube`，子代碼＝影片 ID → topic `yt-<影片ID>`），見 `docs/YTNOTES_SOP.md`。

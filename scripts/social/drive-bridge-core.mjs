@@ -27,7 +27,15 @@ export const DRIVE_PATHS = {
    Drive：AllenI3Aurora/notes/youtube/<YYYYMMDD>/pilotone/<影片ID>/manifest.json… */
 export const DRIVE_FAMILIES = {
   yt: { path: ["notes", "youtube"], sub: /^[A-Za-z0-9_-]{6,20}$/ },
+  // pc ＝ 自有 Podcast 節目單集（每集一份；子代碼自訂英數，如 ep012、daily-1124），
+  // Drive：AllenI3Aurora/podcast/episodes/<YYYYMMDD>/pilotone/<子代碼>/（manifest＋podcast.txt＋音檔）
+  pc: { path: ["podcast", "episodes"], sub: /^[A-Za-z0-9_-]{2,40}$/ },
 };
+/* 音檔不推進 git（content 分支會暴肥）：橋接只寫 <檔名>.drive.json 指向 Drive 檔案，
+   發布時由排程器以服務帳戶直接從 Drive 下載後上傳 GitHub Releases。 */
+export const AUDIO_NAME = /\.(mp3|m4a|mp4|aac|wav)$/i;
+export const DRIVE_STUB = ".drive.json";
+export const driveStub = (f) => ({ id: f.id, name: f.name, size: f.size != null ? Number(f.size) : null, mimeType: f.mimeType || null, modifiedTime: f.modifiedTime || null });
 export function familyTopic(prefix, sub) {
   const f = DRIVE_FAMILIES[prefix];
   return f && f.sub.test(String(sub || "")) ? `${prefix}-${sub}` : null;
@@ -43,7 +51,7 @@ export function referencedFiles(m) {
   const p = (m && m.platforms) || {};
   for (const key of Object.keys(p)) {
     const c = p[key] || {};
-    for (const n of [c.caption, ...(Array.isArray(c.images) ? c.images : [])]) {
+    for (const n of [c.caption, c.audio, ...(Array.isArray(c.images) ? c.images : [])]) {
       if (n == null || n === "") continue;
       const s = String(n);
       if (!SAFE_NAME.test(s) || s.includes("..") || s === MANIFEST) bad.push(s);
