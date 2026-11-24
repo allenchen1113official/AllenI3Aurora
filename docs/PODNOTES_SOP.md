@@ -9,7 +9,7 @@
 | 階段 | 在哪裡跑 | 程式 |
 |---|---|---|
 | 讀 RSS、挑集數、下載音檔、轉錄草稿 | Mac mini 原生 macOS（launchd `official.allen.ytnotes` 每 15 分鐘，與常看 YouTube 共用引擎與檔案鎖） | `scripts/ytnotes/ytnotes.py`（`podscan`、`draft_podcast`）、`funasr_run.py` |
-| 校正、康乃爾筆記、三平台文案、圖卡、送審包 | Claude 排程「常聽 Podcast 重點筆記｜PilotOne 送審」（台北每日 11:23／22:23） | `scripts/podnotes/make_package.py`、`scripts/ytnotes/merge_index.py`、`scripts/podcast/render_social_card.py`（主題 `morandi-blue`） |
+| 校正、康乃爾筆記、三平台文案、圖卡、送審包 | Claude 排程「常聽 Podcast 重點筆記｜PilotOne 送審」（`trig_01BHPcUndhA9rdPUWyxAELGW`，台北每日 11:23／22:23；**需在 Mac mini 的 Claude 桌面 App 開啟「Require this computer」**） | `scripts/podnotes/make_package.py`、`scripts/ytnotes/merge_index.py`、`scripts/podcast/render_social_card.py`（主題 `morandi-blue`） |
 | 送審包 → PilotOne 草稿 | `social-publish.yml`（Drive 橋接主題家族 `pn`） | `scripts/social/drive-bridge*.mjs`、`ingest-core.mjs`（topic `pn-<集數ID>`） |
 | 前台筆記＋圖卡、後台逐字稿 | `focus-update.yml`（每 3 小時） | `scripts/podnotes/update-podnotes.mjs` → `data/podnotes.json`、`assets/podnotes/`、Firestore `aurora_podcast_transcripts` |
 | 前台 | GitHub Pages | `Dashboard.jsx`（首頁只放最新 1 則）、`podcast.html`（各節目最新一集＋歷期重點筆記；`?pn=<集數ID>#pn-<集數ID>` 直接展開該集圖卡） |
@@ -38,7 +38,7 @@ index.json · 索引.md   前台索引（merge_index.py；不含逐字稿）
 <YYYYMMDD>/pilotone/<集數ID>/  送審包：manifest.json（topic pn-<集數ID>）· fb/ig/threads.txt · PodNotes_<集數ID>_FB.png（1200×630）· _IG.png（1080×1080）
 ```
 
-引擎的檔案（`ytnotes.py` 等）、佇列（`_engine/pod_queue.json`）、紀錄（`pod_seen.json`、`run.log`、`failed.txt`）、詞庫都與常看 YouTube 共用 `notes/youtube/_engine/` 與 `notes/youtube/詞庫/`。**引擎改版後要把 `scripts/ytnotes/ytnotes.py` 複製到 Drive `notes/youtube/_engine/ytnotes.py`**（launchd 跑 Drive 那份），`scripts/podnotes/make_package.py` 複製成 `_engine/make_podnotes.py`、`scripts/podcast/render_social_card.py` 複製到 `_engine/`。
+引擎的檔案（`ytnotes.py` 等）、佇列（`_engine/pod_queue.json`）、紀錄（`pod_seen.json`、`run.log`、`failed.txt`）、詞庫都與常看 YouTube 共用 `notes/youtube/_engine/` 與 `notes/youtube/詞庫/`。**引擎部署**：launchd 跑的是 Drive `notes/youtube/_engine/ytnotes.py`。Podcast 筆記排程每次執行先比對 repo 與 Drive 的 `ytnotes.py`／`funasr_run.py` 雜湊，不同就經 Mac mini 寫入新版並記進 `_engine/versions.txt`，所以合併到 main 後最慢下一次排程就部署。送審包程式（`make_package.py`、`render_social_card.py`、`merge_index.py`）排程直接用 repo 版本，不需複製。
 
 ## note.json（Claude 撰寫）與文案規則
 
