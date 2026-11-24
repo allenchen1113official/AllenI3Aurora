@@ -1,0 +1,30 @@
+ReAct 還是 CodeAct？史丹佛課堂拆解 Agent 設計 5 大取捨
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常聽 Podcast 重點筆記 2026/11/24（週二）
+
+🎧 節目來源：AI懶人報〈EP490 – ReAct、CodeAct 怎麼選？Agent 設計模式的取捨｜史丹佛 CS329Z 第六堂精華〉（2026-11-24・18 分）
+
+Agent 設計模式那麼多，ReAct、CodeAct、先規劃再執行，到底怎麼選？🤔
+史丹佛 CS329Z 第六堂給的答案是：每個模式，都是拿一樣東西去換另一樣東西。
+
+這集 AI懶人報 EP490 整理了這堂課（主講 Michael Ryan，DSPy 核心貢獻者），先記住 4 個重點：
+
+1️⃣ Workflow 五種模式（串接、分流、平行、指揮者加工人、評審迴圈），都在延遲、成本、準確度之間做交換。
+
+2️⃣ 沒有外部回饋的自我修正，可能把原本對的答案改錯；檢查的一方要接上測試、搜尋這類工具。
+
+3️⃣ 行動寫成程式碼（CodeAct），比一次一個 JSON 呼叫成功率更高、回合更少；先規劃再執行，今天多被產生程式碼和平行工具呼叫取代。
+
+4️⃣ Context 要保持聚焦、保留連續性；遮蔽舊的工具回傳結果，解題率和模型摘要差不多，成本卻少一半。
+
+最後的重點很有意思：模型越強，harness 可以越簡單；模型較弱，就要靠更好的 harness 補回來。要選哪一邊，拿你自己的任務去測就知道。
+
+你現在做 AI agent，是用 JSON 工具呼叫，還是讓模型直接寫程式？留言聊聊 👇
+
+💡 一句話總結：Agent 設計沒有標準答案，每個模式都是取捨，拿自己的任務去測。
+
+📝 康乃爾筆記全文：https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261124#pn-ailanren-20261124
+🎧 收聽原節目：https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/93458b72-7507-4852-843b-f8b79f78bdd8
+
+以上為個人收聽後整理的重點筆記，非節目逐字轉載；完整內容請收聽原節目並支持創作者。
+
+#AIAgent #ReAct #CodeAct #史丹佛 #CS329Z #DSPy #ContextEngineering #LLM

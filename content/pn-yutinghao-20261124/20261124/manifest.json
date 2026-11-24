@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-yutinghao-20261124",
+  "date": "2026-11-24",
+  "title": "黃仁勳回鍋、輝達單日飆31%！投資人該盯的3個後續關卡",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=yutinghao-20261124#pn-yutinghao-20261124",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_yutinghao-20261124_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_yutinghao-20261124_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_yutinghao-20261124_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-24T21:53:42+08:00"
+}

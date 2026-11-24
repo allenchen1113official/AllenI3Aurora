@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-zhaohua-20261124",
+  "date": "2026-11-24",
+  "title": "台股狂漲3386點！黃仁勳回歸後，散戶必學的3個風險管理教訓",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=zhaohua-20261124#pn-zhaohua-20261124",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_zhaohua-20261124_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_zhaohua-20261124_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_zhaohua-20261124_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-24T21:52:12+08:00"
+}

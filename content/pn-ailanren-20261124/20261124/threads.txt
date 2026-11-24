@@ -1,0 +1,8 @@
+ReAct 還是 CodeAct？史丹佛課堂拆解 Agent 設計 5 大取捨
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常聽 Podcast 重點筆記 2026/11/24
+🎧 節目來源：AI懶人報〈EP490 – ReAct、CodeAct 怎麼選？Age…〉
+
+最反直覺的一點：讓模型自己檢查自己的答案，不一定更準。史丹佛 CS329Z 這堂課提到，沒有外部回饋，一直改到「它覺得對」為止，GPT-4 在數學題反而從 95.5 掉到 89，原本對的被改錯。差別在於有沒有接上工具，像是真的去跑測試。這讓我覺得，agent 設計重點不是疊更多花招，而是每一步有沒有拿到新資訊。你做 agent 時，有踩過類似的坑嗎？
+
+📝 筆記：https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261124#pn-ailanren-20261124
+#Podcast重點筆記
