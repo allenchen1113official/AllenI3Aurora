@@ -21,6 +21,7 @@ export const DRIVE_PATHS = {
   heatmap: ["finance", "heatmap"],
   stockradar: ["finance", "stockradar"],
   "tw-whale-weekly": ["finance", "whale"],
+  dailypick: ["finance", "dailypick"],   // 極光日報・每日來一股（StockAdvisor daily_pick 產出；trig_015VCDQcyY63P2AixT6a4St8）
 };
 /* 主題家族：同一天可有多份送審包，各放在 pilotone/<子代碼>/ 底下，topic＝<前綴>-<子代碼>。
    yt ＝ 常看 YouTube 重點筆記（每支影片一份；子代碼＝YouTube 影片 ID 或 IG 短碼），
