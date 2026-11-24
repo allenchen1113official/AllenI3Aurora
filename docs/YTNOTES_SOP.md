@@ -69,7 +69,7 @@ bash "$HOME/Library/CloudStorage/GoogleDrive-allenchen1113.official@gmail.com/�
 
 ## 送審
 
-`make_package.py` 產生 `manifest.json`（`topic: "yt-<影片ID>"`、`autoPublish: false`、`verified: true`），FB 用 1200×630、IG／Threads 用 1080×1080 康乃爾筆記圖卡（艾倫報報品牌鎖定）。Drive 橋接讀台北今天＋昨天的 `notes/youtube/<YYYYMMDD>/pilotone/*/`，同一天每支影片各一筆草稿（`cs_yt-<影片ID>_<YYYYMMDD>`），Allen 在 PilotOne 核准後才發布。
+`make_package.py` 產生 `manifest.json`（`topic: "yt-<影片ID>"`、`autoPublish: false`、`verified: true`），FB 用 1200×630、IG／Threads 用 1080×1080 康乃爾筆記圖卡（艾倫報報品牌鎖定）。圖卡色調為**莫蘭迪靛色系**（`render_social_card.py` 的 `THEMES["morandi-indigo"]`：灰靛頁首帶＋霧白底；`make_package.py` 的 `CARD_THEME` 可切換，Podcast 圖卡維持預設 `aurora`），品牌列左側備註影片來源「影片來源：YouTube · youtu.be/<ID>｜作者〈標題〉」；三平台文案也都以「📺 影片來源：作者〈標題〉」開頭（`validate` 會檢查）。PilotOne 審核頁除 Facebook 預覽外，另列出 Instagram／Threads 的圖卡與文案（含字數），三平台圖卡一併審核。Drive 橋接讀台北今天＋昨天的 `notes/youtube/<YYYYMMDD>/pilotone/*/`，同一天每支影片各一筆草稿（`cs_yt-<影片ID>_<YYYYMMDD>`），Allen 在 PilotOne 核准後才發布。
 
 ## 測試
 

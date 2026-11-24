@@ -32,6 +32,7 @@ SERIES = "常看 YouTube 重點筆記"
 WEEK = "一二三四五六日"
 NOTICE = "以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。"
 LIMIT = {"ig": 2200, "th": 500, "tags": 30}
+CARD_THEME = "morandi-indigo"   # 圖卡色調：莫蘭迪靛色系（render_social_card.THEMES）
 
 def safe(s, n=50):
     s = re.sub(r'[\\/:*?"<>|\n\r\t#^\[\]]+', " ", str(s or "")).strip()
@@ -88,7 +89,7 @@ def build_copy(meta, note, date):
     slash = d.strftime("%Y/%m/%d")
     day = f"{slash}（週{WEEK[d.weekday()]}）"
     head = str(note.get("headline") or meta.get("title")).strip()
-    src = f"▶ {meta.get('author','')}〈{meta.get('title','')}〉（{meta.get('published','')}・{dur_text(meta.get('duration_sec'))}）"
+    src = f"📺 影片來源：{meta.get('author','')}〈{meta.get('title','')}〉（YouTube・{meta.get('published','')}・{dur_text(meta.get('duration_sec'))}）"
     summ = [f"• {x}" for x in note.get("summary") or []]
     c = note.get("cornell") or {}
     rows = [f"🔹 {r.get('cue','')}：{r.get('note','')}" for r in c.get("rows") or []]
@@ -107,7 +108,7 @@ def build_copy(meta, note, date):
     ])
     # Threads：單則 ≤500 字元，逐步刪減到符合
     def th_text(n_points, with_take=True, short_src=False):
-        s = src if not short_src else f"▶ {meta.get('author','')}〈{safe(meta.get('title'), 28)}〉"
+        s = src if not short_src else f"📺 影片來源：{meta.get('author','')}〈{safe(meta.get('title'), 28)}〉"
         parts = [head, f"{BRAND}｜{SERIES} {slash}", s, ""]
         parts += [f"{'①②③④⑤'[i]} {x.lstrip('• ')}" for i, x in enumerate(summ[:n_points])]
         if with_take and take:
@@ -121,6 +122,12 @@ def build_copy(meta, note, date):
             break
     return {"fb": fb.strip() + "\n", "ig": ig.strip() + "\n", "th": th.strip() + "\n"}, slash
 
+def source_line(meta):
+    """圖卡上的影片來源備註：網址放前面，長標題截斷時連結仍保留"""
+    vid = meta.get("id", "")
+    link = f"youtu.be/{vid}" if meta.get("platform", "youtube") == "youtube" and vid else (meta.get("url") or "")
+    return f"影片來源：YouTube · {link}｜{meta.get('author','')}〈{meta.get('title','')}〉"
+
 def render_cards(meta, note, outdir, stem):
     sys.path.insert(0, str(HERE))
     try:
@@ -132,7 +139,9 @@ def render_cards(meta, note, outdir, stem):
     ep = {"kicker": "YOUTUBE · 重點筆記 · 康乃爾筆記", "show": meta.get("author", ""), "title": meta.get("title", ""),
           "date": (meta.get("published") or "").replace("-", "."), "duration": dur_text(meta.get("duration_sec")),
           "summary": " ".join(note.get("summary") or [])[:220],
-          "cornell": {"rows": c.get("rows") or [], "summary": c.get("summary", "")}}
+          "cornell": {"rows": c.get("rows") or [], "summary": c.get("summary", "")},
+          "theme": CARD_THEME, "source": source_line(meta),
+          "footer": "艾倫報報 · 常看 YouTube 重點筆記｜allenchen1113official.github.io/AllenI3Aurora"}
     files = {}
     for k, size in (("fb", (1200, 630)), ("ig", (1080, 1080))):
         p = outdir / f"{stem}_{k.upper()}.png"
@@ -143,6 +152,8 @@ def render_cards(meta, note, outdir, stem):
 def validate(copy, slash, note, meta):
     errs = []
     for k, t in copy.items():
+        if "影片來源" not in t:
+            errs.append(f"{k}：缺影片來源")
         if slash not in t:
             errs.append(f"{k}：缺日期 {slash}")
         if BRAND not in t:

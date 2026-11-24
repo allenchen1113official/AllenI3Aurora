@@ -51,6 +51,33 @@ SKY = (99, 172, 226)        # 極光藍（intelligence）
 GOLD = (255, 200, 87)       # 極光金（illumination）
 TONE_COLORS = {"insight": MINT, "intelligence": SKY, "illumination": GOLD}
 
+# ---------- 主題（ep["theme"]；預設 aurora＝上方深色極光色票） ----------
+# morandi-indigo：莫蘭迪靛色系（常看 YouTube 重點筆記用）——灰靛頁首帶＋霧白底、低彩度靛藍強調
+THEMES = {
+    "aurora": {
+        "bg": BG, "panel": PANEL, "border": BORDER, "rule": (30, 40, 56),
+        "text1": TEXT1, "text2": TEXT2, "text3": TEXT3, "accent": None,
+        "glow": True, "band": None,
+        "brand_grad": (MINT, SKY), "brand_mark": (13, 46, 48), "brand_text": TEXT1, "brand_sub": TEXT3,
+    },
+    "morandi-indigo": {
+        "bg": (236, 234, 240),          # 霧白藕灰
+        "panel": (223, 223, 234),       # 淺灰靛
+        "border": (196, 198, 214),
+        "rule": (212, 212, 224),
+        "text1": (47, 51, 82),          # 深靛墨
+        "text2": (70, 74, 98),
+        "text3": (118, 121, 142),
+        "accent": (88, 98, 148),        # 莫蘭迪靛
+        "glow": False,
+        "band": {"fill": (74, 82, 120), "stripe": (160, 152, 190),   # 灰靛頁首帶＋薰衣草細線
+                 "title": (246, 243, 238), "kicker": (200, 205, 228), "meta": (186, 190, 212)},
+        "brand_grad": (104, 114, 160), "brand_mark": (250, 248, 244),
+        "brand_text": (47, 51, 82), "brand_sub": (118, 121, 142),
+    },
+}
+THEMES["morandi-indigo"]["brand_grad"] = ((104, 114, 160), (164, 156, 196))
+
 GSTATIC = {
     "NotoSansTC-Regular.ttf": "https://fonts.gstatic.com/s/notosanstc/v39/-nFuOG829Oofr2wohFbTp9ifNAn722rq0MXz70e1_Co.ttf",
     "NotoSansTC-Bold.ttf": "https://fonts.gstatic.com/s/notosanstc/v39/-nFuOG829Oofr2wohFbTp9ifNAn722rq0MXz76Cy_Co.ttf",
@@ -149,13 +176,14 @@ def _gradient(size, c0, c1):
     return img
 
 
-def make_brand_lockup(icon_size=64):
+def make_brand_lockup(icon_size=64, theme=None):
     """漸層圖示（AI³A）＋ 艾倫報報 / ALLEN I³ AURORA 文字組合，回傳 RGBA 圖。"""
+    th = theme or THEMES["aurora"]
     icon = Image.new("RGBA", (icon_size, icon_size), (0, 0, 0, 0))
-    icon.paste(_gradient((icon_size, icon_size), MINT, SKY), (0, 0),
+    icon.paste(_gradient((icon_size, icon_size), *th["brand_grad"]), (0, 0),
                _rounded_mask((icon_size, icon_size), int(icon_size * 0.24)))
     d = ImageDraw.Draw(icon)
-    dark = (13, 46, 48)
+    dark = th["brand_mark"]
     f_main = F("latb", int(icon_size * 0.40))
     f_sup = F("latb", int(icon_size * 0.22))
     w1 = d.textlength("AI", font=f_main)
@@ -184,11 +212,11 @@ def make_brand_lockup(icon_size=64):
     d2 = ImageDraw.Draw(out)
     block_h = cjk_size * 1.08 + eng_size * 1.25
     ty = (H - block_h) / 2 - cjk_size * 0.12
-    d2.text((icon_size + pad, ty), cjk_text, font=f_cjk, fill=TEXT1)
+    d2.text((icon_size + pad, ty), cjk_text, font=f_cjk, fill=th["brand_text"])
     cx = icon_size + pad
     ey = ty + cjk_size * 1.18
     for ch in eng_text:
-        d2.text((cx, ey), ch, font=f_eng, fill=TEXT3)
+        d2.text((cx, ey), ch, font=f_eng, fill=th["brand_sub"])
         cx += tmp.textlength(ch, font=f_eng) + spacing
     return out
 
@@ -251,40 +279,53 @@ def clamp_lines(draw, lines, font, max_width, max_lines):
 def render_card(ep, size, out_path):
     W, H = size
     is_ig = H > 800
+    th = THEMES.get(ep.get("theme") or "aurora", THEMES["aurora"])
+    BG, PANEL, BORDER = th["bg"], th["panel"], th["border"]
+    TEXT1, TEXT2, TEXT3 = th["text1"], th["text2"], th["text3"]
+    band = th["band"]
     img = Image.new("RGB", (W, H), BG)
 
-    # 頂部極光光暈（低調、不搶內容）
-    glow = Image.new("RGB", (W, H), BG)
-    gd = ImageDraw.Draw(glow)
-    gd.ellipse((-W * 0.25, -H * 0.45, W * 0.55, H * 0.18), fill=(16, 44, 38))
-    gd.ellipse((W * 0.45, -H * 0.5, W * 1.25, H * 0.12), fill=(15, 32, 52))
-    img = Image.blend(img, glow.filter(ImageFilter.GaussianBlur(int(H * 0.09))), 0.9)
+    if th["glow"]:
+        # 頂部極光光暈（低調、不搶內容）
+        glow = Image.new("RGB", (W, H), BG)
+        gd = ImageDraw.Draw(glow)
+        gd.ellipse((-W * 0.25, -H * 0.45, W * 0.55, H * 0.18), fill=(16, 44, 38))
+        gd.ellipse((W * 0.45, -H * 0.5, W * 1.25, H * 0.12), fill=(15, 32, 52))
+        img = Image.blend(img, glow.filter(ImageFilter.GaussianBlur(int(H * 0.09))), 0.9)
     d = ImageDraw.Draw(img)
 
     M = int(W * 0.045)                       # 版面邊距
-    tone = TONE_COLORS.get(ep.get("tone"), MINT)
+    tone = th["accent"] or TONE_COLORS.get(ep.get("tone"), MINT)
 
     # --- 頁首 ---
-    y = M
     f_kicker = F("bold", int(H * (0.020 if is_ig else 0.030)))
-    d.text((M, y), ep.get("kicker") or "CORNELL NOTES · 康乃爾筆記", font=f_kicker, fill=tone)
-    meta = " · ".join(x for x in [ep.get("date"), ep.get("duration")] if x)
-    if meta:
-        f_meta = F("reg", int(H * (0.018 if is_ig else 0.027)))
-        d.text((W - M - d.textlength(meta, font=f_meta), y + f_kicker.size * 0.08), meta, font=f_meta, fill=TEXT3)
-    y += int(f_kicker.size * 1.7)
-
+    f_meta = F("reg", int(H * (0.018 if is_ig else 0.027)))
+    f_title = F("bold", int(H * (0.034 if is_ig else 0.055)))
     title = (ep.get("show") or "")
     if title and ep.get("title"):
         title += " — "
     title += ep.get("title") or ""
-    f_title = F("bold", int(H * (0.034 if is_ig else 0.055)))
-    for line in clamp_lines(d, wrap_text(d, title, f_title, W - 2 * M), f_title, W - 2 * M, 2):
-        d.text((M, y), line, font=f_title, fill=TEXT1)
+    title_lines = clamp_lines(d, wrap_text(d, title, f_title, W - 2 * M), f_title, W - 2 * M, 2)
+    y = M
+    if band:   # 頁首色帶：先量高度再鋪底
+        band_h = M + int(f_kicker.size * 1.7) + len(title_lines) * int(f_title.size * 1.28) + int(H * 0.028)
+        d.rectangle((0, 0, W, band_h), fill=band["fill"])
+        d.rectangle((0, band_h, W, band_h + max(3, int(H * 0.006))), fill=band["stripe"])
+    d.text((M, y), ep.get("kicker") or "CORNELL NOTES · 康乃爾筆記", font=f_kicker, fill=band["kicker"] if band else tone)
+    meta = " · ".join(x for x in [ep.get("date"), ep.get("duration")] if x)
+    if meta:
+        d.text((W - M - d.textlength(meta, font=f_meta), y + f_kicker.size * 0.08), meta, font=f_meta,
+               fill=band["meta"] if band else TEXT3)
+    y += int(f_kicker.size * 1.7)
+    for line in title_lines:
+        d.text((M, y), line, font=f_title, fill=band["title"] if band else TEXT1)
         y += int(f_title.size * 1.28)
-    y += int(H * 0.012)
-    d.line((M, y, W - M, y), fill=BORDER, width=2)
-    y += int(H * 0.022)
+    if band:
+        y = band_h + int(H * 0.035)
+    else:
+        y += int(H * 0.012)
+        d.line((M, y, W - M, y), fill=BORDER, width=2)
+        y += int(H * 0.022)
 
     # --- 底部先保留：總結面板 + 品牌列 ---
     f_sum_lb = F("bold", int(H * (0.016 if is_ig else 0.024)))
@@ -292,8 +333,9 @@ def render_card(ep, size, out_path):
     summary = (ep.get("cornell") or {}).get("summary") or ep.get("summary") or ""
     sum_lines = clamp_lines(d, wrap_text(d, summary, f_sum, W - 2 * M - int(W * 0.04)),
                             f_sum, W - 2 * M - int(W * 0.04), 3 if is_ig else 2) if summary else []
-    brand = make_brand_lockup(int(H * (0.052 if is_ig else 0.080)))
+    brand = make_brand_lockup(int(H * (0.052 if is_ig else 0.080)), th)
     brand_h = brand.size[1] + int(H * 0.028)
+    source = str(ep.get("source") or "").strip()   # 影片／節目來源備註（顯示於品牌列左側）
     sum_h = (int(f_sum_lb.size * 1.6) + len(sum_lines) * int(f_sum.size * 1.5) + int(H * 0.035)) if sum_lines else 0
     body_bottom = H - M - brand_h - sum_h
 
@@ -321,10 +363,16 @@ def render_card(ep, size, out_path):
             break
         blocks.append((cue_lines, note_lines, row_h))
         fit_y += row_h
+    f_more = F("reg", int(H * (0.016 if is_ig else 0.024)))
+    more_h = int(f_more.size * 1.6)
+    # 放不下全部列時，要留一行給「…及另外 N 個重點」，避免壓到總結面板
+    while blocks and len(blocks) < len(rows) and fit_y + more_h > body_bottom:
+        fit_y -= blocks.pop()[2]
     drawn = len(blocks)
     extra = 0
     if drawn:
-        extra = min(int((body_bottom - fit_y) / (drawn + 1)), int(H * (0.055 if is_ig else 0.030)))
+        spare = body_bottom - fit_y - (more_h if drawn < len(rows) else 0)
+        extra = max(0, min(int(spare / (drawn + 1)), int(H * (0.055 if is_ig else 0.030))))
     for i, (cue_lines, note_lines, row_h) in enumerate(blocks):
         ly = y
         for line in cue_lines:
@@ -336,10 +384,9 @@ def render_card(ep, size, out_path):
             ly += int(f_note.size * 1.5)
         y += row_h + extra
         if i < drawn - 1:
-            d.line((M, y - int(H * 0.010) - extra // 2, W - M, y - int(H * 0.010) - extra // 2), fill=(30, 40, 56), width=1)
+            d.line((M, y - int(H * 0.010) - extra // 2, W - M, y - int(H * 0.010) - extra // 2), fill=th["rule"], width=1)
     if drawn < len(rows):
-        d.text((M, y), f"…及另外 {len(rows) - drawn} 個重點（完整筆記見網站）",
-               font=F("reg", int(H * (0.016 if is_ig else 0.024))), fill=TEXT3)
+        d.text((M, y), f"…及另外 {len(rows) - drawn} 個重點（完整筆記見網站）", font=f_more, fill=TEXT3)
 
     # --- 總結面板 ---
     if sum_lines:
@@ -359,9 +406,18 @@ def render_card(ep, size, out_path):
     by = H - M - brand.size[1]
     img.paste(brand, (W - M - brand.size[0], by), brand)
     f_site = F("reg", int(H * (0.015 if is_ig else 0.022)))
-    d.text((M, by + (brand.size[1] - f_site.size) // 2),
-           "逐字稿 · 摘要 · 康乃爾筆記｜allenchen1113official.github.io/AllenI3Aurora",
-           font=f_site, fill=TEXT3)
+    site = ep.get("footer") or "逐字稿 · 摘要 · 康乃爾筆記｜allenchen1113official.github.io/AllenI3Aurora"
+    if source:
+        f_src = F("bold", int(H * (0.016 if is_ig else 0.024)))
+        src_w = W - 2 * M - brand.size[0] - int(W * 0.03)
+        src_line = clamp_lines(d, wrap_text(d, source, f_src, src_w), f_src, src_w, 1)[0]
+        site = clamp_lines(d, wrap_text(d, site, f_site, src_w), f_site, src_w, 1)[0]
+        block = f_src.size * 1.35 + f_site.size
+        ty = by + (brand.size[1] - block) / 2
+        d.text((M, ty), src_line, font=f_src, fill=TEXT2)
+        d.text((M, ty + f_src.size * 1.35), site, font=f_site, fill=TEXT3)
+    else:
+        d.text((M, by + (brand.size[1] - f_site.size) // 2), site, font=f_site, fill=TEXT3)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     img.save(out_path)
