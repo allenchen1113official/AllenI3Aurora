@@ -1,4 +1,364 @@
 {
- "updatedAt": "",
- "items": []
+ "updatedAt": "2026-11-24T10:24:05+08:00",
+ "items": [
+  {
+   "id": "en0GuyhieQk",
+   "title": "Introducing Claude Dashboards and Claude Motion",
+   "author": "Claude",
+   "channelUrl": "https://www.youtube.com/channel/UCV03SRZXJEz-hchIAogeJOg",
+   "url": "https://www.youtube.com/watch?v=en0GuyhieQk",
+   "date": "2026-10-08",
+   "duration": "1 分 22 秒",
+   "category": "AI 應用",
+   "headline": "1 分鐘看懂 Claude 兩個新成品：資料變即時儀表板、報告變動畫簡報",
+   "thumbnail": "https://i.ytimg.com/vi/en0GuyhieQk/hqdefault.jpg",
+   "summary": [
+    "Anthropic 推出兩種新 artifact：Claude Dashboards 接上資料平台或 CRM，做出隨資料自動更新的儀表板；Claude Motion 把報告或圖表變成短動畫。",
+    "示範情境：共享單車營運團隊讓 Claude 抓一年騎乘資料做成儀表板，看出「山坡站點平日早上 8:15 前就被借空」這個問題。",
+    "接著用 Claude Motion 把儀表板轉成動畫敘事，可以直接在影片上留言微調、邀同事一起評論，也能匯出到設計工具。",
+    "說明欄補充：Motion 以程式碼生成、不靠影片模型，文字、數字、節奏都能改並匯出 MP4；Docs、Slides、Design 同步轉正式版、Free 方案可用。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "兩個新類型",
+      "note": "Dashboards 負責看懂資料，Motion 負責把故事講給團隊聽"
+     },
+     {
+      "cue": "工作流",
+      "note": "資料倉儲 → 儀表板 → 發現問題 → 動畫敘事 → 全員大會"
+     },
+     {
+      "cue": "協作",
+      "note": "在影片上直接留言調整，同事也能評論，一起把故事改好"
+     },
+     {
+      "cue": "可編輯",
+      "note": "動畫是程式碼產生，字、數字、時間點都能改，可匯出 MP4 或交給剪輯軟體"
+     }
+    ],
+    "summary": "從資料到簡報動畫，現在可以在同一個 Claude 裡一路做完。"
+   },
+   "added": "20261124"
+  },
+  {
+   "id": "YAsxyoTWFDA",
+   "title": "I Have Spent 1000+ Hours With Claude Code. This Is What I Learned",
+   "author": "The Coding Sloth",
+   "channelUrl": "https://www.youtube.com/channel/UCxVPH8W2ayMey1-b0SY8rBQ",
+   "url": "https://www.youtube.com/watch?v=YAsxyoTWFDA",
+   "date": "2026-08-18",
+   "duration": "22 分 30 秒",
+   "category": "AI 應用",
+   "headline": "用 Claude Code 1000 小時的功能排行：3 個 S 級，為什麼 /init 只拿 C",
+   "thumbnail": "https://i.ytimg.com/vi/YAsxyoTWFDA/hqdefault.jpg",
+   "summary": [
+    "作者用 20 美元方案，最大痛點是用量限制，因此把常用功能做 S～F 分級，並分享省 token 的方法。",
+    "S 級三件事：技能 skills（到 skills.sh 找，別一次裝一堆）、plan mode（大任務才用）、驗證（先寫測試再實作、跑型別檢查與 linter、截圖或瀏覽器測試）。",
+    "/init 只拿 C～D，但 CLAUDE.md 值得寫：專案說明、現況、程式風格；MCP 只在需要和外部系統互動時才裝。",
+    "Context 管理：一個任務一個新對話、別讓它亂查、提示要非常具體；超過約 10～20 萬 token 品質就下滑，自動壓縮出現就該重開。",
+    "其他：/loop 做定時自動化、子代理與 worktree 平行開發；替代品有 Codex、OpenCode、Cursor、Copilot；最後提醒還是要學會寫程式。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "S 級",
+      "note": "技能、plan mode、驗證；驗證是工程基本功，AI 只是讓它更重要"
+     },
+     {
+      "cue": "驗證順序",
+      "note": "先寫測試再實作，否則 AI 只會寫出能通過自己程式碼的測試"
+     },
+     {
+      "cue": "省 token",
+      "note": "一任務一對話、限制亂查、提示具體、自己下 /compact 並指定要保留什麼"
+     },
+     {
+      "cue": "自動化",
+      "note": "/loop 像 AI 版排程：每天挑 issue 開 PR、掃漏洞、發想功能"
+     },
+     {
+      "cue": "心態",
+      "note": "會寫程式才看得懂 AI 在做什麼，用量用完也還能繼續前進"
+     }
+    ],
+    "summary": "功能不必全學，把技能、計畫、驗證做好，再省著用 context 就夠了。"
+   },
+   "added": "20261124"
+  },
+  {
+   "id": "bcM9dP_uXJU",
+   "title": "How to Build an AI Agent with Claude Code (Claude AI Agent Tutorial)",
+   "author": "AI Master",
+   "channelUrl": "https://www.youtube.com/channel/UC0yHbz4OxdQFwmVX2BBQqLg",
+   "url": "https://www.youtube.com/watch?v=bcM9dP_uXJU",
+   "date": "2026-06-30",
+   "duration": "22 分 7 秒",
+   "category": "AI 應用",
+   "headline": "不寫程式也能用 Claude 建 AI 代理：3 個關鍵特徵、5 個常見錯誤",
+   "thumbnail": "https://i.ytimg.com/vi/bcM9dP_uXJU/hqdefault.jpg",
+   "summary": [
+    "使用 AI 有三個層次：聊天問答、請它產出成品，以及交出完整目標讓它自己規劃執行的代理式工作。",
+    "真正的代理有三個特徵：照流程走、遇到不確定會停下來問、執行前先釐清需求。",
+    "在 Claude 桌面版 Code 工作區建專案資料夾，第一步寫 CLAUDE.md：專案背景、關於我、規則（先問三個問題、先給計畫）、資料夾結構。",
+    "代理系統由三部分組成：工作流程檔（白話 SOP）、Claude（協調者）、工具；最關鍵的是流程檔，不是工具。",
+    "實作兩個代理：研究報告代理，以及把一份長腳本拆成 3 支短影音腳本加社群貼文包的再利用代理。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "三層次",
+      "note": "聊天 → 產出 → 代理：交出目標，而不是一步步指揮"
+     },
+     {
+      "cue": "CLAUDE.md",
+      "note": "寫一次、每次自動讀；規則寫進去就不用每次重講"
+     },
+     {
+      "cue": "先看計畫",
+      "note": "花 2 分鐘審計畫，省下 10 分鐘收拾殘局"
+     },
+     {
+      "cue": "五個錯誤",
+      "note": "跳過 CLAUDE.md、目標模糊、不審計畫、不要求先提問、一次建太多"
+     },
+     {
+      "cue": "擴充路線",
+      "note": "單一研究寫作 → 多輪迭代 → 多個工作流串成管線"
+     }
+    ],
+    "summary": "代理的聰明在說明書而不在工具，先把一個流程跑穩再加下一個。"
+   },
+   "added": "20261124"
+  },
+  {
+   "id": "IuyVVtr1uhY",
+   "title": "Claude Code Tutorial - Build Apps 10x Faster with AI",
+   "author": "Programming with Mosh",
+   "channelUrl": "https://www.youtube.com/channel/UCWv7vMbMWH4-V0ZXdmDpPBA",
+   "url": "https://www.youtube.com/watch?v=IuyVVtr1uhY",
+   "date": "2026-03-24",
+   "duration": "58 分 11 秒",
+   "category": "AI 應用",
+   "headline": "Claude Code 新手必學 5 件事：Mosh 示範像真正工程師一樣用 AI 寫程式",
+   "thumbnail": "https://i.ytimg.com/vi/IuyVVtr1uhY/hqdefault.jpg",
+   "summary": [
+    "Mosh 的立場：這是軟體工程課不是 vibe coding，AI 產生的每一行都要審、要重構；就像電鋸沒有取代木工，寫程式只是工程的一部分。",
+    "上手設定：在 VS Code 終端機跑、/terminal-setup 啟用 Shift+Enter 換行、! 執行 shell、@ 引用檔案；權限選本次允許所有編輯，再用原始碼控制面板逐檔審。",
+    "/init 建立 CLAUDE.md 當專案長期記憶，架構改了要叫它更新；每完成一步就 commit，方便比對下一步。",
+    "提示三原則：清楚具體、給足 context、精簡；示範修 bug 時 AI 只治標，要追問到根因（把金額資料改成數字）。",
+    "新功能用 plan mode 並拆小任務；/context、/compact、/clear 管 context，/usage 看用量；MCP 只裝真正需要的，因為每個伺服器的工具都占 context。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "心態",
+      "note": "你的工作變成評估程式碼，工程基本功比以前更重要"
+     },
+     {
+      "cue": "審查",
+      "note": "讓 AI 改、用 Git 面板逐檔看，發現只治標就再追問"
+     },
+     {
+      "cue": "記憶",
+      "note": "CLAUDE.md 保持精簡，架構一變就更新"
+     },
+     {
+      "cue": "規劃",
+      "note": "新功能先 plan mode，小步前進建立程式模式，AI 會照著模式寫"
+     },
+     {
+      "cue": "Context 與成本",
+      "note": "無關任務用 /clear、相關任務用 /compact；每次請求都帶上整段對話"
+     }
+    ],
+    "summary": "把 Claude Code 當成要你審核的高速工具：小步走、管記憶、先規劃、清 context。"
+   },
+   "added": "20261124"
+  },
+  {
+   "id": "QoQBzR1NIqI",
+   "title": "CLAUDE CODE FULL COURSE 4 HOURS: Build & Sell (2026)",
+   "author": "Nick Saraev",
+   "channelUrl": "https://www.youtube.com/channel/UCbo-KbSjJDG6JWQ_MTZ_rNA",
+   "url": "https://www.youtube.com/watch?v=QoQBzR1NIqI",
+   "date": "2026-02-12",
+   "duration": "4 小時 10 分",
+   "category": "AI 應用",
+   "headline": "4 小時 Claude Code 全攻略濃縮：非工程師從安裝走到自動化上線的 7 個階段",
+   "thumbnail": "https://i.ytimg.com/vi/QoQBzR1NIqI/hqdefault.jpg",
+   "summary": [
+    "定位是給非工程師的 Claude Code 完整入門；作者自述用它經營年獲利逾 400 萬美元的事業，最低需要 Pro 方案。",
+    "起步：終端機或 IDE 擇一，先建立「專案大腦」CLAUDE.md，接著直接做一個上線的簡單網頁，邊做邊學。",
+    "權限模式要懂得切換：一般詢問、自動編輯、plan mode、bypass／dangerously skip permissions；複雜專案先規劃，危險模式要安全使用。",
+    "進階功能：context 管理避免 context rot、slash 指令、hooks、skills、MCP、外掛、Chrome DevTools 抓沒有 API 的資料、子代理與 agent teams、Git worktree 平行開發。",
+    "部署：用 Modal webhooks、GitHub Actions 與雲端版 Claude Code，把自動化放到雲端長期執行。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "入門",
+      "note": "Pro 方案＋終端機或 IDE，先寫 CLAUDE.md 再動手做"
+     },
+     {
+      "cue": "權限模式",
+      "note": "依風險切換：小事自動、大事先規劃、危險模式要隔離"
+     },
+     {
+      "cue": "Context",
+      "note": "管理 context 防止 context rot，提示結構化才划算"
+     },
+     {
+      "cue": "擴充",
+      "note": "hooks、skills、MCP、外掛；MCP 可想成別人幫你寫好的技能"
+     },
+     {
+      "cue": "平行",
+      "note": "子代理、agent teams、worktree；作者同時開 3～4 個分頁就是上限"
+     }
+    ],
+    "summary": "重點不是學寫程式，而是學會把工作拆給 Claude，並且安全地放手。"
+   },
+   "added": "20261124"
+  },
+  {
+   "id": "Ffh9OeJ7yxw",
+   "title": "800+ hours of Learning Claude Code in 8 minutes (2026 tutorial / unknown tricks / newest model)",
+   "author": "Edmund Yong",
+   "channelUrl": "https://www.youtube.com/channel/UCuKVsDS3oVzTuNjnQ79pEEg",
+   "url": "https://www.youtube.com/watch?v=Ffh9OeJ7yxw",
+   "date": "2025-10-27",
+   "duration": "8 分 0 秒",
+   "category": "AI 應用",
+   "headline": "Claude Code 用了 800 小時：獨立開發者最該補上的 5 個設定＋1 個心法",
+   "thumbnail": "https://i.ytimg.com/vi/Ffh9OeJ7yxw/hqdefault.jpg",
+   "summary": [
+    "重複講的規則交給記憶：按 # 把指令存進 CLAUDE.md（專案或全域），常用提示做成 .claude/commands 下的自訂 slash 指令，還能帶參數。",
+    "用 MCP 連外部工具：每天用 Context7 抓最新版文件，另搭 Supabase、Chrome DevTools／Playwright、Stripe、Vercel。",
+    "子代理要「按任務」而不是「按角色」設計：清理程式、寫文件、網路研究、審 UI 最有效，扮演前端工程師或 PM 反而效果差。",
+    "外掛（plugins）能把指令、子代理、MCP 打包，一行指令就能裝進高手的整套設定。",
+    "心法：提示寫不清楚代表自己還沒想清楚；模糊需求先用 plan mode 讓它反問；上線前開新對話請 AI 審查剛改過的檔案。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "別重複自己",
+      "note": "# 記憶＋自訂 slash 指令，把每天重打的提示變成快捷鍵"
+     },
+     {
+      "cue": "最新文件",
+      "note": "Context7 MCP：提示加一句 use Context7 就會去抓最新版文件"
+     },
+     {
+      "cue": "子代理",
+      "note": "按任務分工，各有獨立 context，不汙染主對話"
+     },
+     {
+      "cue": "外掛",
+      "note": "把整套設定打包分享，只挑需要的裝"
+     },
+     {
+      "cue": "人要負責",
+      "note": "AI 寫程式、人擁有程式：安全、效能、錯誤處理仍要自己把關"
+     }
+    ],
+    "summary": "設定讓 Claude 少犯錯，心法讓你知道錯在哪，兩者缺一不可。"
+   },
+   "added": "20261124"
+  },
+  {
+   "id": "iF9iV4xponk",
+   "title": "The future of agentic coding with Claude Code",
+   "author": "Anthropic",
+   "channelUrl": "https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA",
+   "url": "https://www.youtube.com/watch?v=iF9iV4xponk",
+   "date": "2025-09-02",
+   "duration": "20 分 20 秒",
+   "category": "AI 應用",
+   "headline": "Claude Code 創造者的 3 段式用法：簡單丟 GitHub、中等先規劃、困難自己開",
+   "thumbnail": "https://i.ytimg.com/vi/iF9iV4xponk/hqdefault.jpg",
+   "summary": [
+    "一年內寫程式的方式大翻轉：從 IDE 自動完成加聊天複製貼上，變成交給代理直接改程式碼，人負責指揮與把關。",
+    "進步來自兩邊：模型從 Sonnet 3.5 一路到 Opus 4.1 更會做代理式開發，外層的 Claude Code（系統提示、context、工具、MCP、權限）也一起演進。",
+    "Anthropic 內部人人用 Claude Code，回饋頻道修得又快又勤；評估新模型最可靠的方法就是拿它做一整天真實工作。",
+    "擴充點越來越多：CLAUDE.md、設定與權限、hooks、MCP、自訂 slash 指令、子代理，以及能自建代理的 SDK。",
+    "給學習者：基本功還是要學，但更要大膽把點子做出來；新手先別叫它寫程式，先用來問程式碼庫問題。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "現況",
+      "note": "從直接改文字變成讓模型改文字，代理已進入日常開發的內循環"
+     },
+     {
+      "cue": "馬與馬鞍",
+      "note": "模型是馬，Claude Code 是馬鞍：工具與 context 管理決定實際表現"
+     },
+     {
+      "cue": "可擴充",
+      "note": "CLAUDE.md → hooks → MCP → slash 指令／子代理 → SDK"
+     },
+     {
+      "cue": "未來",
+      "note": "12～24 個月內從具體任務走向目標導向，人決定收不收下改動"
+     },
+     {
+      "cue": "分級交辦",
+      "note": "簡單任務在 GitHub 標 @Claude、中等用 plan mode、困難自己主導"
+     }
+    ],
+    "summary": "先學會問、再學會分級交辦；程式碼不再珍貴，點子與判斷才是。"
+   },
+   "added": "20261124"
+  },
+  {
+   "id": "6eBSHbLKuN0",
+   "title": "Mastering Claude Code in 30 minutes",
+   "author": "Anthropic",
+   "channelUrl": "https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA",
+   "url": "https://www.youtube.com/watch?v=6eBSHbLKuN0",
+   "date": "2025-05-22",
+   "duration": "28 分 7 秒",
+   "category": "AI 應用",
+   "headline": "Claude Code 作者親授 7 個實戰技巧：新人上手從 3 週縮到 3 天",
+   "thumbnail": "https://i.ytimg.com/vi/6eBSHbLKuN0/hqdefault.jpg",
+   "summary": [
+    "先從問程式碼庫開始：問用法、問 Git 歷史、問 issue；Anthropic 新人技術上手從 2～3 週縮短到 2～3 天，而且不建索引、程式碼留在本機。",
+    "動手改之前先要它腦力激盪、提出計畫並等你核可；一句「commit, push, PR」就能完成提交與開 PR。",
+    "給它驗證自己的方法：單元測試、Puppeteer 或 iOS 模擬器截圖，讓它迭代兩三輪，結果明顯更好。",
+    "用 CLAUDE.md（企業、專案、本機、子目錄四層）、slash 指令、@ 檔案與共享 MCP 設定補足 context，但內容要短。",
+    "進階：Shift+Tab 自動接受編輯、# 記憶、! 跑 bash、Esc 隨時中斷、claude -p 當 Unix 工具串 CI；高手用多個 checkout 或 Git worktree 平行跑。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "起手式",
+      "note": "先問不改：程式碼庫問答是最好的新手訓練"
+     },
+     {
+      "cue": "先計畫",
+      "note": "「先做計畫、問過我再寫」比直接丟 3000 行功能可靠"
+     },
+     {
+      "cue": "驗證迴圈",
+      "note": "給它測試或截圖工具，讓它自己看結果再修"
+     },
+     {
+      "cue": "分層 context",
+      "note": "CLAUDE.md 與設定可分企業／專案／個人，團隊設定一次全員受益"
+     },
+     {
+      "cue": "快捷鍵",
+      "note": "Shift+Tab、#、!、Esc、Esc 兩下回溯、--resume、Ctrl+R"
+     },
+     {
+      "cue": "SDK",
+      "note": "claude -p 搭配管線與 JSON 輸出，像超級聰明的 Unix 工具"
+     }
+    ],
+    "summary": "先問、再計畫，並給它驗證工具和 context，Claude Code 就從聊天變成隊友。"
+   },
+   "added": "20261124"
+  }
+ ]
 }
