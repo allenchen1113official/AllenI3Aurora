@@ -84,20 +84,20 @@
     {
       "id": "cs_stockradar_20261124",
       "topic": "stockradar",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111741031524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgISdOkkUfu/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgISdv1kbB6",
         "error": null
       }
     },
@@ -124,39 +124,39 @@
     {
       "id": "cs_pn-ailanren-20261124_20261124",
       "topic": "pn-ailanren-20261124",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111740743524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgISbVXkSbT/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgISb3GEd1i",
         "error": null
       }
     },
     {
       "id": "cs_pn-yutinghao-20261124_20261124",
       "topic": "pn-yutinghao-20261124",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111742435524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgISwTzEXF2/",
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -631,5 +631,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T15:10:49.646Z"
+  "generatedAt": "2026-11-24T15:39:56.577Z"
 }
