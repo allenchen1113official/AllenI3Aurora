@@ -1,0 +1,52 @@
+name: 每日來一股 · 分析順序清單
+
+# 極光日報・每日來一股：每日更新「個股分析順序清單」data/dailypick/queue.json（＋queue.csv）。
+# 母體＝上市＋上櫃普通股（證交所／櫃買中心 OpenAPI 收盤價 × 已發行股數＝市值）；
+# 順序＝後台指定 → 優先組（上市市值前 100＋上櫃前 50，依市值）→ 其餘依市值；已分析（data/dailypick/history.json）不重複。
+# Claude 排程「極光日報・每日來一股」（台北 17:41）分析完會追加 history.json 並推送 → 觸發本 workflow 立即重排。
+# 註：GitHub 排程以 UTC 計；台北 = UTC+8。
+on:
+  schedule:
+    - cron: "47 8 * * 1-5"       # 台北週一至週五 16:47（收盤資料就緒後、每日來一股 17:41 之前）
+    - cron: "13 22 * * 0-4"      # 台北週一至週五 06:13（前一次被丟棄時補位）
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/dailypick-queue.yml"
+      - "scripts/dailypick/**"
+      - "data/dailypick/history.json"
+  workflow_dispatch: {}
+
+concurrency:
+  group: dailypick-queue
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 單元測試
+        run: node --test scripts/dailypick/dailypick.test.mjs
+      - name: 更新分析順序清單
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node scripts/dailypick/update-queue.mjs --today "$(TZ=Asia/Taipei date +%Y-%m-%d)"
+          if [[ -n "$(git status --porcelain data/dailypick)" ]]; then
+            git add data/dailypick/queue.json data/dailypick/queue.csv
+            git commit -q -m "chore(dailypick): 更新個股分析順序清單 [skip ci]"
+            for i in 1 2 3; do
+              git pull -q --rebase --autostash origin main && git push -q && break
+              echo "push 失敗，第 $i 次重試"; sleep 10
+            done
+          else
+            echo "清單無變化"
+          fi

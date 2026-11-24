@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-24",
+ "asof": "",
+ "updatedAt": "2026-11-24T07:25:11.324Z",
+ "rule": "指定下一檔 → 優先組（上市市值前 100＋上櫃市值前 50，依市值）→ 其餘上市櫃普通股（依市值）；已分析不重複、略過者排除",
+ "counts": {
+  "total": 1,
+  "tier1": 0,
+  "done": 1,
+  "pending": 0,
+  "tier1Pending": 0,
+  "skipped": 0,
+  "delisted": 0,
+  "newToday": 0
+ },
+ "next": [],
+ "newToday": [],
+ "note": "初始檔：合併到 main 後 dailypick-queue workflow 會以證交所／櫃買中心 OpenAPI 產生完整清單",
+ "items": [
+{"code":"2609","name":"陽明","market":"TWSE","industry":"航運業","mcap":null,"close":null,"tier":2,"marketRank":null,"status":"done","pinned":0,"analyzedAt":"2026-11-23","score":69.8,"light":"黃燈","rating":"中性","folder":"daily_pick/20261123","addedAt":"2026-11-24","isNew":false,"listed":"","rank":1}
+]
+}
