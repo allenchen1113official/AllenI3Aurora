@@ -20,9 +20,42 @@
         "url": "https://www.threads.com/@allenchen1113.official/post/DgGmL94m3Vy",
         "error": null
       }
+    },
+    {
+      "id": "cs_daily_20261124",
+      "topic": "daily",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
+    {
+      "id": "cs_daily_20261124",
+      "topic": "daily",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜艾倫極光日報 2026/11/24（週二）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
     {
       "id": "cs_tsm-prebrief_20261124",
       "topic": "tsm-prebrief",
@@ -37,5 +70,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-23T23:53:00.208Z"
+  "generatedAt": "2026-11-24T00:12:34.032Z"
 }
