@@ -1,0 +1,10 @@
+Claude Code 新手 5 步上手：為什麼 Net Ninja 堅持「不 vibe coding」，還是能把 AI 用到位？
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24
+📺 影片來源：Net Ninja〈Claude Code Tutorial 1 - Int〉
+
+① Claude Code 是 Anthropic 的終端機代理式寫程式工具，不綁編輯器，能讀懂整個專案、改檔、跑指令，也能接 GitHub 做 PR 審查與處理 issue。
+② 安裝只要一行 npm install -g @anthropic-ai/claude-code，Windows 現在可直接在終端機裝，不必再透過 WSL；需要 Pro 或 Max 訂閱，免費方案不含 Claude Code（錄影當時）。
+③ 第一次啟動依序選主題、登入訂閱帳號、確認信任資料夾，接手陌生專案時先請它「摘要這個專案」最省時間。
+
+原片：https://www.youtube.com/watch?v=SUysp3sJHbA
+#YouTube重點筆記

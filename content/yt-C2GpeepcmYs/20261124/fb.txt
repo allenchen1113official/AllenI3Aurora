@@ -1,0 +1,27 @@
+Claude Code 63 分鐘速成濃縮成 5 個重點：Traversy 教你管好權限、脈絡與 CLAUDE.md，再用 Skills／MCP／子代理加速
+
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/24（週二）
+
+📺 影片來源：Traversy Media〈Claude Code Crash Course For Developers〉（YouTube・2026-06-22・1 小時 3 分）
+
+📌 重點摘要
+• Claude Code 在你的電腦上直接讀寫檔、跑指令；作者偏好在 VS Code 擴充套件裡用，能看見每一筆差異，而不是閉著眼 vibe coding。
+• 訂閱也有額度：/usage 看 5 小時與每週用量，/model 切換模型、/effort 調思考強度，越高越耗 token，Pro 方案要更節制。
+• Shift+Tab 切換一般／自動接受編輯／計畫／自動模式；/permissions 可設 allow／ask／deny，並分專案、本機、使用者三種範圍。
+• 脈絡要管理：/context 檢查用量，一個功能做完就 commit 再 /clear；常駐規範寫進 CLAUDE.md（/init 自動產生），保持精簡、指向其他文件。
+• 可重用流程寫成 Skill（如 commit 訊息格式）、用 MCP 接外部工具（Playwright 開瀏覽器測試），子代理有獨立脈絡，只把摘要帶回主對話。
+
+📝 康乃爾筆記
+🔹 模型與額度：/model 選 Opus／Sonnet／Haiku 等，/usage 看額度、/effort 調強度；強度與模型越高越耗 token
+🔹 模式與權限：Shift+Tab 循環四種模式；/permissions 設 git push 一律詢問、rm -rf 一律拒絕，可存專案或使用者層級
+🔹 脈絡管理：/context 查用量，功能完成即 commit＋/clear；用 sessions 紀錄或 CLAUDE.md 保留跨對話記憶
+🔹 計畫模式：先規劃不改檔，會提問並列出幾種重構方案，確認後才實作
+🔹 Skills／MCP／子代理：Skill 是可重用流程；MCP 接 Playwright 等外部工具；子代理有獨立脈絡，只回傳摘要
+
+💡 一句話總結：不必自己敲每一行，但要看懂每一行：用模式、權限與脈絡管理把 Claude Code 變成看得見、管得住的開發夥伴。
+
+🎬 原片：https://www.youtube.com/watch?v=C2GpeepcmYs
+
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#ClaudeCode #AI寫程式 #Anthropic #MCP #VSCode #開發者工具

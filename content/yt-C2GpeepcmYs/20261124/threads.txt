@@ -1,0 +1,10 @@
+Claude Code 63 分鐘速成濃縮成 5 個重點：Traversy 教你管好權限、脈絡與 CLAUDE.md，再用 Skills／MCP／子代理加速
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24
+📺 影片來源：Traversy Media〈Claude Code Crash Course For〉
+
+① Claude Code 在你的電腦上直接讀寫檔、跑指令；作者偏好在 VS Code 擴充套件裡用，能看見每一筆差異，而不是閉著眼 vibe coding。
+② 訂閱也有額度：/usage 看 5 小時與每週用量，/model 切換模型、/effort 調思考強度，越高越耗 token，Pro 方案要更節制。
+③ Shift+Tab 切換一般／自動接受編輯／計畫／自動模式；/permissions 可設 allow／ask／deny，並分專案、本機、使用者三種範圍。
+
+原片：https://www.youtube.com/watch?v=C2GpeepcmYs
+#YouTube重點筆記

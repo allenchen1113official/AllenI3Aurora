@@ -1,0 +1,25 @@
+Claude Code 新手 5 步上手：為什麼 Net Ninja 堅持「不 vibe coding」，還是能把 AI 用到位？
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24（週二）
+
+📺 影片來源：Net Ninja〈Claude Code Tutorial #1 - Introduction & Setup〉（YouTube・2025-08-21・10 分 10 秒）
+
+📌 重點摘要
+• Claude Code 是 Anthropic 的終端機代理式寫程式工具，不綁編輯器，能讀懂整個專案、改檔、跑指令，也能接 GitHub 做 PR 審查與處理 issue。
+• 安裝只要一行 npm install -g @anthropic-ai/claude-code，Windows 現在可直接在終端機裝，不必再透過 WSL；需要 Pro 或 Max 訂閱，免費方案不含 Claude Code（錄影當時）。
+• 第一次啟動依序選主題、登入訂閱帳號、確認信任資料夾，接手陌生專案時先請它「摘要這個專案」最省時間。
+• 建議在 VS Code 內的終端機執行，會自動裝擴充套件，提供差異檢視、選取文字當脈絡、感知目前分頁等功能。
+• 作者主張小範圍任務、邊做邊檢查：先用 /terminal-setup 設定換行鍵，再讓 Claude 開新分支（claude-edits），避免弄壞主線。
+
+📝 康乃爾筆記
+🔹 它是什麼：住在終端機的代理式寫程式工具，能分析、規劃、撰寫與修改程式碼，對專案脈絡理解力強
+🔹 安裝與方案：npm 全域安裝；Pro 方案用量約每 5 小時重置，Opus 耗額度快，日常預設用 Sonnet
+🔹 首次啟動：選主題 → 以訂閱登入 → 信任資料夾 → 先請它摘要專案
+🔹 VS Code 整合：自動安裝擴充套件：差異檢視、選取文字當脈絡、快捷鍵、作用中分頁感知
+🔹 安全習慣：先用可丟棄專案或版本控制；讓 Claude 開新分支，每個 bash 指令都會先徵求同意
+
+💡 一句話總結：把 Claude Code 當成一起寫程式的夥伴而非代工，小步前進、隨時檢查，程式碼才會乾淨好維護。
+
+🎬 原片搜尋：Net Ninja〈Claude Code Tutorial #1 - Introduction & Setup〉（連結見 FB／Threads）
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#ClaudeCode #AI寫程式 #Anthropic #VSCode #開發者工具 #艾倫極光報報 #YouTube重點筆記
