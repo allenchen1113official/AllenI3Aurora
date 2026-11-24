@@ -122,6 +122,26 @@
       }
     },
     {
+      "id": "cs_yt-C2GpeepcmYs_20261124",
+      "topic": "yt-C2GpeepcmYs",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_yt-Ffh9OeJ7yxw_20261124",
       "topic": "yt-Ffh9OeJ7yxw",
       "queueState": "pending",
@@ -177,6 +197,26 @@
       },
       "th": {
         "state": "approved",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-SUysp3sJHbA_20261124",
+      "topic": "yt-SUysp3sJHbA",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
         "url": null,
         "error": null
       }
@@ -355,6 +395,19 @@
       ]
     },
     {
+      "id": "cs_yt-C2GpeepcmYs_20261124",
+      "topic": "yt-C2GpeepcmYs",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "Claude Code 63 分鐘速成濃縮成 5 個重點：Traversy 教你管好權限、脈絡與 CLAUDE.md，再用 Skills／MCP／子代理加速",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_yt-en0GuyhieQk_20261124",
       "topic": "yt-en0GuyhieQk",
       "date": "20261124",
@@ -420,6 +473,19 @@
       ]
     },
     {
+      "id": "cs_yt-SUysp3sJHbA_20261124",
+      "topic": "yt-SUysp3sJHbA",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "Claude Code 新手 5 步上手：為什麼 Net Ninja 堅持「不 vibe coding」，還是能把 AI 用到位？",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_yt-YAsxyoTWFDA_20261124",
       "topic": "yt-YAsxyoTWFDA",
       "date": "20261124",
@@ -433,5 +499,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T12:57:51.203Z"
+  "generatedAt": "2026-11-24T13:32:28.497Z"
 }
