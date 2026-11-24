@@ -74,6 +74,7 @@ export function validateManifest(m, folder, files) {
   const slash = dash.replace(/-/g, "/");
   if (m.date !== dash) errors.push(`date「${m.date}」與資料夾日期 ${dash} 不符`);
   if (!String(m.title || "").trim()) errors.push("缺少 title");
+  if (m.link != null && m.link !== "" && !/^https:\/\//i.test(String(m.link))) errors.push(`link 需為 https:// 網址（目前「${m.link}」）`);
   const plats = m.platforms && typeof m.platforms === "object" ? m.platforms : {};
   const keys = Object.keys(plats);
   if (!keys.length) errors.push("platforms 沒有任何平台");
@@ -117,7 +118,7 @@ export function buildPost(m, folder, channels, { urlOf, auto, nowIso }) {
     const c = channels[id];
     const base = { enabled: !!c, caption: c ? c.caption : "", state: c ? (auto ? "approved" : "draft") : "draft", attempts: 0, error: null,
       imageUrls: c ? c.images.map(urlOf) : [] };
-    if (id === "fb") Object.assign(base, { link: "", postId: null });
+    if (id === "fb") Object.assign(base, { link: String(m.link || "").trim(), postId: null });   // manifest.link：FB 文末連結（如網站筆記頁）
     else Object.assign(base, { containerId: null });
     return base;
   };

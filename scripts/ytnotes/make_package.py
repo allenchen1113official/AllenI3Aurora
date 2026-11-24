@@ -32,6 +32,7 @@ SERIES = "常看 YouTube 重點筆記"
 WEEK = "一二三四五六日"
 NOTICE = "以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。"
 LIMIT = {"ig": 2200, "th": 500, "tags": 30}
+SITE_NOTE = "https://allenchen1113official.github.io/AllenI3Aurora/?yt={vid}#ytnotes"   # 網站「常看 YouTube · 重點筆記」該支筆記
 CARD_THEME = "morandi-indigo"   # 圖卡色調：莫蘭迪靛色系（render_social_card.THEMES）
 
 def safe(s, n=50):
@@ -199,7 +200,7 @@ def main():
     cards = render_cards(meta, note, pkg, stem)
     now = datetime.now(TPE).isoformat(timespec="seconds")
     manifest = {"version": 1, "topic": f"yt-{vid}", "date": f"{a.date[:4]}-{a.date[4:6]}-{a.date[6:]}",
-                "title": copy["fb"].splitlines()[0], "autoPublish": False, "verified": True,
+                "title": copy["fb"].splitlines()[0], "link": SITE_NOTE.format(vid=vid), "autoPublish": False, "verified": True,
                 "platforms": {"fb": {"caption": "fb.txt", "images": [cards["fb"]]},
                               "ig": {"caption": "ig.txt", "images": [cards["ig"]]},
                               "threads": {"caption": "threads.txt", "images": [cards["ig"]]}},

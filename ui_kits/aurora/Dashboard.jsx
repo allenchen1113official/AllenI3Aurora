@@ -718,14 +718,22 @@
      可展開康乃爾筆記圖卡（沿用 CornellCard）；逐字稿只留在 Drive，不上網站。 */
   const YTNOTES_JSON_URL = "/AllenI3Aurora/data/ytnotes.json";
   const YT_TONES = ["illumination", "insight", "intelligence"];
+  /* 社群貼文連結：…/AllenI3Aurora/?yt=<影片ID>#ytnotes → 該支排第一、展開筆記圖卡並捲動到位 */
+  const ytFocusId = () => { try { return new URLSearchParams(window.location.search).get("yt") || ""; } catch (e) { return ""; } };
 
-  function YouTubeNoteCard({ v, isLatest, tone }) {
+  function YouTubeNoteCard({ v, isLatest, tone, focus }) {
     const I = window.Icons;
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(!!focus);
+    const ref = React.useRef(null);
+    React.useEffect(() => {
+      if (!focus || !ref.current) return;
+      const t = setTimeout(() => { try { ref.current.scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 400);
+      return () => clearTimeout(t);
+    }, [focus]);
     const ep = { show: v.author, title: v.title, date: (v.date || "").replace(/-/g, "."), duration: v.duration, summary: "", cornell: v.cornell, tone };
     const hasCornell = !!(v.cornell && ((v.cornell.rows || []).length || v.cornell.summary));
     return (
-      <div>
+      <div id={"yt-" + v.id} ref={ref} style={{ scrollMarginTop: 80 }}>
         <Card accent={tone} padding="var(--space-5)">
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
             {v.thumbnail ? (
@@ -763,6 +771,7 @@
 
   function YouTubeNotes() {
     const [items, setItems] = React.useState([]);
+    const focusId = ytFocusId();
     React.useEffect(() => {
       let alive = true;
       fetch(YTNOTES_JSON_URL, { cache: "no-store" })
@@ -771,6 +780,8 @@
           if (!alive || !d || !Array.isArray(d.items)) return;
           const seen = new Set();
           const latest = [];
+          const f = focusId && d.items.find((v) => v.id === focusId);
+          if (f) { latest.push(f); seen.add(String(f.author || f.channelUrl || f.id)); }   // 指定的那支一定出現且排第一
           d.items.forEach((v) => {      // 已依新到舊排序：每個頻道只取最新一支
             const key = String(v.author || v.channelUrl || v.id);
             if (!seen.has(key)) { seen.add(key); latest.push(v); }
@@ -782,10 +793,10 @@
     }, []);
     if (!items.length) return null;
     return (
-      <div>
+      <div id="ytnotes" style={{ scrollMarginTop: 80 }}>
         <SectionHeader kicker="YOUTUBE · 最新筆記" title="常看 YouTube · 重點筆記" style={{ marginBottom: "var(--space-4)" }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {items.map((v, i) => <YouTubeNoteCard key={v.id} v={v} isLatest={i === 0} tone={YT_TONES[i % YT_TONES.length]} />)}
+          {items.map((v, i) => <YouTubeNoteCard key={v.id} v={v} isLatest={i === 0 && v.id !== focusId} focus={!!focusId && v.id === focusId} tone={YT_TONES[i % YT_TONES.length]} />)}
         </div>
       </div>
     );
