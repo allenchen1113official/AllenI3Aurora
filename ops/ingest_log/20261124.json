@@ -4,20 +4,20 @@
     {
       "id": "cs_txf-flash_20261124",
       "topic": "txf-flash",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111704479524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgH8326lYbQ/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgH85I3FfGS",
         "error": null
       }
     },
@@ -64,20 +64,20 @@
     {
       "id": "cs_heatmap_20261124",
       "topic": "heatmap",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111704161524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgH8zaZFWKs/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgH80xjFcZC",
         "error": null
       }
     },
@@ -400,5 +400,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T12:24:49.377Z"
+  "generatedAt": "2026-11-24T12:33:09.502Z"
 }
