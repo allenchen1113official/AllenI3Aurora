@@ -1887,6 +1887,20 @@ const FBP = { bg: "#FFFFFF", line: "#CED0D4", text: "#1C1E21", sub: "#4B4F56", f
    其次貼文層 imageUrls，最後退回單張 imageUrl。Claude 排程素材的 imageUrl 只是縮圖（第一張），
    實際發布的是各頻道 imageUrls，預覽必須照這個順序取圖才會和發布結果一致。 */
 const SOC_MAX_IMAGES = { fb: 10, ig: 10, th: 20 };
+/* 預覽圖載入失敗時依序改走鏡像 CDN（raw.githubusercontent.com 在部分網路／DNS 打不開；
+   同一 commit SHA 的檔案內容相同）。全部失敗才淡化顯示。實際發布仍用原網址（Meta 由伺服器端下載）。 */
+function socImgMirrors(u) {
+  const m = /^https:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.+)$/.exec(String(u || ""));
+  return m ? [`https://cdn.jsdelivr.net/gh/${m[1]}/${m[2]}@${m[3]}/${m[4]}`, `https://cdn.statically.io/gh/${m[1]}/${m[2]}/${m[3]}/${m[4]}`] : [];
+}
+function socImgErr(e) {
+  const el = e.currentTarget;
+  if (!el.dataset.orig) el.dataset.orig = el.getAttribute("src") || "";
+  const alts = socImgMirrors(el.dataset.orig);
+  const i = Number(el.dataset.alt || 0);
+  if (i < alts.length) { el.dataset.alt = String(i + 1); el.src = alts[i]; return; }
+  el.style.opacity = 0.25;
+}
 function socImagesFor(post, ch) {
   const c = (post && post[ch]) || {};
   const pick = Array.isArray(c.imageUrls) && c.imageUrls.length ? c.imageUrls
@@ -1899,7 +1913,7 @@ function SocFbPhotoGrid({ urls, bg, line }) {
   const n = urls.length;
   const cell = (u, i, extra) => (
     <a key={u + i} href={u} target="_blank" rel="noopener" style={{ position: "relative", display: "block", overflow: "hidden", background: bg }}>
-      <img src={u} alt={`圖 ${i + 1}`} style={{ display: "block", width: "100%", height: n === 1 ? "auto" : "100%", objectFit: n === 1 ? "contain" : "cover", objectPosition: "top center" }} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} />
+      <img src={u} alt={`圖 ${i + 1}`} style={{ display: "block", width: "100%", height: n === 1 ? "auto" : "100%", objectFit: n === 1 ? "contain" : "cover", objectPosition: "top center" }} onError={socImgErr} />
       {extra ? <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(0,0,0,.45)", color: "#fff", fontSize: 28, fontWeight: 700 }}>+{extra}</span> : null}
     </a>
   );
@@ -1919,11 +1933,11 @@ function SocCarouselPreview({ urls }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <div style={{ position: "relative" }}>
-        <img src={urls[0]} alt="圖 1" style={{ display: "block", width: "100%", borderRadius: "var(--radius-md)", background: "var(--night-700)" }} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} />
+        <img key={urls[0]} src={urls[0]} alt="圖 1" style={{ display: "block", width: "100%", borderRadius: "var(--radius-md)", background: "var(--night-700)" }} onError={socImgErr} />
         {urls.length > 1 ? <span style={{ position: "absolute", top: 8, right: 8, padding: "2px 8px", borderRadius: 999, background: "rgba(0,0,0,.6)", color: "#fff", fontSize: 12 }}>1/{urls.length}</span> : null}
       </div>
       {urls.length > 1 ? <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-        {urls.map((u, i) => <a key={u + i} href={u} target="_blank" rel="noopener"><img src={u} alt={`圖 ${i + 1}`} style={{ width: 54, height: 54, objectFit: "cover", borderRadius: 6, background: "var(--night-700)", outline: i === 0 ? "2px solid var(--brand)" : "none" }} /></a>)}
+        {urls.map((u, i) => <a key={u + i} href={u} target="_blank" rel="noopener"><img src={u} onError={socImgErr} alt={`圖 ${i + 1}`} style={{ width: 54, height: 54, objectFit: "cover", borderRadius: 6, background: "var(--night-700)", outline: i === 0 ? "2px solid var(--brand)" : "none" }} /></a>)}
       </div> : null}
     </div>
   );
@@ -2291,7 +2305,7 @@ function SocialPanel() {
                 {[["fb", "Facebook"], ["ig", "Instagram"], ["th", "Threads"]].filter(([c]) => sel[c] && sel[c].enabled && Array.isArray(sel[c].imageUrls) && sel[c].imageUrls.length).map(([c, label]) => (
                   <div key={c} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6, flexWrap: "wrap" }}>
                     <span style={{ fontSize: 11.5, color: "var(--text-3)", width: 72 }}>{label}</span>
-                    {sel[c].imageUrls.map((u, i) => <a key={u + i} href={u} target="_blank" rel="noopener"><img src={u} alt={`${label} 圖 ${i + 1}`} style={{ width: 54, height: 54, objectFit: "cover", borderRadius: 6, background: "var(--night-700)" }} /></a>)}
+                    {sel[c].imageUrls.map((u, i) => <a key={u + i} href={u} target="_blank" rel="noopener"><img src={u} onError={socImgErr} alt={`${label} 圖 ${i + 1}`} style={{ width: 54, height: 54, objectFit: "cover", borderRadius: 6, background: "var(--night-700)" }} /></a>)}
                   </div>
                 ))}
               </div>
