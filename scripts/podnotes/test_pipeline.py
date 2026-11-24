@@ -102,6 +102,17 @@ class IndexTest(unittest.TestCase):
         self.assertEqual(sorted(f.name for f in cards.iterdir()), ["yutinghao-20261124_IG.png"])
 
 
+class AsrTest(unittest.TestCase):
+    def test_plan_carries_show_asr_and_dicts_exist(self):
+        show = dict(SHOW, asr="whisper")
+        with mock.patch.object(P, "fetch", lambda url, timeout=60: RSS):
+            ep, act = P.plan([show], {}, NOW)[0]
+        self.assertEqual(ep["asr"], "whisper")
+        reps = P.load_replace()
+        self.assertIn(("趙懷古惑仔", "兆華與股惑仔"), reps)
+        self.assertTrue((P.HERE / "dict" / "熱詞.txt").exists())
+
+
 class ChunkTest(unittest.TestCase):
     def test_offset_segs_shifts_time_and_drops_speaker(self):
         out = P.offset_segs([{"start": 1.5, "end": 3, "text": "a", "spk": 0}], 600)
