@@ -534,11 +534,12 @@ function hubBlank() {
 function hubFromPost(r) {
   const h = r.hub || {};
   // 尚未在中控台編修過（如 Claude 排程素材）：FB 文案拆成主稿＋Hashtag，IG／Threads 保留各自文案為微調
-  const sp = r.hub ? null : hubSplitTags((r.fb && r.fb.caption) || "");
+  // 已存過 hub 但 Hashtag 空白（舊版存檔把標籤留在內文）：同樣從內文結尾拆出標籤
+  const sp = !r.hub ? hubSplitTags((r.fb && r.fb.caption) || "") : !String(h.hashtags || "").trim() ? hubSplitTags(h.body != null ? h.body : (r.fb && r.fb.caption) || "") : null;
   const fbCap = String((r.fb && r.fb.caption) || "").trim();
   const own = (c) => { const x = r[c] && r[c].enabled !== false ? String(r[c].caption || "").trim() : ""; return x && x !== fbCap ? x : ""; };
   const imgs = hubImgsOf(r);
-  return { __new: false, id: r.id, title: r.title || "", body: h.body != null ? h.body : sp ? sp.body : "", hashtags: h.hashtags || (sp ? sp.tags : ""),
+  return { __new: false, id: r.id, title: r.title || "", body: sp ? sp.body : h.body != null ? h.body : "", hashtags: (sp && sp.tags) || h.hashtags || "",
     category: h.category || HUB_CATS[0], imageUrl: r.imageUrl || "", link: (r.fb && r.fb.link) || hubDefaultLink(r), note: r.note || "",
     imgs, imgPool: hubUniq([...imgs.fb, ...imgs.ig, ...imgs.th, r.imageUrl || ""]), source: r.source || null,
     platforms: Object.assign({ ig: false, th: false, yt: false, pc: false }, h.platforms || {},
@@ -585,7 +586,7 @@ function HubCardPicker({ s, setS }) {
                 const inList = options.some((o) => o.url === u);
                 return (
                   <div key={k} style={{ display: "flex", flexDirection: "column", gap: 6, width: 220 }}>
-                    <a href={u} target="_blank" rel="noopener"><img src={u} alt={`${label} 圖卡 ${i + 1}`} style={thumb} onError={(e) => { e.currentTarget.style.opacity = 0.25; }} /></a>
+                    <a href={u} target="_blank" rel="noopener"><img key={u} src={u} alt={`${label} 圖卡 ${i + 1}`} style={thumb} onError={socImgErr} /></a>
                     <select className="ad-in" style={{ fontSize: 12, padding: "5px 8px" }} value={custom[k] != null ? "__custom" : inList ? u : "__current"}
                       onChange={(e) => { const v = e.target.value; if (v === "__custom") setCustom((m) => ({ ...m, [k]: u })); else { setCustom((m) => { const n = { ...m }; delete n[k]; return n; }); if (v !== "__current") put(c, i, v); } }}>
                       {!inList ? <option value="__current">{hubImgName(u) || "（空白）"}</option> : null}
@@ -772,7 +773,7 @@ function HubComposer({ init, reload, flash, go }) {
           <HubCardPicker s={s} setS={setS} />
           <div><label className="ad-lbl" htmlFor="hub-link">連結（選填）</label><input id="hub-link" className="ad-in" value={s.link} onChange={(e) => set("link", e.target.value)} placeholder="https://…" />
             <div style={{ ...muted, fontSize: 11.5, marginTop: 5, lineHeight: 1.6 }}>Facebook 會把連結接在內文最後。{hubDefaultLink(s) ? <>常看 YouTube 筆記預設連到網站該支重點筆記：<button type="button" style={linkBtn} onClick={() => set("link", hubDefaultLink(s))}>套用預設</button></> : null}</div></div>
-          <div><label className="ad-lbl" htmlFor="hub-tags">標籤 / Hashtag</label><input id="hub-tags" className="ad-in" value={s.hashtags} onChange={(e) => set("hashtags", e.target.value)} placeholder="#智慧家庭 #自動化" />
+          <div><label className="ad-lbl" htmlFor="hub-tags">標籤 / Hashtag</label><input id="hub-tags" className="ad-in" value={s.hashtags} onChange={(e) => set("hashtags", e.target.value)} placeholder="例：#AI #ClaudeCode（開啟時自動取自文案結尾）" />
             <div style={{ ...muted, fontSize: 11.5, marginTop: 5 }}>{s.hashtags.trim() ? `${s.hashtags.trim().split(/\s+/).length} 個（自動取自文案結尾，會接在主稿後面）` : "多個標籤以空白分隔，會接在主稿後面"}</div></div>
           <div><label className="ad-lbl" htmlFor="hub-cat">內容分類</label>
             <select id="hub-cat" className="ad-in" value={s.category} onChange={(e) => set("category", e.target.value)}>{HUB_CATS.map((c) => <option key={c}>{c}</option>)}</select></div>
