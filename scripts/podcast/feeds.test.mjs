@@ -48,3 +48,19 @@ test("toEpisode 欄位與 KIT.podcastEpisodes 相容", () => {
   assert.equal(ep.status, "published");
   assert.equal(ep.source, "rss");
 });
+
+test("跨集樣板（節目固定介紹）被扣除；全扣光時退回標題主題", async () => {
+  const { latestSummary, parseItems } = await import("./feeds-core.mjs");
+  const boiler = "<p>開盤前30分鐘，08:30 - 09:00 讓我們一起解讀財經時事 。</p><p>《早晨財經速解讀》是游庭皓的個人知識節目，每日開盤前半小時準時直播。</p><p>如有疑問，歡迎來信 x@gmail.com</p>";
+  const xml = `<rss><channel>
+<item><title>2026/11/24(二)黃仁勳閃電回鍋!輝達狂飆31% 現在買股 還來得及嗎?【早晨財經速解讀】</title><pubDate>Tue, 24 Nov 2026 00:30:00 GMT</pubDate><description><![CDATA[${boiler}]]></description></item>
+<item><title>2026/11/23(一)舊集</title><pubDate>Mon, 23 Nov 2026 00:30:00 GMT</pubDate><description><![CDATA[${boiler}]]></description></item>
+</channel></rss>`;
+  const items = parseItems(xml);
+  assert.equal(latestSummary(items, items[0]), "主題：黃仁勳閃電回鍋!輝達狂飆31% 現在買股 還來得及嗎?");
+});
+
+test("免責聲明與追蹤行移除；maxLines 只取首行", () => {
+  assert.equal(cleanShowNotes("<p>反彈該跑還是買？</p><p>節目內容純屬主持人與來賓個人經驗分享，非個股推薦。投資人須自行謹慎判斷</p><p>追蹤 IG：@x</p>"), "反彈該跑還是買？");
+  assert.equal(cleanShowNotes("<p>靠 GTA VI 的籃球和路人打發時間</p><p>聖誕節、跨年快到了，想給另一半一個驚喜的</p>", 260, 1), "靠 GTA VI 的籃球和路人打發時間");
+});

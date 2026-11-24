@@ -9,7 +9,7 @@
    ===================================================================== */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
-import { parseLatestItem, toEpisode } from "./feeds-core.mjs";
+import { parseItems, parseLatestItem, toEpisode } from "./feeds-core.mjs";
 
 const OUT = "data/podcast-episodes.json";
 const CFG = "scripts/podcast/feeds.json";
@@ -44,7 +44,8 @@ async function main() {
       const xml = await get(await resolveFeed(cfg));
       const it = parseLatestItem(xml);
       if (!it) throw new Error("RSS 無集數");
-      const ep = toEpisode(cfg, it);
+      const all = parseItems(xml).sort((a, b) => (Date.parse(b.pubDate) || 0) - (Date.parse(a.pubDate) || 0));
+      const ep = toEpisode(cfg, it, all);
       items.push(ep);
       ok++;
       console.log(`✓ ${cfg.show}｜${ep.date}｜${ep.title}`);

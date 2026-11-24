@@ -76,8 +76,9 @@ export function taipeiDate(pubDate) {
 }
 
 /* 節目說明 → 重點摘要文字：去 HTML、連結、廣告段與訂閱宣傳。 */
-const DROP = /(廣告|贊助|業配|警語|投資一定有風險|有賺有賠|公開說明書|申購|powered by|hosting provided|訂閱|五星|評分|評論|小額|粉絲團|粉專|官網|app\s*下載|app store|google play|youtube頻道|線上收聽|podcast：|合作|商務|聯絡|email|e-mail|line群組|詐騙|追蹤我們|follow|instagram|facebook|threads|discord|sponsor|ad-free|privacy|^note:|not investment advice|merch|slack|carve.?outs?|sign up|vote on future|^links?:|^-{3,}|^—+|^▍|^＃|^#)/i;
-export function cleanShowNotes(html, max = 260) {
+const DROP = /(廣告|贊助|業配|警語|投資一定有風險|有賺有賠|公開說明書|申購|powered by|hosting provided|訂閱|五星|評分|評論|小額|粉絲團|粉專|官網|app\s*下載|app store|google play|youtube頻道|線上收聽|podcast：|合作|商務|聯絡|email|e-mail|line群組|詐騙|追蹤我們|follow|instagram|facebook|threads|discord|sponsor|ad-free|privacy|^note:|not investment advice|merch|slack|carve.?outs?|sign up|vote on future|^links?:|^-{3,}|^—+|^▍|^＃|^#|免責|非個股推薦|自行.{0,6}判斷|僅供參考|打賞|退款|來信|追蹤|會員|^此集影片|^"{2,})/i;
+/* 節目說明 → 乾淨的內容行（去 HTML、連結、廣告段與訂閱宣傳）。 */
+export function showNoteLines(html) {
   let s = String(html || "")
     .replace(/<\s*br\s*\/?>/gi, "\n").replace(/<\/(p|div|li|h\d)>/gi, "\n").replace(/<li[^>]*>/gi, "• ")
     .replace(/<[^>]+>/g, "");
@@ -87,14 +88,18 @@ export function cleanShowNotes(html, max = 260) {
   if (adEnd >= 0) s = s.slice(adEnd).replace(/^[—-]{2,}\s*以上廣告[^—\n]*[—-]*/, "");
   // 常見的單行串接（如「主持人：… 來賓：… 主題：…」）拆行
   s = s.replace(/\s*(主持人|來賓|主題|節目時間|本集播出日期|此集影片)\s*[：:]/g, "\n$1：");
-  const lines = s.split(/\n+/)
-    .map((l) => l.replace(/https?:\/\/\S+/g, "").replace(/[ \t　]+/g, " ").trim())
-    .filter((l) => l.length >= 4 && !DROP.test(l) && !/^(節目時間|本集播出日期|此集影片)：/.test(l) && !/^[\d\s\p{P}\p{S}_]+$/u.test(l));
   const seen = new Set();
+  return s.split(/\n+/)
+    .map((l) => l.replace(/https?:\/\/\S+/g, "").replace(/[ \t\u3000]+/g, " ").trim())
+    .filter((l) => l.length >= 4 && !DROP.test(l) && !/^(節目時間|本集播出日期|此集影片)：/.test(l) && !/^[\d\s\p{P}\p{S}_]+$/u.test(l))
+    .filter((l) => (seen.has(l) ? false : (seen.add(l), true)));
+}
+
+/* 內容行 → 摘要文字（最多 max 字；maxLines 限制行數，如股癌只取首行主題、其後多為業配）。 */
+export function composeSummary(lines, max = 260, maxLines = 0) {
   let out = "";
-  for (const l of lines) {
-    if (seen.has(l)) continue;
-    seen.add(l);
+  const use = maxLines > 0 ? lines.slice(0, maxLines) : lines;
+  for (const l of use) {
     if (out.length + l.length + 1 > max) {
       if (!out) out = l.slice(0, max - 1) + "…";
       else if (out.length < max * 0.6) out += "\n" + l.slice(0, max - out.length - 2) + "…";
@@ -105,8 +110,25 @@ export function cleanShowNotes(html, max = 260) {
   return out.trim();
 }
 
+export function cleanShowNotes(html, max = 260, maxLines = 0) {
+  return composeSummary(showNoteLines(html), max, maxLines);
+}
+
+/* 最新一集的摘要：扣掉與前幾集重複出現的行（節目固定介紹、免責聲明、追蹤連結等樣板）；
+   全被扣光時退回「主題：<標題>」（去日期與【系列名】）。 */
+export function latestSummary(items, latest, cfg = {}) {
+  const others = new Set();
+  items.filter((x) => x !== latest).slice(0, 6).forEach((x) => showNoteLines(x.description).forEach((l) => others.add(l)));
+  const own = showNoteLines(latest.description).filter((l) => !others.has(l));
+  const sum = composeSummary(own, cfg.maxChars || 260, cfg.maxLines || 0);
+  if (sum) return sum;
+  const topic = String(latest.title || "")
+    .replace(/【[^】]*】/g, "").replace(/\d{4}[./]\d{1,2}[./]\d{1,2}(\s*[(（][^)）]*[)）])?/g, "").replace(/\s+/g, " ").trim();
+  return topic ? "主題：" + topic : "";
+}
+
 /* 單一節目 → 前台集數物件（與 KIT.podcastEpisodes 同欄位，source 標記 rss） */
-export function toEpisode(cfg, item) {
+export function toEpisode(cfg, item, items) {
   const url = /^https:\/\//.test(item.link || "") ? item.link : (cfg.page || "");
   return {
     show: cfg.show,
@@ -115,7 +137,7 @@ export function toEpisode(cfg, item) {
     duration: formatDuration(item.duration),
     tone: cfg.tone || "insight",
     url: String(url).slice(0, 300),
-    summary: cleanShowNotes(item.description),
+    summary: items && items.length > 1 ? latestSummary(items, item, cfg) : cleanShowNotes(item.description, cfg.maxChars || 260, cfg.maxLines || 0),
     status: "published",
     source: "rss",
   };
