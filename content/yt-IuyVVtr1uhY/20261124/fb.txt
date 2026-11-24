@@ -1,0 +1,27 @@
+Claude Code 新手必學 5 件事：Mosh 示範像真正工程師一樣用 AI 寫程式
+
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/24（週二）
+
+▶ Programming with Mosh〈Claude Code Tutorial - Build Apps 10x Faster with AI〉（2026-03-24・58 分 11 秒）
+
+📌 重點摘要
+• Mosh 的立場：這是軟體工程課不是 vibe coding，AI 產生的每一行都要審、要重構；就像電鋸沒有取代木工，寫程式只是工程的一部分。
+• 上手設定：在 VS Code 終端機跑、/terminal-setup 啟用 Shift+Enter 換行、! 執行 shell、@ 引用檔案；權限選本次允許所有編輯，再用原始碼控制面板逐檔審。
+• /init 建立 CLAUDE.md 當專案長期記憶，架構改了要叫它更新；每完成一步就 commit，方便比對下一步。
+• 提示三原則：清楚具體、給足 context、精簡；示範修 bug 時 AI 只治標，要追問到根因（把金額資料改成數字）。
+• 新功能用 plan mode 並拆小任務；/context、/compact、/clear 管 context，/usage 看用量；MCP 只裝真正需要的，因為每個伺服器的工具都占 context。
+
+📝 康乃爾筆記
+🔹 心態：你的工作變成評估程式碼，工程基本功比以前更重要
+🔹 審查：讓 AI 改、用 Git 面板逐檔看，發現只治標就再追問
+🔹 記憶：CLAUDE.md 保持精簡，架構一變就更新
+🔹 規劃：新功能先 plan mode，小步前進建立程式模式，AI 會照著模式寫
+🔹 Context 與成本：無關任務用 /clear、相關任務用 /compact；每次請求都帶上整段對話
+
+💡 一句話總結：把 Claude Code 當成要你審核的高速工具：小步走、管記憶、先規劃、清 context。
+
+🎬 原片：https://www.youtube.com/watch?v=IuyVVtr1uhY
+
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#ClaudeCode #AI寫程式 #程式教學 #軟體工程 #艾倫極光報報 #YouTube重點筆記

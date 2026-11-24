@@ -1,0 +1,25 @@
+4 小時 Claude Code 全攻略濃縮：非工程師從安裝走到自動化上線的 7 個階段
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24（週二）
+
+▶ Nick Saraev〈CLAUDE CODE FULL COURSE 4 HOURS: Build & Sell (2026)〉（2026-02-12・4 小時 10 分）
+
+📌 重點摘要
+• 定位是給非工程師的 Claude Code 完整入門；作者自述用它經營年獲利逾 400 萬美元的事業，最低需要 Pro 方案。
+• 起步：終端機或 IDE 擇一，先建立「專案大腦」CLAUDE.md，接著直接做一個上線的簡單網頁，邊做邊學。
+• 權限模式要懂得切換：一般詢問、自動編輯、plan mode、bypass／dangerously skip permissions；複雜專案先規劃，危險模式要安全使用。
+• 進階功能：context 管理避免 context rot、slash 指令、hooks、skills、MCP、外掛、Chrome DevTools 抓沒有 API 的資料、子代理與 agent teams、Git worktree 平行開發。
+• 部署：用 Modal webhooks、GitHub Actions 與雲端版 Claude Code，把自動化放到雲端長期執行。
+
+📝 康乃爾筆記
+🔹 入門：Pro 方案＋終端機或 IDE，先寫 CLAUDE.md 再動手做
+🔹 權限模式：依風險切換：小事自動、大事先規劃、危險模式要隔離
+🔹 Context：管理 context 防止 context rot，提示結構化才划算
+🔹 擴充：hooks、skills、MCP、外掛；MCP 可想成別人幫你寫好的技能
+🔹 平行：子代理、agent teams、worktree；作者同時開 3～4 個分頁就是上限
+
+💡 一句話總結：重點不是學寫程式，而是學會把工作拆給 Claude，並且安全地放手。
+
+🎬 原片搜尋：Nick Saraev〈CLAUDE CODE FULL COURSE 4 HOURS: Build & Sell (2026)〉（連結見 FB／Threads）
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#ClaudeCode #AI自動化 #無程式碼 #生產力 #艾倫極光報報 #YouTube重點筆記

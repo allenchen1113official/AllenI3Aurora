@@ -1,0 +1,12 @@
+不寫程式也能用 Claude 建 AI 代理：3 個關鍵特徵、5 個常見錯誤
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24
+▶ AI Master〈How to Build an AI Agent with Claude Code (Claude AI Agent Tutorial)〉（2026-06-30・22 分 7 秒）
+
+① 使用 AI 有三個層次：聊天問答、請它產出成品，以及交出完整目標讓它自己規劃執行的代理式工作。
+② 真正的代理有三個特徵：照流程走、遇到不確定會停下來問、執行前先釐清需求。
+③ 在 Claude 桌面版 Code 工作區建專案資料夾，第一步寫 CLAUDE.md：專案背景、關於我、規則（先問三個問題、先給計畫）、資料夾結構。
+
+💡 一句話總結：代理的聰明在說明書而不在工具，先把一個流程跑穩再加下一個。
+
+原片：https://www.youtube.com/watch?v=bcM9dP_uXJU
+#YouTube重點筆記

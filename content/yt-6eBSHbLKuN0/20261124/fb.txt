@@ -1,0 +1,28 @@
+Claude Code 作者親授 7 個實戰技巧：新人上手從 3 週縮到 3 天
+
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/24（週二）
+
+▶ Anthropic〈Mastering Claude Code in 30 minutes〉（2025-05-22・28 分 7 秒）
+
+📌 重點摘要
+• 先從問程式碼庫開始：問用法、問 Git 歷史、問 issue；Anthropic 新人技術上手從 2～3 週縮短到 2～3 天，而且不建索引、程式碼留在本機。
+• 動手改之前先要它腦力激盪、提出計畫並等你核可；一句「commit, push, PR」就能完成提交與開 PR。
+• 給它驗證自己的方法：單元測試、Puppeteer 或 iOS 模擬器截圖，讓它迭代兩三輪，結果明顯更好。
+• 用 CLAUDE.md（企業、專案、本機、子目錄四層）、slash 指令、@ 檔案與共享 MCP 設定補足 context，但內容要短。
+• 進階：Shift+Tab 自動接受編輯、# 記憶、! 跑 bash、Esc 隨時中斷、claude -p 當 Unix 工具串 CI；高手用多個 checkout 或 Git worktree 平行跑。
+
+📝 康乃爾筆記
+🔹 起手式：先問不改：程式碼庫問答是最好的新手訓練
+🔹 先計畫：「先做計畫、問過我再寫」比直接丟 3000 行功能可靠
+🔹 驗證迴圈：給它測試或截圖工具，讓它自己看結果再修
+🔹 分層 context：CLAUDE.md 與設定可分企業／專案／個人，團隊設定一次全員受益
+🔹 快捷鍵：Shift+Tab、#、!、Esc、Esc 兩下回溯、--resume、Ctrl+R
+🔹 SDK：claude -p 搭配管線與 JSON 輸出，像超級聰明的 Unix 工具
+
+💡 一句話總結：先問、再計畫，並給它驗證工具和 context，Claude Code 就從聊天變成隊友。
+
+🎬 原片：https://www.youtube.com/watch?v=6eBSHbLKuN0
+
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#ClaudeCode #Anthropic #AI寫程式 #開發工具 #艾倫極光報報 #YouTube重點筆記

@@ -1,0 +1,12 @@
+用 Claude Code 1000 小時的功能排行：3 個 S 級，為什麼 /init 只拿 C
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24
+▶ The Coding Sloth〈I Have Spent 1000+ Hours Wit〉
+
+① 作者用 20 美元方案，最大痛點是用量限制，因此把常用功能做 S～F 分級，並分享省 token 的方法。
+② S 級三件事：技能 skills（到 skills.sh 找，別一次裝一堆）、plan mode（大任務才用）、驗證（先寫測試再實作、跑型別檢查與 linter、截圖或瀏覽器測試）。
+③ /init 只拿 C～D，但 CLAUDE.md 值得寫：專案說明、現況、程式風格；MCP 只在需要和外部系統互動時才裝。
+
+💡 一句話總結：功能不必全學，把技能、計畫、驗證做好，再省著用 context 就夠了。
+
+原片：https://www.youtube.com/watch?v=YAsxyoTWFDA
+#YouTube重點筆記

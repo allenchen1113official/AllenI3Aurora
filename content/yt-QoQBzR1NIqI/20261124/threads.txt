@@ -1,0 +1,12 @@
+4 小時 Claude Code 全攻略濃縮：非工程師從安裝走到自動化上線的 7 個階段
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24
+▶ Nick Saraev〈CLAUDE CODE FULL COURSE 4 HO〉
+
+① 定位是給非工程師的 Claude Code 完整入門；作者自述用它經營年獲利逾 400 萬美元的事業，最低需要 Pro 方案。
+② 起步：終端機或 IDE 擇一，先建立「專案大腦」CLAUDE.md，接著直接做一個上線的簡單網頁，邊做邊學。
+③ 權限模式要懂得切換：一般詢問、自動編輯、plan mode、bypass／dangerously skip permissions；複雜專案先規劃，危險模式要安全使用。
+
+💡 一句話總結：重點不是學寫程式，而是學會把工作拆給 Claude，並且安全地放手。
+
+原片：https://www.youtube.com/watch?v=QoQBzR1NIqI
+#YouTube重點筆記

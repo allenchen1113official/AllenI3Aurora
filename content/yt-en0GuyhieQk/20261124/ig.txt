@@ -1,0 +1,23 @@
+1 分鐘看懂 Claude 兩個新成品：資料變即時儀表板、報告變動畫簡報
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24（週二）
+
+▶ Claude〈Introducing Claude Dashboards and Claude Motion〉（2026-10-08・1 分 22 秒）
+
+📌 重點摘要
+• Anthropic 推出兩種新 artifact：Claude Dashboards 接上資料平台或 CRM，做出隨資料自動更新的儀表板；Claude Motion 把報告或圖表變成短動畫。
+• 示範情境：共享單車營運團隊讓 Claude 抓一年騎乘資料做成儀表板，看出「山坡站點平日早上 8:15 前就被借空」這個問題。
+• 接著用 Claude Motion 把儀表板轉成動畫敘事，可以直接在影片上留言微調、邀同事一起評論，也能匯出到設計工具。
+• 說明欄補充：Motion 以程式碼生成、不靠影片模型，文字、數字、節奏都能改並匯出 MP4；Docs、Slides、Design 同步轉正式版、Free 方案可用。
+
+📝 康乃爾筆記
+🔹 兩個新類型：Dashboards 負責看懂資料，Motion 負責把故事講給團隊聽
+🔹 工作流：資料倉儲 → 儀表板 → 發現問題 → 動畫敘事 → 全員大會
+🔹 協作：在影片上直接留言調整，同事也能評論，一起把故事改好
+🔹 可編輯：動畫是程式碼產生，字、數字、時間點都能改，可匯出 MP4 或交給剪輯軟體
+
+💡 一句話總結：從資料到簡報動畫，現在可以在同一個 Claude 裡一路做完。
+
+🎬 原片搜尋：Claude〈Introducing Claude Dashboards and Claude Motion〉（連結見 FB／Threads）
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#Claude #AI工具 #資料視覺化 #Anthropic #艾倫極光報報 #YouTube重點筆記

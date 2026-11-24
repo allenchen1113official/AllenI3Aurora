@@ -1,0 +1,27 @@
+Claude Code 創造者的 3 段式用法：簡單丟 GitHub、中等先規劃、困難自己開
+
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/24（週二）
+
+▶ Anthropic〈The future of agentic coding with Claude Code〉（2025-09-02・20 分 20 秒）
+
+📌 重點摘要
+• 一年內寫程式的方式大翻轉：從 IDE 自動完成加聊天複製貼上，變成交給代理直接改程式碼，人負責指揮與把關。
+• 進步來自兩邊：模型從 Sonnet 3.5 一路到 Opus 4.1 更會做代理式開發，外層的 Claude Code（系統提示、context、工具、MCP、權限）也一起演進。
+• Anthropic 內部人人用 Claude Code，回饋頻道修得又快又勤；評估新模型最可靠的方法就是拿它做一整天真實工作。
+• 擴充點越來越多：CLAUDE.md、設定與權限、hooks、MCP、自訂 slash 指令、子代理，以及能自建代理的 SDK。
+• 給學習者：基本功還是要學，但更要大膽把點子做出來；新手先別叫它寫程式，先用來問程式碼庫問題。
+
+📝 康乃爾筆記
+🔹 現況：從直接改文字變成讓模型改文字，代理已進入日常開發的內循環
+🔹 馬與馬鞍：模型是馬，Claude Code 是馬鞍：工具與 context 管理決定實際表現
+🔹 可擴充：CLAUDE.md → hooks → MCP → slash 指令／子代理 → SDK
+🔹 未來：12～24 個月內從具體任務走向目標導向，人決定收不收下改動
+🔹 分級交辦：簡單任務在 GitHub 標 @Claude、中等用 plan mode、困難自己主導
+
+💡 一句話總結：先學會問、再學會分級交辦；程式碼不再珍貴，點子與判斷才是。
+
+🎬 原片：https://www.youtube.com/watch?v=iF9iV4xponk
+
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#ClaudeCode #Anthropic #AgenticCoding #AI寫程式 #艾倫極光報報 #YouTube重點筆記

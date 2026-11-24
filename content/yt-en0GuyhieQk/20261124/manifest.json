@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "topic": "yt-en0GuyhieQk",
+  "date": "2026-11-24",
+  "title": "1 分鐘看懂 Claude 兩個新成品：資料變即時儀表板、報告變動畫簡報",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "YTNotes_en0GuyhieQk_20261124_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "YTNotes_en0GuyhieQk_20261124_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "YTNotes_en0GuyhieQk_20261124_IG.png"
+      ]
+    }
+  },
+  "producedBy": "常看YouTube重點筆記排程",
+  "producedAt": "2026-11-24T10:23:37+08:00"
+}

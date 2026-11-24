@@ -1,0 +1,12 @@
+Claude Code 用了 800 小時：獨立開發者最該補上的 5 個設定＋1 個心法
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/24
+▶ Edmund Yong〈800+ hours of Learning Claud〉
+
+① 重複講的規則交給記憶：按 # 把指令存進 CLAUDE.md（專案或全域），常用提示做成 .claude/commands 下的自訂 slash 指令，還能帶參數。
+② 用 MCP 連外部工具：每天用 Context7 抓最新版文件，另搭 Supabase、Chrome DevTools／Playwright、Stripe、Vercel。
+③ 子代理要「按任務」而不是「按角色」設計：清理程式、寫文件、網路研究、審 UI 最有效，扮演前端工程師或 PM 反而效果差。
+
+💡 一句話總結：設定讓 Claude 少犯錯，心法讓你知道錯在哪，兩者缺一不可。
+
+原片：https://www.youtube.com/watch?v=Ffh9OeJ7yxw
+#YouTube重點筆記

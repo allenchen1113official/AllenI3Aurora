@@ -1,0 +1,27 @@
+Claude Code 用了 800 小時：獨立開發者最該補上的 5 個設定＋1 個心法
+
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/24（週二）
+
+▶ Edmund Yong〈800+ hours of Learning Claude Code in 8 minutes (2026 tutorial / unknown tricks / newest model)〉（2025-10-27・8 分 0 秒）
+
+📌 重點摘要
+• 重複講的規則交給記憶：按 # 把指令存進 CLAUDE.md（專案或全域），常用提示做成 .claude/commands 下的自訂 slash 指令，還能帶參數。
+• 用 MCP 連外部工具：每天用 Context7 抓最新版文件，另搭 Supabase、Chrome DevTools／Playwright、Stripe、Vercel。
+• 子代理要「按任務」而不是「按角色」設計：清理程式、寫文件、網路研究、審 UI 最有效，扮演前端工程師或 PM 反而效果差。
+• 外掛（plugins）能把指令、子代理、MCP 打包，一行指令就能裝進高手的整套設定。
+• 心法：提示寫不清楚代表自己還沒想清楚；模糊需求先用 plan mode 讓它反問；上線前開新對話請 AI 審查剛改過的檔案。
+
+📝 康乃爾筆記
+🔹 別重複自己：# 記憶＋自訂 slash 指令，把每天重打的提示變成快捷鍵
+🔹 最新文件：Context7 MCP：提示加一句 use Context7 就會去抓最新版文件
+🔹 子代理：按任務分工，各有獨立 context，不汙染主對話
+🔹 外掛：把整套設定打包分享，只挑需要的裝
+🔹 人要負責：AI 寫程式、人擁有程式：安全、效能、錯誤處理仍要自己把關
+
+💡 一句話總結：設定讓 Claude 少犯錯，心法讓你知道錯在哪，兩者缺一不可。
+
+🎬 原片：https://www.youtube.com/watch?v=Ffh9OeJ7yxw
+
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#ClaudeCode #AI寫程式 #獨立開發 #MCP #艾倫極光報報 #YouTube重點筆記
