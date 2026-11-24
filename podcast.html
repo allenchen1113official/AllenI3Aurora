@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- base href 讓 JSX 內的 ../../assets/ 相對路徑仍能正確解析到根目錄資產 -->
+<base href="/AllenI3Aurora/ui_kits/aurora/">
+<title>常聽 Podcast · 重點筆記 — 艾倫報報</title>
+<meta name="description" content="艾倫報報常聽 Podcast 的重點筆記：各節目最新一集的繁中摘要與康乃爾筆記。Allen I³ Aurora。">
+<link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
+<link rel="stylesheet" href="/AllenI3Aurora/styles.css">
+<meta property="og:type" content="website">
+<meta property="og:title" content="常聽 Podcast · 重點筆記 — 艾倫報報">
+<meta property="og:description" content="常聽節目各最新一集的繁中摘要與康乃爾筆記。">
+<style>
+  html, body { height: auto; }
+  body { margin: 0; min-height: 100vh; color: var(--text-2); }
+  .wrap { max-width: 920px; margin: 0 auto; padding: var(--space-8, 28px) var(--gutter, 20px) var(--space-24, 96px); }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand .mark { width: 36px; height: 36px; border-radius: 11px; background: var(--aurora-gradient); display: grid; place-items: center; font-family: var(--font-display, system-ui); font-weight: 900; font-size: 12px; color: var(--text-on-accent, #0b0d12); }
+  .brand .name { font-family: var(--font-display, system-ui); font-weight: 900; font-size: 18px; color: var(--text-1); letter-spacing: .02em; }
+  .back { font-size: 14px; color: var(--text-3); text-decoration: none; border: 1px solid var(--border); border-radius: var(--radius-pill, 999px); padding: 7px 15px; }
+  h1 { font-family: var(--font-display, system-ui); font-weight: 900; font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.1; letter-spacing: -.02em; color: var(--text-1); margin: 0 0 14px; }
+  .dek { color: var(--text-2); font-size: 1.02rem; line-height: 1.7; margin: 0 0 24px; max-width: 68ch; }
+  .empty { color: var(--text-3); padding: 30px 0; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="/AllenI3Aurora/_ds_bundle.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/AllenI3Aurora/firebase-config.js"></script>
+<script src="/AllenI3Aurora/aurora-data.js"></script>
+</head>
+<body class="aurora-bg">
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="/AllenI3Aurora/"><span class="mark">AI³A</span><span class="name">艾倫報報</span></a>
+    <a class="back" href="/AllenI3Aurora/#podcast">← 回首頁</a>
+  </div>
+  <h1>常聽 Podcast · 重點筆記</h1>
+  <p class="dek">常聽節目各自最新一集，整理成繁中摘要與康乃爾筆記，新到舊排列；尚無筆記的節目附收聽連結。</p>
+  <div id="root"><div class="empty">載入中…</div></div>
+</div>
+<!-- kit.jsx 提供 KIT 內建預設與 Icons；Dashboard.jsx 匯出 window.AuroraPodcast（與首頁同一份合併邏輯與卡片） -->
+<script type="text/babel" src="kit.jsx" data-presets="react"></script>
+<script type="text/babel" src="Dashboard.jsx" data-presets="react"></script>
+<script type="text/babel" data-presets="react">
+function PodcastAll() {
+  const P = window.AuroraPodcast;
+  const list = React.useMemo(P.mergedPodcastList, []);
+  if (!list.length) return <div className="empty">筆記整理中，敬請期待。</div>;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {list.map((x, i) => x.ep
+        ? <P.PodcastEpisodeCard key={i} ep={x.ep} isLatest={i === 0} />
+        : <P.PodcastLinkCard key={i} p={x.p} />)}
+    </div>
+  );
+}
+async function boot() {
+  if (!window.AuroraPodcast || !window.KIT || !window.Icons) { return setTimeout(boot, 40); }
+  try { const d = window.AURORA && await window.AURORA.ready; if (d) Object.assign(window.KIT, d); } catch (e) { /* 保留內建預設資料 */ }
+  ReactDOM.createRoot(document.getElementById("root")).render(<PodcastAll />);
+}
+boot();
+</script>
+</body>
+</html>

@@ -695,21 +695,33 @@
     );
   }
 
-  /* 合併區塊：常聽 Podcast × 各節目最新一集重點筆記。 */
+  /* 合併區塊：常聽 Podcast × 各節目最新一集重點筆記。
+     首頁只顯示最新 1 則（合併清單第一筆），其餘以「更多筆記」連到 podcast.html
+     （全部節目最新一集＋尚無集數的常聽節目連結卡，沿用同一份合併邏輯與卡片元件）。 */
+  const PODCAST_PAGE_URL = "/AllenI3Aurora/podcast.html";
   function PodcastNotes() {
+    const I = window.Icons;
     const list = React.useMemo(mergedPodcastList, []);
     if (!list.length) return null;
+    const first = list[0];
+    const total = list.length;
+    const more = total - 1;
+    const goMore = () => { window.location.href = PODCAST_PAGE_URL; };
     return (
-      <div>
-        <SectionHeader kicker="PODCAST · 最新一集" title="常聽 Podcast · 重點筆記" style={{ marginBottom: "var(--space-4)" }} />
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {list.map((x, i) => x.ep
-            ? <PodcastEpisodeCard key={i} ep={x.ep} isLatest={i === 0} />
-            : <PodcastLinkCard key={i} p={x.p} />)}
-        </div>
+      <div id="podcast" style={{ scrollMarginTop: 80 }}>
+        <SectionHeader kicker="PODCAST · 最新一集" title="常聽 Podcast · 重點筆記" style={{ marginBottom: "var(--space-4)" }}
+          action={more > 0 ? <Button variant="ghost" size="sm" iconRight={<I.arrow size={14} />} onClick={goMore}>{`更多筆記（${more}）`}</Button> : null} />
+        {first.ep ? <PodcastEpisodeCard ep={first.ep} isLatest /> : <PodcastLinkCard p={first.p} />}
+        {more > 0 ? (
+          <div style={{ marginTop: 10, textAlign: "right" }}>
+            <a href={PODCAST_PAGE_URL} style={{ color: "var(--text-3)", fontSize: 13, textDecoration: "none" }}>查看全部 {total} 則常聽 Podcast 重點筆記 →</a>
+          </div>
+        ) : null}
       </div>
     );
   }
+  /* 供 podcast.html（全部清單頁）重用同一份合併邏輯與卡片。 */
+  window.AuroraPodcast = { mergedPodcastList, PodcastEpisodeCard, PodcastLinkCard };
 
   /* ── 常看 YouTube · 重點筆記 ──────────────────────────────────────────
      資料來源同源 data/ytnotes.json（focus-update.yml → scripts/ytnotes/update-ytnotes.mjs
