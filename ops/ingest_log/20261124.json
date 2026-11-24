@@ -233,7 +233,7 @@
       "id": "cs_yt-6eBSHbLKuN0_20261124",
       "topic": "yt-6eBSHbLKuN0",
       "date": "20261124",
-      "status": "created",
+      "status": "updated",
       "auto": false,
       "title": "Claude Code 作者親授 7 個實戰技巧：新人上手從 3 週縮到 3 天",
       "channels": [
@@ -246,7 +246,7 @@
       "id": "cs_yt-bcM9dP_uXJU_20261124",
       "topic": "yt-bcM9dP_uXJU",
       "date": "20261124",
-      "status": "created",
+      "status": "updated",
       "auto": false,
       "title": "不寫程式也能用 Claude 建 AI 代理：3 個關鍵特徵、5 個常見錯誤",
       "channels": [
@@ -259,7 +259,7 @@
       "id": "cs_yt-en0GuyhieQk_20261124",
       "topic": "yt-en0GuyhieQk",
       "date": "20261124",
-      "status": "created",
+      "status": "updated",
       "auto": false,
       "title": "1 分鐘看懂 Claude 兩個新成品：資料變即時儀表板、報告變動畫簡報",
       "channels": [
@@ -272,7 +272,7 @@
       "id": "cs_yt-Ffh9OeJ7yxw_20261124",
       "topic": "yt-Ffh9OeJ7yxw",
       "date": "20261124",
-      "status": "created",
+      "status": "updated",
       "auto": false,
       "title": "Claude Code 用了 800 小時：獨立開發者最該補上的 5 個設定＋1 個心法",
       "channels": [
@@ -285,7 +285,7 @@
       "id": "cs_yt-iF9iV4xponk_20261124",
       "topic": "yt-iF9iV4xponk",
       "date": "20261124",
-      "status": "created",
+      "status": "updated",
       "auto": false,
       "title": "Claude Code 創造者的 3 段式用法：簡單丟 GitHub、中等先規劃、困難自己開",
       "channels": [
@@ -298,7 +298,7 @@
       "id": "cs_yt-IuyVVtr1uhY_20261124",
       "topic": "yt-IuyVVtr1uhY",
       "date": "20261124",
-      "status": "created",
+      "status": "updated",
       "auto": false,
       "title": "Claude Code 新手必學 5 件事：Mosh 示範像真正工程師一樣用 AI 寫程式",
       "channels": [
@@ -311,7 +311,7 @@
       "id": "cs_yt-QoQBzR1NIqI_20261124",
       "topic": "yt-QoQBzR1NIqI",
       "date": "20261124",
-      "status": "created",
+      "status": "updated",
       "auto": false,
       "title": "4 小時 Claude Code 全攻略濃縮：非工程師從安裝走到自動化上線的 7 個階段",
       "channels": [
@@ -324,7 +324,7 @@
       "id": "cs_yt-YAsxyoTWFDA_20261124",
       "topic": "yt-YAsxyoTWFDA",
       "date": "20261124",
-      "status": "created",
+      "status": "updated",
       "auto": false,
       "title": "用 Claude Code 1000 小時的功能排行：3 個 S 級，為什麼 /init 只拿 C",
       "channels": [
@@ -334,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T02:31:42.938Z"
+  "generatedAt": "2026-11-24T03:12:45.913Z"
 }
