@@ -8,7 +8,7 @@
 | 後台設定 | Firestore `aurora_dailypick/overrides` | `pin`（指定下一檔，依序）、`skip`（不分析）；公開讀、管理者寫 |
 | 後台頁 | `admin/#dailypick`（`admin/dailypick.jsx`） | 分析順序／分析紀錄／新增股票、指定與略過、下載 CSV |
 | 更新程式 | `scripts/dailypick/update-queue.mjs`（純邏輯 `core.mjs`） | 測試 `node --test scripts/dailypick/dailypick.test.mjs` |
-| 分析引擎 | StockAdvisor repo `daily_pick/`、`skills/aurora-daily-pick/SKILL.md` | Mac mini 本機 Claude 排程（台北每日 17:30，不限交易日；設定見 `docs/DAILYPICK_MACMINI.md`；雲端排程皆已停用） |
+| 分析引擎 | StockAdvisor repo `daily_pick/`、`skills/aurora-daily-pick/SKILL.md` | Claude 排程 `trig_015VCDQcyY63P2AixT6a4St8`「極光日報・每日來一股（交易日 17:41）」（台北週一至週五 17:41，綁定 Mac mini、用其 Chrome 抓官方資料；舊 trigger 皆已停用；本機排程備援設定見 `docs/DAILYPICK_MACMINI.md`，不可與此排程同時啟用） |
 
 ## 順序規則
 1. 後台「指定下一檔」（依指定順序）
@@ -21,7 +21,7 @@
 
 ## 每日流程（台北時間）
 - 16:47 `dailypick-queue.yml` 重算清單；17:23 再算一次（套用 16:47 後才儲存的後台指定／略過）；06:13 補位；監控代理丟棄時自動補跑
-- 17:41 Claude 排程（StockAdvisor `python3 -m daily_pick.pick`）以 GitHub API 讀 `queue.json` 取第一檔待分析（能連到 Firestore 時再套一次後台設定；雲端環境通常連不到，所以後台設定請 17:20 前儲存）→ 分析 → `python3 -m daily_pick.record` 追加 `history.json` 推送 main → 觸發本 workflow 立即重排
+- 17:41 Claude 排程 `trig_015VCDQcyY63P2AixT6a4St8`（交易日；StockAdvisor `python3 -m daily_pick.pick`）以 GitHub API 讀 `queue.json` 取第一檔待分析（能連到 Firestore 時再套一次後台設定；雲端環境通常連不到，所以後台設定請 17:20 前儲存）→ 分析 → `python3 -m daily_pick.record` 追加 `history.json` 推送 main → 觸發本 workflow 立即重排
 - 資料量不足（上市 < 700 或上櫃 < 500 檔有市值）時不覆寫清單
 
 ## history.json 格式
