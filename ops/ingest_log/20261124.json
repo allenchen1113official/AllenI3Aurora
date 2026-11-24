@@ -4,19 +4,19 @@
     {
       "id": "cs_txf-flash_20261124",
       "topic": "txf-flash",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -64,19 +64,19 @@
     {
       "id": "cs_heatmap_20261124",
       "topic": "heatmap",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -400,5 +400,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T12:04:13.407Z"
+  "generatedAt": "2026-11-24T12:24:49.377Z"
 }
