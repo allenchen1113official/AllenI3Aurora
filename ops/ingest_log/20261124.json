@@ -102,6 +102,66 @@
       }
     },
     {
+      "id": "cs_pn-ailanren-20261124_20261124",
+      "topic": "pn-ailanren-20261124",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_pn-yutinghao-20261124_20261124",
+      "topic": "pn-yutinghao-20261124",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_pn-zhaohua-20261124_20261124",
+      "topic": "pn-zhaohua-20261124",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_yt-6eBSHbLKuN0_20261124",
       "topic": "yt-6eBSHbLKuN0",
       "queueState": "done",
@@ -330,6 +390,45 @@
       ]
     },
     {
+      "id": "cs_pn-ailanren-20261124_20261124",
+      "topic": "pn-ailanren-20261124",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "ReAct 還是 CodeAct？史丹佛課堂拆解 Agent 設計 5 大取捨",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-yutinghao-20261124_20261124",
+      "topic": "pn-yutinghao-20261124",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "黃仁勳回鍋、輝達單日飆31%！投資人該盯的3個後續關卡",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-zhaohua-20261124_20261124",
+      "topic": "pn-zhaohua-20261124",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "台股狂漲3386點！黃仁勳回歸後，散戶必學的3個風險管理教訓",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_tsm-prebrief_20261124",
       "topic": "tsm-prebrief",
       "date": "20261124",
@@ -499,5 +598,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T13:47:14.841Z"
+  "generatedAt": "2026-11-24T14:01:08.827Z"
 }
