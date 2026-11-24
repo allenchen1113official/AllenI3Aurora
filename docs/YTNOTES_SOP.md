@@ -9,7 +9,7 @@
 | 下載、判斷語言、轉錄草稿 | Mac mini 原生 macOS（launchd 每 15 分鐘） | `scripts/ytnotes/ytnotes.py`、`funasr_run.py`（安裝 `install.sh`） |
 | 校正、筆記、圖卡、文案、送審包 | Claude（對話中丟連結，或每日排程） | `make_package.py`、`merge_index.py`、`scripts/podcast/render_social_card.py` |
 | 送審包 → PilotOne 草稿 | `social-publish.yml`（Drive 橋接主題家族 `yt-<影片ID>`） | `scripts/social/drive-bridge*.mjs`、`ingest-core.mjs` |
-| 首頁區塊 | `focus-update.yml`（每 3 小時） | `scripts/ytnotes/update-ytnotes.mjs` → `data/ytnotes.json` → `Dashboard.jsx` `YouTubeNotes` |
+| 首頁區塊 | `focus-update.yml`（每 3 小時） | `scripts/ytnotes/update-ytnotes.mjs` → `data/ytnotes.json` → `Dashboard.jsx` `YouTubeNotes`（首頁只放最新 1 則，「更多筆記」連到 `ytnotes.html` 全部清單） |
 | 轉錄進度面板 | Mac mini 寫進度檔 → `social-publish.yml` 每 2 分鐘同步 | `ytnotes.py`（`progress.json`）→ `scripts/ytnotes/sync-progress.mjs` → Firestore `aurora_ops/ytnotes_progress` → PilotOne 中控台「YouTube 轉錄」 |
 
 > Claude 的 device_bash 是 Mac mini 上的 Linux VM，連不到 YouTube、也跑不了 mlx-whisper，所以下載與轉錄一定在 macOS 本體由 launchd 執行；Claude 只讀寫 Drive 上的草稿與成品。

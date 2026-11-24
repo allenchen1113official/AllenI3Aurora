@@ -714,9 +714,11 @@
   /* ── 常看 YouTube · 重點筆記 ──────────────────────────────────────────
      資料來源同源 data/ytnotes.json（focus-update.yml → scripts/ytnotes/update-ytnotes.mjs
      讀 Drive notes/youtube/index.json）。Mac mini 本機下載＋轉錄（FunASR／mlx-whisper），
-     Claude 校正後寫成 Obsidian 筆記並送 PilotOne；這裡每個頻道各取最新一支、最多 5 個頻道，
-     可展開康乃爾筆記圖卡（沿用 CornellCard）；逐字稿只留在 Drive，不上網站。 */
+     Claude 校正後寫成 Obsidian 筆記並送 PilotOne；首頁只顯示最新 1 則（或社群連結指定的那支），
+     其餘以「更多筆記」連到 ytnotes.html 全部清單；可展開康乃爾筆記圖卡（沿用 CornellCard）；
+     逐字稿只留在 Drive，不上網站。 */
   const YTNOTES_JSON_URL = "/AllenI3Aurora/data/ytnotes.json";
+  const YTNOTES_PAGE_URL = "/AllenI3Aurora/ytnotes.html";
   const YT_TONES = ["illumination", "insight", "intelligence"];
   /* 社群貼文連結：…/AllenI3Aurora/?yt=<影片ID>#ytnotes → 該支排第一、展開筆記圖卡並捲動到位 */
   const ytFocusId = () => { try { return new URLSearchParams(window.location.search).get("yt") || ""; } catch (e) { return ""; } };
@@ -770,34 +772,37 @@
   }
 
   function YouTubeNotes() {
-    const [items, setItems] = React.useState([]);
+    const I = window.Icons;
+    const [item, setItem] = React.useState(null);
+    const [total, setTotal] = React.useState(0);
     const focusId = ytFocusId();
     React.useEffect(() => {
       let alive = true;
       fetch(YTNOTES_JSON_URL, { cache: "no-store" })
         .then((r) => (r.ok ? r.json() : null))
         .then((d) => {
-          if (!alive || !d || !Array.isArray(d.items)) return;
-          const seen = new Set();
-          const latest = [];
+          if (!alive || !d || !Array.isArray(d.items) || !d.items.length) return;
+          // 已依新到舊排序：首頁只放最新 1 則；社群連結 ?yt=<影片ID> 指定的那支優先
           const f = focusId && d.items.find((v) => v.id === focusId);
-          if (f) { latest.push(f); seen.add(String(f.author || f.channelUrl || f.id)); }   // 指定的那支一定出現且排第一
-          d.items.forEach((v) => {      // 已依新到舊排序：每個頻道只取最新一支
-            const key = String(v.author || v.channelUrl || v.id);
-            if (!seen.has(key)) { seen.add(key); latest.push(v); }
-          });
-          setItems(latest.slice(0, 5));
+          setItem(f || d.items[0]);
+          setTotal(d.items.length);
         })
         .catch(() => {});
       return () => { alive = false; };
     }, []);
-    if (!items.length) return null;
+    if (!item) return null;
+    const more = total - 1;
+    const goMore = () => { window.location.href = YTNOTES_PAGE_URL; };
     return (
       <div id="ytnotes" style={{ scrollMarginTop: 80 }}>
-        <SectionHeader kicker="YOUTUBE · 最新筆記" title="常看 YouTube · 重點筆記" style={{ marginBottom: "var(--space-4)" }} />
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {items.map((v, i) => <YouTubeNoteCard key={v.id} v={v} isLatest={i === 0 && v.id !== focusId} focus={!!focusId && v.id === focusId} tone={YT_TONES[i % YT_TONES.length]} />)}
-        </div>
+        <SectionHeader kicker="YOUTUBE · 最新筆記" title="常看 YouTube · 重點筆記" style={{ marginBottom: "var(--space-4)" }}
+          action={more > 0 ? <Button variant="ghost" size="sm" iconRight={<I.arrow size={14} />} onClick={goMore}>{`更多筆記（${more}）`}</Button> : null} />
+        <YouTubeNoteCard key={item.id} v={item} isLatest={item.id !== focusId} focus={!!focusId && item.id === focusId} tone={YT_TONES[0]} />
+        {more > 0 ? (
+          <div style={{ marginTop: 10, textAlign: "right" }}>
+            <a href={YTNOTES_PAGE_URL} style={{ color: "var(--text-3)", fontSize: 13, textDecoration: "none" }}>查看全部 {total} 則 YouTube 重點筆記 →</a>
+          </div>
+        ) : null}
       </div>
     );
   }
