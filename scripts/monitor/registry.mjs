@@ -95,7 +95,9 @@ export const CLAUDE_TASKS = [
   { id: "trig_01FQDvHmuqhvUm1MbFNNq2D9", name: "常看 YouTube 重點筆記｜PilotOne 送審", cron: "CRON_TZ=Asia/Taipei 17 10,21 * * *", check: "",           kind: "post", manual: true },
   // 常聽 Podcast 重點筆記：2026-11-24 改由 GitHub Actions podnotes.yml 處理（排程監控自動解析其 cron），原 Claude 排程 trig_01BHPcUndhA9rdPUWyxAELGW 已停用
   // 2026-11-24：極光日報・每日來一股（依 data/dailypick/queue.json 順序取下一檔 → StockAdvisor 12 面向評分＋莫蘭迪金圖卡＋三平台文案；分析完追加 data/dailypick/history.json）
-  { id: "trig_01AvzcAubP2YPje9PTMJ7JEA", name: "極光日報・每日來一股",        cron: "CRON_TZ=Asia/Taipei 30 17 * * *", check: "",           kind: "produce" },
+  //   2026-11-25：改由 Mac mini 本機 Claude 排程執行（docs/DAILYPICK_MACMINI.md）。雲端 trigger（trig_01AvzcAubP2YPje9PTMJ7JEA／trig_01VC1abuTATbeq5ZtLdr8i9y／trig_014g7ZgDMTzq5LY75tV9V7KG）
+  //   一律停用、不可補跑——雲端連不到 Chrome 與公開資訊觀測站。local:true＝本機排程，Agent 巡檢只回報、不得以雲端 trigger 重跑。
+  { id: "macmini-dailypick", name: "極光日報・每日來一股（Mac mini 本機）", cron: "CRON_TZ=Asia/Taipei 30 17 * * *", check: "",           kind: "produce", local: true },
   { id: "aurora-agent", tid: "trig_014J2SYkJeqeJ8S2QvSM4WAH", name: "AllenI3Aurora Agent 巡檢",      cron: "CRON_TZ=Asia/Taipei 41 7,9,19,21,23 * * *", check: "", kind: "agent", agent: true },
 ];
 

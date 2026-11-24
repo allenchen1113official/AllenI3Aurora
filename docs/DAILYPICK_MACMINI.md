@@ -1,6 +1,8 @@
 # 極光日報・每日來一股：Mac mini 本機排程設定
 
-雲端排程碰不到 Mac mini 的 Chrome（Claude in Chrome），而且證交所、公開資訊觀測站、櫃買中心、集保的網站都被雲端網路擋下，所以「每日來一股」改由 Mac mini 本機執行。雲端排程 `trig_01AvzcAubP2YPje9PTMJ7JEA` 和 `trig_01VC1abuTATbeq5ZtLdr8i9y` 都已停用。
+雲端排程碰不到 Mac mini 的 Chrome（Claude in Chrome），而且證交所、公開資訊觀測站、櫃買中心、集保的網站都被雲端網路擋下，所以「每日來一股」改由 Mac mini 本機執行。雲端排程 `trig_01AvzcAubP2YPje9PTMJ7JEA` 、`trig_01VC1abuTATbeq5ZtLdr8i9y`、`trig_014g7ZgDMTzq5LY75tV9V7KG` 都應停用。
+
+> **注意（2026-11-25）**：11/25 台北 00:27 仍有一個雲端排程用 Mac mini 路徑的指令觸發，在雲端容器裡執行而失敗。到 https://claude.ai/code/scheduled 檢查「每日來一股」相關的雲端排程，全部停用或刪除，只保留 Mac mini 桌面版的本機排程。SKILL.md 第 0 步已加防呆：不是 macOS 或找不到本機 Chrome，就推播「被雲端排程觸發」後停止，不會用雲端資料亂跑。監控 `registry.mjs` 也把這個任務改成本機任務（`local: true`），巡檢 Agent 不能再用雲端 trigger 補跑。
 
 ## 一、Mac mini 先準備好（只做一次）
 
