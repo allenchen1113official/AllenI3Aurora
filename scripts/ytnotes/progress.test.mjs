@@ -90,7 +90,8 @@ test("接線：引擎寫的路徑＝同步讀的路徑；面板讀的文件＝�
 test("接線：social-publish 常駐輪詢會跑轉錄進度同步，且單輪模式也跑", () => {
   const wf = read(".github/workflows/social-publish.yml");
   assert.match(wf, /progress_once\(\) \{[\s\S]*?node scripts\/ytnotes\/sync-progress\.mjs/);
-  assert.match(wf, /ingest_once; publish_once; progress_once/);
-  assert.match(wf, /publish_once\n\s+progress_once|publish_once; progress_once/);
+  // #182 起單輪模式在 publish_once 與 progress_once 之間多了 feed_once（Podcast RSS 託管），允許中間夾一個步驟
+  assert.match(wf, /ingest_once; publish_once;(?: feed_once[^;\n]*;)? progress_once/);
+  assert.match(wf, /publish_once\n\s+progress_once|publish_once;(?: feed_once[^;\n]*;)? progress_once/);
   assert.match(wf, /scripts\/ytnotes\/progress\.test\.mjs/);
 });
