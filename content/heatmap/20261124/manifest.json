@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "topic": "heatmap",
+  "date": "2026-11-24",
+  "title": "今日關注動態｜台股熱力圖．上市／上櫃 2026/11/24（週二）",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "TaiwanStock_Heatmap_Listed_2026-11-24_FB.png",
+        "TaiwanStock_Heatmap_OTC_2026-11-24_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "TaiwanStock_Heatmap_Listed_2026-11-24_IG.png",
+        "TaiwanStock_Heatmap_OTC_2026-11-24_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "TaiwanStock_Heatmap_Listed_2026-11-24_Threads_V.png",
+        "TaiwanStock_Heatmap_OTC_2026-11-24_Threads_V.png"
+      ]
+    }
+  },
+  "producedBy": "trig_01KeuuacckZZsdd8UgCpd3dk",
+  "producedAt": "2026-11-24T19:56:23+08:00"
+}
