@@ -82,6 +82,26 @@
       }
     },
     {
+      "id": "cs_tw-whale-weekly_20261124",
+      "topic": "tw-whale-weekly",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_yt-6eBSHbLKuN0_20261124",
       "topic": "yt-6eBSHbLKuN0",
       "queueState": "done",
@@ -283,6 +303,19 @@
       ]
     },
     {
+      "id": "cs_tw-whale-weekly_20261124",
+      "topic": "tw-whale-weekly",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "4 檔大戶一週加碼超過 3 個百分點！想跟著籌碼選股的你，這份集保週報先收藏",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_txf-flash_20261124",
       "topic": "txf-flash",
       "date": "20261124",
@@ -400,5 +433,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T12:33:09.502Z"
+  "generatedAt": "2026-11-24T12:43:27.653Z"
 }
