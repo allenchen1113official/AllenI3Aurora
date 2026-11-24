@@ -19,6 +19,7 @@ export const KNOWN_TOPICS = {
   heatmap: { label: "台股熱力圖．上市／上櫃", category: "理財" },
   stockradar: { label: "台股選股雷達", category: "理財" },
   "tw-whale-weekly": { label: "台股大戶籌碼週報", category: "理財" },
+  dailypick: { label: "極光日報・每日來一股", category: "理財" },
 };
 /* 主題家族：一個主題代碼對應多檔個股（同一天可各有一筆貼文）。
    stock-<代號> ＝ 台股個股交易診斷（StockAdvisor tw-stock-diagnosis-card skill，不定時手動觸發的 Claude 排程產出）。
