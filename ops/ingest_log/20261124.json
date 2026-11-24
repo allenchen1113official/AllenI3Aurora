@@ -82,6 +82,26 @@
       }
     },
     {
+      "id": "cs_stockradar_20261124",
+      "topic": "stockradar",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_tw-whale-weekly_20261124",
       "topic": "tw-whale-weekly",
       "queueState": "done",
@@ -429,6 +449,19 @@
       ]
     },
     {
+      "id": "cs_stockradar_20261124",
+      "topic": "stockradar",
+      "date": "20261124",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜台股選股雷達 2026/11/24（週二）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_tsm-prebrief_20261124",
       "topic": "tsm-prebrief",
       "date": "20261124",
@@ -598,5 +631,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-24T14:01:08.827Z"
+  "generatedAt": "2026-11-24T15:10:49.646Z"
 }
