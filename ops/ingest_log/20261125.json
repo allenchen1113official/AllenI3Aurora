@@ -4,20 +4,20 @@
     {
       "id": "cs_txf-flash_20261125",
       "topic": "txf-flash",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111925939524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgKPhRjlXzx/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgKPi3rleht",
         "error": null
       }
     },
@@ -136,5 +136,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T09:02:39.396Z"
+  "generatedAt": "2026-11-25T09:52:31.394Z"
 }
