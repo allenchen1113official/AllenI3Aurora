@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>常看 YouTube · 重點筆記 — 艾倫報報</title>
-<meta name="description" content="艾倫報報常看 YouTube 頻道的重點筆記：每支影片的繁中摘要與康乃爾筆記。Allen I³ Aurora。">
+<meta name="description" content="艾倫報報常看 YouTube 頻道的重點筆記：每支影片的繁中摘要、康乃爾筆記與社群圖卡。Allen I³ Aurora。">
 <link rel="icon" href="/AllenI3Aurora/assets/favicon-32x32.png">
 <link rel="stylesheet" href="/AllenI3Aurora/styles.css">
 <meta property="og:type" content="website">
@@ -41,6 +41,10 @@
   table.cornell td { border-top: 1px solid var(--border-subtle, var(--border)); padding: 8px 6px; vertical-align: top; }
   table.cornell td.cue { width: 28%; color: var(--text-1); font-weight: 700; }
   .csum { margin-top: 8px; font-size: 13px; color: var(--text-1); background: rgba(125, 211, 252, .08); border-radius: 10px; padding: 8px 12px; }
+  .social figure { margin: 12px 0 0; }
+  .social img { width: 100%; display: block; margin: 0 auto; border-radius: 14px; border: 1px solid var(--border); }
+  .social figcaption { text-align: center; margin-top: 6px; font-size: 12.5px; color: var(--text-3); }
+  .social figcaption a { color: var(--text-3); }
   .acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
   .btn { font-size: 13px; text-decoration: none; border: 1px solid var(--border); border-radius: var(--radius-pill, 999px); padding: 6px 14px; color: var(--text-2); }
   .empty { color: var(--text-3); padding: 30px 0; }
@@ -55,7 +59,7 @@
     <a class="back" href="/AllenI3Aurora/#ytnotes">← 回首頁</a>
   </div>
   <h1>常看 YouTube · 重點筆記</h1>
-  <p class="dek">常看頻道的每支新影片，整理成繁中重點摘要與康乃爾筆記，新到舊排列。</p>
+  <p class="dek">常看頻道的每支新影片，整理成繁中重點摘要、康乃爾筆記與 FB／IG 社群圖卡，新到舊排列。</p>
   <div id="chips" class="chips"></div>
   <div id="list" class="list empty">載入中…</div>
   <div id="upd" class="upd"></div>
@@ -65,6 +69,9 @@
   var el = document.getElementById("list"), chipsEl = document.getElementById("chips");
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); };
   var safeUrl = function (u) { return /^https:\/\//.test(u || "") ? u : ""; };
+  /* 社群圖卡只接受同站 assets/ytnotes/ 底下的 png（update-ytnotes.mjs 產生） */
+  var cardUrl = function (p) { return /^assets\/ytnotes\/[A-Za-z0-9_-]+-\d{8}_(FB|IG)\.png$/.test(p || "") ? "/AllenI3Aurora/" + p : ""; };
+  var openId = (location.hash || "").replace(/^#yt-/, "");
   var items = [], filter = "";
 
   function card(v, i) {
@@ -76,6 +83,16 @@
         rows.map(function (r) { return '<tr><td class="cue">' + esc(r.cue) + "</td><td>" + esc(r.note) + "</td></tr>"; }).join("") +
         "</table>" + (c.summary ? '<div class="csum">摘要｜' + esc(c.summary) + "</div>" : "") + "</details>"
       : "";
+    var cards = v.cards || {}, ig = cardUrl(cards.ig), fb = cardUrl(cards.fb), main = ig || fb;
+    var nm = (v.author || "") + "〈" + (v.title || "") + "〉";
+    var fig = function (src, label, size, maxW) {
+      return src ? '<figure><a href="' + esc(src) + '" target="_blank" rel="noopener noreferrer"><img loading="lazy" style="max-width:' + maxW + 'px" src="' + esc(src) + '" alt="' + esc(nm + label) + '"></a>' +
+        "<figcaption>" + esc(label) + " · " + size + ' · <a href="' + esc(src) + '" download>下載原圖</a></figcaption></figure>' : "";
+    };
+    var social = main
+      ? '<details class="social"' + (openId === v.id ? " open" : "") + "><summary>社群圖卡（FB／IG）</summary>" +
+        fig(fb, "Facebook 發布圖卡", "1200×630 橫式", 720) + fig(ig, "Instagram／Threads 發布圖卡", "1080×1080 方形", 480) + "</details>"
+      : "";
     return '<article class="card" id="yt-' + esc(v.id) + '"><div class="head">' + thumb + '<div style="flex:1;min-width:0">' +
       '<div class="meta"><span class="badge">' + esc(v.author || "YouTube") + "</span>" +
       (v.category ? '<span class="badge">' + esc(v.category) + "</span>" : "") +
@@ -84,7 +101,7 @@
       '<div class="ttl">' + esc(v.title) + "</div>" +
       (v.headline ? '<div class="hl">' + esc(v.headline) + "</div>" : "") +
       "</div></div>" +
-      (sum ? '<ul class="sum">' + sum + "</ul>" : "") + cornell +
+      (sum ? '<ul class="sum">' + sum + "</ul>" : "") + cornell + social +
       '<div class="acts">' +
       '<a class="btn" href="/AllenI3Aurora/?yt=' + encodeURIComponent(v.id) + '#ytnotes">筆記圖卡</a>' +
       (safeUrl(v.url) ? '<a class="btn" href="' + esc(v.url) + '" target="_blank" rel="noopener noreferrer">前往觀看 ↗</a>' : "") +

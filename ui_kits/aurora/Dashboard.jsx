@@ -648,6 +648,29 @@
   const pnFocusId = () => { try { return new URLSearchParams(window.location.search).get("pn") || ""; } catch (e) { return ""; } };
   const SITE_ROOT = "/AllenI3Aurora/";
 
+  /* 社群圖卡：FB 橫式（1200×630）與 IG 方形（1080×1080）兩張都附上，各標平台與尺寸；Podcast 與 YouTube 筆記共用 */
+  function SocialCardImages({ cards, name }) {
+    return (
+      <div style={{ marginTop: 10, display: "grid", gap: 14 }}>
+        {[
+          cards.fb ? { key: "fb", src: cards.fb, label: "Facebook 發布圖卡", size: "1200×630 橫式", maxW: 720 } : null,
+          cards.ig ? { key: "ig", src: cards.ig, label: "Instagram／Threads 發布圖卡", size: "1080×1080 方形", maxW: 480 } : null,
+        ].filter(Boolean).map((c) => (
+          <figure key={c.key} style={{ margin: 0 }}>
+            <a href={SITE_ROOT + c.src} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
+              <img src={SITE_ROOT + c.src} alt={`${name}${c.label}`} loading="lazy"
+                style={{ width: "100%", maxWidth: c.maxW, display: "block", margin: "0 auto", borderRadius: 14, border: "1px solid var(--border)" }} />
+            </a>
+            <figcaption style={{ textAlign: "center", marginTop: 6, color: "var(--text-3)", fontSize: 12.5 }}>
+              {c.label} · {c.size} ·{" "}
+              <a href={SITE_ROOT + c.src} download style={{ color: "var(--text-3)" }}>下載原圖</a>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    );
+  }
+
   function PodcastEpisodeCard({ ep, isLatest }) {
     const I = window.Icons;
     const focus = !!ep.id && pnFocusId() === ep.id;
@@ -708,26 +731,7 @@
           </div>
         </Card>
         {openCard && hasCornell ? <div style={{ marginTop: 10 }}><CornellCard ep={ep} /></div> : null}
-        {openSocial && hasSocial ? (
-          /* 社群圖卡：FB 橫式（1200×630）與 IG 方形（1080×1080）兩張都附上，各標平台與尺寸 */
-          <div style={{ marginTop: 10, display: "grid", gap: 14 }}>
-            {[
-              cards.fb ? { key: "fb", src: cards.fb, label: "Facebook 發布圖卡", size: "1200×630 橫式", maxW: 720 } : null,
-              cards.ig ? { key: "ig", src: cards.ig, label: "Instagram／Threads 發布圖卡", size: "1080×1080 方形", maxW: 480 } : null,
-            ].filter(Boolean).map((c) => (
-              <figure key={c.key} style={{ margin: 0 }}>
-                <a href={SITE_ROOT + c.src} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
-                  <img src={SITE_ROOT + c.src} alt={`${ep.show || ""}〈${ep.title || ""}〉${c.label}`} loading="lazy"
-                    style={{ width: "100%", maxWidth: c.maxW, display: "block", margin: "0 auto", borderRadius: 14, border: "1px solid var(--border)" }} />
-                </a>
-                <figcaption style={{ textAlign: "center", marginTop: 6, color: "var(--text-3)", fontSize: 12.5 }}>
-                  {c.label} · {c.size} ·{" "}
-                  <a href={SITE_ROOT + c.src} download style={{ color: "var(--text-3)" }}>下載原圖</a>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        ) : null}
+        {openSocial && hasSocial ? <SocialCardImages cards={cards} name={`${ep.show || ""}〈${ep.title || ""}〉`} /> : null}
       </div>
     );
   }
@@ -797,7 +801,11 @@
 
   function YouTubeNoteCard({ v, isLatest, tone, focus }) {
     const I = window.Icons;
-    const [open, setOpen] = React.useState(!!focus);
+    const cards = v.cards || {};
+    const hasSocial = !!(cards.ig || cards.fb);
+    /* 社群連結 ?yt=<影片ID>：有社群圖卡就展開社群圖卡（與貼文同一張），否則展開康乃爾筆記圖卡 */
+    const [open, setOpen] = React.useState(!!focus && !hasSocial);
+    const [openSocial, setOpenSocial] = React.useState(!!focus && hasSocial);
     const ref = React.useRef(null);
     React.useEffect(() => {
       if (!focus || !ref.current) return;
@@ -833,12 +841,16 @@
             {hasCornell ? (
               <Button variant="secondary" size="sm" icon={<I.book size={15} />} onClick={() => setOpen((o) => !o)}>{open ? "收合筆記圖卡" : "康乃爾筆記圖卡"}</Button>
             ) : null}
+            {hasSocial ? (
+              <Button variant="secondary" size="sm" icon={I.image ? <I.image size={15} /> : <I.book size={15} />} onClick={() => setOpenSocial((o) => !o)}>{openSocial ? "收合社群圖卡" : "社群圖卡"}</Button>
+            ) : null}
             {v.url ? (
               <Button variant="ghost" size="sm" iconRight={<I.ext size={14} />} onClick={() => window.open(v.url, "_blank", "noopener,noreferrer")}>前往觀看</Button>
             ) : null}
           </div>
         </Card>
         {open && hasCornell ? <div style={{ marginTop: 10 }}><CornellCard ep={ep} /></div> : null}
+        {openSocial && hasSocial ? <SocialCardImages cards={cards} name={`${v.author || ""}〈${v.title || ""}〉`} /> : null}
       </div>
     );
   }
