@@ -1,12 +1,14 @@
 /* =====================================================================
    YouTube 頻道（後台導覽「YouTube 頻道」、admin/#youtube）
-   四分頁：
+   五分頁：
      總覽  頻道統計與訂閱走勢（youtube-sync 每日同步：aurora_youtube/channel＋history）、同步狀態
      影片  最新影片清單（aurora_youtube/videos）→ 一鍵加入電子報（YouTube 區塊）
      上傳  PilotOne 的 YouTube 貼文（aurora_social_posts 中 yt.enabled）進度一覽；
            建立／核准在「PilotOne 中控台」（狀態機 scripts/social/core.mjs 的 yt 頻道）
      常看頻道  「常看 YouTube 重點筆記」要追的頻道（aurora_ytnotes/channels，公開讀）；
            Mac mini 的 ytnotes.py 每天台北 06:00 後第一次執行時讀取，與 Drive notes/youtube/channels.tsv 合併（後台為準）
+     筆記影片  指定單支影片做重點筆記（aurora_ytnotes/videos，公開讀）；ytnotes.py 每次 run（每 15 分鐘）讀取並排入轉錄佇列，
+           狀態取自 aurora_ops/ytnotes_progress
    日期一律台北時間。需於 admin.jsx 之後載入（共用 db、errText、SOC_COLL）。掛 window.YouTubePanel。
    ===================================================================== */
 (function () {
@@ -156,6 +158,151 @@ function FollowChannels({ box, flash, setErr }) {
   );
 }
 
+/* ---------------- 筆記影片（常看 YouTube 重點筆記：指定單支影片） ----------------
+   清單存 aurora_ytnotes/videos（{items:[{url,note,addedAt,retry?}], updatedAt}，公開讀、管理者寫、最多 100 支）。
+   Mac mini 的 ytnotes.py 每次 run（launchd 每 15 分鐘）開頭讀取：新影片排入佇列、移除且尚未開始的撤回、
+   retry 值改變且沒有完成草稿的再排一次。影片 ID 規則與 ytnotes.py 的 video_key 一致（僅 YouTube）。
+   進度沿用 PilotOne「YouTube 轉錄」的 aurora_ops/ytnotes_progress（管理者唯讀）。 */
+const YTV_DOC = () => db.collection("aurora_ytnotes").doc("videos");
+const YTV_MAX = 100;
+function videoKey(url) {
+  const s = String(url || "").trim();
+  if (!/^(https?:\/\/)?((www|m|music)\.)?(youtube\.com|youtu\.be)\//.test(s)) return "";
+  const m = s.match(/(?:v=|youtu\.be\/|shorts\/|live\/|embed\/)([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/);
+  return m ? m[1] : "";
+}
+const videoUrl = (url) => { const k = videoKey(url); return !k ? "" : /\/shorts\//.test(url) ? "https://www.youtube.com/shorts/" + k : watch(k); };
+const YTV_ST = { unsaved: ["未儲存", "var(--illumination)"], waiting: ["等待 Mac mini 讀取", "var(--text-3)"], queued: ["排隊中", "var(--intelligence)"],
+  processing: ["轉錄中", "var(--illumination)"], drafted: ["草稿完成・等筆記排程", "var(--intelligence)"], done: ["已送審", "var(--success)"], stale: ["無進度紀錄・可能已完成", "var(--text-4)"], failed: ["失敗", "var(--danger)"] };
+
+function NoteVideos({ box, flash, setErr }) {
+  const [items, setItems] = useState(null);
+  const [saved, setSaved] = useState("[]");
+  const [updatedAt, setUpdatedAt] = useState("");
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [prog, setProg] = useState(null);
+  const load = useCallback(async () => {
+    try {
+      const d = await YTV_DOC().get();
+      const l = (d.exists && Array.isArray(d.data().items) ? d.data().items : []).filter((x) => x && videoKey(x.url))
+        .map((x) => ({ url: videoUrl(x.url), note: x.note || "", addedAt: x.addedAt || "", retry: x.retry || "" }));
+      setItems(l); setSaved(JSON.stringify(l)); setUpdatedAt(d.exists ? d.data().updatedAt || "" : "");
+    } catch (ex) { setErr("讀取筆記影片失敗：" + errText(ex)); setItems([]); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  useEffect(() => db.collection("aurora_ops").doc("ytnotes_progress").onSnapshot((d) => setProg(d.exists ? d.data() : {}), () => setProg({})), []);
+
+  const dirty = items != null && JSON.stringify(items) !== saved;
+  const savedKeys = new Set(JSON.parse(saved).map((x) => videoKey(x.url)));
+  const lines = text.split(/[\s,，]+/).map((s) => s.trim()).filter(Boolean);
+  const add = () => {
+    const have = new Set(items.map((x) => videoKey(x.url)));
+    const next = [], bad = []; let dup = 0;
+    for (const l of lines) {
+      const k = videoKey(l);
+      if (!k) { bad.push(l); continue; }
+      if (have.has(k)) { dup++; continue; }
+      have.add(k); next.push({ url: videoUrl(l), note: "", addedAt: new Date().toISOString(), retry: "" });
+    }
+    const room = YTV_MAX - items.length, over = Math.max(0, next.length - room);
+    if (next.length) setItems((l) => [...l, ...next.slice(0, Math.max(0, room))]);
+    setText(bad.join("\n"));
+    const msg = [bad.length ? `${bad.length} 行不是 YouTube 影片網址（已留在輸入框）` : "", dup ? `${dup} 支已在清單中` : "", over ? `超過 ${YTV_MAX} 支上限，${over} 支未加入` : ""].filter(Boolean).join("；");
+    setErr(msg);
+    if (next.length - over > 0) flash(`已加入 ${next.length - over} 支，按「儲存變更」後生效`);
+  };
+  const patch = (i, p) => setItems((l) => l.map((x, j) => (j === i ? { ...x, ...p } : x)));
+  const save = async () => {
+    setBusy(true);
+    try {
+      const at = new Date().toISOString();
+      const out = items.map((x) => { const o = { url: x.url, note: (x.note || "").slice(0, 120), addedAt: x.addedAt || at }; if (x.retry) o.retry = x.retry; return o; });
+      await YTV_DOC().set({ items: out, updatedAt: at });
+      setSaved(JSON.stringify(items)); setUpdatedAt(at); setErr("");
+      flash("已儲存筆記影片 ✓ Mac mini 最慢 15 分鐘內讀取並開始轉錄");
+    } catch (ex) { setErr("儲存失敗：" + errText(ex)); }
+    setBusy(false);
+  };
+  if (items == null) return <div style={{ color: "var(--text-3)" }}>載入中…</div>;
+
+  const pmap = {}; ((prog && prog.items) || []).forEach((p) => { pmap[p.id] = p; });
+  const fails = {}; ((prog && prog.failures) || []).forEach((f) => { if (f.id) fails[f.id] = f; });
+  const stateOf = (x) => {
+    const k = videoKey(x.url), p = pmap[k];
+    if (p && YTV_ST[p.state]) return p.state;
+    if (!savedKeys.has(k)) return "unsaved";
+    if (fails[k]) return "failed";
+    return Date.now() - Date.parse(x.addedAt || "") > 2 * 86400e3 ? "stale" : "waiting"; // 進度面板只留近 14 天／20 筆已送審
+  };
+  const doneCount = items.filter((x) => stateOf(x) === "done").length;
+  const pending = items.filter((x) => ["waiting", "queued", "processing"].includes(stateOf(x))).length;
+  const syncAge = prog && prog.syncedAt ? (Date.now() - Date.parse(prog.syncedAt)) / 60000 : null;
+
+  return (
+    <div>
+      <div style={{ ...box, color: "var(--text-3)", fontSize: 13, lineHeight: 1.8 }}>
+        在這裡貼<b style={{ color: "var(--text-1)" }}>單支 YouTube 影片</b>網址，Mac mini 的 <code>ytnotes.py</code> 每 15 分鐘執行時會讀這份清單並排入轉錄佇列 →
+        草稿完成後由 Claude 筆記排程（台北 10:17／21:17）校正、產圖卡與三平台文案 → 每支影片一筆 PilotOne 草稿待審。
+        這裡指定的影片不受 180 分鐘長度限制；做過的影片不會重複處理。還在排隊、尚未開始的影片，從清單移除並儲存即可撤回。
+        {syncAge != null && syncAge > 15 ? <div style={{ marginTop: 6, color: "var(--illumination)" }}>⚠ 轉錄進度已 {Math.round(syncAge)} 分鐘沒同步，下方狀態可能不是最新（看「PilotOne 中控台 → YouTube 轉錄」）。</div> : null}
+      </div>
+
+      <div style={{ ...box }}>
+        <textarea className="ad-in" rows={3} style={{ width: "100%", fontFamily: "var(--font-mono)", fontSize: 12.5, resize: "vertical" }}
+          placeholder={"貼上影片網址，可一次多支（一行一個）\n例：https://www.youtube.com/watch?v=xxxxxxxxxxx 或 https://youtu.be/xxxxxxxxxxx"}
+          value={text} onChange={(e) => setText(e.target.value)} />
+        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", marginTop: 8 }}>
+          <button className="ad-btn" onClick={add} disabled={!lines.length || items.length >= YTV_MAX}>＋ 加入清單{lines.length > 1 ? `（${lines.length} 行）` : ""}</button>
+          <span style={{ color: "var(--text-4)", fontSize: 12 }}>支援 watch、youtu.be、Shorts、直播存檔網址；頻道與播放清單請到「常看頻道」。</span>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
+        <div style={{ color: "var(--text-3)", fontSize: 12.5 }}>共 {items.length}／{YTV_MAX} 支・進行中 {pending}・已送審 {doneCount}・上次儲存 {updatedAt ? tpeFmt(updatedAt) : "—"}</div>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {doneCount ? <button className="ad-btn ghost" onClick={() => setItems((l) => l.filter((x) => stateOf(x) !== "done"))} disabled={busy}>清掉已送審（{doneCount}）</button> : null}
+          {dirty ? <button className="ad-btn ghost" onClick={load} disabled={busy}>還原</button> : null}
+          <button className="ad-btn primary" onClick={save} disabled={!dirty || busy}>{busy ? "儲存中…" : dirty ? "💾 儲存變更" : "已儲存"}</button>
+        </div>
+      </div>
+
+      {!items.length ? <div style={{ ...box, color: "var(--text-3)" }}>清單是空的。貼上影片網址加入後按「儲存變更」。</div>
+        : <div style={{ display: "grid", gap: 8, marginBottom: 14 }}>
+          {items.map((x, i) => {
+            const k = videoKey(x.url), p = pmap[k] || {}, st = stateOf(x), [label, color] = YTV_ST[st];
+            const errMsg = st === "failed" ? (p.error || (fails[k] || {}).error || "") : "";
+            return (
+              <div key={k} style={{ ...box, marginBottom: 0, display: "flex", gap: 12, alignItems: "flex-start", flexWrap: "wrap" }}>
+                <a href={x.url} target="_blank" rel="noopener" style={{ flex: "0 0 auto" }}>
+                  <img src={`https://i.ytimg.com/vi/${k}/mqdefault.jpg`} alt="" loading="lazy" width="128" height="72" style={{ display: "block", borderRadius: 6, objectFit: "cover", background: "var(--night-700)" }} />
+                </a>
+                <div style={{ flex: "1 1 260px", minWidth: 0 }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 4 }}>
+                    <span style={{ padding: "2px 9px", borderRadius: "var(--radius-pill)", fontSize: 11.5, fontWeight: 800, background: "var(--night-700)", color, border: "1px solid var(--border)" }}>{label}{st === "processing" && p.stageLabel ? "・" + p.stageLabel : ""}</span>
+                    {p.durationSec ? <span style={{ color: "var(--text-4)", fontSize: 12 }}>{Math.round(p.durationSec / 60)} 分鐘</span> : null}
+                    {x.addedAt ? <span style={{ color: "var(--text-4)", fontSize: 12 }}>加入 {tpeFmt(x.addedAt)}</span> : null}
+                  </div>
+                  <div style={{ color: "var(--text-1)", fontWeight: 700, fontSize: 14, wordBreak: "break-word" }}>{p.title || "（讀取影片資訊後顯示標題）"}{p.author ? <span style={{ color: "var(--text-3)", fontWeight: 400 }}>　{p.author}</span> : null}</div>
+                  <a href={x.url} target="_blank" rel="noopener" style={{ color: "var(--brand)", fontSize: 12, fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>{x.url} ↗</a>
+                  {errMsg ? <div style={{ color: "var(--danger)", fontSize: 12.5, marginTop: 4, wordBreak: "break-word" }}>✕ {errMsg}</div> : null}
+                  <input className="ad-in" style={{ width: "100%", marginTop: 6 }} value={x.note} placeholder="備註（選填，只在後台顯示，例：想看的重點）" onChange={(e) => patch(i, { note: e.target.value.slice(0, 120) })} />
+                </div>
+                <div style={{ display: "flex", gap: 4, flex: "0 0 auto" }}>
+                  {st === "failed" ? <button className="ad-btn ghost" style={{ padding: "4px 8px" }} onClick={() => { patch(i, { retry: new Date().toISOString() }); flash("已標記重試，按「儲存變更」後 Mac mini 會再排一次"); }}>↻ 重試</button> : null}
+                  <button className="ad-btn ghost" style={{ padding: "4px 8px", color: "var(--danger)" }} onClick={() => {
+                    const warn = st === "processing" ? "這支正在轉錄，移除不會中斷，仍會產出草稿。" : ["drafted", "done"].includes(st) ? "已做好的草稿／筆記不受影響。" : "尚未開始的話會從轉錄佇列撤回。";
+                    if (window.confirm(`從筆記影片移除「${p.title || k}」？\n${warn}`)) setItems((l) => l.filter((_, j) => j !== i));
+                  }}>移除</button>
+                </div>
+              </div>
+            );
+          })}
+        </div>}
+    </div>
+  );
+}
+
 function YouTubePanel() {
   const [tab, setTab] = useState("overview");
   const [channel, setChannel] = useState(undefined);
@@ -232,7 +379,7 @@ function YouTubePanel() {
       {err && <div style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{err}</div>}
       {toast && <div style={{ color: "var(--success)", fontSize: 13, marginBottom: 12 }}>{toast}</div>}
       <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-        {tabBtn("overview", "總覽")}{tabBtn("videos", `影片（${videos ? videos.length : "…"}）`)}{tabBtn("uploads", `上傳（PilotOne）${activeCount ? `・進行中 ${activeCount}` : ""}`)}{tabBtn("follow", "常看頻道")}
+        {tabBtn("overview", "總覽")}{tabBtn("videos", `影片（${videos ? videos.length : "…"}）`)}{tabBtn("uploads", `上傳（PilotOne）${activeCount ? `・進行中 ${activeCount}` : ""}`)}{tabBtn("follow", "常看頻道")}{tabBtn("notevideos", "筆記影片")}
       </div>
 
       {tab === "overview" && (
@@ -311,6 +458,7 @@ function YouTubePanel() {
       )}
 
       {tab === "follow" && <FollowChannels box={box} flash={flash} setErr={setErr} />}
+      {tab === "notevideos" && <NoteVideos box={box} flash={flash} setErr={setErr} />}
 
       {tab === "uploads" && (
         <div>

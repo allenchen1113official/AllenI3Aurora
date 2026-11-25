@@ -41,3 +41,23 @@ test("常看頻道：規則公開讀、僅管理者寫 channels、欄位白名�
   const py = readFileSync(join(ROOT, "scripts/ytnotes/ytnotes.py"), "utf8");
   assert.match(py, /projects\/alleni3aurora\/databases\/\(default\)\/documents\/aurora_ytnotes\/channels/);
 });
+
+test("筆記影片：規則只多開 videos 一份文件（上限 100）、後台寫入欄位與引擎讀取網址一致", () => {
+  const rules = readFileSync(join(ROOT, "firebase/firestore.rules"), "utf8");
+  const panel = readFileSync(join(ROOT, "admin/youtube.jsx"), "utf8");
+  const py = readFileSync(join(ROOT, "scripts/ytnotes/ytnotes.py"), "utf8");
+  const block = rules.match(/match \/aurora_ytnotes\/\{doc\} \{([\s\S]*?)\n    \}/)[1];
+  const writes = block.split("allow write:").slice(1);
+  assert.equal(writes.length, 2, "只有 channels 與 videos 兩條寫入規則");
+  const v = writes.find((w) => /doc == 'videos'/.test(w));
+  assert.match(v, /isOwner\(\) && doc == 'videos'/);
+  assert.deepEqual([...v.match(/hasOnly\(\[([^\]]+)\]\)/)[1].matchAll(/'(\w+)'/g)].map((m) => m[1]).sort(), ["items", "updatedAt"]);
+  assert.equal(Number(v.match(/items\.size\(\) <= (\d+)/)[1]), Number(panel.match(/const YTV_MAX = (\d+);/)[1]));
+  assert.match(panel, /YTV_DOC\(\)\.set\(\{ items: out, updatedAt: at \}\)/);
+  assert.match(panel, /db\.collection\("aurora_ytnotes"\)\.doc\("videos"\)/);
+  assert.match(py, /"videos_url": "https:\/\/firestore\.googleapis\.com\/v1\/projects\/alleni3aurora\/databases\/\(default\)\/documents\/aurora_ytnotes\/videos"/);
+  // 影片 ID 規則：後台 videoKey 與引擎 video_key 用同一組網址樣式
+  assert.match(panel, /\(\?:v=\|youtu\\\.be\\\/\|shorts\\\/\|live\\\/\|embed\\\/\)\(\[A-Za-z0-9_-\]\{11\}\)/);
+  assert.match(py, /\(\?:v=\|youtu\\\.be\/\|shorts\/\|live\/\|embed\/\)\(\[A-Za-z0-9_-\]\{11\}\)/);
+  assert.match(py, /def _run_batch\(\):[\s\S]*?sync_remote_videos\(\)[\s\S]*?q = read_queue\(\)/);
+});
