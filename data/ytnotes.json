@@ -39,7 +39,11 @@
     ],
     "summary": "從資料到簡報動畫，現在可以在同一個 Claude 裡一路做完。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/en0GuyhieQk-20261124_FB.png",
+    "ig": "assets/ytnotes/en0GuyhieQk-20261124_IG.png"
+   }
   },
   {
    "id": "YAsxyoTWFDA",
@@ -84,7 +88,11 @@
     ],
     "summary": "功能不必全學，把技能、計畫、驗證做好，再省著用 context 就夠了。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/YAsxyoTWFDA-20261124_FB.png",
+    "ig": "assets/ytnotes/YAsxyoTWFDA-20261124_IG.png"
+   }
   },
   {
    "id": "bcM9dP_uXJU",
@@ -129,7 +137,11 @@
     ],
     "summary": "代理的聰明在說明書而不在工具，先把一個流程跑穩再加下一個。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/bcM9dP_uXJU-20261124_FB.png",
+    "ig": "assets/ytnotes/bcM9dP_uXJU-20261124_IG.png"
+   }
   },
   {
    "id": "C2GpeepcmYs",
@@ -174,7 +186,11 @@
     ],
     "summary": "不必自己敲每一行，但要看懂每一行：用模式、權限與脈絡管理把 Claude Code 變成看得見、管得住的開發夥伴。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/C2GpeepcmYs-20261124_FB.png",
+    "ig": "assets/ytnotes/C2GpeepcmYs-20261124_IG.png"
+   }
   },
   {
    "id": "IuyVVtr1uhY",
@@ -219,7 +235,11 @@
     ],
     "summary": "把 Claude Code 當成要你審核的高速工具：小步走、管記憶、先規劃、清 context。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/IuyVVtr1uhY-20261124_FB.png",
+    "ig": "assets/ytnotes/IuyVVtr1uhY-20261124_IG.png"
+   }
   },
   {
    "id": "QoQBzR1NIqI",
@@ -264,7 +284,11 @@
     ],
     "summary": "重點不是學寫程式，而是學會把工作拆給 Claude，並且安全地放手。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/QoQBzR1NIqI-20261124_FB.png",
+    "ig": "assets/ytnotes/QoQBzR1NIqI-20261124_IG.png"
+   }
   },
   {
    "id": "Ffh9OeJ7yxw",
@@ -309,7 +333,11 @@
     ],
     "summary": "設定讓 Claude 少犯錯，心法讓你知道錯在哪，兩者缺一不可。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/Ffh9OeJ7yxw-20261124_FB.png",
+    "ig": "assets/ytnotes/Ffh9OeJ7yxw-20261124_IG.png"
+   }
   },
   {
    "id": "iF9iV4xponk",
@@ -354,7 +382,11 @@
     ],
     "summary": "先學會問、再學會分級交辦；程式碼不再珍貴，點子與判斷才是。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/iF9iV4xponk-20261124_FB.png",
+    "ig": "assets/ytnotes/iF9iV4xponk-20261124_IG.png"
+   }
   },
   {
    "id": "SUysp3sJHbA",
@@ -399,7 +431,11 @@
     ],
     "summary": "把 Claude Code 當成一起寫程式的夥伴而非代工，小步前進、隨時檢查，程式碼才會乾淨好維護。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/SUysp3sJHbA-20261124_FB.png",
+    "ig": "assets/ytnotes/SUysp3sJHbA-20261124_IG.png"
+   }
   },
   {
    "id": "6eBSHbLKuN0",
@@ -448,7 +484,11 @@
     ],
     "summary": "先問、再計畫，並給它驗證工具和 context，Claude Code 就從聊天變成隊友。"
    },
-   "added": "20261124"
+   "added": "20261124",
+   "cards": {
+    "fb": "assets/ytnotes/6eBSHbLKuN0-20261124_FB.png",
+    "ig": "assets/ytnotes/6eBSHbLKuN0-20261124_IG.png"
+   }
   }
  ]
 }
