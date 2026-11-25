@@ -2,6 +2,26 @@
   "date": "2026-11-25",
   "posts": [
     {
+      "id": "cs_txf-flash_20261125",
+      "topic": "txf-flash",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_tsm-prebrief_20261125",
       "topic": "tsm-prebrief",
       "queueState": "done",
@@ -101,7 +121,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_txf-flash_20261125",
+      "topic": "txf-flash",
+      "date": "20261125",
+      "status": "created",
+      "auto": false,
+      "title": "加權重挫 1,926.92 點、外資賣超 1,236.55 億：給期貨交易人的 3 個籌碼訊號",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-25T04:13:48.255Z"
+  "generatedAt": "2026-11-25T09:02:39.396Z"
 }
