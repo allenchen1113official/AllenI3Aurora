@@ -61,3 +61,35 @@ test("筆記影片：規則只多開 videos 一份文件（上限 100）、後�
   assert.match(py, /\(\?:v=\|youtu\\\.be\/\|shorts\/\|live\/\|embed\/\)\(\[A-Za-z0-9_-\]\{11\}\)/);
   assert.match(py, /def _run_batch\(\):[\s\S]*?sync_remote_videos\(\)[\s\S]*?q = read_queue\(\)/);
 });
+
+/* ---------- 社群圖卡：送審包圖卡 → assets/ytnotes/ → cards 欄位 ---------- */
+import { cardName, driveCardName, attachCards, staleCards, CARD_DIR } from "./update-ytnotes.mjs";
+
+test("社群圖卡：檔名規則、只掛本機已有的圖卡、清掉不再引用的舊圖", () => {
+  const v = { id: "en0GuyhieQk", added: "20261124" };
+  assert.equal(cardName(v, "fb"), "en0GuyhieQk-20261124_FB.png");
+  assert.equal(driveCardName(v, "ig"), "YTNotes_en0GuyhieQk_20261124_IG.png");
+  assert.equal(cardName({ id: "../x", added: "20261124" }, "fb"), "");
+  assert.equal(cardName({ id: "abc", added: "" }, "fb"), "");
+  const have = new Set(["en0GuyhieQk-20261124_FB.png", "en0GuyhieQk-20261124_IG.png", "zzz-20261101_IG.png"]);
+  const out = attachCards([v, { id: "zzz", added: "20261101" }, { id: "none", added: "20261120" }], have);
+  assert.deepEqual(out[0].cards, { fb: `${CARD_DIR}/en0GuyhieQk-20261124_FB.png`, ig: `${CARD_DIR}/en0GuyhieQk-20261124_IG.png` });
+  assert.deepEqual(out[1].cards, { ig: `${CARD_DIR}/zzz-20261101_IG.png` });
+  assert.equal(out[2].cards, undefined);
+  // 重做（送審日期變了）→ 舊日期的圖卡被清掉；非圖卡檔不碰
+  assert.deepEqual(staleCards(["en0GuyhieQk-20261120_FB.png", "en0GuyhieQk-20261124_FB.png", "README.md"], [v]), ["en0GuyhieQk-20261120_FB.png"]);
+});
+
+test("社群圖卡：前台首頁與 ytnotes.html 都讀 cards 欄位、ytnotes.html 只接受 assets/ytnotes 路徑、workflow 會提交圖卡", () => {
+  const dash = readFileSync(join(ROOT, "ui_kits/aurora/Dashboard.jsx"), "utf8");
+  const yt = dash.slice(dash.indexOf("function YouTubeNoteCard"), dash.indexOf("function YouTubeNotes()"));
+  assert.match(yt, /const cards = v\.cards \|\| \{\}/);
+  assert.match(yt, /<SocialCardImages cards=\{cards\}/);
+  assert.match(yt, /"社群圖卡"/);
+  const page = readFileSync(join(ROOT, "ytnotes.html"), "utf8");
+  assert.match(page, /cardUrl\(cards\.ig\)/);
+  assert.match(page, /\^assets\\\/ytnotes\\\//);
+  const wf = readFileSync(join(ROOT, ".github/workflows/focus-update.yml"), "utf8");
+  assert.match(wf, /git add -A assets\/ytnotes/);
+  assert.match(wf, /git status --porcelain[^\n]*assets\/ytnotes/);
+});

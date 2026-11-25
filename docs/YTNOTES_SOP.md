@@ -11,7 +11,7 @@
 | 下載、判斷語言、轉錄草稿 | Mac mini 原生 macOS（launchd 每 15 分鐘） | `scripts/ytnotes/ytnotes.py`、`funasr_run.py`（安裝 `install.sh`） |
 | 校正、筆記、圖卡、文案、送審包 | Claude（對話中丟連結，或每日排程） | `make_package.py`、`merge_index.py`、`scripts/podcast/render_social_card.py` |
 | 送審包 → PilotOne 草稿 | `social-publish.yml`（Drive 橋接主題家族 `yt-<影片ID>`） | `scripts/social/drive-bridge*.mjs`、`ingest-core.mjs` |
-| 首頁區塊 | `focus-update.yml`（每 3 小時） | `scripts/ytnotes/update-ytnotes.mjs` → `data/ytnotes.json` → `Dashboard.jsx` `YouTubeNotes`（首頁只放最新 1 則，「更多筆記」連到 `ytnotes.html` 全部清單） |
+| 首頁區塊 | `focus-update.yml`（每 3 小時） | `scripts/ytnotes/update-ytnotes.mjs` → `data/ytnotes.json` → `Dashboard.jsx` `YouTubeNotes`（首頁只放最新 1 則，「更多筆記」連到 `ytnotes.html` 全部清單）；社群圖卡由同一支腳本從送審包下載到 `assets/ytnotes/<影片ID>-<送審日期>_{FB,IG}.png`，各筆加 `cards` |
 | 指定單支影片 | 後台「YouTube 頻道 → 筆記影片」→ Mac mini 每次 run 讀取 | `admin/youtube.jsx` `NoteVideos` → Firestore `aurora_ytnotes/videos` → `ytnotes.py` `sync_remote_videos()` → `queue.txt` |
 | 轉錄進度面板 | Mac mini 寫進度檔 → `social-publish.yml` 每 2 分鐘同步 | `ytnotes.py`（`progress.json`）→ `scripts/ytnotes/sync-progress.mjs` → Firestore `aurora_ops/ytnotes_progress` → PilotOne 中控台「YouTube 轉錄」 |
 
@@ -141,7 +141,9 @@ launchctl kickstart -k gui/$(id -u)/official.allen.ytnotes           # 立即重
 
 ## 送審
 
-`make_package.py` 產生 `manifest.json`（`topic: "yt-<影片ID>"`、`autoPublish: false`、`verified: true`），FB 用 1200×630、IG／Threads 用 1080×1080 康乃爾筆記圖卡（艾倫報報品牌鎖定）。圖卡色調為**莫蘭迪靛色系**（`render_social_card.py` 的 `THEMES["morandi-indigo"]`：灰靛頁首帶＋霧白底；`make_package.py` 的 `CARD_THEME` 可切換，Podcast 圖卡維持預設 `aurora`），品牌列左側備註影片來源「影片來源：YouTube · youtu.be/<ID>｜作者〈標題〉」；三平台文案也都以「📺 影片來源：作者〈標題〉」開頭（`validate` 會檢查）。PilotOne 審核頁除 Facebook 預覽外，另列出 Instagram／Threads 的圖卡與文案（含字數），三平台圖卡一併審核。`manifest.json` 另帶 `link`＝網站該支筆記 `https://allenchen1113official.github.io/AllenI3Aurora/?yt=<影片ID>#ytnotes`（匯入時寫入 `fb.link`，FB 接在內文最後；首頁看到 `?yt=` 會把該支排第一、展開康乃爾圖卡並捲動到「常看 YouTube · 重點筆記」）。PilotOne 內容中控台「編輯內容」：連結空白時預設帶入上述網址；Hashtag 自動取自 FB 文案結尾的標籤段（主稿＝文案去掉標籤段，IG／Threads 原文案保留為逐平台微調）；新增「圖卡」欄位逐平台列出實際發布的圖卡，可人工換圖（本篇 FB／IG 圖卡、站內圖卡或自訂 https 網址）、調整順序、移除或加圖，存檔寫回各平台 `imageUrls`，預覽同步顯示。Drive 橋接讀台北今天＋昨天的 `notes/youtube/<YYYYMMDD>/pilotone/*/`，同一天每支影片各一筆草稿（`cs_yt-<影片ID>_<YYYYMMDD>`），Allen 在 PilotOne 核准後才發布。
+`make_package.py` 產生 `manifest.json`（`topic: "yt-<影片ID>"`、`autoPublish: false`、`verified: true`），FB 用 1200×630、IG／Threads 用 1080×1080 康乃爾筆記圖卡（艾倫報報品牌鎖定）。圖卡色調為**莫蘭迪靛色系**（`render_social_card.py` 的 `THEMES["morandi-indigo"]`：灰靛頁首帶＋霧白底；`make_package.py` 的 `CARD_THEME` 可切換，Podcast 圖卡維持預設 `aurora`），品牌列左側備註影片來源「影片來源：YouTube · youtu.be/<ID>｜作者〈標題〉」；三平台文案也都以「📺 影片來源：作者〈標題〉」開頭（`validate` 會檢查）。PilotOne 審核頁除 Facebook 預覽外，另列出 Instagram／Threads 的圖卡與文案（含字數），三平台圖卡一併審核。`manifest.json` 另帶 `link`＝網站該支筆記 `https://allenchen1113official.github.io/AllenI3Aurora/?yt=<影片ID>#ytnotes`（匯入時寫入 `fb.link`，FB 接在內文最後；首頁看到 `?yt=` 會把該支排第一、展開社群圖卡（與貼文同一張；尚未同步圖卡時改展開康乃爾圖卡）並捲動到「常看 YouTube · 重點筆記」）。
+
+**前台社群圖卡（2026-11-26）**：`update-ytnotes.mjs` 每 3 小時依 `index.json` 每筆的 `id`＋`added` 在 Drive 找 `YTNotes_<影片ID>_<added>_FB.png`／`_IG.png`，下載到 `assets/ytnotes/<影片ID>-<added>_{FB,IG}.png`（已存在不重抓；非 PNG 或下載失敗只略過該張、下一輪再補；不再被引用的舊圖自動刪除），`data/ytnotes.json` 各筆加 `cards: {fb, ig}`。首頁卡片與 `ytnotes.html` 皆有「社群圖卡」：FB 橫式（1200×630）與 IG 方形（1080×1080）兩張都附上、各附下載原圖（與 Podcast 共用 `SocialCardImages`）；`ytnotes.html#yt-<影片ID>` 會直接展開該支的社群圖卡。`ytnotes.html` 只接受 `assets/ytnotes/` 底下符合命名規則的路徑。PilotOne 內容中控台「編輯內容」：連結空白時預設帶入上述網址；Hashtag 自動取自 FB 文案結尾的標籤段（主稿＝文案去掉標籤段，IG／Threads 原文案保留為逐平台微調）；新增「圖卡」欄位逐平台列出實際發布的圖卡，可人工換圖（本篇 FB／IG 圖卡、站內圖卡或自訂 https 網址）、調整順序、移除或加圖，存檔寫回各平台 `imageUrls`，預覽同步顯示。Drive 橋接讀台北今天＋昨天的 `notes/youtube/<YYYYMMDD>/pilotone/*/`，同一天每支影片各一筆草稿（`cs_yt-<影片ID>_<YYYYMMDD>`），Allen 在 PilotOne 核准後才發布。
 
 ## 測試
 
