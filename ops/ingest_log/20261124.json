@@ -246,9 +246,9 @@
       "topic": "yt-Ffh9OeJ7yxw",
       "queueState": "done",
       "fb": {
-        "state": "failed",
-        "url": "https://www.facebook.com/122111612763524851",
-        "error": "(#100) Tried accessing nonexisting field (is_published)"
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111841303524851",
+        "error": null
       },
       "ig": {
         "state": "published",
@@ -664,5 +664,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T00:03:31.095Z"
+  "generatedAt": "2026-11-25T01:21:45.970Z"
 }
