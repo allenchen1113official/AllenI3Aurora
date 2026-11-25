@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-26",
+  "posts": [
+    {
+      "id": "cs_pn-caijing-20261125_20261126",
+      "topic": "pn-caijing-20261125",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    }
+  ],
+  "lastIngest": [
+    {
+      "id": "cs_pn-caijing-20261125_20261126",
+      "topic": "pn-caijing-20261125",
+      "date": "20261126",
+      "status": "created",
+      "auto": false,
+      "title": "外資今年已提款3.4兆！5個重點看懂台股為何殺不停",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    }
+  ],
+  "generatedAt": "2026-11-25T16:18:28.242Z"
+}
