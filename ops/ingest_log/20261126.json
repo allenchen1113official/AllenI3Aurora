@@ -4,19 +4,19 @@
     {
       "id": "cs_tsm-prebrief_20261126",
       "topic": "tsm-prebrief",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -70,5 +70,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T23:00:57.508Z"
+  "generatedAt": "2026-11-25T23:54:51.380Z"
 }
