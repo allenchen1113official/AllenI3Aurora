@@ -104,19 +104,19 @@
     {
       "id": "cs_stockradar_20261125",
       "topic": "stockradar",
-      "queueState": "rejected",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112006207524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgK6Y1YoVW0/",
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -298,14 +298,8 @@
       "id": "cs_stockradar_20261125",
       "topic": "stockradar",
       "date": "20261125",
-      "status": "created",
-      "auto": false,
-      "title": "今日關注動態｜台股選股雷達 2026/11/25（週三）",
-      "channels": [
-        "fb",
-        "ig",
-        "th"
-      ]
+      "status": "skipped",
+      "reason": "已核准、發布中或已發布，不覆蓋（如需改稿請在後台處理）"
     },
     {
       "id": "cs_tsm-prebrief_20261125",
@@ -334,5 +328,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T15:49:48.881Z"
+  "generatedAt": "2026-11-25T16:04:40.015Z"
 }
