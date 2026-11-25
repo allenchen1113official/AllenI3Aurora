@@ -1,0 +1,28 @@
+Claude Code 的 Code Mode 值得開嗎？終端機重度用戶的 5 個用法
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常聽 Podcast 重點筆記 2026/11/25（週三）
+
+🎧 節目來源：AI懶人報〈EP492 – Claude Code 的 Code Mode：是什麼、什麼時候該開、怎麼用〉（2026-11-25・5 分）
+
+Claude Code 接了一堆 MCP，context 還是很快就滿？🤔
+叫它從 200 個 issue 挑出 5 個跟登入有關的，另外 195 個的內容也全留在對話裡，之後每一輪都要重讀。
+
+AI懶人報 EP492 整理了 Claude Code 新的實驗功能 Code Mode，重點有這幾個：
+
+1️⃣ 做法不同：Claude 改寫一段 JavaScript，把工具當函式呼叫，在程式裡篩完，只把那 5 個帶回來。
+2️⃣ 省在哪：社群實測新對話開場少約 2 萬 token，大任務讀進的 token 可少七成（官方沒有公布節省數字）。
+3️⃣ 別期待太多：重複讀的對話有快取折扣，多數實測帳單只省一到兩成。
+4️⃣ 不是每次都快：逐一檢查大量連結反而慢了四倍，簡單問題也常慢幾秒。
+5️⃣ 先知道限制：目前只能在終端機用，版本要 2.1.323 以上；Auto Mode 只審整段程式，git push、刪檔這類指令記得寫成 ask／deny 規則。
+
+結論：工具呼叫多、常撞用量上限的終端機重度用戶可以試；主要用 Desktop 或 VS Code 的人，先等它離開實驗階段。
+
+你平常用 Claude Code，最常卡在 context 還是用量上限？留言聊聊 👇
+
+💡 一句話總結：Code Mode 適合工具呼叫多的終端機重度使用者，小任務可先等等。
+
+📝 康乃爾筆記全文：https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261125#pn-ailanren-20261125
+🎧 收聽原節目：https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/78789eba-1e73-478a-8baf-5b8bdcd4e1ea
+
+以上為個人收聽後整理的重點筆記，非節目逐字轉載；完整內容請收聽原節目並支持創作者。
+
+#ClaudeCode #CodeMode #MCP #AI工具 #AI寫程式 #Anthropic #token #艾倫極光報報

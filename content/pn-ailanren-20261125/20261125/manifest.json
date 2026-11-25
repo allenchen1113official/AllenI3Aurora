@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-ailanren-20261125",
+  "date": "2026-11-25",
+  "title": "Claude Code 的 Code Mode 值得開嗎？終端機重度用戶的 5 個用法",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261125#pn-ailanren-20261125",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_ailanren-20261125_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_ailanren-20261125_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_ailanren-20261125_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-25T19:36:13+08:00"
+}

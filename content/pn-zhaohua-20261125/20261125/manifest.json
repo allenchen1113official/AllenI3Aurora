@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-zhaohua-20261125",
+  "date": "2026-11-25",
+  "title": "川普關稅、晶片稅又來攪局？5個重點看懂台股大跌後的情緒與配置",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=zhaohua-20261125#pn-zhaohua-20261125",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_zhaohua-20261125_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_zhaohua-20261125_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_zhaohua-20261125_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-25T19:34:03+08:00"
+}

@@ -1,0 +1,14 @@
+Claude Code 的 Code Mode 值得開嗎？終端機重度用戶的 5 個用法
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常聽 Podcast 重點筆記 2026/11/25
+🎧 節目來源：AI懶人報〈EP492 – Claude Code 的 Code Mo…〉
+
+很多人以為 Code Mode 是省錢神器，但實測帳單多半只省一到兩成，因為重複讀的對話本來就有快取折扣。
+
+我覺得更有感的是另一件事：有人發現，沒開的時候 Claude 會自己寫 Python 腳本從背後改檔案，你根本看不到改了什麼；開了之後每個改動都走 Claude Code 自己的 edit，有 diff 可看。
+
+反過來，叫它逐一檢查連結，反而慢了四倍。
+
+所以重點不是開不開，而是你的工作是不是工具呼叫很多。你會為了可控性開它嗎？
+
+📝 筆記：https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261125#pn-ailanren-20261125
+#Podcast重點筆記
