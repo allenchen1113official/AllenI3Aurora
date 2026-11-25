@@ -144,7 +144,7 @@
     {
       "id": "cs_pn-zhaohua-20261125_20261125",
       "topic": "pn-zhaohua-20261125",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122111973657524851",
@@ -156,8 +156,8 @@
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgKmqomIaaq",
         "error": null
       }
     }
@@ -268,5 +268,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T13:12:21.102Z"
+  "generatedAt": "2026-11-25T13:19:31.347Z"
 }
