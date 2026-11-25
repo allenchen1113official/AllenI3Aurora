@@ -80,6 +80,66 @@
         "url": "https://www.threads.com/@allenchen1113.official/post/DgJozAoIK6R",
         "error": null
       }
+    },
+    {
+      "id": "cs_pn-ailanren-20261125_20261125",
+      "topic": "pn-ailanren-20261125",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_pn-yutinghao-20261125_20261125",
+      "topic": "pn-yutinghao-20261125",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_pn-zhaohua-20261125_20261125",
+      "topic": "pn-zhaohua-20261125",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
@@ -103,6 +163,45 @@
       "status": "created",
       "auto": false,
       "title": "給投資人與科技人的 5 大午間訊號：台積電為何暴跌 140 元？3 個原因一次看懂",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-ailanren-20261125_20261125",
+      "topic": "pn-ailanren-20261125",
+      "date": "20261125",
+      "status": "created",
+      "auto": false,
+      "title": "Claude Code 的 Code Mode 值得開嗎？終端機重度用戶的 5 個用法",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-yutinghao-20261125_20261125",
+      "topic": "pn-yutinghao-20261125",
+      "date": "20261125",
+      "status": "created",
+      "auto": false,
+      "title": "股市暴漲暴跌怎麼看？3 種歷史情境，判斷是修正還是泡沫破裂",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-zhaohua-20261125_20261125",
+      "topic": "pn-zhaohua-20261125",
+      "date": "20261125",
+      "status": "created",
+      "auto": false,
+      "title": "川普關稅、晶片稅又來攪局？5個重點看懂台股大跌後的情緒與配置",
       "channels": [
         "fb",
         "ig",
@@ -136,5 +235,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T09:52:31.394Z"
+  "generatedAt": "2026-11-25T11:45:51.985Z"
 }
