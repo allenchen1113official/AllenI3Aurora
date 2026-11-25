@@ -104,59 +104,59 @@
     {
       "id": "cs_pn-ailanren-20261125_20261125",
       "topic": "pn-ailanren-20261125",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111971167524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgKmFgPIaOT/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgKmGDEIVp_",
         "error": null
       }
     },
     {
       "id": "cs_pn-yutinghao-20261125_20261125",
       "topic": "pn-yutinghao-20261125",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111971695524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgKmXrKISew/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgKmYPvoWn4",
         "error": null
       }
     },
     {
       "id": "cs_pn-zhaohua-20261125_20261125",
       "topic": "pn-zhaohua-20261125",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111973657524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgKmprxocYA/",
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -268,5 +268,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T13:04:11.404Z"
+  "generatedAt": "2026-11-25T13:12:21.102Z"
 }
