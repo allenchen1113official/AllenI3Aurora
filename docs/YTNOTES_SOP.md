@@ -12,6 +12,7 @@
 | 校正、筆記、圖卡、文案、送審包 | Claude（對話中丟連結，或每日排程） | `make_package.py`、`merge_index.py`、`scripts/podcast/render_social_card.py` |
 | 送審包 → PilotOne 草稿 | `social-publish.yml`（Drive 橋接主題家族 `yt-<影片ID>`） | `scripts/social/drive-bridge*.mjs`、`ingest-core.mjs` |
 | 首頁區塊 | `focus-update.yml`（每 3 小時） | `scripts/ytnotes/update-ytnotes.mjs` → `data/ytnotes.json` → `Dashboard.jsx` `YouTubeNotes`（首頁只放最新 1 則，「更多筆記」連到 `ytnotes.html` 全部清單） |
+| 指定單支影片 | 後台「YouTube 頻道 → 筆記影片」→ Mac mini 每次 run 讀取 | `admin/youtube.jsx` `NoteVideos` → Firestore `aurora_ytnotes/videos` → `ytnotes.py` `sync_remote_videos()` → `queue.txt` |
 | 轉錄進度面板 | Mac mini 寫進度檔 → `social-publish.yml` 每 2 分鐘同步 | `ytnotes.py`（`progress.json`）→ `scripts/ytnotes/sync-progress.mjs` → Firestore `aurora_ops/ytnotes_progress` → PilotOne 中控台「YouTube 轉錄」 |
 
 > Claude 的 device_bash 是 Mac mini 上的 Linux VM，連不到 YouTube、也跑不了 mlx-whisper，所以下載與轉錄一定在 macOS 本體由 launchd 執行；Claude 只讀寫 Drive 上的草稿與成品。
@@ -61,6 +62,29 @@ bash "$HOME/Library/CloudStorage/GoogleDrive-allenchen1113.official@gmail.com/�
 - 清單上每支影片的狀態（等待讀取／排隊中／轉錄中／草稿完成／已送審／失敗）取自 `aurora_ops/ytnotes_progress`，與 PilotOne「YouTube 轉錄」面板同一份資料；超過 2 天且進度面板已無紀錄者顯示「無進度紀錄・可能已完成」。
 - 要馬上讀取可在 Mac mini 執行 `python3 ytnotes.py videos`。
 
+### 操作步驟（後台）
+
+1. 以管理者帳號登入後台 →「YouTube 頻道」→「筆記影片」分頁。
+2. 在輸入框貼影片網址（一行一支，可一次多支；支援 `watch?v=`、`youtu.be/`、`/shorts/`、`/live/`）→「＋ 加入清單」。重複的會略過；不是影片的網址（頻道、播放清單）會留在輸入框並提示，頻道請改到「常看頻道」。
+3. 需要的話填備註（只在後台顯示）→ 按「💾 儲存變更」。**沒按儲存 Mac mini 讀不到**，該列會標「未儲存」。
+4. 等 Mac mini 下一次執行（最慢 15 分鐘），狀態依序變為：等待 Mac mini 讀取 → 排隊中 → 轉錄中（附階段）→ 草稿完成・等筆記排程 → 已送審。草稿完成後由 Claude 筆記排程（台北 10:17／21:17）產筆記、圖卡、文案，到 PilotOne 審核。
+5. 維護：
+   - **撤回**：還在「等待讀取／排隊中」的影片，按「移除」再「儲存變更」；已在轉錄的不會中斷、已有草稿或筆記的不受影響。
+   - **重試**：狀態「失敗」的影片按「↻ 重試」再「儲存變更」（先看失敗原因；403 類多半要在 Mac mini `brew upgrade yt-dlp`）。
+   - **清理**：「清掉已送審」一次移除做完的影片再儲存；清單上限 100 支。
+   - 「無進度紀錄・可能已完成」＝加入超過 2 天、進度面板已不再保留該筆（只留近 14 天／20 筆已送審），到 `ytnotes.html` 或 PilotOne 內容庫確認後可移除。
+
+### 欄位與上限
+
+| 欄位 | 說明 |
+|---|---|
+| `url` | 正規化後的影片網址（`https://www.youtube.com/watch?v=<ID>` 或 `…/shorts/<ID>`）；影片 ID 規則與 `ytnotes.py` 的 `video_key` 一致 |
+| `note` | 備註，最多 120 字，只在後台顯示 |
+| `addedAt` | 加入時間（ISO UTC；畫面以台北時間顯示） |
+| `retry` | 按「重試」時寫入的時間；引擎看到值改變才重排（沒按過就沒有此欄） |
+
+規則 r16：`aurora_ytnotes/videos` 公開讀（引擎免登入讀取，**清單內容等同公開，備註勿寫私密資訊**）、僅管理者寫、只允許 `items`／`updatedAt` 兩欄、最多 100 支。
+
 ## 規則
 
 - 下載挑最低畫質；長片只抓音訊；≤60 秒短影音抓 480p 並截 4 張畫面。暫存在 `~/.ytnotes/tmp`，用完即刪。
@@ -79,6 +103,41 @@ bash "$HOME/Library/CloudStorage/GoogleDrive-allenchen1113.official@gmail.com/�
 - **健康警示**：同步超過 15 分鐘沒更新 →「同步中斷」（social-publish 停了，看排程監控）；轉錄中超過 10 分鐘沒心跳 →「可能卡住」（Mac mini 睡眠、離線或 Drive 暫停同步）；閒置超過 35 分鐘沒回報 →「引擎沒回報」（launchd 沒在跑，重跑 `install.sh`）。
 - **時效**：Mac mini 寫檔 → Google Drive 上傳（通常 1 分鐘內）→ 最慢 2 分鐘同步 → 面板即時更新（onSnapshot）。
 - **更新引擎**：repo 的 `scripts/ytnotes/ytnotes.py` 改版後，要複製到 Drive `notes/youtube/_engine/ytnotes.py`（launchd 跑的是 Drive 上那份；下一次 15 分鐘喚醒即生效，不必重裝）。
+
+## 引擎部署與故障排除
+
+### 更新引擎（repo 改版後）
+
+launchd 執行的是 Drive `notes/youtube/_engine/` 裡的檔案，repo 合併後**不會自動生效**：
+
+1. 把 repo `scripts/ytnotes/ytnotes.py`（`funasr_run.py` 有改也一起）複製到 Drive `_engine/` 覆蓋同名檔。Claude 在綁定 Mac mini 的對話中以 device_commit_files 寫入；手動則直接在 Finder 覆蓋。
+2. 比對 sha256 與位元組數和 repo 版本完全一致（`shasum -a 256 ytnotes.py`）。2026-11-25 版：`ytnotes.py` `db8f67ad…5b4ba2`（53096 bytes）、`funasr_run.py` `dc94e30f…4d450d`。
+3. 不必重裝；下一次 15 分鐘喚醒即使用新版。
+4. 確認：`_engine/progress.json` 的 `updatedAt` 有更新、PilotOne「YouTube 轉錄」面板不再顯示「引擎沒回報」。
+
+> 2026-11-25 檢查發現 Drive `_engine/ytnotes.py` 停在 11/23 的舊版（21926 bytes，無進度檔功能），11/24 的進度面板改版當時沒有部署到 Drive，已於 11/25 補上。**每次引擎改版都要做上面第 1～2 步並留下 sha256。**
+
+### 引擎沒在跑（影片一直停在「等待 Mac mini 讀取」）
+
+| 檢查 | 位置 | 判讀 |
+|---|---|---|
+| 最後一次啟動時間 | `~/.ytnotes/run.lock` 的修改時間 | 每次 `run` 都會更新；超過 30 分鐘沒變＝launchd 沒有啟動工作 |
+| 執行紀錄 | `~/.ytnotes/launchd.log`、Drive `_engine/run.log` | 有錯誤訊息照訊息處理；完全沒有新紀錄＝工作沒被觸發 |
+| 當天頻道掃描 | Drive `_engine/last_scan.txt` | 內容應為台北今天日期（06:00 後） |
+| 進度檔 | Drive `_engine/progress.json` | `updatedAt` 應在 15 分鐘內 |
+
+處理（Mac mini 終端機）：
+
+```bash
+launchctl print gui/$(id -u)/official.allen.ytnotes | head -20      # 看工作是否已載入、上次結束狀態
+launchctl kickstart -k gui/$(id -u)/official.allen.ytnotes           # 立即重跑一次
+```
+
+- `print` 回報找不到服務 → 重跑 `_engine/install.sh`（會重新註冊 launchd，不會重下載已有的模型）。
+- 有載入但沒有週期執行 → 確認 Mac mini 沒有進入睡眠、已登入使用者帳號（LaunchAgent 只在登入後執行）。
+- 讀不到 Drive 上的檔案（`Resource deadlock avoided`／`Operation timed out`）→ 開啟 Google Drive 電腦版確認已登入且同步未暫停。
+
+> 2026-11-25 事件：launchd 自 11/24 20:23（台北）後沒有再啟動（`run.lock`、`launchd.log` 皆未更新，11/25 沒有 06:00 頻道掃描），記錄檔無錯誤訊息；以上述指令重啟。
 
 ## 送審
 

@@ -16,6 +16,8 @@
 | 發布到 YouTube | PilotOne 中控台勾 YouTube → 核准；Vlog 面板「▶ 建立 YouTube 上傳排程（PilotOne）」帶入文案 | `aurora_social_posts` 的 `yt` 欄位；後台「上傳（PilotOne）」分頁唯讀顯示進度 |
 | 電子報影片區塊 | 電子報編輯器區塊「YouTube 影片」（可從頻道清單挑選），或「影片」分頁「＋ 加入電子報」 | 網站內嵌 youtube-nocookie；信件縮圖＋實色「▶ 在 YouTube 觀看」按鈕；純文字版附網址 |
 
+> 後台「YouTube 頻道」另有「常看頻道」「筆記影片」兩個分頁，屬於「常看 YouTube 重點筆記」（追蹤別人的頻道／指定單支影片做筆記），操作與故障排除見 `docs/YTNOTES_SOP.md`。
+
 ## 1. 授權前檢查清單（全部自有）
 
 - [ ] 以**官方管理者帳號** `allenchen1113.official@gmail.com` 操作 Google Cloud Console（不要用個人帳號，曾因登錯帳號被權限擋下）。
