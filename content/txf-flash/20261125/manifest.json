@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "topic": "txf-flash",
+  "date": "2026-11-25",
+  "title": "加權重挫 1,926.92 點、外資賣超 1,236.55 億：給期貨交易人的 3 個籌碼訊號",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "TXFFlash_Chips_2026-11-25.png",
+        "TXFFlash_Flash_2026-11-25.png",
+        "TXFFlash_Retail_2026-11-25.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "TXFFlash_Chips_2026-11-25.png",
+        "TXFFlash_Flash_2026-11-25.png",
+        "TXFFlash_Retail_2026-11-25.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "TXFFlash_Chips_2026-11-25.png",
+        "TXFFlash_Flash_2026-11-25.png",
+        "TXFFlash_Retail_2026-11-25.png"
+      ]
+    }
+  },
+  "producedBy": "trig_01AX9chVhyFpy13mDpmyLYQJ",
+  "producedAt": "2026-11-25T16:56:29+08:00"
+}
