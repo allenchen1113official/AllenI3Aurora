@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "topic": "tsm-prebrief",
+  "date": "2026-11-26",
+  "title": "今日關注動態｜台股盤前速報 2026/11/26（週四）",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "TSMPreBrief_FB_2026-11-26.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "TSMPreBrief_IG_2026-11-26.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "TSMPreBrief_Threads_2026-11-26.png"
+      ]
+    }
+  },
+  "producedBy": "trig_01Dz4wx74V1MnnHGaheaXrj4",
+  "producedAt": "2026-11-26T06:56:30+08:00"
+}
