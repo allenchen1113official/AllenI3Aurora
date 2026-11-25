@@ -20,7 +20,7 @@
 
 ```
 _engine/        ytnotes.py · funasr_run.py · install.sh · make_package.py · merge_index.py · render_social_card.py
-                config.json（選用） · queue.txt（待處理網址，純文字一行一個；不是 Google 文件） · seen.json · failed.txt · run.log · versions.txt
+                config.json（選用） · queue.txt（待處理網址，純文字一行一個；不是 Google 文件） · videos.remote.json（後台筆記影片同步紀錄） · seen.json · failed.txt · run.log · versions.txt
                 progress.json（轉錄進度，引擎自動覆寫，勿手動編輯）
 _inbox/<影片ID>/ meta.json · draft.md · draft_whisper.md · frames/ · status.json（drafted → done）
 _inbox/_done/   處理完的草稿資料夾
@@ -50,6 +50,17 @@ bash "$HOME/Library/CloudStorage/GoogleDrive-allenchen1113.official@gmail.com/�
 - 網址正規化兩邊一致（`channel_key`／`channelKey`）：`@handle`、`/channel/UC…`、`/c/…`、`/user/…` 自動補 `/videos`；Shorts 另加 `…/shorts`；單支影片、播放清單不接受。
 - 後台存檔後最慢到隔天 06:00 後才生效；要馬上掃可在 Mac mini 執行 `python3 ytnotes.py scan`。
 
+## 筆記影片（後台指定單支影片）
+
+後台「YouTube 頻道 → 筆記影片」（`admin/#youtube`，`admin/youtube.jsx` 的 `NoteVideos`）貼單支影片網址（可一次多行）、寫備註、移除、對失敗的影片按「重試」，存在 Firestore `aurora_ytnotes/videos`（`{items:[{url,note,addedAt,retry?}], updatedAt}`；規則：公開讀、僅管理者寫、最多 100 支）。
+
+- Mac mini 的 `ytnotes.py` **每次 `run`（launchd 每 15 分鐘）開頭**以 Firestore REST 讀這份清單（`config.json` 的 `videos_url`，設 `""` 停用）：新出現的影片排到 `queue.txt` 尾端；同步紀錄寫 `_engine/videos.remote.json`，做過的不會重複排。
+- 從清單移除並儲存：還在排隊、尚未開始的會從佇列撤回（只撤回後台排入的；頻道掃描或 `add` 排的不動）。已在轉錄或已有草稿的不受影響。
+- 「重試」：寫入新的 `retry` 時間，下一次 run 看到值改變且沒有完成的草稿就再排一次。
+- 讀取失敗（斷線）時本輪不排入也不撤回。後台指定的影片不受 180 分鐘長度限制。
+- 清單上每支影片的狀態（等待讀取／排隊中／轉錄中／草稿完成／已送審／失敗）取自 `aurora_ops/ytnotes_progress`，與 PilotOne「YouTube 轉錄」面板同一份資料；超過 2 天且進度面板已無紀錄者顯示「無進度紀錄・可能已完成」。
+- 要馬上讀取可在 Mac mini 執行 `python3 ytnotes.py videos`。
+
 ## 規則
 
 - 下載挑最低畫質；長片只抓音訊；≤60 秒短影音抓 480p 並截 4 張畫面。暫存在 `~/.ytnotes/tmp`，用完即刪。
@@ -75,4 +86,4 @@ bash "$HOME/Library/CloudStorage/GoogleDrive-allenchen1113.official@gmail.com/�
 
 ## 測試
 
-`node --test scripts/social/bridge.test.mjs scripts/ytnotes/ytnotes.test.mjs scripts/ytnotes/progress.test.mjs`（含常看頻道規則白名單比對、進度檔精簡與引擎↔同步↔面板↔規則↔workflow 接線）、`python3 -m unittest scripts/ytnotes/test_channels.py scripts/ytnotes/test_progress.py`（進度檔內容、心跳、run 流程、檔案鎖協調）
+`node --test scripts/social/bridge.test.mjs scripts/ytnotes/ytnotes.test.mjs scripts/ytnotes/progress.test.mjs`（含常看頻道規則白名單比對、進度檔精簡與引擎↔同步↔面板↔規則↔workflow 接線）、`python3 -m unittest scripts/ytnotes/test_channels.py scripts/ytnotes/test_videos.py scripts/ytnotes/test_progress.py`（進度檔內容、心跳、run 流程、檔案鎖協調）

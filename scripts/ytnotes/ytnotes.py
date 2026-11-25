@@ -9,6 +9,7 @@ FunASR 虛擬環境（中文，見 funasr_run.py）。安裝見 install.sh。
   python3 ytnotes.py add <網址> [<網址>…]   # 排入佇列（Claude 在對話中「丟連結」就是寫這個佇列）
   python3 ytnotes.py run                     # 處理佇列；台北 06:00 後當天第一次 run 會先掃常看頻道
   python3 ytnotes.py scan                    # 只掃頻道、把新片排入佇列
+  python3 ytnotes.py videos                  # 立即讀後台「筆記影片」清單併入佇列（run 每次開頭也會做）
   python3 ytnotes.py draft <網址>            # 立即處理一支（略過佇列）
   python3 ytnotes.py status                  # 佇列與收件匣狀態
   python3 ytnotes.py progress                # 重新產生並印出 _engine/progress.json
@@ -57,6 +58,8 @@ CFG = {
     "skip_longer_than_min": 180,     # 超過幾分鐘的影片不自動處理（手動 draft 不受限）
     # 後台「YouTube 頻道 → 常看頻道」存的清單（Firestore aurora_ytnotes/channels，公開讀）；設 "" 只用 channels.tsv
     "channels_url": "https://firestore.googleapis.com/v1/projects/alleni3aurora/databases/(default)/documents/aurora_ytnotes/channels",
+    # 後台「YouTube 頻道 → 筆記影片」指定要做筆記的單支影片（Firestore aurora_ytnotes/videos，公開讀）；設 "" 停用
+    "videos_url": "https://firestore.googleapis.com/v1/projects/alleni3aurora/databases/(default)/documents/aurora_ytnotes/videos",
     # 常聽 Podcast 重點筆記：2026-11-24 起改由 GitHub Actions（podnotes.yml）在雲端處理，Mac mini 預設不掃 Podcast。
     # 要改回本機處理才填網站 feeds.json：https://allenchen1113official.github.io/AllenI3Aurora/scripts/podcast/feeds.json
     "podcast_feeds_url": "",
@@ -318,6 +321,72 @@ def cmd_add(urls):
     write_queue(q)
     log(f"佇列新增 {added} 支，共 {len(q)} 支")
     write_progress()
+
+# ───────────────────────── 後台指定影片 ─────────────────────────
+VIDEOS_STATE = lambda: ENGINE / "videos.remote.json"   # {影片ID: {"url", "at", "queued": 是否由本同步排入}}
+
+def parse_remote_videos(doc):
+    """aurora_ytnotes/videos 文件（REST JSON）→ [{id,url,retry}]（依後台順序、同一支不重複、無法辨識的略過）
+    retry：後台按「重試」時寫入的時間字串；與上次同步紀錄不同就再排一次"""
+    items = _fs_value({"mapValue": {"fields": (doc or {}).get("fields") or {}}}).get("items") or []
+    out, seen = [], set()
+    for it in items:
+        url = str(it.get("url") or "").strip() if isinstance(it, dict) else ""
+        k = video_key(url) if url else None
+        if k and k not in seen:
+            seen.add(k)
+            out.append({"id": k, "url": url, "retry": str(it.get("retry") or "")})
+    return out
+
+def plan_remote_videos(remote, state, queue, has_draft):
+    """純邏輯：後台清單 × 上次同步紀錄 × 目前佇列 → (新佇列, 新紀錄, 排入的ID, 撤回的ID)
+    - 後台新出現的影片：還沒草稿／沒做過、也不在佇列 → 排到佇列尾端
+    - 後台移除的影片：若是本同步排入且還在佇列（尚未開始）→ 從佇列撤回；頻道掃描或手動 add 排的不動
+    - 做過的影片留在紀錄，不會重複排入；後台按「重試」（retry 值改變）且沒有完成的草稿 → 再排一次"""
+    q = list(queue)
+    in_q = {video_key(u): u for u in q}
+    st, added, removed = {}, [], []
+    ids = set()
+    for v in remote:
+        k = v["id"]; ids.add(k)
+        prev = state.get(k) if isinstance(state.get(k), dict) else None
+        retry = v.get("retry") or ""
+        if prev is not None and (not retry or retry == (prev.get("retry") or "")):
+            st[k] = prev
+            continue
+        queued = bool(prev and prev.get("queued") and k in in_q)
+        if k not in in_q and not has_draft(k):
+            q.append(v["url"]); in_q[k] = v["url"]; queued = True; added.append(k)
+        st[k] = {"url": v["url"], "at": _iso(), "queued": queued, **({"retry": retry} if retry else {})}
+    for k, rec in state.items():
+        if k in ids:
+            continue
+        if isinstance(rec, dict) and rec.get("queued") and k in in_q:
+            q = [u for u in q if video_key(u) != k]; removed.append(k)
+    return q, st, added, removed
+
+def sync_remote_videos():
+    """每次 run 開頭：讀後台「筆記影片」清單併入佇列。讀取失敗就維持現狀（不排入也不撤回）。"""
+    url = CFG.get("videos_url") or ""
+    if not url:
+        return
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"Accept": "application/json"}), timeout=20) as r:
+            remote = parse_remote_videos(json.loads(r.read().decode("utf-8")))
+    except urllib.error.HTTPError as e:
+        if e.code != 404:                     # 404＝後台還沒存過清單
+            log("讀取後台筆記影片失敗，本輪略過：", e); return
+        remote = []
+    except Exception as e:
+        log("讀取後台筆記影片失敗，本輪略過：", e); return
+    state = _read_json(VIDEOS_STATE())
+    has_draft = lambda k: (INBOX / "_done" / k).exists() or _read_json(INBOX / k / "status.json").get("state") in ("drafted", "done")
+    q, st, added, removed = plan_remote_videos(remote, state, read_queue(), has_draft)
+    if added or removed:
+        write_queue(q)
+        log(f"後台筆記影片：排入 {len(added)} 支、撤回 {len(removed)} 支，佇列共 {len(q)} 支")
+    if st != state:
+        VIDEOS_STATE().write_text(json.dumps(st, ensure_ascii=False, indent=1), encoding="utf-8")
 
 # ───────────────────────── 頻道掃描 ─────────────────────────
 def channel_key(url):
@@ -903,6 +972,8 @@ def _run_batch():
     last = (ENGINE / "last_scan.txt").read_text().strip() if (ENGINE / "last_scan.txt").exists() else ""
     if now_tpe().hour >= int(CFG["scan_hour"]) and last != now_tpe().strftime("%Y%m%d"):
         cmd_scan()
+    sync_remote_videos()
+    write_progress()
     q = read_queue()
     done = 0
     while q and done < CFG["batch_max"]:
@@ -946,6 +1017,7 @@ def main():
     if a[0] == "add": cmd_add(a[1:])
     elif a[0] == "run": cmd_run()
     elif a[0] == "scan": cmd_scan()
+    elif a[0] == "videos": sync_remote_videos(); cmd_status()
     elif a[0] == "draft": [draft(u, force="--force" in a) for u in a[1:] if not u.startswith("--")]
     elif a[0] == "status": cmd_status()
     elif a[0] == "podscan": cmd_podscan(force=True); print(json.dumps(read_podq(), ensure_ascii=False, indent=1))
