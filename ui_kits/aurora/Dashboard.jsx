@@ -709,16 +709,23 @@
         </Card>
         {openCard && hasCornell ? <div style={{ marginTop: 10 }}><CornellCard ep={ep} /></div> : null}
         {openSocial && hasSocial ? (
-          <div style={{ marginTop: 10 }}>
-            <a href={SITE_ROOT + (cards.ig || cards.fb)} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
-              <img src={SITE_ROOT + (cards.ig || cards.fb)} alt={`${ep.show || ""}〈${ep.title || ""}〉康乃爾筆記社群圖卡`} loading="lazy"
-                style={{ width: "100%", maxWidth: 560, display: "block", margin: "0 auto", borderRadius: 14, border: "1px solid var(--border)" }} />
-            </a>
-            {cards.fb && cards.ig ? (
-              <div style={{ textAlign: "center", marginTop: 6 }}>
-                <a href={SITE_ROOT + cards.fb} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-3)", fontSize: 12.5, textDecoration: "none" }}>橫式版（FB 1200×630）↗</a>
-              </div>
-            ) : null}
+          /* 社群圖卡：FB 橫式（1200×630）與 IG 方形（1080×1080）兩張都附上，各標平台與尺寸 */
+          <div style={{ marginTop: 10, display: "grid", gap: 14 }}>
+            {[
+              cards.fb ? { key: "fb", src: cards.fb, label: "Facebook 發布圖卡", size: "1200×630 橫式", maxW: 720 } : null,
+              cards.ig ? { key: "ig", src: cards.ig, label: "Instagram／Threads 發布圖卡", size: "1080×1080 方形", maxW: 480 } : null,
+            ].filter(Boolean).map((c) => (
+              <figure key={c.key} style={{ margin: 0 }}>
+                <a href={SITE_ROOT + c.src} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
+                  <img src={SITE_ROOT + c.src} alt={`${ep.show || ""}〈${ep.title || ""}〉${c.label}`} loading="lazy"
+                    style={{ width: "100%", maxWidth: c.maxW, display: "block", margin: "0 auto", borderRadius: 14, border: "1px solid var(--border)" }} />
+                </a>
+                <figcaption style={{ textAlign: "center", marginTop: 6, color: "var(--text-3)", fontSize: 12.5 }}>
+                  {c.label} · {c.size} ·{" "}
+                  <a href={SITE_ROOT + c.src} download style={{ color: "var(--text-3)" }}>下載原圖</a>
+                </figcaption>
+              </figure>
+            ))}
           </div>
         ) : null}
       </div>
