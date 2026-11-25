@@ -122,6 +122,26 @@
       }
     },
     {
+      "id": "cs_dailypick_20261125",
+      "topic": "dailypick",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_pn-ailanren-20261125_20261125",
       "topic": "pn-ailanren-20261125",
       "queueState": "done",
@@ -190,6 +210,19 @@
       "status": "created",
       "auto": false,
       "title": "今日關注動態｜艾倫極光日報 2026/11/25（週三）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_dailypick_20261125",
+      "topic": "dailypick",
+      "date": "20261125",
+      "status": "created",
+      "auto": false,
+      "title": "極光日報・每日來一股｜聯發科 2454 12 面向健檢 2026/11/25",
       "channels": [
         "fb",
         "ig",
@@ -301,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T15:19:53.045Z"
+  "generatedAt": "2026-11-25T15:34:27.649Z"
 }
