@@ -104,7 +104,7 @@
     {
       "id": "cs_stockradar_20261125",
       "topic": "stockradar",
-      "queueState": "draft",
+      "queueState": "rejected",
       "fb": {
         "state": "draft",
         "url": null,
@@ -301,5 +301,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T15:12:44.403Z"
+  "generatedAt": "2026-11-25T15:19:53.045Z"
 }
