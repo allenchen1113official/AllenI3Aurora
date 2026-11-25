@@ -4,39 +4,39 @@
     {
       "id": "cs_tsm-prebrief_20261125",
       "topic": "tsm-prebrief",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111835885524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgJPhNoIK2t/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgJPiWQIP1w",
         "error": null
       }
     },
     {
       "id": "cs_daily_20261125",
       "topic": "daily",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122111836239524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -70,5 +70,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T00:11:53.764Z"
+  "generatedAt": "2026-11-25T00:33:12.651Z"
 }
