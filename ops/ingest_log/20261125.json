@@ -40,6 +40,26 @@
         "url": "https://www.threads.com/@allenchen1113.official/post/DgJPzPkoNHz",
         "error": null
       }
+    },
+    {
+      "id": "cs_noon_20261125",
+      "topic": "noon",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
@@ -50,6 +70,19 @@
       "status": "created",
       "auto": false,
       "title": "今日關注動態｜艾倫極光日報 2026/11/25（週三）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_noon_20261125",
+      "topic": "noon",
+      "date": "20261125",
+      "status": "created",
+      "auto": false,
+      "title": "給投資人與科技人的 5 大午間訊號：台積電為何暴跌 140 元？3 個原因一次看懂",
       "channels": [
         "fb",
         "ig",
@@ -70,5 +103,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-25T00:40:18.843Z"
+  "generatedAt": "2026-11-25T03:59:37.624Z"
 }
