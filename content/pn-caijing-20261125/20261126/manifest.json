@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-caijing-20261125",
+  "date": "2026-11-26",
+  "title": "外資今年已提款3.4兆！5個重點看懂台股為何殺不停",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=caijing-20261125#pn-caijing-20261125",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_caijing-20261125_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_caijing-20261125_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_caijing-20261125_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-26T00:16:22+08:00"
+}
