@@ -1,0 +1,14 @@
+Claude Code /ship 怎麼用？4步驟、3風險、3道守門規則
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常聽 Podcast 重點筆記 2026/11/26
+🎧 節目來源：AI懶人報〈EP493 – Claude Code 新指令 /ship…〉
+
+我覺得 /ship 最有意思的不是它能自己修到測試通過，而是它刻意把「按合併」留給人。
+
+真正的風險不在 AI 修不好，而在你的專案若開了自動合併，它推一個修正上去，就可能沒人看過直接上線。而且它檢查密碼金鑰只看檔名，不看內容。
+
+所以守門不能靠 AI 自律，要靠 GitHub 的規則：至少一人批准，新 commit 讓舊批准失效。
+
+你願意讓 AI 修 PR 到哪一步？
+
+📝 筆記：https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261126#pn-ailanren-20261126
+#Podcast重點筆記

@@ -1,0 +1,33 @@
+Claude Code /ship 怎麼用？4步驟、3風險、3道守門規則
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常聽 Podcast 重點筆記 2026/11/26（週四）
+
+🎧 節目來源：AI懶人報〈EP493 – Claude Code 新指令 /ship：寫完一個指令送上線，AI 自己審、自己修，哪些能放心交給它〉（2026-11-26・4 分）
+
+寫功能 10 分鐘，開 PR、等測試、修紅燈、回留言卻花掉一整個下午，你是不是也這樣？
+
+Claude Code 新增的 /ship 就是要接手這段。這集 AI懶人報 把 Claude Code /ship 的重點整理如下：
+
+1️⃣ 它做四件事：把變更 commit 並開 PR、用 code review 自己審、最長 7 天盯著 PR 修到測試通過，最後通知你可以合併。
+
+2️⃣ 開啟條件：Claude Code 要更新到最新版、gh 要先登入、只能在終端機跑。Bypass Permissions 模式與原生 Windows 不會啟動看守。
+
+3️⃣ 可以放心交給它的：測試紅燈、與主線衝突、同事要求改個名字或錯字，這些不難但很耗時間。
+
+4️⃣ 要自己看的三個風險：它會把你還沒存的變更連新檔案全部 commit，檢查金鑰只看檔名；它用你的 GitHub 帳號動作；專案若開了自動合併，修正推上去後可能沒人看過就合併。
+
+5️⃣ 守門靠規則：GitHub 設至少一人批准，且新 commit 要讓舊批准失效；團隊版先設手動觸發並加花費上限。
+
+一句話：AI 可以幫你把送件補件跑完，最後簽名的還是要人。
+
+你敢把 PR 交給 AI 一路修到通過嗎？留言說說你的底線在哪。
+
+非投資建議
+
+💡 一句話總結：AI 能把送件補件跑完，但最後簽名合併的仍應是人。
+
+📝 康乃爾筆記全文：https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261126#pn-ailanren-20261126
+🎧 收聽原節目：https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/477450bd-ae87-4a31-aa61-8adacba5e9fb
+
+以上為個人收聽後整理的重點筆記，非節目逐字轉載；完整內容請收聽原節目並支持創作者。
+
+#ClaudeCode #Anthropic #AI工具 #AI寫程式 #GitHub #PullRequest #開發者工具 #AI懶人報

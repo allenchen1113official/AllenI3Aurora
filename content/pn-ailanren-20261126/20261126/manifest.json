@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-ailanren-20261126",
+  "date": "2026-11-26",
+  "title": "Claude Code /ship 怎麼用？4步驟、3風險、3道守門規則",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261126#pn-ailanren-20261126",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_ailanren-20261126_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_ailanren-20261126_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_ailanren-20261126_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-26T19:14:13+08:00"
+}

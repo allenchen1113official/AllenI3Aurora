@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-zhaohua-20261126",
+  "date": "2026-11-26",
+  "title": "PCE超預期台股仍反彈：3個訊號看AI股落底了沒",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=zhaohua-20261126#pn-zhaohua-20261126",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_zhaohua-20261126_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_zhaohua-20261126_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_zhaohua-20261126_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-26T19:11:43+08:00"
+}
