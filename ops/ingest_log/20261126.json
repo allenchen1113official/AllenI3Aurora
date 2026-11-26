@@ -82,6 +82,26 @@
       }
     },
     {
+      "id": "cs_pn-ailanren-20261126_20261126",
+      "topic": "pn-ailanren-20261126",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_pn-caijing-20261125_20261126",
       "topic": "pn-caijing-20261125",
       "queueState": "done",
@@ -98,6 +118,46 @@
       "th": {
         "state": "published",
         "url": "https://www.threads.com/@allenchen1113.official/post/DgLw2M1EaOM",
+        "error": null
+      }
+    },
+    {
+      "id": "cs_pn-yutinghao-20261126_20261126",
+      "topic": "pn-yutinghao-20261126",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_pn-zhaohua-20261126_20261126",
+      "topic": "pn-zhaohua-20261126",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
         "error": null
       }
     }
@@ -130,12 +190,51 @@
       ]
     },
     {
+      "id": "cs_pn-ailanren-20261126_20261126",
+      "topic": "pn-ailanren-20261126",
+      "date": "20261126",
+      "status": "created",
+      "auto": false,
+      "title": "Claude Code /ship 怎麼用？4步驟、3風險、3道守門規則",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_pn-caijing-20261125_20261126",
       "topic": "pn-caijing-20261125",
       "date": "20261126",
       "status": "created",
       "auto": false,
       "title": "外資今年已提款3.4兆！5個重點看懂台股為何殺不停",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-yutinghao-20261126_20261126",
+      "topic": "pn-yutinghao-20261126",
+      "date": "20261126",
+      "status": "created",
+      "auto": false,
+      "title": "外資為何狂提款3.4兆？3個關鍵看懂台股急漲急跌",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-zhaohua-20261126_20261126",
+      "topic": "pn-zhaohua-20261126",
+      "date": "20261126",
+      "status": "created",
+      "auto": false,
+      "title": "PCE超預期台股仍反彈：3個訊號看AI股落底了沒",
       "channels": [
         "fb",
         "ig",
@@ -169,5 +268,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T09:22:40.636Z"
+  "generatedAt": "2026-11-26T11:24:57.134Z"
 }
