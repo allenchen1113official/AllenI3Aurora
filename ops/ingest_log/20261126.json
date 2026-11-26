@@ -182,6 +182,26 @@
       }
     },
     {
+      "id": "cs_pn-caijing-20261126_20261126",
+      "topic": "pn-caijing-20261126",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_pn-yutinghao-20261126_20261126",
       "topic": "pn-yutinghao-20261126",
       "queueState": "done",
@@ -302,6 +322,19 @@
       ]
     },
     {
+      "id": "cs_pn-caijing-20261126_20261126",
+      "topic": "pn-caijing-20261126",
+      "date": "20261126",
+      "status": "created",
+      "auto": false,
+      "title": "AI股為何腰斬？看懂美中管制的3個關鍵與台灣供應鏈風險",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_pn-yutinghao-20261126_20261126",
       "topic": "pn-yutinghao-20261126",
       "date": "20261126",
@@ -367,5 +400,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T15:02:01.909Z"
+  "generatedAt": "2026-11-26T16:04:23.107Z"
 }
