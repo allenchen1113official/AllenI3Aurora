@@ -184,19 +184,19 @@
     {
       "id": "cs_pn-caijing-20261126_20261126",
       "topic": "pn-caijing-20261126",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -400,5 +400,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T16:04:23.107Z"
+  "generatedAt": "2026-11-26T17:12:05.206Z"
 }
