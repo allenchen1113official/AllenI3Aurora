@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-caijing-20261126",
+  "date": "2026-11-26",
+  "title": "AI股為何腰斬？看懂美中管制的3個關鍵與台灣供應鏈風險",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=caijing-20261126#pn-caijing-20261126",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_caijing-20261126_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_caijing-20261126_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_caijing-20261126_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-26T23:58:25+08:00"
+}
