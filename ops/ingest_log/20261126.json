@@ -104,20 +104,20 @@
     {
       "id": "cs_dailypick_20261126",
       "topic": "dailypick",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112229035524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgNSj4glT7Z/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgNSmBzlZ91",
         "error": null
       }
     },
@@ -334,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T14:10:57.491Z"
+  "generatedAt": "2026-11-26T14:18:43.853Z"
 }
