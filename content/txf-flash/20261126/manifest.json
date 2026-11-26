@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "topic": "txf-flash",
+  "date": "2026-11-26",
+  "title": "加權大漲 956.38 點、外資仍賣超 491.81 億：給期貨交易人的 3 個籌碼訊號",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "TXFFlash_Chips_2026-11-26.png",
+        "TXFFlash_Flash_2026-11-26.png",
+        "TXFFlash_Retail_2026-11-26.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "TXFFlash_Chips_2026-11-26.png",
+        "TXFFlash_Flash_2026-11-26.png",
+        "TXFFlash_Retail_2026-11-26.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "TXFFlash_Chips_2026-11-26.png",
+        "TXFFlash_Flash_2026-11-26.png",
+        "TXFFlash_Retail_2026-11-26.png"
+      ]
+    }
+  },
+  "producedBy": "trig_01AX9chVhyFpy13mDpmyLYQJ",
+  "producedAt": "2026-11-26T16:56:33+08:00"
+}
