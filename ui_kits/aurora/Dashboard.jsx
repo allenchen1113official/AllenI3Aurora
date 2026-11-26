@@ -37,17 +37,21 @@
      取收盤、其餘每日 01:00 更新——寫入此檔。
      前端同源讀取，無 CORS 問題、必定可用，故不再依賴不穩定的公用代理。
 
-     額外強化：交易時段另嘗試由瀏覽器直接抓 MIS 即時（經公用 CORS 代理），
-     成功則覆蓋為更即時的值；失敗則沿用 taiex.json 的基準值。
+     額外強化：交易時段另在背景嘗試由瀏覽器抓 MIS 即時（經公用 CORS 代理，有逾時與退避），
+     成功則覆蓋為更即時的值；失敗則沿用已顯示的 taiex.json 基準值。
      所有來源皆失敗才退回 kit.jsx 內建值，不影響儀表板其他區塊。
      卡片點擊仍前往 Yahoo ^TWII 完整即時報價頁（見 kit.jsx 之 stats.link）。 */
   const TAIEX_JSON_URL = "/AllenI3Aurora/data/taiex.json";
   const TAIEX_REALTIME_API = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw&json=1&delay=0";
   // 公用 CORS 代理（依序嘗試）；僅用於瀏覽器端轉發未開放 CORS 的即時來源。
+  // 2026-11-26 實測：allorigins 常逾時、corsproxy.io 改為需 API key（401，已移除）。
+  // 公用代理不可靠，所以只當「加分項」：一律先顯示同源基準值，代理在背景嘗試且有逾時。
   const CORS_PROXIES = [
     (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
-    (u) => "https://corsproxy.io/?url=" + encodeURIComponent(u),
   ];
+  const TAIEX_FETCH_TIMEOUT = 5000;          // 每個來源最多等 5 秒
+  const TAIEX_RT_BACKOFF_AFTER = 3;          // 即時來源連續失敗 3 次後…
+  const TAIEX_RT_BACKOFF_MS = 5 * 60 * 1000; // …改為每 5 分鐘才再試一次
   // 刷新頻率（2026-11-26）：交易期間每 20 秒（即時）；收盤後 13:30–14:00 每分鐘（盡快換成收盤值）；
   // 其餘每 10 分鐘重讀同源基準檔（伺服器端非交易時段每日 01:00 更新，重讀成本極低）。
   const TAIEX_POLL_TRADING = 20 * 1000;
@@ -92,15 +96,18 @@
     } catch { return TAIEX_POLL_IDLE; }
   }
 
-  /* 依序嘗試直接抓取與各 CORS 代理，回傳解析後 JSON；全數失敗回傳 null。 */
+  /* 依序嘗試各 CORS 代理，回傳解析後 JSON；全數失敗回傳 null。每個來源有逾時，不會卡住。
+     （證交所 MIS 未開放 CORS，瀏覽器直連必定失敗，故不再嘗試直連。） */
   async function fetchJSONResilient(url) {
-    const attempts = [url, ...CORS_PROXIES.map((f) => f(url))];
-    for (const u of attempts) {
+    for (const u of CORS_PROXIES.map((f) => f(url))) {
+      const ctl = new AbortController();
+      const to = setTimeout(() => ctl.abort(), TAIEX_FETCH_TIMEOUT);
       try {
-        const res = await fetch(u, { headers: { Accept: "application/json" } });
+        const res = await fetch(u, { headers: { Accept: "application/json" }, signal: ctl.signal });
         if (!res.ok) continue;
         return await res.json();
       } catch { /* 換下一個來源 */ }
+      finally { clearTimeout(to); }
     }
     return null;
   }
@@ -186,16 +193,23 @@
       let timer = null;
       const baseRef = { current: null }; // data/taiex.json 基準值（含走勢）
 
+      const rt = { fails: 0, nextTry: 0, ok: false }; // 瀏覽器端即時來源的失敗退避；ok＝上一輪即時值有效
+
       const refresh = async () => {
-        // 1) 先更新同源基準值（伺服器端即時／收盤與走勢）。
+        // 1) 先更新並「立即顯示」同源基準值（伺服器端交易期間每 2 分鐘更新）。
+        //    舊版要等瀏覽器端 MIS 回應後才顯示，代理一逾時首頁就停在內建／Firestore 預設值。
         const base = await fetchTaiexBaseline();
         if (base) baseRef.current = base;
-        // 2) 交易時段或基準過時：嘗試瀏覽器端 MIS，成功則以較新的值覆蓋。
-        if (taiexNeedsBrowserFetch(baseRef.current)) {
-          const rt = parseTaiexRealtime(await fetchJSONResilient(TAIEX_REALTIME_API), baseRef.current);
-          if (alive && rt) return setLive(rt);
-        }
+        const wantRt = taiexNeedsBrowserFetch(baseRef.current) && Date.now() >= rt.nextTry;
+        // 上一輪即時值有效且這輪還會再抓時，先不退回較舊的基準值（避免數字來回跳）。
+        if (alive && baseRef.current && !(rt.ok && wantRt)) setLive(baseRef.current);
+        // 2) 交易時段或基準過時：背景嘗試瀏覽器端 MIS，成功才以較新的值覆蓋。
+        if (!wantRt) { rt.ok = false; return; }
+        const got = parseTaiexRealtime(await fetchJSONResilient(TAIEX_REALTIME_API), baseRef.current);
+        if (got) { rt.fails = 0; rt.ok = true; if (alive) setLive(got); return; }
+        rt.ok = false;
         if (alive && baseRef.current) setLive(baseRef.current);
+        if (++rt.fails >= TAIEX_RT_BACKOFF_AFTER) rt.nextTry = Date.now() + TAIEX_RT_BACKOFF_MS;
       };
 
       const loop = async () => {
