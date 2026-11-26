@@ -84,19 +84,19 @@
     {
       "id": "cs_heatmap_20261126",
       "topic": "heatmap",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -301,5 +301,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T11:59:09.083Z"
+  "generatedAt": "2026-11-26T12:06:01.367Z"
 }
