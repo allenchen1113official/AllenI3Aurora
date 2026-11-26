@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-25T16:25:23.819Z",
+ "updatedAt": "2026-11-26T01:30:21.373Z",
  "items": [
   {
    "show": "財經一路發",
@@ -25,23 +25,23 @@
   },
   {
    "show": "AI懶人報",
-   "title": "EP492 – Claude Code 的 Code Mode：是什麼、什麼時候該開、怎麼用",
-   "date": "2026.11.25",
-   "duration": "6m",
+   "title": "EP493 – Claude Code 新指令 /ship：寫完一個指令送上線，AI 自己審、自己修，哪些能放心交給它",
+   "date": "2026.11.26",
+   "duration": "5m",
    "tone": "illumination",
-   "url": "https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/78789eba-1e73-478a-8baf-5b8bdcd4e1ea",
-   "summary": "你在 Claude Code 接了 GitHub 的 MCP，叫它從兩百個還開著的 issue 裡挑出跟登入有關的五個：兩百個 issue 的內容全塞進 context，之後每一輪都要再讀一次。Claude Code 新的實驗功能 Code Mode，讓 Claude 改寫一段 JavaScript 把工具當函式呼叫，在程式裡篩完，只把答案帶回來。\n這一集把官方文件和大家的實測整理成三件事：差在哪、什麼時候該開、怎麼用。\n📌 重點",
+   "url": "https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/477450bd-ae87-4a31-aa61-8adacba5e9fb",
+   "summary": "Claude Code 十分鐘就把功能寫好，但開 PR、等測試、修紅燈、回同事留言，一個下午就沒了。Anthropic 在 Claude Code 加了 /ship：寫完打一個指令，Claude 幫你開 PR、自己審、盯著 PR 修到測試通過，最後的合併留給你按。\n這一集講清楚：/ship 實際做了哪四步、怎麼開（要什麼版本、哪些情況看守不會啟動）、它跟 Team／Enterprise 的團隊版 Claude Ship（Code Review、PR Steward、Claude Approvals）差在哪、哪些事…",
    "status": "published",
    "source": "rss"
   },
   {
    "show": "游庭皓的財經皓角",
-   "title": "2026/11/25(三)反彈乏力 關稅帝君回來了?股市暴漲暴跌時代!牛市修正還是泡沫破裂？【早晨財經速解讀】",
-   "date": "2026.11.25",
-   "duration": "34m",
+   "title": "2026/11/26(四)急漲急跌!多空大屠殺?外資提款無底洞 國家隊能守住台股嗎?【早晨財經速解讀】",
+   "date": "2026.11.26",
+   "duration": "32m",
    "tone": "insight",
-   "url": "https://soundcloud.com/l9j0totnyhgh/2026-11-25",
-   "summary": "主題：反彈乏力 關稅帝君回來了?股市暴漲暴跌時代!牛市修正還是泡沫破裂？",
+   "url": "https://soundcloud.com/l9j0totnyhgh/2026-11-26",
+   "summary": "主題：急漲急跌!多空大屠殺?外資提款無底洞 國家隊能守住台股嗎?",
    "status": "published",
    "source": "rss"
   },
