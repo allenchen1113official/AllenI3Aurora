@@ -104,19 +104,19 @@
     {
       "id": "cs_dailypick_20261126",
       "topic": "dailypick",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -334,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T14:04:06.371Z"
+  "generatedAt": "2026-11-26T14:10:57.491Z"
 }
