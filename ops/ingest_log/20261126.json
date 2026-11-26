@@ -42,6 +42,26 @@
       }
     },
     {
+      "id": "cs_noon_20261126",
+      "topic": "noon",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_pn-caijing-20261125_20261126",
       "topic": "pn-caijing-20261125",
       "queueState": "done",
@@ -77,6 +97,19 @@
       ]
     },
     {
+      "id": "cs_noon_20261126",
+      "topic": "noon",
+      "date": "20261126",
+      "status": "created",
+      "auto": false,
+      "title": "13 則午間訊號：那指逼近熊市，輝達下一步怎麼走？給科技人的 AI×智慧交通×智慧水務 5 大領域速覽",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_pn-caijing-20261125_20261126",
       "topic": "pn-caijing-20261125",
       "date": "20261126",
@@ -103,5 +136,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T01:52:30.317Z"
+  "generatedAt": "2026-11-26T03:58:23.398Z"
 }
