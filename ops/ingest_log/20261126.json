@@ -2,6 +2,26 @@
   "date": "2026-11-26",
   "posts": [
     {
+      "id": "cs_txf-flash_20261126",
+      "topic": "txf-flash",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_tsm-prebrief_20261126",
       "topic": "tsm-prebrief",
       "queueState": "done",
@@ -134,7 +154,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_txf-flash_20261126",
+      "topic": "txf-flash",
+      "date": "20261126",
+      "status": "created",
+      "auto": false,
+      "title": "加權大漲 956.38 點、外資仍賣超 491.81 億：給期貨交易人的 3 個籌碼訊號",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-26T04:26:11.726Z"
+  "generatedAt": "2026-11-26T09:00:04.250Z"
 }
