@@ -82,6 +82,26 @@
       }
     },
     {
+      "id": "cs_heatmap_20261126",
+      "topic": "heatmap",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_pn-ailanren-20261126_20261126",
       "topic": "pn-ailanren-20261126",
       "queueState": "draft",
@@ -170,6 +190,19 @@
       "status": "created",
       "auto": false,
       "title": "今日關注動態｜艾倫極光日報 2026/11/26（週四）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_heatmap_20261126",
+      "topic": "heatmap",
+      "date": "20261126",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜台股熱力圖．上市／上櫃 2026/11/26（週四）",
       "channels": [
         "fb",
         "ig",
@@ -268,5 +301,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T11:24:57.134Z"
+  "generatedAt": "2026-11-26T11:59:09.083Z"
 }
