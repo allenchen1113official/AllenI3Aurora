@@ -8,6 +8,10 @@
    - 交易時段（台北 週一至週五 09:00–13:30）：抓 MIS 即時指數（tse_t00.tw）。
    - 非交易時段或即時抓取失敗：抓 OpenAPI「加權指數歷史資料」最新收盤。
    走勢（sparkline）一律取 OpenAPI 近 9 個交易日收盤。
+
+   何時執行由 taiex-update.yml 常駐輪詢依 scripts/taiex-schedule.mjs 決定：
+   交易期間每 2 分鐘、收盤後 13:36／13:45／15:10、其餘每日 01:00。
+   內容與現有檔案相同且 6 小時內寫過 → 不重寫（避免只改時間戳的空提交）。
    ===================================================================== */
 import { writeFileSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -127,6 +131,18 @@ export function pickResult({ realtime, history, existing }) {
   return result;
 }
 
+/* 是否需要寫檔：內容有變就寫；內容相同時，距上次寫入滿 TOUCH_HOURS 才更新時間戳
+   （讓每日 01:00 的例行更新仍留下「有在跑」的紀錄，供排程監控判斷新鮮度）。 */
+const TOUCH_HOURS = 6;
+const CONTENT_KEYS = ["value", "delta", "points", "pct", "data", "date", "asOf", "live"];
+export function shouldWrite(result, existing, now = Date.now()) {
+  if (!existing) return true;
+  const same = CONTENT_KEYS.every((k) => JSON.stringify(result[k] ?? null) === JSON.stringify(existing[k] ?? null));
+  if (!same) return true;
+  const last = Date.parse(existing.updatedAt || "");
+  return !Number.isFinite(last) || +now - last >= TOUCH_HOURS * 3600 * 1000;
+}
+
 function readExisting() {
   try { return JSON.parse(readFileSync(OUT, "utf8")); } catch { return null; }
 }
@@ -154,6 +170,10 @@ async function main() {
 
   if (!result.date) result.date = resultDate(result);
   if (!result.data && existing && Array.isArray(existing.data)) result.data = existing.data;
+  if (!shouldWrite(result, existing)) {
+    console.log("內容與現有檔案相同（", result.date, result.value, "），不重寫。");
+    return;
+  }
   result.updatedAt = new Date().toISOString();
 
   mkdirSync(dirname(OUT), { recursive: true });
