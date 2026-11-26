@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261125",
+    "kind": "熱力圖",
+    "date": "2026.11.25",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.11.25",
+    "cover": "https://drive.google.com/thumbnail?id=1ZMii7-r9dFSnneh3FKFla2oekupwjvGR&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1ZMii7-r9dFSnneh3FKFla2oekupwjvGR&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1ZMii7-r9dFSnneh3FKFla2oekupwjvGR&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1lzIMqVEiWsyr8TRf5XcReXnbnqDS6qOw&sz=w1600",
+    "summary": "加權指數收38,195點、重挫1,926點（-4.80%），成交值約1.19兆元，外資賣超約1,237億元；AI/半導體、金融、電子權值股齊殺，少數傳產與航運逆勢收紅。，焦點個股（皆為11/25收盤查證）：台積電 2,150元 -3.59%、聯發科…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261124",
     "kind": "熱力圖",
     "date": "2026.11.24",
