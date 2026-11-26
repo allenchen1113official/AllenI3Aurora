@@ -1,27 +1,19 @@
 {
  "date": "2026-11-26",
  "asof": "2026-11-26",
- "updatedAt": "2026-11-26T11:34:41.738Z",
+ "updatedAt": "2026-11-26T15:19:03.789Z",
  "rule": "指定下一檔 → 優先組（上市市值前 100＋上櫃市值前 50，依市值）→ 其餘上市櫃普通股（依市值）；已分析不重複、略過者排除",
  "counts": {
   "total": 1988,
   "tier1": 150,
-  "done": 3,
-  "pending": 1985,
-  "tier1Pending": 147,
+  "done": 4,
+  "pending": 1984,
+  "tier1Pending": 146,
   "skipped": 0,
   "delisted": 0,
-  "newToday": 1
+  "newToday": 0
  },
  "next": [
-  {
-   "code": "2317",
-   "name": "鴻海",
-   "market": "TWSE",
-   "tier": 1,
-   "rank": 3,
-   "pinned": 0
-  },
   {
    "code": "2308",
    "name": "台達電",
@@ -93,15 +85,21 @@
    "tier": 1,
    "rank": 12,
    "pinned": 0
+  },
+  {
+   "code": "2382",
+   "name": "廣達",
+   "market": "TWSE",
+   "tier": 1,
+   "rank": 13,
+   "pinned": 0
   }
  ],
- "newToday": [
-  "7869"
- ],
+ "newToday": [],
  "items": [
 {"code":"2330","name":"台積電","market":"TWSE","industry":"半導體業","mcap":557546,"close":2150,"tier":1,"marketRank":1,"status":"done","pinned":0,"analyzedAt":"2026-11-24","score":69.9,"light":"黃燈","rating":"中性","folder":"daily_pick/20261124","addedAt":"2026-11-24","isNew":false,"listed":"1994-09-05","rank":1},
 {"code":"2454","name":"聯發科","market":"TWSE","industry":"半導體業","mcap":58499,"close":3645,"tier":1,"marketRank":2,"status":"done","pinned":0,"analyzedAt":"2026-11-25","score":51.9,"light":"橘燈","rating":"偏弱","folder":"daily_pick/20261125","addedAt":"2026-11-24","isNew":false,"listed":"2001-07-23","rank":2},
-{"code":"2317","name":"鴻海","market":"TWSE","industry":"其他電子業","mcap":29066,"close":206.5,"tier":1,"marketRank":3,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"1991-06-18","rank":3},
+{"code":"2317","name":"鴻海","market":"TWSE","industry":"其他電子業","mcap":29066,"close":206.5,"tier":1,"marketRank":3,"status":"done","pinned":0,"analyzedAt":"2026-11-26","score":62.6,"light":"黃燈","rating":"中性","folder":"daily_pick/20261126","addedAt":"2026-11-24","isNew":false,"listed":"1991-06-18","rank":3},
 {"code":"2308","name":"台達電","market":"TWSE","industry":"電子零組件業","mcap":27404,"close":1055,"tier":1,"marketRank":4,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"1988-12-19","rank":4},
 {"code":"3711","name":"日月光投控","market":"TWSE","industry":"半導體業","mcap":21902,"close":488,"tier":1,"marketRank":5,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"2018-04-30","rank":5},
 {"code":"2881","name":"富邦金","market":"TWSE","industry":"金融保險","mcap":18560,"close":132.5,"tier":1,"marketRank":6,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"2001-12-19","rank":6},
@@ -986,7 +984,7 @@
 {"code":"5608","name":"四維航","market":"TWSE","industry":"航運業","mcap":54,"close":13.95,"tier":2,"marketRank":642,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"2003-08-25","rank":885},
 {"code":"6184","name":"大豐電","market":"TWSE","industry":"其他業","mcap":54,"close":34.15,"tier":2,"marketRank":643,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"2005-02-15","rank":886},
 {"code":"6732","name":"昇佳電子","market":"TPEx","industry":"半導體業","mcap":54,"close":111,"tier":2,"marketRank":244,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"2020-06-08","rank":887},
-{"code":"7869","name":"宏于電機","market":"TPEx","industry":"","mcap":54,"close":180.5,"tier":2,"marketRank":245,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-26","isNew":true,"listed":"","rank":888},
+{"code":"7869","name":"宏于電機","market":"TPEx","industry":"電機機械","mcap":54,"close":180.5,"tier":2,"marketRank":245,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-26","isNew":false,"listed":"2026-11-26","rank":888},
 {"code":"8927","name":"北基","market":"TPEx","industry":"油電燃氣業","mcap":54,"close":12.9,"tier":2,"marketRank":246,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"2000-11-02","rank":889},
 {"code":"1603","name":"華電","market":"TWSE","industry":"電器電纜","mcap":53,"close":27.65,"tier":2,"marketRank":644,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"1968-06-03","rank":890},
 {"code":"2399","name":"映泰","market":"TWSE","industry":"電腦及週邊設備業","mcap":53,"close":29.85,"tier":2,"marketRank":645,"status":"pending","pinned":0,"analyzedAt":"","score":null,"light":"","rating":"","folder":"","addedAt":"2026-11-24","isNew":false,"listed":"1999-12-16","rank":891},
