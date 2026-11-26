@@ -44,7 +44,7 @@
     {
       "id": "cs_noon_20261126",
       "topic": "noon",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122112114513524851",
@@ -56,8 +56,8 @@
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgMOdnHjuXW",
         "error": null
       }
     },
@@ -136,5 +136,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T04:19:08.697Z"
+  "generatedAt": "2026-11-26T04:26:11.726Z"
 }
