@@ -32,8 +32,9 @@
 
   /* ── 加權指數 TAIEX 即時／收盤資料 ────────────────────────────────────
      為確保「儀表板首頁永遠是最新」，主要資料來源改為同源的 data/taiex.json：
-     由 GitHub Actions 定時任務（.github/workflows/taiex-update.yml）在伺服器端
-     向證交所抓取——交易時段抓 MIS 即時、非交易抓 OpenAPI 收盤——寫入此檔。
+     由 GitHub Actions 常駐輪詢（.github/workflows/taiex-update.yml）在伺服器端
+     向證交所抓取——交易日交易期間每 2 分鐘抓 MIS 即時、收盤後 13:36／13:45／15:10
+     取收盤、其餘每日 01:00 更新——寫入此檔。
      前端同源讀取，無 CORS 問題、必定可用，故不再依賴不穩定的公用代理。
 
      額外強化：交易時段另嘗試由瀏覽器直接抓 MIS 即時（經公用 CORS 代理），
@@ -47,8 +48,10 @@
     (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
     (u) => "https://corsproxy.io/?url=" + encodeURIComponent(u),
   ];
-  // 交易時段每 20 秒刷新；非交易時段每 10 分鐘刷新一次。
+  // 刷新頻率（2026-11-26）：交易期間每 20 秒（即時）；收盤後 13:30–14:00 每分鐘（盡快換成收盤值）；
+  // 其餘每 10 分鐘重讀同源基準檔（伺服器端非交易時段每日 01:00 更新，重讀成本極低）。
   const TAIEX_POLL_TRADING = 20 * 1000;
+  const TAIEX_POLL_CLOSING = 60 * 1000;
   const TAIEX_POLL_IDLE = 10 * 60 * 1000;
 
   const taiexNumFmt = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -74,6 +77,19 @@
       if (t.weekday === "Sat" || t.weekday === "Sun") return false;
       return t.minutes >= 9 * 60 && t.minutes <= 13 * 60 + 30;
     } catch { return false; }
+  }
+
+  /* 下一次刷新的間隔：交易期間即時；剛收盤加快；開盤前不睡過 09:00（頁面開著也能準時切到即時）。 */
+  function taiexNextPollMs(now = new Date()) {
+    try {
+      if (isTaiexTradingHours(now)) return TAIEX_POLL_TRADING;
+      const t = taipeiNowParts(now);
+      if (t.weekday === "Sat" || t.weekday === "Sun") return TAIEX_POLL_IDLE;
+      if (t.minutes > 13 * 60 + 30 && t.minutes < 14 * 60) return TAIEX_POLL_CLOSING;
+      const toOpen = (9 * 60 - t.minutes) * 60 * 1000;
+      if (toOpen > 0 && toOpen < TAIEX_POLL_IDLE) return Math.max(toOpen, 5000);
+      return TAIEX_POLL_IDLE;
+    } catch { return TAIEX_POLL_IDLE; }
   }
 
   /* 依序嘗試直接抓取與各 CORS 代理，回傳解析後 JSON；全數失敗回傳 null。 */
@@ -184,7 +200,7 @@
 
       const loop = async () => {
         await refresh();
-        if (alive) timer = setTimeout(loop, isTaiexTradingHours() ? TAIEX_POLL_TRADING : TAIEX_POLL_IDLE);
+        if (alive) timer = setTimeout(loop, taiexNextPollMs());
       };
       loop();
 

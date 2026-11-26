@@ -60,3 +60,57 @@ test("OpenAPI 比 MIS 新時取 OpenAPI", () => {
   const rt = { value: "40,092.11", date: "2026-11-17", live: false };
   assert.equal(pickResult({ realtime: rt, history: h2, existing: null }).value, "40,500.00");
 });
+
+/* ── 更新時程（scripts/taiex-schedule.mjs）與空提交防護 ───────────────── */
+import { planNext } from "./taiex-schedule.mjs";
+import { shouldWrite } from "./update-taiex.mjs";
+
+test("時程：交易日交易期間每 2 分鐘即時更新", () => {
+  // 2026-11-26（週四）開盤後、資料日已是今天
+  assert.deepEqual(planNext(tp("2026-11-26T09:00:00"), "2026-11-25"), { phase: "trading", delaySec: 120, at: "2026-11-26 09:02" });
+  const p = planNext(tp("2026-11-26T12:32:00"), "2026-11-26");
+  assert.equal(p.phase, "trading"); assert.equal(p.delaySec, 120);
+});
+
+test("時程：接近收盤不睡過頭，13:36 取收盤", () => {
+  const p = planNext(tp("2026-11-26T13:34:30"), "2026-11-26");
+  assert.equal(p.phase, "trading"); assert.equal(p.delaySec, 90); assert.equal(p.at, "2026-11-26 13:36");
+});
+
+test("時程：收盤後依序 13:45、15:10，之後等隔日 01:00", () => {
+  assert.deepEqual(planNext(tp("2026-11-26T13:36:10"), "2026-11-26"), { phase: "close", delaySec: 530, at: "2026-11-26 13:45" });
+  assert.equal(planNext(tp("2026-11-26T13:45:10"), "2026-11-26").at, "2026-11-26 15:10");
+  const night = planNext(tp("2026-11-26T15:10:30"), "2026-11-26");
+  assert.equal(night.phase, "daily"); assert.equal(night.at, "2026-11-27 01:00");
+});
+
+test("時程：01:00 更新後等當日開盤（平日）", () => {
+  const p = planNext(tp("2026-11-27T01:00:20"), "2026-11-26");
+  assert.equal(p.phase, "open"); assert.equal(p.at, "2026-11-27 09:00");
+});
+
+test("時程：週末與非交易日只在每日 01:00 更新", () => {
+  // 週五收盤後 → 週六 01:00 → 週日 01:00 → 週一 01:00 → 週一 09:00 開盤
+  assert.equal(planNext(tp("2026-11-27T15:10:30"), "2026-11-27").at, "2026-11-28 01:00");
+  assert.equal(planNext(tp("2026-11-28T01:00:30"), "2026-11-27").at, "2026-11-29 01:00");
+  assert.equal(planNext(tp("2026-11-29T01:00:30"), "2026-11-27").at, "2026-11-30 01:00");
+  assert.equal(planNext(tp("2026-11-30T01:00:30"), "2026-11-27").at, "2026-11-30 09:00");
+  assert.equal(planNext(tp("2026-11-28T10:00:00"), "2026-11-27").phase, "daily"); // 週六白天不輪詢
+});
+
+test("時程：平日休市（09:40 後仍無今日資料）改每 15 分鐘探測，收盤後不再更新", () => {
+  const p = planNext(tp("2026-11-26T09:41:00"), "2026-11-25");
+  assert.equal(p.phase, "probe"); assert.equal(p.delaySec, 900);
+  const after = planNext(tp("2026-11-26T13:40:00"), "2026-11-25");
+  assert.equal(after.phase, "daily"); assert.equal(after.at, "2026-11-27 01:00");
+});
+
+test("空提交防護：內容相同且 6 小時內寫過 → 不重寫；滿 6 小時或內容有變 → 寫", () => {
+  const ex = { value: "38,195.43", delta: "-4.80% · -1,926.92", points: -1926.92, pct: -4.8, data: [1, 2], date: "2026-11-25",
+    asOf: "2026-11-25 收盤", live: false, updatedAt: "2026-11-25T07:10:00.000Z" };
+  const same = { ...ex }; delete same.updatedAt;
+  assert.equal(shouldWrite(same, ex, Date.parse("2026-11-25T09:00:00Z")), false);
+  assert.equal(shouldWrite(same, ex, Date.parse("2026-11-25T17:00:00Z")), true);   // 台北 01:00 例行更新
+  assert.equal(shouldWrite({ ...same, value: "38,200.00" }, ex, Date.parse("2026-11-25T07:12:00Z")), true);
+  assert.equal(shouldWrite(same, null), true);
+});
