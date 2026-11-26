@@ -104,20 +104,20 @@
     {
       "id": "cs_stockradar_20261126",
       "topic": "stockradar",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112239655524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgNXwijkdcO/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgNXxonkc5M",
         "error": null
       }
     },
@@ -367,5 +367,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T14:39:23.608Z"
+  "generatedAt": "2026-11-26T15:02:01.909Z"
 }
