@@ -144,39 +144,39 @@
     {
       "id": "cs_pn-yutinghao-20261126_20261126",
       "topic": "pn-yutinghao-20261126",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112210117524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgNF6YMFZrk/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgNF6zSlU7z",
         "error": null
       }
     },
     {
       "id": "cs_pn-zhaohua-20261126_20261126",
       "topic": "pn-zhaohua-20261126",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112211317524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -301,5 +301,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T12:20:50.278Z"
+  "generatedAt": "2026-11-26T12:28:14.570Z"
 }
