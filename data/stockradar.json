@@ -1,9 +1,9 @@
 {
-  "date": "2026.11.25",
-  "dateLabel": "2026.11.25（最新）",
-  "asOf": "2026.11.26",
+  "date": "2026.11.26",
+  "dateLabel": "2026.11.26（最新）",
+  "asOf": "2026.11.27",
   "desc": "今日 TOP 10…",
-  "summary": "今日 TOP 10：騰輝-KY(6672)、定穎投控(3715)、敬鵬(2355)、長榮(2603)、健策(3653)、汎銓(6830)、鴻呈(6913)、允強(2034)、儒鴻(1476)、台玻(1802)，‧盤勢偏弱，10檔中僅健策收紅（+2.…",
+  "summary": "今日 TOP 10：騰輝電子-KY(6672)、貿聯-KY(3665)、長榮(2603)、健策(3653)、世芯-KY(3661)、雍智科技(6683)、敬鵬(2355)、定穎投控(3715)、汎銓(6830)、金像電(2368)，・10 檔全數收…",
   "hashtags": "#台股 #台股分析 #技術分析 #基本面分析 #投資理財 #KD指標 #均線 #籌碼分析 #選股雷達 #艾倫報報 #AllenI3Aurora",
   "signals": [
     {
@@ -35,39 +35,29 @@
   "top10": [
     {
       "code": "6672",
-      "name": "騰輝-KY",
-      "changePct": "-8.46%",
-      "up": false,
+      "name": "騰輝電子-KY",
+      "changePct": "+9.93%",
+      "up": true,
       "signals": [
         "om",
-        "rev",
         "eps"
       ]
     },
     {
-      "code": "3715",
-      "name": "定穎投控",
-      "changePct": "-3.30%",
-      "up": false,
+      "code": "3665",
+      "name": "貿聯-KY",
+      "changePct": "+9.82%",
+      "up": true,
       "signals": [
-        "gc",
-        "rev"
-      ]
-    },
-    {
-      "code": "2355",
-      "name": "敬鵬",
-      "changePct": "-6.96%",
-      "up": false,
-      "signals": [
+        "om",
         "eps"
       ]
     },
     {
       "code": "2603",
       "name": "長榮",
-      "changePct": "-1.75%",
-      "up": false,
+      "changePct": "+0.59%",
+      "up": true,
       "signals": [
         "om"
       ]
@@ -75,7 +65,27 @@
     {
       "code": "3653",
       "name": "健策",
-      "changePct": "+2.96%",
+      "changePct": "+9.95%",
+      "up": true,
+      "signals": [
+        "om",
+        "eps"
+      ]
+    },
+    {
+      "code": "3661",
+      "name": "世芯-KY",
+      "changePct": "+3.61%",
+      "up": true,
+      "signals": [
+        "gc",
+        "om"
+      ]
+    },
+    {
+      "code": "6683",
+      "name": "雍智科技",
+      "changePct": "+6.73%",
       "up": true,
       "signals": [
         "gc",
@@ -84,45 +94,39 @@
       ]
     },
     {
-      "code": "6830",
-      "name": "汎銓",
-      "changePct": "-6.50%",
-      "up": false,
-      "signals": []
-    },
-    {
-      "code": "6913",
-      "name": "鴻呈",
-      "changePct": "-2.05%",
-      "up": false,
+      "code": "2355",
+      "name": "敬鵬",
+      "changePct": "+9.85%",
+      "up": true,
       "signals": [
-        "om",
-        "rev",
+        "gc",
+        "ma",
         "eps"
       ]
     },
     {
-      "code": "2034",
-      "name": "允強",
-      "changePct": "-4.00%",
-      "up": false,
+      "code": "3715",
+      "name": "定穎投控",
+      "changePct": "+8.71%",
+      "up": true,
       "signals": []
     },
     {
-      "code": "1476",
-      "name": "儒鴻",
-      "changePct": "-0.54%",
-      "up": false,
+      "code": "6830",
+      "name": "汎銓",
+      "changePct": "+7.27%",
+      "up": true,
       "signals": [
-        "om"
+        "gc"
       ]
     },
     {
-      "code": "1802",
-      "name": "台玻",
-      "changePct": "-6.26%",
-      "up": false,
+      "code": "2368",
+      "name": "金像電",
+      "changePct": "+9.94%",
+      "up": true,
       "signals": [
+        "om",
         "eps"
       ]
     }
@@ -131,9 +135,9 @@
     "title": "TOP 10 訊號雷達",
     "subtitle": "技術面轉強名單 · 依綜合訊號強度排序",
     "local": "assets/stockradar/stockradar-ig.png",
-    "drive": "https://drive.google.com/thumbnail?id=1j10kMG8936vGsVsBN5C-ysqjmzaB8hO2&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1Wcn29UdXzigre2BsyTttLfnvYlfyKjnL&sz=w1600"
   },
-  "source": "https://drive.google.com/file/d/17rmGW-gHuNn12C2nB1o3zNoGxOpbCg54/view?usp=drivesdk",
+  "source": "https://drive.google.com/file/d/1G_d97JfomTdPK6CFTrAWFqUaNQ7PloZg/view?usp=drivesdk",
   "note": "本報表所有數據皆為技術面與公開財務資訊之客觀整理，僅供研究參考，不構成任何投資建議或買賣邀約。過去表現不代表未來績效，投資人應自行判斷產業前景、公司體質與市場風險，並自負盈虧。資料日期為 2026.08.14（TOP10 排行與技術指標採最近可得交易日 2026.08.13 收盤資料）。",
-  "updatedAt": "2026-11-26T11:51:40.968Z"
+  "updatedAt": "2026-11-26T20:30:35.590Z"
 }
