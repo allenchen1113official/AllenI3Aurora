@@ -184,20 +184,20 @@
     {
       "id": "cs_pn-caijing-20261126_20261126",
       "topic": "pn-caijing-20261126",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112257517524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgNnP4flF3G/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgNnQHJFA8-",
         "error": null
       }
     },
@@ -400,5 +400,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-26T17:12:05.206Z"
+  "generatedAt": "2026-11-26T17:19:12.210Z"
 }
