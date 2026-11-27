@@ -64,27 +64,27 @@
     {
       "id": "cs_heatmap_20261127",
       "topic": "heatmap",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112478743524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgQG3FCFUMJ/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgQG4XGFSBv",
         "error": null
       }
     },
     {
       "id": "cs_stockradar_20261127",
       "topic": "stockradar",
-      "queueState": "draft",
+      "queueState": "rejected",
       "fb": {
         "state": "draft",
         "url": null,
@@ -598,5 +598,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T15:49:45.656Z"
+  "generatedAt": "2026-11-27T16:32:07.193Z"
 }
