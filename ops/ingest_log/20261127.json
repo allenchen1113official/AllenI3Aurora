@@ -20,6 +20,166 @@
         "url": "https://www.threads.com/@allenchen1113.official/post/DgOZ09wIItG",
         "error": null
       }
+    },
+    {
+      "id": "cs_yt-LokQyLFPUOA_20261127",
+      "topic": "yt-LokQyLFPUOA",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-Lu0hunynWJY_20261127",
+      "topic": "yt-Lu0hunynWJY",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-Tk12gOkOdb4_20261127",
+      "topic": "yt-Tk12gOkOdb4",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-Z4gvkmJ8q48_20261127",
+      "topic": "yt-Z4gvkmJ8q48",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-ZY1D1_IksVI_20261127",
+      "topic": "yt-ZY1D1_IksVI",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-hwWlEuI359w_20261127",
+      "topic": "yt-hwWlEuI359w",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-pC-VBly1Y00_20261127",
+      "topic": "yt-pC-VBly1Y00",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-s3r_42caK8I_20261127",
+      "topic": "yt-s3r_42caK8I",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
@@ -35,7 +195,111 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_yt-hwWlEuI359w_20261127",
+      "topic": "yt-hwWlEuI359w",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "AI 證明黎曼猜想？1,700 萬行沒人看懂的證明，價值在哪",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-LokQyLFPUOA_20261127",
+      "topic": "yt-LokQyLFPUOA",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "14 個 Home Assistant 儀表板逐一評分：好看又好用的關鍵是什麼？",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-Lu0hunynWJY_20261127",
+      "topic": "yt-Lu0hunynWJY",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "4 招搞定 Home Assistant 在家偵測：網路＋GPS 組合最穩",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-pC-VBly1Y00_20261127",
+      "topic": "yt-pC-VBly1Y00",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "Home Assistant 儀表板 7 條規則：3 秒內找到任何控制",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-s3r_42caK8I_20261127",
+      "topic": "yt-s3r_42caK8I",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "Home Assistant 新手必懂：場景、腳本、自動化怎麼選？2 個問題就判斷",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-Tk12gOkOdb4_20261127",
+      "topic": "yt-Tk12gOkOdb4",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "Home Assistant 新手必看：11 個少走冤枉路的設定技巧",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-Z4gvkmJ8q48_20261127",
+      "topic": "yt-Z4gvkmJ8q48",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "Home Assistant 新手如何上手？3 種協定＋3 段式自動化一次搞懂",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-ZY1D1_IksVI_20261127",
+      "topic": "yt-ZY1D1_IksVI",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "Home Assistant 新手：不到 24 分鐘從開箱到第一條自動化",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-27T00:39:07.547Z"
+  "generatedAt": "2026-11-27T02:34:25.008Z"
 }
