@@ -24,60 +24,60 @@
     {
       "id": "cs_noon_20261127",
       "topic": "noon",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112337833524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgOyEF9DUsV/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgOyFQHDfjS",
         "error": null
       }
     },
     {
       "id": "cs_yt-LokQyLFPUOA_20261127",
       "topic": "yt-LokQyLFPUOA",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112338517524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgOyXHZjRz2/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgOyXulDVw_",
         "error": null
       }
     },
     {
       "id": "cs_yt-Lu0hunynWJY_20261127",
       "topic": "yt-Lu0hunynWJY",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112338955524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgOypnADXER/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgOyqoHjWJT",
         "error": null
       }
     },
@@ -334,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T04:05:50.146Z"
+  "generatedAt": "2026-11-27T04:14:11.739Z"
 }
