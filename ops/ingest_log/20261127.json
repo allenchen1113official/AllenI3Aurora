@@ -104,59 +104,59 @@
     {
       "id": "cs_pn-ailanren-20261127_20261127",
       "topic": "pn-ailanren-20261127",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112480393524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgQIAY5lQid",
         "error": null
       }
     },
     {
       "id": "cs_pn-caijing-20261127_20261127",
       "topic": "pn-caijing-20261127",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112479841524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgQHtSBFRPe/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgQHtqnFeJX",
         "error": null
       }
     },
     {
       "id": "cs_pn-yutinghao-20261127_20261127",
       "topic": "pn-yutinghao-20261127",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -164,19 +164,19 @@
     {
       "id": "cs_pn-zhaohua-20261127_20261127",
       "topic": "pn-zhaohua-20261127",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -304,20 +304,20 @@
     {
       "id": "cs_yt-p7C2QvmsM8M_20261127",
       "topic": "yt-p7C2QvmsM8M",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112479973524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgQHvMAlezg/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgQHvkmlSaS",
         "error": null
       }
     },
@@ -598,5 +598,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T16:32:07.193Z"
+  "generatedAt": "2026-11-27T16:39:53.798Z"
 }
