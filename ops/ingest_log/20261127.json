@@ -102,17 +102,37 @@
       }
     },
     {
+      "id": "cs_dailypick_20261127",
+      "topic": "dailypick",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_pn-ailanren-20261127_20261127",
       "topic": "pn-ailanren-20261127",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122112480393524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgQIAB-FQhh/",
         "error": null
       },
       "th": {
@@ -144,40 +164,40 @@
     {
       "id": "cs_pn-yutinghao-20261127_20261127",
       "topic": "pn-yutinghao-20261127",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112480699524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgQIXYCFbTZ/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgQIX4xlRjC",
         "error": null
       }
     },
     {
       "id": "cs_pn-zhaohua-20261127_20261127",
       "topic": "pn-zhaohua-20261127",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112480789524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgQIY-IFXBY/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgQIZY9lU8_",
         "error": null
       }
     },
@@ -370,6 +390,19 @@
       "status": "created",
       "auto": false,
       "title": "今日關注動態｜艾倫極光日報 2026/11/27（週五）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_dailypick_20261127",
+      "topic": "dailypick",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "極光日報・每日來一股｜台達電 2308 12 面向健檢 2026/11/27",
       "channels": [
         "fb",
         "ig",
@@ -598,5 +631,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T16:39:53.798Z"
+  "generatedAt": "2026-11-27T16:47:57.530Z"
 }
