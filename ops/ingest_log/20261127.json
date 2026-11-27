@@ -104,7 +104,7 @@
     {
       "id": "cs_yt-Z4gvkmJ8q48_20261127",
       "topic": "yt-Z4gvkmJ8q48",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122112340815524851",
@@ -116,8 +116,8 @@
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgO1oUGDe7i",
         "error": null
       }
     },
@@ -164,41 +164,41 @@
     {
       "id": "cs_yt-pC-VBly1Y00_20261127",
       "topic": "yt-pC-VBly1Y00",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122112341805524851",
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgO1Sa8DWwG/",
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgO1S87Dbbr",
         "error": null
       }
     },
     {
       "id": "cs_yt-s3r_42caK8I_20261127",
       "topic": "yt-s3r_42caK8I",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112342645524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgO1qlADSqd/",
         "error": null
       },
       "th": {
-        "state": "approved",
+        "state": "failed",
         "url": null,
-        "error": null
+        "error": "The media with id 18166472191500431 cannot be found."
       }
     }
   ],
@@ -334,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T04:37:04.338Z"
+  "generatedAt": "2026-11-27T04:44:44.420Z"
 }
