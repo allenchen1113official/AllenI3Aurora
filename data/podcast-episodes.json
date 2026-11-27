@@ -1,11 +1,11 @@
 {
- "updatedAt": "2026-11-27T03:28:19.525Z",
+ "updatedAt": "2026-11-27T12:06:04.280Z",
  "items": [
   {
    "show": "財經一路發",
    "title": "美中AI管制大戰 台灣全鏈風險 2026.11.26",
    "date": "2026.11.26",
-   "duration": "41m",
+   "duration": "42m",
    "tone": "insight",
    "url": "https://open.firstory.fm/story/cmwxhalr800g401y94bk0elq0",
    "summary": "【跨計畫查詢服務平台 即將上線】\n跨機關、跨計畫，同一入口查。填表單，上線第一時間通知你\n來賓：《天下雜誌》資深副總主筆 林宏達\n主題：美中AI管制大戰 台灣全鏈風險",
@@ -14,23 +14,23 @@
   },
   {
    "show": "兆華與股惑仔",
-   "title": "EP1231｜PCE物價指數再測試，美股尾盤急拉，底部洗出來了沒？AI指標股低點反彈2成，市場情緒轉暖好現象！ft.選股教練 陳唯泰",
-   "date": "2026.11.26",
-   "duration": "50m",
+   "title": "EP1232｜風雨一週漸平靜，AI股默默回暖，可以期待低點已過？AI債信違約風險堪比2007年？謹慎中可以樂觀！ft.操盤手 黃豐凱",
+   "date": "2026.11.27",
+   "duration": "34m",
    "tone": "intelligence",
-   "url": "https://player.soundon.fm/p/91be014b-9f55-4bf3-a910-b232eda82d11/episodes/5bd715f9-551b-49c9-a571-a4444b764ec0",
-   "summary": "PCE物價指數再測試，美股尾盤急拉，底部洗出來了沒？AI指標股低點反彈2成，市場情緒轉暖好現象！",
+   "url": "https://player.soundon.fm/p/91be014b-9f55-4bf3-a910-b232eda82d11/episodes/b387d5fb-9f93-4a52-bf9b-310eda9ae7bd",
+   "summary": "風雨一週漸平靜，AI股默默回暖，可以期待低點已過？AI債信違約風險堪比2007年？謹慎中可以樂觀！",
    "status": "published",
    "source": "rss"
   },
   {
    "show": "AI懶人報",
-   "title": "EP493 – Claude Code 新指令 /ship：寫完一個指令送上線，AI 自己審、自己修，哪些能放心交給它",
-   "date": "2026.11.26",
-   "duration": "5m",
+   "title": "EP494 – 我把自媒體當成軟體開發：一個人帶 AI agent 團隊，搬進最前沿工程師的方法",
+   "date": "2026.11.27",
+   "duration": "11m",
    "tone": "illumination",
-   "url": "https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/477450bd-ae87-4a31-aa61-8adacba5e9fb",
-   "summary": "Claude Code 十分鐘就把功能寫好，但開 PR、等測試、修紅燈、回同事留言，一個下午就沒了。Anthropic 在 Claude Code 加了 /ship：寫完打一個指令，Claude 幫你開 PR、自己審、盯著 PR 修到測試通過，最後的合併留給你按。\n這一集講清楚：/ship 實際做了哪四步、怎麼開（要什麼版本、哪些情況看守不會啟動）、它跟 Team／Enterprise 的團隊版 Claude Ship（Code Review、PR Steward、Claude Approvals）差在哪、哪些事…",
+   "url": "https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/3b96427e-2296-4013-8cc3-c3327316444c",
+   "summary": "📚 這套做法和我每天在用的 skills，整理成課程「拆解AI懶人報內容工廠」：\nAI 一天就能做出十支影片，軟體業最前沿的工程師也正在處理同一個問題：AI 的產量爆炸之後，品質要怎麼守住。懶人報是我一個人帶著一組 AI agent 在做，一個半月多了 6 萬粉絲。我把整個自媒體流程當成軟體開發在經營：我像 tech lead 一樣分工、定規則、做判斷，agent 寫、agent 審、agent 把我的意見變成之後每支都會跑的檢查，流程一起越跑越好。這一集我拆解從 Lauren Tan 和 Matt Pococ…",
    "status": "published",
    "source": "rss"
   },

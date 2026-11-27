@@ -1,5 +1,18 @@
 [
   {
+    "no": "heatmap-20261126",
+    "kind": "熱力圖",
+    "date": "2026.11.26",
+    "tone": "insight",
+    "title": "台股熱力圖 · 上市／上櫃｜2026.11.26",
+    "cover": "https://drive.google.com/thumbnail?id=1TPEH54VgcPd79S0kbCOwVw3e_vhy9CJJ&sz=w1600",
+    "link": "https://drive.google.com/thumbnail?id=1TPEH54VgcPd79S0kbCOwVw3e_vhy9CJJ&sz=w1600",
+    "listed": "https://drive.google.com/thumbnail?id=1TPEH54VgcPd79S0kbCOwVw3e_vhy9CJJ&sz=w1600",
+    "otc": "https://drive.google.com/thumbnail?id=1C1Rt4HwU87aKu414pxbC651uGWc4Qbq1&sz=w1600",
+    "summary": "【上市熱力圖貼文文案】交易日 2026-11-26（週四，正常開市），資料備註：圖中上市100檔，其中95檔為當日收盤查證，5檔（聯詠3034、宏碁2353、新光金2888、三商壽2867、遠傳4904）為同類股模擬值。，加權指數大漲956.38點…",
+    "items": 2
+  },
+  {
     "no": "heatmap-20261125",
     "kind": "熱力圖",
     "date": "2026.11.25",

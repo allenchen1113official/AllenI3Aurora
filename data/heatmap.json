@@ -1,6 +1,6 @@
 {
-  "date": "2026.11.26",
-  "dateLabel": "2026.11.26（最新）",
+  "date": "2026.11.27",
+  "dateLabel": "2026.11.27",
   "asOf": "2026.11.27",
   "taiex": {
     "name": "加權指數 TAIEX",
@@ -16,20 +16,20 @@
     "changePct": "-1.27%",
     "up": false
   },
-  "summary": "【上市熱力圖貼文文案】交易日 2026-11-26（週四，正常開市），資料備註：圖中上市100檔，其中95檔為當日收盤查證，5檔（聯詠3034、宏碁2353、新光金2888、三商壽2867、遠傳4904）為同類股模擬值。，加權指數大漲956.38點…",
+  "summary": "加權指數收39,308.08點、漲156點(+0.40%)，權值股台積電+1.63%撐盤；金融股走弱，國泰金、華南金、開發金、第一金等回檔，群光(+9.78%)、緯穎(+6.37%)、啟碁(+4.15%)表現亮眼，創意(-5.57%)、友達(-3.…",
   "hashtags": "#台股 #台股熱力圖 #市值熱力圖 #上市 #上櫃 #台積電 #台光電 #群聯 #AI伺服器 #記憶體 #艾倫報報 #AllenI3Aurora #洞察世界 #累積智慧 #點亮未來",
   "listed": {
     "title": "上市 · TWSE",
     "subtitle": "市值前 100 大代表股",
     "local": "assets/heatmap/twse-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1TPEH54VgcPd79S0kbCOwVw3e_vhy9CJJ&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1pofwmh0jhbwAxkgsvsODbWaFx5O_gPT7&sz=w1600"
   },
   "otc": {
     "title": "上櫃 · TPEx",
     "subtitle": "市值前 50 大代表股",
     "local": "assets/heatmap/tpex-heatmap-fb.png",
-    "drive": "https://drive.google.com/thumbnail?id=1C1Rt4HwU87aKu414pxbC651uGWc4Qbq1&sz=w1600"
+    "drive": "https://drive.google.com/thumbnail?id=1LZOKLD7hmKGGBZe_k1MfKs5pgosAl3Xv&sz=w1600"
   },
   "note": "上市／上櫃市值熱力圖，方塊大小約略反映市值比例（經壓縮處理以利閱讀）。加權指數為證交所 2026/08/14 收盤資料（45,811.01、-0.46%），櫃買指數收 400.95（-1.27%）。熱力圖與個股漲跌幅由艾倫報報雲端流程（finance/heatmap/20260814）當日產出，資料僅供參考，不構成投資建議。",
-  "updatedAt": "2026-11-27T03:27:47.958Z"
+  "updatedAt": "2026-11-27T12:05:49.846Z"
 }
