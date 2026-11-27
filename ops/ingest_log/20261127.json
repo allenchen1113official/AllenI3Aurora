@@ -22,6 +22,26 @@
       }
     },
     {
+      "id": "cs_noon_20261127",
+      "topic": "noon",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_yt-LokQyLFPUOA_20261127",
       "topic": "yt-LokQyLFPUOA",
       "queueState": "draft",
@@ -197,6 +217,19 @@
       ]
     },
     {
+      "id": "cs_noon_20261127",
+      "topic": "noon",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "7 個午間訊號：台股狂漲 956 點後，最壞真的過了嗎？給科技人的 AI × 智慧交通 × 智慧水務速讀",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_yt-hwWlEuI359w_20261127",
       "topic": "yt-hwWlEuI359w",
       "date": "20261127",
@@ -301,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T02:34:25.008Z"
+  "generatedAt": "2026-11-27T03:58:45.439Z"
 }
