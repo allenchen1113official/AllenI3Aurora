@@ -262,6 +262,26 @@
       }
     },
     {
+      "id": "cs_yt-p7C2QvmsM8M_20261127",
+      "topic": "yt-p7C2QvmsM8M",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_yt-pC-VBly1Y00_20261127",
       "topic": "yt-pC-VBly1Y00",
       "queueState": "done",
@@ -434,6 +454,19 @@
       ]
     },
     {
+      "id": "cs_yt-p7C2QvmsM8M_20261127",
+      "topic": "yt-p7C2QvmsM8M",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "動作感測器抓不到坐著看電視的人？用 ESP32＋ESPresense 做逐房間偵測的 5 個重點",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_yt-pC-VBly1Y00_20261127",
       "topic": "yt-pC-VBly1Y00",
       "date": "20261127",
@@ -499,5 +532,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T12:03:36.593Z"
+  "generatedAt": "2026-11-27T13:28:53.154Z"
 }
