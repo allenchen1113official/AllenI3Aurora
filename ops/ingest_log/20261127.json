@@ -2,6 +2,26 @@
   "date": "2026-11-27",
   "posts": [
     {
+      "id": "cs_txf-flash_20261127",
+      "topic": "txf-flash",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_daily_20261127",
       "topic": "daily",
       "queueState": "done",
@@ -230,6 +250,19 @@
       ]
     },
     {
+      "id": "cs_txf-flash_20261127",
+      "topic": "txf-flash",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "外資小臺指淨額翻多 3,699 口、散戶小台多空比降至 -10.96%：給期貨交易人的 3 個籌碼訊號",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_yt-hwWlEuI359w_20261127",
       "topic": "yt-hwWlEuI359w",
       "date": "20261127",
@@ -334,5 +367,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T04:44:44.420Z"
+  "generatedAt": "2026-11-27T08:59:18.369Z"
 }
