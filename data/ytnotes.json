@@ -1,6 +1,398 @@
 {
- "updatedAt": "2026-11-24T21:26:31+08:00",
+ "updatedAt": "2026-11-27T10:28:56+08:00",
  "items": [
+  {
+   "id": "hwWlEuI359w",
+   "title": "Claude AI 最大的數學突破，有個問題。",
+   "author": "Two Minute Papers",
+   "channelUrl": "https://www.youtube.com/channel/UCbfYPyITQ-7l4upoX8nvctg",
+   "url": "https://www.youtube.com/watch?v=hwWlEuI359w",
+   "date": "2026-11-25",
+   "duration": "8 分 7 秒",
+   "category": "AI 應用",
+   "headline": "AI 證明黎曼猜想？1,700 萬行沒人看懂的證明，價值在哪",
+   "thumbnail": "https://i.ytimg.com/vi/hwWlEuI359w/hqdefault.jpg",
+   "summary": [
+    "影片稱 Claude 與一位 Anthropic／史丹佛研究者交出黎曼猜想證明，長達 1,700 萬行程式碼，作者坦言目前沒有人完整理解。",
+    "證明已用 Lean 形式化，影片說檢查跑完、多個獨立驗證系統都判定正確；另有 AI 在嘗試壓縮證明，整體進展仍有限。",
+    "作者提問：看不懂的證明有多少價值？很多研究早已假設猜想成立，真正重要的是證明過程能教我們什麼。",
+    "直覺版解說：質數計數的上下限在 x 很大時會拉開；把質數「疊起來秤」誤差會爆，theta 提升串接約 √x 次讓誤差受控。",
+    "已有人用一群 AI 代理公開挑戰 P vs NP；作者期待開放權重模型、公開協作的科學。以上皆為影片說法，有待學界查證。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "影片宣稱",
+      "note": "Claude 與研究者提出黎曼猜想證明，約 1,700 萬行"
+     },
+     {
+      "cue": "如何驗證",
+      "note": "以 Lean 形式化，影片稱多個獨立系統判定正確"
+     },
+     {
+      "cue": "看不懂的證明",
+      "note": "尚無人完整理解；AI 正嘗試壓縮成更易讀版本"
+     },
+     {
+      "cue": "核心直覺",
+      "note": "theta 提升串接約 √x 次，壓住質數計數誤差"
+     },
+     {
+      "cue": "下一步",
+      "note": "AI 代理公開挑戰 P vs NP，作者看好開放模型"
+     }
+    ],
+    "summary": "影片說法待查證；作者認為證明能教我們什麼比結論更重要"
+   },
+   "added": "20261127",
+   "cards": {
+    "fb": "assets/ytnotes/hwWlEuI359w-20261127_FB.png",
+    "ig": "assets/ytnotes/hwWlEuI359w-20261127_IG.png"
+   }
+  },
+  {
+   "id": "ZY1D1_IksVI",
+   "title": "Home Assistant 入門（搭配 Green！）",
+   "author": "HiTech Life",
+   "channelUrl": "https://www.youtube.com/channel/UCrWFuz0BIrUGB42-2GGsqqA",
+   "url": "https://www.youtube.com/watch?v=ZY1D1_IksVI",
+   "date": "2026-02-10",
+   "duration": "35 分 6 秒",
+   "category": "智慧家庭",
+   "headline": "Home Assistant 新手：不到 24 分鐘從開箱到第一條自動化",
+   "thumbnail": "https://i.ytimg.com/vi/ZY1D1_IksVI/hqdefault.jpg",
+   "summary": [
+    "免寫 YAML、免碰 Docker：用官方 Home Assistant Green 主機，插電接網路線約 5 分鐘就能完成安裝。",
+    "瀏覽器輸入 homeassistant.local:8123 進入設定；先建 admin 管理帳號，日常操作另開一般帳號。",
+    "插上 SONOFF Zigbee 接收器自動建網，再配對 ThirdReality 燈泡與 Aqara 動作感測器，免靠 Wi-Fi。",
+    "自動化＝觸發＋條件＋動作；用 toggle 輔助開關一鍵停用整組自動照明，不必逐條改規則。",
+    "升級前先做本機加密備份；建自訂儀表板給家人用，手機 App 開位置權限還能收動作通知。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "硬體選擇",
+      "note": "官方 Green 主機開箱即用，新手免碰 Proxmox"
+     },
+     {
+      "cue": "帳號分權",
+      "note": "admin 只拿來改設定，日常用一般帳號"
+     },
+     {
+      "cue": "Zigbee",
+      "note": "USB 接收器自建網路，省電又不靠家用 Wi-Fi"
+     },
+     {
+      "cue": "自動化三元素",
+      "note": "觸發、條件、動作；helper 當總開關"
+     },
+     {
+      "cue": "備份與手機",
+      "note": "升級前先備份；App 收通知、依在家與否運作"
+     }
+    ],
+    "summary": "一台主機加三樣配件，半小時內就能踏進智慧家庭"
+   },
+   "added": "20261127",
+   "cards": {
+    "fb": "assets/ytnotes/ZY1D1_IksVI-20261127_FB.png",
+    "ig": "assets/ytnotes/ZY1D1_IksVI-20261127_IG.png"
+   }
+  },
+  {
+   "id": "s3r_42caK8I",
+   "title": "如何使用 Home Assistant 的自動化、場景與腳本！",
+   "author": "Everything Smart Home",
+   "channelUrl": "https://www.youtube.com/channel/UCrVLgIniVg6jW38uVqDRIiQ",
+   "url": "https://www.youtube.com/watch?v=s3r_42caK8I",
+   "date": "2025-05-01",
+   "duration": "8 分 25 秒",
+   "category": "智慧家庭",
+   "headline": "Home Assistant 新手必懂：場景、腳本、自動化怎麼選？2 個問題就判斷",
+   "thumbnail": "https://i.ytimg.com/vi/s3r_42caK8I/hqdefault.jpg",
+   "summary": [
+    "場景像一張房間快照，只負責把燈、電視、窗簾等裝置還原成預設狀態，不能等待或發通知。",
+    "腳本是依序執行的動作清單，可加延遲、做選擇並支援變數，適合早晨例行流程這類多步驟任務。",
+    "自動化同樣能跑多步驟動作，但多了觸發條件與條件判斷，例如人體感測器偵測到動作就開燈。",
+    "選用時先問要不要自動發生：要就用自動化；手動執行時，只設定狀態用場景，有邏輯步驟用腳本。",
+    "進階做法是在自動化裡呼叫場景與腳本，把通知流程寫成一支腳本共用，省去在每個自動化重複設定。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "場景 Scene",
+      "note": "裝置狀態快照，一鍵還原；不能延遲、發通知或做邏輯"
+     },
+     {
+      "cue": "腳本 Script",
+      "note": "依序執行的動作清單，可延遲、分支，支援變數可重用"
+     },
+     {
+      "cue": "自動化",
+      "note": "多了觸發條件與條件判斷，由事件自動啟動，三者最強"
+     },
+     {
+      "cue": "怎麼選",
+      "note": "要自動→自動化；手動且只設狀態→場景；有步驟→腳本"
+     },
+     {
+      "cue": "組合運用",
+      "note": "自動化中套用場景、呼叫共用腳本，例如統一通知流程"
+     }
+    ],
+    "summary": "先問要不要自動，再看有無邏輯，三者可互相組合"
+   },
+   "added": "20261127",
+   "cards": {
+    "fb": "assets/ytnotes/s3r_42caK8I-20261127_FB.png",
+    "ig": "assets/ytnotes/s3r_42caK8I-20261127_IG.png"
+   }
+  },
+  {
+   "id": "pC-VBly1Y00",
+   "title": "如何打造完美的 Home Assistant 儀表板！",
+   "author": "Smart Home Solver",
+   "channelUrl": "https://www.youtube.com/channel/UCwOBG77Tm8cE24FPxHb_abw",
+   "url": "https://www.youtube.com/watch?v=pC-VBly1Y00",
+   "date": "2025-03-22",
+   "duration": "20 分 44 秒",
+   "category": "智慧家庭",
+   "headline": "Home Assistant 儀表板 7 條規則：3 秒內找到任何控制",
+   "thumbnail": "https://i.ytimg.com/vi/pC-VBly1Y00/hqdefault.jpg",
+   "summary": [
+    "先依擺放位置分三類設計：單一房間、廚房等家庭共用區、手機平板電腦，共用板只留最常用的 5 顆按鈕。",
+    "版面選 sections、寬度設 2～4 欄，區塊數別超過欄數以免留大片空白；多用精簡的 tile cards 省空間。",
+    "不必每天用的卡片別上板，用 visibility 條件只在需要時顯示，例如門鈴偵測到人才跳出影像與門鎖。",
+    "少開檢視與儀表板，改用下拉選單切換房間並依存在偵測自動切；掛牆板避免捲動，雜項收進 Bubble Card 彈窗。",
+    "靠版面順序與圖示顏色養成手眼肌肉記憶，3 秒內找到東西；再用 App 捷徑不到 1 秒直達指定頁面。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "依位置設計",
+      "note": "房間板不藏按鈕；家庭共用板只留最常用的 5 顆"
+     },
+     {
+      "cue": "善用空間",
+      "note": "sections 選 2～4 欄，區塊數別超過欄數，多用 tile cards"
+     },
+     {
+      "cue": "條件顯示",
+      "note": "visibility 條件讓門鈴影像、門鎖只在需要時出現"
+     },
+     {
+      "cue": "少開檢視",
+      "note": "下拉選單切換房間，搭配存在偵測自動切；雜項收進彈窗"
+     },
+     {
+      "cue": "3 秒原則",
+      "note": "左上放最重要的，圖示配色養成肌肉記憶，再加 App 捷徑"
+     }
+    ],
+    "summary": "儀表板越簡單越好用：依位置設計、只放每天要用的東西"
+   },
+   "added": "20261127",
+   "cards": {
+    "fb": "assets/ytnotes/pC-VBly1Y00-20261127_FB.png",
+    "ig": "assets/ytnotes/pC-VBly1Y00-20261127_IG.png"
+   }
+  },
+  {
+   "id": "Z4gvkmJ8q48",
+   "title": "終極 Home Assistant 新手指南！",
+   "author": "Smart Home Solver",
+   "channelUrl": "https://www.youtube.com/channel/UCwOBG77Tm8cE24FPxHb_abw",
+   "url": "https://www.youtube.com/watch?v=Z4gvkmJ8q48",
+   "date": "2024-10-12",
+   "duration": "35 分 47 秒",
+   "category": "智慧家庭",
+   "headline": "Home Assistant 新手如何上手？3 種協定＋3 段式自動化一次搞懂",
+   "thumbnail": "https://i.ytimg.com/vi/Z4gvkmJ8q48/hqdefault.jpg",
+   "summary": [
+    "用 Home Assistant Green 插電接網路，瀏覽器輸入 IP:8123 就能開始；系統會自動找出家中 Wi-Fi 與有線裝置。",
+    "裝置是整個硬體、實體是其中各個感測器；建議以「品牌＋房間＋位置」命名，比依區域分類更好維護與搜尋。",
+    "Zigbee、Z-Wave、Thread 可用 USB 棒直接接上，搭配 USB 延長線減少干擾，不必依賴各家品牌的橋接器。",
+    "自訂儀表板改用 sections 拖放版面，搭配子檢視與每台裝置各自的預設儀表板，比自動產生的總覽清爽許多。",
+    "自動化分觸發、條件、動作三段，用 Traces 追查為何沒執行；腳本集中共用動作，更新前務必先備份。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "裝置 vs 實體",
+      "note": "裝置是整個硬體，實體是裡面的光線、動作、溫度等感測器"
+     },
+     {
+      "cue": "命名原則",
+      "note": "以名稱帶出房間與位置，比設定區域更好維護、好搜尋"
+     },
+     {
+      "cue": "USB 無線電棒",
+      "note": "Zigbee／Z-Wave 棒直插主機，加延長線減少干擾"
+     },
+     {
+      "cue": "自動化三段",
+      "note": "觸發→條件→動作，用 Traces 看是哪一步卡住"
+     },
+     {
+      "cue": "腳本與備份",
+      "note": "共用動作寫成腳本只改一處；每次更新前先備份"
+     }
+    ],
+    "summary": "先求能跑、再整理儀表板，自動化善用條件與追蹤除錯"
+   },
+   "added": "20261127",
+   "cards": {
+    "fb": "assets/ytnotes/Z4gvkmJ8q48-20261127_FB.png",
+    "ig": "assets/ytnotes/Z4gvkmJ8q48-20261127_IG.png"
+   }
+  },
+  {
+   "id": "Tk12gOkOdb4",
+   "title": "Home Assistant 新手必備的 11 個技巧！",
+   "author": "Everything Smart Home",
+   "channelUrl": "https://www.youtube.com/channel/UCrVLgIniVg6jW38uVqDRIiQ",
+   "url": "https://www.youtube.com/watch?v=Tk12gOkOdb4",
+   "date": "2024-09-20",
+   "duration": "14 分 49 秒",
+   "category": "智慧家庭",
+   "headline": "Home Assistant 新手必看：11 個少走冤枉路的設定技巧",
+   "thumbnail": "https://i.ytimg.com/vi/Tk12gOkOdb4/hqdefault.jpg",
+   "summary": [
+    "一開始就訂好「房間＋功能」命名規則，並替裝置設定區域，語音助理與自動產生的儀表板都靠它。",
+    "開啟自動備份、存到 NAS 或雲端，別再用 SD 卡；更新保持每一兩個月一次，等 .1、.2 版較穩。",
+    "長期運行改用 Proxmox 這類第一型 hypervisor，別用 VirtualBox；HACS 卡片與附加元件只裝需要的。",
+    "善用分類與標籤整理大量自動化，標籤還能直接當自動化目標，一次控制同類裝置。",
+    "只把要聲控的實體曝露給 Assist、替實體加別名，並匯入社群藍圖，幾秒就建好自動化。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "命名與區域",
+      "note": "房間＋功能命名，裝置設區域，實體會一併套用"
+     },
+     {
+      "cue": "備份與更新",
+      "note": "每日自動完整備份存 NAS；每一兩個月更新一次"
+     },
+     {
+      "cue": "少裝一點",
+      "note": "HACS 卡片、附加元件只裝需要的，用完就移除"
+     },
+     {
+      "cue": "分類與標籤",
+      "note": "分類整理自動化，標籤可多選並當自動化目標"
+     },
+     {
+      "cue": "Assist 與藍圖",
+      "note": "少曝露實體、加別名；匯入藍圖快速建自動化"
+     }
+    ],
+    "summary": "先把命名、備份、更新顧好，系統才能越長越大不亂。"
+   },
+   "added": "20261127",
+   "cards": {
+    "fb": "assets/ytnotes/Tk12gOkOdb4-20261127_FB.png",
+    "ig": "assets/ytnotes/Tk12gOkOdb4-20261127_IG.png"
+   }
+  },
+  {
+   "id": "LokQyLFPUOA",
+   "title": "幫你的智慧家庭儀表板打分數－第 1 集！",
+   "author": "Everything Smart Home",
+   "channelUrl": "https://www.youtube.com/channel/UCrVLgIniVg6jW38uVqDRIiQ",
+   "url": "https://www.youtube.com/watch?v=LokQyLFPUOA",
+   "date": "2023-02-08",
+   "duration": "29 分 30 秒",
+   "category": "智慧家庭",
+   "headline": "14 個 Home Assistant 儀表板逐一評分：好看又好用的關鍵是什麼？",
+   "thumbnail": "https://i.ytimg.com/vi/LokQyLFPUOA/hqdefault.jpg",
+   "summary": [
+    "Everything Smart Home 徵集觀眾儀表板，收到超過百份投稿，首集逐一點評 14 個並打分（Star Trek 風那款刻意不評）。",
+    "反覆出現的扣分點：圖示太大或留白過多、按鈕散落沒分區、元素沒對齊；建議用垂直／水平堆疊整理版面。",
+    "加分點：一致的圓角、配色與格線，用小晶片取代歡迎訊息，人員卡片顯示電量，音量改成分段按鈕更好按。",
+    "平板首選「左側欄選房間、右側顯示控制」的配置；手機則把導覽放底部方便單手操作，並可隨系統切換深淺色。",
+    "最高分是 Leon 先在 Figma 設計再移植的手機儀表板（10 分），jk 與 Basbruss 的平板版各拿 9.5 分。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "版面動線",
+      "note": "按鈕分區、元素對齊，善用垂直／水平堆疊"
+     },
+     {
+      "cue": "空間利用",
+      "note": "縮小過大圖示、刪多餘欄位，少捲動多資訊"
+     },
+     {
+      "cue": "視覺一致",
+      "note": "圓角、配色、圖示大小統一，白框別太搶眼"
+     },
+     {
+      "cue": "平板配置",
+      "note": "左側欄選房間、右側顯示控制，約佔三分之一"
+     },
+     {
+      "cue": "手機配置",
+      "note": "導覽放底部單手好按，自動切換深淺色模式"
+     }
+    ],
+    "summary": "好儀表板靠一致、對齊與留白控制，不是功能塞越多越好"
+   },
+   "added": "20261127",
+   "cards": {
+    "fb": "assets/ytnotes/LokQyLFPUOA-20261127_FB.png",
+    "ig": "assets/ytnotes/LokQyLFPUOA-20261127_IG.png"
+   }
+  },
+  {
+   "id": "Lu0hunynWJY",
+   "title": "4 種簡單的 Home Assistant 在家偵測設定",
+   "author": "Everything Smart Home",
+   "channelUrl": "https://www.youtube.com/channel/UCrVLgIniVg6jW38uVqDRIiQ",
+   "url": "https://www.youtube.com/watch?v=Lu0hunynWJY",
+   "date": "2021-05-25",
+   "duration": "11 分 29 秒",
+   "category": "智慧家庭",
+   "headline": "4 招搞定 Home Assistant 在家偵測：網路＋GPS 組合最穩",
+   "thumbnail": "https://i.ytimg.com/vi/Lu0hunynWJY/hqdefault.jpg",
+   "summary": [
+    "四種方法都靠追蹤手機：兩種網路型（ping、路由器）、兩種位置型（官方 App、iCloud），Android 與 iOS 都有解。",
+    "ping 感測器適合 Android；iOS 手機休眠時常不回應 ping，狀態改變也可能要等三、四分鐘。",
+    "路由器型比 ping 更乾淨，以 UniFi 為例：建本機唯讀帳號、加整合，再把離開判定時間調低。",
+    "位置型可配合區域觸發自動化；iOS 用官方 App 不穩，作者建議改用 iCloud 整合並開啟尋找功能。",
+    "最後把追蹤器綁到 person 實體，自動化只認 person；建議網路型與位置型各用一種互補。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "ping 感測器",
+      "note": "送封包看手機有無回應，Android 可靠，iOS 休眠會失準"
+     },
+     {
+      "cue": "路由器偵測",
+      "note": "UniFi 建本機唯讀帳號，離開判定時間調低"
+     },
+     {
+      "cue": "官方 App",
+      "note": "開背景位置，可依區域觸發；iOS 不開 App 不更新"
+     },
+     {
+      "cue": "iCloud 整合",
+      "note": "iOS 首選，需開尋找功能，雙重驗證會定期要驗證碼"
+     },
+     {
+      "cue": "綁定 person",
+      "note": "自動化用 person 不用裝置，換手機只改一處"
+     }
+    ],
+    "summary": "網路型加位置型各一種，再綁 person，在家偵測最穩"
+   },
+   "added": "20261127",
+   "cards": {
+    "fb": "assets/ytnotes/Lu0hunynWJY-20261127_FB.png",
+    "ig": "assets/ytnotes/Lu0hunynWJY-20261127_IG.png"
+   }
+  },
   {
    "id": "en0GuyhieQk",
    "title": "Introducing Claude Dashboards and Claude Motion",
