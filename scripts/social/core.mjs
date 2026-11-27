@@ -220,6 +220,9 @@ export function createIgGraph({ token, igUserId, version = "v25.0", host = "grap
   };
 }
 
+export const THREADS_PUBLISH_RETRY_MS = 30 * 1000;
+export const isThreadsMediaNotReady = (e) => e instanceof GraphError && /media with id \S+ cannot be found/i.test(e.message || "");
+
 /* Threads（獨立的長效 Token，60 天到期，可每日續期；文字上限 500 字） */
 export function createThreadsGraph({ token, userId, version = "v1.0", fetchImpl = fetch, sleep = realSleep }) {
   const call = makeCaller(`https://graph.threads.net/${version}`, token, fetchImpl);
@@ -244,8 +247,22 @@ export function createThreadsGraph({ token, userId, version = "v1.0", fetchImpl 
       const r = await call("GET", id, { fields: "status,error_message" });
       return { status: normStatus(r.status), error: r.error_message || null };
     },
+    /* 容器剛回報 FINISHED 就發布，Threads 偶爾會回「The media with id … cannot be found」
+       （媒體還沒同步完成；官方建議建立容器後平均等 30 秒再發布）。等一下重送一次，
+       仍失敗就標記為可重試：貼文留在「媒體處理中」，下一輪先查容器狀態再發，不直接判失敗。 */
     async publish(creationId) {
-      const r = await call("POST", `${userId}/threads_publish`, { creation_id: creationId });
+      const send = () => call("POST", `${userId}/threads_publish`, { creation_id: creationId });
+      let r;
+      try { r = await send(); }
+      catch (e) {
+        if (!isThreadsMediaNotReady(e)) throw e;
+        await sleep(THREADS_PUBLISH_RETRY_MS);
+        try { r = await send(); }
+        catch (e2) {
+          if (isThreadsMediaNotReady(e2)) e2.retryable = true;
+          throw e2;
+        }
+      }
       return { id: r.id };
     },
     async permalink(id) { return (await call("GET", id, { fields: "permalink" })).permalink || null; },
