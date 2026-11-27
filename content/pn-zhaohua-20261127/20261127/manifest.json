@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-zhaohua-20261127",
+  "date": "2026-11-27",
+  "title": "台股落底了嗎？3個關鍵看懂AI股回暖與AI債信違約風險",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=zhaohua-20261127#pn-zhaohua-20261127",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_zhaohua-20261127_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_zhaohua-20261127_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_zhaohua-20261127_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-27T19:06:27+08:00"
+}

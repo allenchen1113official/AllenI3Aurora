@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-ailanren-20261127",
+  "date": "2026-11-27",
+  "title": "5個心法：一個人帶AI agent做自媒體，6萬粉絲怎麼守住品質？",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261127#pn-ailanren-20261127",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_ailanren-20261127_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_ailanren-20261127_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_ailanren-20261127_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-27T19:11:07+08:00"
+}

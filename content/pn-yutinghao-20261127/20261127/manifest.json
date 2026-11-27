@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-yutinghao-20261127",
+  "date": "2026-11-27",
+  "title": "外資20天只買1天！台股選後護盤撐得住嗎？3種情境一次看",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=yutinghao-20261127#pn-yutinghao-20261127",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_yutinghao-20261127_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_yutinghao-20261127_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_yutinghao-20261127_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-27T19:17:17+08:00"
+}
