@@ -576,7 +576,7 @@ test("YouTube：取消已排定影片 → 刪除影片退回草稿", async () =>
 });
 
 /* ---------- 多圖：FB 多圖貼文、IG／Threads 輪播（Claude 排程素材匯入使用） ---------- */
-import { imagesFor, refreshInstagramToken } from "./core.mjs";
+import { imagesFor, refreshInstagramToken, isRetryable } from "./core.mjs";
 
 function seqFetch(...resps) {
   const reqs = [];
@@ -668,6 +668,43 @@ test("Threads 輪播：子容器還在處理中時先等待，FINISHED 後才建
   assert.equal(r.id, "TC");
   assert.equal(sleeps.length, 1);
   assert.equal(f.reqs.at(-1).body.media_type, "CAROUSEL");
+});
+
+const TH_NOT_FOUND = { error: { message: "The media with id 18166472191500431 cannot be found.", code: 24 } };
+
+test("Threads 發布：回「media … cannot be found」時等 30 秒重送一次，成功即發布", async () => {
+  const f = seqFetch(TH_NOT_FOUND, { id: "TP" });
+  const sleeps = [];
+  const g = createThreadsGraph({ token: "TKN", userId: "TU", fetchImpl: f, sleep: async (ms) => { sleeps.push(ms); } });
+  const r = await g.publish("C1");
+  assert.equal(r.id, "TP");
+  assert.deepEqual(sleeps, [30000]);
+  assert.deepEqual(f.reqs.map((q) => q.body.creation_id), ["C1", "C1"]);
+});
+
+test("Threads 發布：重送仍找不到媒體 → 標記可重試，貼文留在處理中下一輪再發，不判失敗", async () => {
+  const f = seqFetch(TH_NOT_FOUND);
+  const th = createThreadsGraph({ token: "TKN", userId: "TU", fetchImpl: f, sleep: async () => {} });
+  await assert.rejects(th.publish("C1"), (e) => e.retryable === true && isRetryable(e));
+  const g = { create: async () => ({ id: "C1" }), status: async () => ({ status: "FINISHED" }), publish: th.publish };
+  const post = { id: "p1", queueState: "pending", scheduledAt: new Date(T0).toISOString(),
+    fb: { enabled: false, state: "skipped" }, th: { enabled: true, state: "approved", caption: "短文" } };
+  const saved = [];
+  const store = { claim: async () => post, update: async (_id, patch) => { saved.push(patch); } };
+  const res = await processPost(post, { store, graph: null, graphs: { th: g }, now: T0 });
+  const last = saved.filter((x) => x.th).at(-1).th;
+  assert.equal(last.state, "processing");
+  assert.equal(last.containerId, "C1");
+  assert.equal(res.retry, true);
+});
+
+test("Threads 發布：其他錯誤不重送", async () => {
+  const f = seqFetch({ error: { message: "Invalid parameter", code: 100 } });
+  const sleeps = [];
+  const g = createThreadsGraph({ token: "TKN", userId: "TU", fetchImpl: f, sleep: async (ms) => { sleeps.push(ms); } });
+  await assert.rejects(g.publish("C1"), /Invalid parameter/);
+  assert.equal(f.reqs.length, 1);
+  assert.equal(sleeps.length, 0);
 });
 
 test("Threads 輪播：子容器 ERROR 時不建 CAROUSEL，丟出可讀錯誤", async () => {
