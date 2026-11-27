@@ -1,0 +1,12 @@
+Home Assistant 新手：不到 24 分鐘從開箱到第一條自動化
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27
+📺 影片來源：HiTech Life〈Home Assistant 入門（搭配 Green！）〉
+
+① 免寫 YAML、免碰 Docker：用官方 Home Assistant Green 主機，插電接網路線約 5 分鐘就能完成安裝。
+② 瀏覽器輸入 homeassistant.local:8123 進入設定；先建 admin 管理帳號，日常操作另開一般帳號。
+③ 插上 SONOFF Zigbee 接收器自動建網，再配對 ThirdReality 燈泡與 Aqara 動作感測器，免靠 Wi-Fi。
+
+💡 一句話總結：一台主機加三樣配件，半小時內就能踏進智慧家庭
+
+原片：https://www.youtube.com/watch?v=ZY1D1_IksVI
+#YouTube重點筆記

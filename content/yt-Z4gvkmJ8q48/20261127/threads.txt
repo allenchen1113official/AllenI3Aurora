@@ -1,0 +1,12 @@
+Home Assistant 新手如何上手？3 種協定＋3 段式自動化一次搞懂
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27
+📺 影片來源：Smart Home Solver〈終極 Home Assistant 新手指南！〉
+
+① 用 Home Assistant Green 插電接網路，瀏覽器輸入 IP:8123 就能開始；系統會自動找出家中 Wi-Fi 與有線裝置。
+② 裝置是整個硬體、實體是其中各個感測器；建議以「品牌＋房間＋位置」命名，比依區域分類更好維護與搜尋。
+③ Zigbee、Z-Wave、Thread 可用 USB 棒直接接上，搭配 USB 延長線減少干擾，不必依賴各家品牌的橋接器。
+
+💡 一句話總結：先求能跑、再整理儀表板，自動化善用條件與追蹤除錯
+
+原片：https://www.youtube.com/watch?v=Z4gvkmJ8q48
+#YouTube重點筆記

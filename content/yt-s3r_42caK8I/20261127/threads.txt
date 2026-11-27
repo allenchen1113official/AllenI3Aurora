@@ -1,0 +1,12 @@
+Home Assistant 新手必懂：場景、腳本、自動化怎麼選？2 個問題就判斷
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27
+📺 影片來源：Everything Smart Home〈如何使用 Home Assistant 的自動化、場景與腳本！〉（YouTube・2025-05-01・8 分 25 秒｜原標題：How To Use Home Assistant Automations, Scene and Scripts!）
+
+① 場景像一張房間快照，只負責把燈、電視、窗簾等裝置還原成預設狀態，不能等待或發通知。
+② 腳本是依序執行的動作清單，可加延遲、做選擇並支援變數，適合早晨例行流程這類多步驟任務。
+③ 自動化同樣能跑多步驟動作，但多了觸發條件與條件判斷，例如人體感測器偵測到動作就開燈。
+
+💡 一句話總結：先問要不要自動，再看有無邏輯，三者可互相組合
+
+原片：https://www.youtube.com/watch?v=s3r_42caK8I
+#YouTube重點筆記

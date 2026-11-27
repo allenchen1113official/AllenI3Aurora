@@ -1,0 +1,12 @@
+Home Assistant 儀表板 7 條規則：3 秒內找到任何控制
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27
+📺 影片來源：Smart Home Solver〈如何打造完美的 Home Assistant 儀表板！〉（YouTube・2025-03-22・20 分 44 秒｜原標題：How to Build the PERFECT Home Assistant Dashboard!）
+
+① 先依擺放位置分三類設計：單一房間、廚房等家庭共用區、手機平板電腦，共用板只留最常用的 5 顆按鈕。
+② 版面選 sections、寬度設 2～4 欄，區塊數別超過欄數以免留大片空白；多用精簡的 tile cards 省空間。
+③ 不必每天用的卡片別上板，用 visibility 條件只在需要時顯示，例如門鈴偵測到人才跳出影像與門鎖。
+
+💡 一句話總結：儀表板越簡單越好用：依位置設計、只放每天要用的東西
+
+原片：https://www.youtube.com/watch?v=pC-VBly1Y00
+#YouTube重點筆記

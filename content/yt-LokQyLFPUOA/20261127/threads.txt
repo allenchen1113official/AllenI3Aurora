@@ -1,0 +1,12 @@
+14 個 Home Assistant 儀表板逐一評分：好看又好用的關鍵是什麼？
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27
+📺 影片來源：Everything Smart Home〈幫你的智慧家庭儀表板打分數－第 1 集！〉（YouTube・2023-02-08・29 分 30 秒｜原標題：Rating Your Smart Home Dashboards - Ep.1!）
+
+① Everything Smart Home 徵集觀眾儀表板，收到超過百份投稿，首集逐一點評 14 個並打分（Star Trek 風那款刻意不評）。
+② 反覆出現的扣分點：圖示太大或留白過多、按鈕散落沒分區、元素沒對齊；建議用垂直／水平堆疊整理版面。
+③ 加分點：一致的圓角、配色與格線，用小晶片取代歡迎訊息，人員卡片顯示電量，音量改成分段按鈕更好按。
+
+💡 一句話總結：好儀表板靠一致、對齊與留白控制，不是功能塞越多越好
+
+原片：https://www.youtube.com/watch?v=LokQyLFPUOA
+#YouTube重點筆記

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "yt-pC-VBly1Y00",
+  "date": "2026-11-27",
+  "title": "Home Assistant 儀表板 7 條規則：3 秒內找到任何控制",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/?yt=pC-VBly1Y00#ytnotes",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "YTNotes_pC-VBly1Y00_20261127_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "YTNotes_pC-VBly1Y00_20261127_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "YTNotes_pC-VBly1Y00_20261127_IG.png"
+      ]
+    }
+  },
+  "producedBy": "常看YouTube重點筆記排程",
+  "producedAt": "2026-11-27T10:22:15+08:00"
+}

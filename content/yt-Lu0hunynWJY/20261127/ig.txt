@@ -1,0 +1,25 @@
+4 招搞定 Home Assistant 在家偵測：網路＋GPS 組合最穩
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27（週五）
+
+📺 影片來源：Everything Smart Home〈4 種簡單的 Home Assistant 在家偵測設定〉（YouTube・2021-05-25・11 分 29 秒｜原標題：4 EASY Presence Detection Setups in Home Assistant）
+
+📌 重點摘要
+• 四種方法都靠追蹤手機：兩種網路型（ping、路由器）、兩種位置型（官方 App、iCloud），Android 與 iOS 都有解。
+• ping 感測器適合 Android；iOS 手機休眠時常不回應 ping，狀態改變也可能要等三、四分鐘。
+• 路由器型比 ping 更乾淨，以 UniFi 為例：建本機唯讀帳號、加整合，再把離開判定時間調低。
+• 位置型可配合區域觸發自動化；iOS 用官方 App 不穩，作者建議改用 iCloud 整合並開啟尋找功能。
+• 最後把追蹤器綁到 person 實體，自動化只認 person；建議網路型與位置型各用一種互補。
+
+📝 康乃爾筆記
+🔹 ping 感測器：送封包看手機有無回應，Android 可靠，iOS 休眠會失準
+🔹 路由器偵測：UniFi 建本機唯讀帳號，離開判定時間調低
+🔹 官方 App：開背景位置，可依區域觸發；iOS 不開 App 不更新
+🔹 iCloud 整合：iOS 首選，需開尋找功能，雙重驗證會定期要驗證碼
+🔹 綁定 person：自動化用 person 不用裝置，換手機只改一處
+
+💡 一句話總結：網路型加位置型各一種，再綁 person，在家偵測最穩
+
+🎬 原片搜尋：Everything Smart Home〈4 EASY Presence Detection Setups in Home Assistant〉（連結見 FB／Threads）
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#HomeAssistant #智慧家庭 #在家偵測 #UniFi #iCloud #艾倫極光報報 #YouTube重點筆記

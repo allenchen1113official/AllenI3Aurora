@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "yt-Z4gvkmJ8q48",
+  "date": "2026-11-27",
+  "title": "Home Assistant 新手如何上手？3 種協定＋3 段式自動化一次搞懂",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/?yt=Z4gvkmJ8q48#ytnotes",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "YTNotes_Z4gvkmJ8q48_20261127_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "YTNotes_Z4gvkmJ8q48_20261127_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "YTNotes_Z4gvkmJ8q48_20261127_IG.png"
+      ]
+    }
+  },
+  "producedBy": "常看YouTube重點筆記排程",
+  "producedAt": "2026-11-27T10:23:47+08:00"
+}

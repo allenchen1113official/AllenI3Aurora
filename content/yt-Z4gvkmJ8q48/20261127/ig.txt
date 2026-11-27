@@ -1,0 +1,25 @@
+Home Assistant 新手如何上手？3 種協定＋3 段式自動化一次搞懂
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27（週五）
+
+📺 影片來源：Smart Home Solver〈終極 Home Assistant 新手指南！〉（YouTube・2024-10-12・35 分 47 秒｜原標題：Ultimate Home Assistant Beginner’s Guide!）
+
+📌 重點摘要
+• 用 Home Assistant Green 插電接網路，瀏覽器輸入 IP:8123 就能開始；系統會自動找出家中 Wi-Fi 與有線裝置。
+• 裝置是整個硬體、實體是其中各個感測器；建議以「品牌＋房間＋位置」命名，比依區域分類更好維護與搜尋。
+• Zigbee、Z-Wave、Thread 可用 USB 棒直接接上，搭配 USB 延長線減少干擾，不必依賴各家品牌的橋接器。
+• 自訂儀表板改用 sections 拖放版面，搭配子檢視與每台裝置各自的預設儀表板，比自動產生的總覽清爽許多。
+• 自動化分觸發、條件、動作三段，用 Traces 追查為何沒執行；腳本集中共用動作，更新前務必先備份。
+
+📝 康乃爾筆記
+🔹 裝置 vs 實體：裝置是整個硬體，實體是裡面的光線、動作、溫度等感測器
+🔹 命名原則：以名稱帶出房間與位置，比設定區域更好維護、好搜尋
+🔹 USB 無線電棒：Zigbee／Z-Wave 棒直插主機，加延長線減少干擾
+🔹 自動化三段：觸發→條件→動作，用 Traces 看是哪一步卡住
+🔹 腳本與備份：共用動作寫成腳本只改一處；每次更新前先備份
+
+💡 一句話總結：先求能跑、再整理儀表板，自動化善用條件與追蹤除錯
+
+🎬 原片搜尋：Smart Home Solver〈Ultimate Home Assistant Beginner’s Guide!〉（連結見 FB／Threads）
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#HomeAssistant #智慧家庭 #Zigbee #ZWave #居家自動化 #艾倫極光報報 #YouTube重點筆記

@@ -1,0 +1,12 @@
+Home Assistant 新手必看：11 個少走冤枉路的設定技巧
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27
+📺 影片來源：Everything Smart Home〈Home Assistant 新手必備的 11 個技巧！〉（YouTube・2024-09-20・14 分 49 秒｜原標題：11 Essential Tips For Home Assistant Beginners!）
+
+① 一開始就訂好「房間＋功能」命名規則，並替裝置設定區域，語音助理與自動產生的儀表板都靠它。
+② 開啟自動備份、存到 NAS 或雲端，別再用 SD 卡；更新保持每一兩個月一次，等 .1、.2 版較穩。
+③ 長期運行改用 Proxmox 這類第一型 hypervisor，別用 VirtualBox；HACS 卡片與附加元件只裝需要的。
+
+💡 一句話總結：先把命名、備份、更新顧好，系統才能越長越大不亂。
+
+原片：https://www.youtube.com/watch?v=Tk12gOkOdb4
+#YouTube重點筆記

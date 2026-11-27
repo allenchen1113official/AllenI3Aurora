@@ -1,0 +1,27 @@
+Home Assistant 新手：不到 24 分鐘從開箱到第一條自動化
+
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/27（週五）
+
+📺 影片來源：HiTech Life〈Home Assistant 入門（搭配 Green！）〉（YouTube・2026-02-10・35 分 6 秒｜原標題：Beginner's Guide to Getting Started with Home Assistant (featuring Home Assistant Green!)）
+
+📌 重點摘要
+• 免寫 YAML、免碰 Docker：用官方 Home Assistant Green 主機，插電接網路線約 5 分鐘就能完成安裝。
+• 瀏覽器輸入 homeassistant.local:8123 進入設定；先建 admin 管理帳號，日常操作另開一般帳號。
+• 插上 SONOFF Zigbee 接收器自動建網，再配對 ThirdReality 燈泡與 Aqara 動作感測器，免靠 Wi-Fi。
+• 自動化＝觸發＋條件＋動作；用 toggle 輔助開關一鍵停用整組自動照明，不必逐條改規則。
+• 升級前先做本機加密備份；建自訂儀表板給家人用，手機 App 開位置權限還能收動作通知。
+
+📝 康乃爾筆記
+🔹 硬體選擇：官方 Green 主機開箱即用，新手免碰 Proxmox
+🔹 帳號分權：admin 只拿來改設定，日常用一般帳號
+🔹 Zigbee：USB 接收器自建網路，省電又不靠家用 Wi-Fi
+🔹 自動化三元素：觸發、條件、動作；helper 當總開關
+🔹 備份與手機：升級前先備份；App 收通知、依在家與否運作
+
+💡 一句話總結：一台主機加三樣配件，半小時內就能踏進智慧家庭
+
+🎬 原片：https://www.youtube.com/watch?v=ZY1D1_IksVI
+
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#HomeAssistant #智慧家庭 #Zigbee #居家自動化 #HomeAssistantGreen #艾倫極光報報

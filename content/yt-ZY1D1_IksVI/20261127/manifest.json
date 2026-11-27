@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "yt-ZY1D1_IksVI",
+  "date": "2026-11-27",
+  "title": "Home Assistant 新手：不到 24 分鐘從開箱到第一條自動化",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/?yt=ZY1D1_IksVI#ytnotes",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "YTNotes_ZY1D1_IksVI_20261127_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "YTNotes_ZY1D1_IksVI_20261127_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "YTNotes_ZY1D1_IksVI_20261127_IG.png"
+      ]
+    }
+  },
+  "producedBy": "常看YouTube重點筆記排程",
+  "producedAt": "2026-11-27T10:24:04+08:00"
+}

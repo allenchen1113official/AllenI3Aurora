@@ -1,0 +1,12 @@
+4 招搞定 Home Assistant 在家偵測：網路＋GPS 組合最穩
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27
+📺 影片來源：Everything Smart Home〈4 種簡單的 Home Assistant 在家偵測設定〉
+
+① 四種方法都靠追蹤手機：兩種網路型（ping、路由器）、兩種位置型（官方 App、iCloud），Android 與 iOS 都有解。
+② ping 感測器適合 Android；iOS 手機休眠時常不回應 ping，狀態改變也可能要等三、四分鐘。
+③ 路由器型比 ping 更乾淨，以 UniFi 為例：建本機唯讀帳號、加整合，再把離開判定時間調低。
+
+💡 一句話總結：網路型加位置型各一種，再綁 person，在家偵測最穩
+
+原片：https://www.youtube.com/watch?v=Lu0hunynWJY
+#YouTube重點筆記
