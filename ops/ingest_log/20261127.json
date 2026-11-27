@@ -111,19 +111,79 @@
         "error": null
       },
       "ig": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgO0W4hjSor/",
         "error": null
       },
       "th": {
-        "state": "failed",
+        "state": "approved",
         "url": null,
-        "error": "The media with id 18166471432500431 cannot be found."
+        "error": null
       }
     },
     {
       "id": "cs_yt-ZY1D1_IksVI_20261127",
       "topic": "yt-ZY1D1_IksVI",
+      "queueState": "done",
+      "fb": {
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112341217524851",
+        "error": null
+      },
+      "ig": {
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgO0uMMDSdd/",
+        "error": null
+      },
+      "th": {
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgO0uvXjRiB",
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-hwWlEuI359w_20261127",
+      "topic": "yt-hwWlEuI359w",
+      "queueState": "done",
+      "fb": {
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112341427524851",
+        "error": null
+      },
+      "ig": {
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgO1Aa9jR2J/",
+        "error": null
+      },
+      "th": {
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgO1A3xDb5x",
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-pC-VBly1Y00_20261127",
+      "topic": "yt-pC-VBly1Y00",
+      "queueState": "pending",
+      "fb": {
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112341805524851",
+        "error": null
+      },
+      "ig": {
+        "state": "processing",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "processing",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-s3r_42caK8I_20261127",
+      "topic": "yt-s3r_42caK8I",
       "queueState": "pending",
       "fb": {
         "state": "approved",
@@ -137,66 +197,6 @@
       },
       "th": {
         "state": "approved",
-        "url": null,
-        "error": null
-      }
-    },
-    {
-      "id": "cs_yt-hwWlEuI359w_20261127",
-      "topic": "yt-hwWlEuI359w",
-      "queueState": "draft",
-      "fb": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      },
-      "ig": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      },
-      "th": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      }
-    },
-    {
-      "id": "cs_yt-pC-VBly1Y00_20261127",
-      "topic": "yt-pC-VBly1Y00",
-      "queueState": "draft",
-      "fb": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      },
-      "ig": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      },
-      "th": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      }
-    },
-    {
-      "id": "cs_yt-s3r_42caK8I_20261127",
-      "topic": "yt-s3r_42caK8I",
-      "queueState": "draft",
-      "fb": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      },
-      "ig": {
-        "state": "draft",
-        "url": null,
-        "error": null
-      },
-      "th": {
-        "state": "draft",
         "url": null,
         "error": null
       }
@@ -334,5 +334,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T04:28:57.877Z"
+  "generatedAt": "2026-11-27T04:37:04.338Z"
 }
