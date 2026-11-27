@@ -62,6 +62,26 @@
       }
     },
     {
+      "id": "cs_heatmap_20261127",
+      "topic": "heatmap",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_pn-ailanren-20261127_20261127",
       "topic": "pn-ailanren-20261127",
       "queueState": "draft",
@@ -297,6 +317,19 @@
       ]
     },
     {
+      "id": "cs_heatmap_20261127",
+      "topic": "heatmap",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜台股熱力圖．上市／上櫃 2026/11/27（週五）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_noon_20261127",
       "topic": "noon",
       "date": "20261127",
@@ -466,5 +499,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T11:20:55.094Z"
+  "generatedAt": "2026-11-27T12:03:36.593Z"
 }
