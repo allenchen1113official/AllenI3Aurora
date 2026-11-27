@@ -4,19 +4,19 @@
     {
       "id": "cs_txf-flash_20261127",
       "topic": "txf-flash",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112398763524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgPUKptkWrC/",
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -216,9 +216,9 @@
         "error": null
       },
       "th": {
-        "state": "failed",
-        "url": null,
-        "error": "The media with id 18166472191500431 cannot be found."
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgPT4fSEVKo",
+        "error": null
       }
     }
   ],
@@ -367,5 +367,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T08:59:18.369Z"
+  "generatedAt": "2026-11-27T09:07:12.835Z"
 }
