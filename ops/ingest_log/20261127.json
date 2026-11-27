@@ -62,6 +62,66 @@
       }
     },
     {
+      "id": "cs_pn-ailanren-20261127_20261127",
+      "topic": "pn-ailanren-20261127",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_pn-yutinghao-20261127_20261127",
+      "topic": "pn-yutinghao-20261127",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_pn-zhaohua-20261127_20261127",
+      "topic": "pn-zhaohua-20261127",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_yt-LokQyLFPUOA_20261127",
       "topic": "yt-LokQyLFPUOA",
       "queueState": "done",
@@ -250,6 +310,45 @@
       ]
     },
     {
+      "id": "cs_pn-ailanren-20261127_20261127",
+      "topic": "pn-ailanren-20261127",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "5個心法：一個人帶AI agent做自媒體，6萬粉絲怎麼守住品質？",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-yutinghao-20261127_20261127",
+      "topic": "pn-yutinghao-20261127",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "外資20天只買1天！台股選後護盤撐得住嗎？3種情境一次看",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-zhaohua-20261127_20261127",
+      "topic": "pn-zhaohua-20261127",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "台股落底了嗎？3個關鍵看懂AI股回暖與AI債信違約風險",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_txf-flash_20261127",
       "topic": "txf-flash",
       "date": "20261127",
@@ -367,5 +466,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T09:14:23.789Z"
+  "generatedAt": "2026-11-27T11:20:55.094Z"
 }
