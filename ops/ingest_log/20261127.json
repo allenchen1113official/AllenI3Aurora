@@ -82,6 +82,26 @@
       }
     },
     {
+      "id": "cs_stockradar_20261127",
+      "topic": "stockradar",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_pn-ailanren-20261127_20261127",
       "topic": "pn-ailanren-20261127",
       "queueState": "draft",
@@ -402,6 +422,19 @@
       ]
     },
     {
+      "id": "cs_stockradar_20261127",
+      "topic": "stockradar",
+      "date": "20261127",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜台股選股雷達 2026/11/27（週五）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_txf-flash_20261127",
       "topic": "txf-flash",
       "date": "20261127",
@@ -532,5 +565,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T13:28:53.154Z"
+  "generatedAt": "2026-11-27T15:07:14.753Z"
 }
