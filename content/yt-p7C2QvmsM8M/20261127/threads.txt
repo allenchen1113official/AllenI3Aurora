@@ -1,0 +1,12 @@
+動作感測器抓不到坐著看電視的人？用 ESP32＋ESPresense 做逐房間偵測的 5 個重點
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/27
+📺 影片來源：Everything Smart Home〈我試過最好的智慧家庭房間存在偵測！〉
+
+① ESPresense 是跑在 ESP32 上的開源藍牙追蹤韌體：每個房間放一台，依哪台收到手錶／手環訊號最強，判斷你在哪個房間。
+② 它更新不夠快，不適合「進門前先開燈」；強項是判斷房間有沒有人，搭配動作感測器在人離開後自動關燈。
+③ 安裝不用編譯：瀏覽器用 ESP Web Tools 燒錄，連 ESPresense 熱點進 192.168.4.1 填 Wi-Fi、MQTT 與房間名稱。
+
+💡 一句話總結：便宜的 ESP32 加上 ESPresense，就能讓 Home Assistant 知道你在哪個房間，最適合拿來補足動作感測器「人不動就失靈」的盲點。
+
+原片：https://www.youtube.com/watch?v=p7C2QvmsM8M
+#YouTube重點筆記
