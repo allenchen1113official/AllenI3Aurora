@@ -4,7 +4,7 @@
     {
       "id": "cs_txf-flash_20261127",
       "topic": "txf-flash",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
         "state": "published",
         "url": "https://www.facebook.com/1370390972829118_122112398763524851",
@@ -16,8 +16,8 @@
         "error": null
       },
       "th": {
-        "state": "processing",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgPUNATEZ1-",
         "error": null
       }
     },
@@ -367,5 +367,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-27T09:07:12.835Z"
+  "generatedAt": "2026-11-27T09:14:23.789Z"
 }
