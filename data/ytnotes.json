@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-27T10:28:56+08:00",
+ "updatedAt": "2026-11-27T21:21:48+08:00",
  "items": [
   {
    "id": "hwWlEuI359w",
@@ -342,6 +342,55 @@
    "cards": {
     "fb": "assets/ytnotes/LokQyLFPUOA-20261127_FB.png",
     "ig": "assets/ytnotes/LokQyLFPUOA-20261127_IG.png"
+   }
+  },
+  {
+   "id": "p7C2QvmsM8M",
+   "title": "我試過最好的智慧家庭房間存在偵測！",
+   "author": "Everything Smart Home",
+   "channelUrl": "https://www.youtube.com/channel/UCrVLgIniVg6jW38uVqDRIiQ",
+   "url": "https://www.youtube.com/watch?v=p7C2QvmsM8M",
+   "date": "2022-02-08",
+   "duration": "10 分 39 秒",
+   "category": "科技",
+   "headline": "動作感測器抓不到坐著看電視的人？用 ESP32＋ESPresense 做逐房間偵測的 5 個重點",
+   "thumbnail": "https://i.ytimg.com/vi/p7C2QvmsM8M/hqdefault.jpg",
+   "summary": [
+    "ESPresense 是跑在 ESP32 上的開源藍牙追蹤韌體：每個房間放一台，依哪台收到手錶／手環訊號最強，判斷你在哪個房間。",
+    "它更新不夠快，不適合「進門前先開燈」；強項是判斷房間有沒有人，搭配動作感測器在人離開後自動關燈。",
+    "安裝不用編譯：瀏覽器用 ESP Web Tools 燒錄，連 ESPresense 熱點進 192.168.4.1 填 Wi-Fi、MQTT 與房間名稱。",
+    "進 Home Assistant 前要有 MQTT broker；開自動探索就會出現節點實體，個別裝置則要從日誌找 ID、用 MQTT room 平台建感測器。",
+    "作者偏好用 Fitbit 等穿戴裝置當信標，手機有限制；實測 iPhone 原生也能用，追蹤 Apple 裝置記得開「查詢裝置特性」。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "原理",
+      "note": "多台 ESP32 收藍牙信標，訊號最強的節點＝你所在的房間。"
+     },
+     {
+      "cue": "適用場景",
+      "note": "判斷房間是否有人、離開後關燈；不適合搶快開燈，那交給動作感測器。"
+     },
+     {
+      "cue": "準備清單",
+      "note": "每房一台 ESP32（大房間加量）、穿戴式藍牙信標、Home Assistant＋MQTT broker。"
+     },
+     {
+      "cue": "設定重點",
+      "note": "關狀態 LED、開查詢裝置特性、最大回報距離≈房間尺寸；追蹤值要複製 ID 欄而非 MAC 欄。"
+     },
+     {
+      "cue": "下一步",
+      "note": "把房間狀態當自動化條件使用；作者希望 ESPresense 併入 ESPHome、整合進牆面開關。"
+     }
+    ],
+    "summary": "便宜的 ESP32 加上 ESPresense，就能讓 Home Assistant 知道你在哪個房間，最適合拿來補足動作感測器「人不動就失靈」的盲點。"
+   },
+   "added": "20261127",
+   "cards": {
+    "fb": "assets/ytnotes/p7C2QvmsM8M-20261127_FB.png",
+    "ig": "assets/ytnotes/p7C2QvmsM8M-20261127_IG.png"
    }
   },
   {
