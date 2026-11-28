@@ -1,6 +1,55 @@
 {
- "updatedAt": "2026-11-27T21:21:48+08:00",
+ "updatedAt": "2026-11-28T11:54:25+08:00",
  "items": [
+  {
+   "id": "3qHkcs3kG44",
+   "title": "Joe Rogan Experience #1309：納瓦爾・拉維肯（Naval Ravikant）",
+   "author": "PowerfulJRE",
+   "channelUrl": "https://www.youtube.com/channel/UCzQUP1qoWDoEbmsQxvdjxgQ",
+   "url": "https://www.youtube.com/watch?v=3qHkcs3kG44",
+   "date": "2019-06-05",
+   "duration": "2 小時 11 分",
+   "category": "理財",
+   "headline": "財富、快樂與健康都能學：Naval 在 Joe Rogan 節目上分享的 5 個人生原則",
+   "thumbnail": "https://i.ytimg.com/vi/3qHkcs3kG44/hqdefault.jpg",
+   "summary": [
+    "致富不靠出租時間：要擁有股權或個人品牌，用程式、媒體、資本等「無限槓桿」放大產出，並靠真實熱愛做出別人無法取代的「特定知識」。",
+    "慾望是「得不到就不快樂」的契約：一次只選一個主要慾望，其餘放下；快樂和健身一樣是可以練習的選擇。",
+    "工作像獅子而非牛：衝刺、休息、重新評估；產出取決於做什麼、跟誰做、怎麼做，而非工時。",
+    "冥想就是「什麼都不做的藝術」：把心裡未處理的事像收件匣一樣逐封清空，追求的是 peace from mind（從念頭中解脫）。",
+    "現代病多是富足病：社群、糖、新聞都被設計得讓人上癮，要劃界線、遠離憤慨與政治站隊，才能保持清晰思考。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "如何致富？",
+      "note": "不要出租時間；擁有事業股權或個人品牌，善用程式、媒體、資本三種免許可槓桿。"
+     },
+     {
+      "cue": "什麼是慾望？",
+      "note": "與自己簽的不快樂契約；一次只專注一個，其餘放下。"
+     },
+     {
+      "cue": "怎麼工作？",
+      "note": "像獅子：衝刺→休息→評估；訂一個有抱負的時薪，低於它的事就外包或放棄。"
+     },
+     {
+      "cue": "怎麼變快樂？",
+      "note": "把快樂當選擇來練習：凡事找正面解讀、曬太陽、多擁抱、整天觀察自己的念頭。"
+     },
+     {
+      "cue": "怎麼學習？",
+      "note": "理解基礎勝過背誦進階；能當場重新推導出來才算真懂，最好的一百本書反覆讀。"
+     }
+    ],
+    "summary": "財富靠槓桿與特定知識，快樂靠減少慾望與觀照內心，兩者都是可以學會的技能。"
+   },
+   "added": "20261128",
+   "cards": {
+    "fb": "assets/ytnotes/3qHkcs3kG44-20261128_FB.png",
+    "ig": "assets/ytnotes/3qHkcs3kG44-20261128_IG.png"
+   }
+  },
   {
    "id": "hwWlEuI359w",
    "title": "Claude AI 最大的數學突破，有個問題。",

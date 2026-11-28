@@ -1,14 +1,14 @@
 {
- "updatedAt": "2026-11-27T16:04:08.003Z",
+ "updatedAt": "2026-11-28T11:18:49.832Z",
  "items": [
   {
    "show": "財經一路發",
-   "title": "消費者信心、投資股票信心雙降！內需經濟撐得住嗎？ 2026.11.27",
-   "date": "2026.11.27",
-   "duration": "19m",
+   "title": "財經觀點｜注意！CDS仍在創新高！ 2026.11.27",
+   "date": "2026.11.28",
+   "duration": "21m",
    "tone": "insight",
-   "url": "https://open.firstory.fm/story/cmwyy7uhe046w01x3cegic7p9",
-   "summary": "來賓：中央大學台經中心 吳大任教授\n主題：消費者信心、投資股票信心雙降！內需經濟撐得住嗎？",
+   "url": "https://open.firstory.fm/story/cmwyynd8n04e801y9fzb1anqf",
+   "summary": "主題：注意！CDS仍在創新高！",
    "status": "published",
    "source": "rss"
   },
@@ -25,12 +25,12 @@
   },
   {
    "show": "AI懶人報",
-   "title": "EP494 – 我把自媒體當成軟體開發：一個人帶 AI agent 團隊，搬進最前沿工程師的方法",
-   "date": "2026.11.27",
-   "duration": "11m",
+   "title": "EP495 – AI 寫程式越強，瓶頸越是你？Flask 作者：先別急著蓋軟體工廠｜Armin Ronacher AI Engineer Code Summit 2026 演講重點",
+   "date": "2026.11.28",
+   "duration": "10m",
    "tone": "illumination",
-   "url": "https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/3b96427e-2296-4013-8cc3-c3327316444c",
-   "summary": "📚 這套做法和我每天在用的 skills，整理成課程「拆解AI懶人報內容工廠」：\nAI 一天就能做出十支影片，軟體業最前沿的工程師也正在處理同一個問題：AI 的產量爆炸之後，品質要怎麼守住。懶人報是我一個人帶著一組 AI agent 在做，一個半月多了 6 萬粉絲。我把整個自媒體流程當成軟體開發在經營：我像 tech lead 一樣分工、定規則、做判斷，agent 寫、agent 審、agent 把我的意見變成之後每支都會跑的檢查，流程一起越跑越好。這一集我拆解從 Lauren Tan 和 Matt Pococ…",
+   "url": "https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/94997f97-a6f1-42af-9c28-1e3d2e84c5d6",
+   "summary": "AI 寫程式越來越強，開一個新專案只要十分鐘，可是兩個禮拜後，那個專案常常已經沒人在顧。Flask 作者、Earendil 共同創辦人兼技術長 Armin Ronacher 在 AI Engineer Code Summit 2026 的演講，用他自己一整年的使用數據說明：agent 變強之後，真正的瓶頸是人的注意力和判斷力。\n這一集整理他的演講重點：\n・先把工坊蓋好，再來蓋軟體工廠：強力工具該放大的是野心和品質，不是數量",
    "status": "published",
    "source": "rss"
   },
@@ -69,12 +69,12 @@
   },
   {
    "show": "股癌 Gooaye",
-   "title": "EP717 | 🦪",
-   "date": "2026.11.25",
+   "title": "EP718 | 🦝",
+   "date": "2026.11.28",
    "duration": "51m",
    "tone": "insight",
-   "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/3da75e11-4344-41d7-be41-55d516ec4991",
-   "summary": "GTA 都不敢這樣編劇",
+   "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/dd46aac0-dc98-49c4-b467-7799fb9abce6",
+   "summary": "希望順利跑完",
    "status": "published",
    "source": "rss"
   },
