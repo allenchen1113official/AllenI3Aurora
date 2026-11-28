@@ -122,6 +122,86 @@
       }
     },
     {
+      "id": "cs_yt-KyfUysrNaco_20261128",
+      "topic": "yt-KyfUysrNaco",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-c6xzYNWXVHo_20261128",
+      "topic": "yt-c6xzYNWXVHo",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-gouMnPxYHDc_20261128",
+      "topic": "yt-gouMnPxYHDc",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_yt-oG8oRUcMbRo_20261128",
+      "topic": "yt-oG8oRUcMbRo",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_yt-u6UYsl-KEoc_20261128",
       "topic": "yt-u6UYsl-KEoc",
       "queueState": "draft",
@@ -222,6 +302,58 @@
       ]
     },
     {
+      "id": "cs_yt-c6xzYNWXVHo_20261128",
+      "topic": "yt-c6xzYNWXVHo",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "Home Assistant 2026.12 Beta 必看 7 大更新：窗簾控制終於直覺、語音不用停頓、能源儀表板更細",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-gouMnPxYHDc_20261128",
+      "topic": "yt-gouMnPxYHDc",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "不寫一行 YAML，用 Mushroom 1 小時做出 9 成像的 Home Assistant 手機儀表板：5 種卡片照著點就好",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-KyfUysrNaco_20261128",
+      "topic": "yt-KyfUysrNaco",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "Naval 3 小時長談的 5 個人生原則：為什麼「猶豫就說不」、先致富再求名，才能從人生遊戲中解脫？",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_yt-oG8oRUcMbRo_20261128",
+      "topic": "yt-oG8oRUcMbRo",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "Home Assistant 儀表板新手必學的 4 個積木＋3 張自訂卡：從空白頁做出掃地機器人控制卡",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_yt-u6UYsl-KEoc_20261128",
       "topic": "yt-u6UYsl-KEoc",
       "date": "20261128",
@@ -235,5 +367,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-28T13:21:56.973Z"
+  "generatedAt": "2026-11-28T13:29:21.425Z"
 }
