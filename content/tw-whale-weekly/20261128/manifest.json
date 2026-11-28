@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "topic": "tw-whale-weekly",
+  "date": "2026-11-28",
+  "title": "1 檔大戶一週加碼超過 3 個百分點！想跟著籌碼選股的你，這份集保週報先收藏",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "WhaleWeekly_FB_2026-11-28.png",
+        "WhaleWeekly_TWSE_2026-11-28.png",
+        "WhaleWeekly_TPEx_2026-11-28.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "WhaleWeekly_Cover_2026-11-28.png",
+        "WhaleWeekly_TWSE_2026-11-28.png",
+        "WhaleWeekly_TPEx_2026-11-28.png",
+        "WhaleWeekly_Method_2026-11-28.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "WhaleWeekly_Cover_2026-11-28.png"
+      ]
+    }
+  },
+  "producedBy": "trig_018dDeuwJzTCfNVVTd4Azru7",
+  "producedAt": "2026-11-28T09:10:00+08:00"
+}
