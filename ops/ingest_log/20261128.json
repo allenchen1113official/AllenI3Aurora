@@ -22,6 +22,26 @@
       }
     },
     {
+      "id": "cs_noon_20261128",
+      "topic": "noon",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_tw-whale-weekly_20261128",
       "topic": "tw-whale-weekly",
       "queueState": "done",
@@ -44,20 +64,20 @@
     {
       "id": "cs_yt-3qHkcs3kG44_20261128",
       "topic": "yt-3qHkcs3kG44",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112572559524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgRVLLCEeIB/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgRVLnnkcJ-",
         "error": null
       }
     }
@@ -70,6 +90,19 @@
       "status": "created",
       "auto": false,
       "title": "今日關注動態｜艾倫極光日報 2026/11/28（週六）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_noon_20261128",
+      "topic": "noon",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "給科技人的 11 則午間必讀：Google 讓 AI 訓練快 3 倍、輝達一週蒸發近 6,000 億美元，你的投資組合該怎麼看？",
       "channels": [
         "fb",
         "ig",
@@ -103,5 +136,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-28T02:32:36.083Z"
+  "generatedAt": "2026-11-28T03:56:27.864Z"
 }
