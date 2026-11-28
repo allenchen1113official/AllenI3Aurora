@@ -40,6 +40,26 @@
         "url": "https://www.threads.com/@allenchen1113.official/post/DgRJM4zEdyB",
         "error": null
       }
+    },
+    {
+      "id": "cs_yt-3qHkcs3kG44_20261128",
+      "topic": "yt-3qHkcs3kG44",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
@@ -68,7 +88,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_yt-3qHkcs3kG44_20261128",
+      "topic": "yt-3qHkcs3kG44",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "財富、快樂與健康都能學：Naval 在 Joe Rogan 節目上分享的 5 個人生原則",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-28T02:11:39.543Z"
+  "generatedAt": "2026-11-28T02:32:36.083Z"
 }
