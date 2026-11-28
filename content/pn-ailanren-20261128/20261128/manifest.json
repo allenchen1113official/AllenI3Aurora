@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-ailanren-20261128",
+  "date": "2026-11-28",
+  "title": "Flask 作者一年開 141 個專案，只顧得了 10 多個：AI 寫程式的 3 個做法",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261128#pn-ailanren-20261128",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_ailanren-20261128_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_ailanren-20261128_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_ailanren-20261128_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-28T18:49:39+08:00"
+}

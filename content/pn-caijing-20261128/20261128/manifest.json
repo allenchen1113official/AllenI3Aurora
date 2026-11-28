@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "pn-caijing-20261128",
+  "date": "2026-11-28",
+  "title": "CDS連創新高！3組數字看懂AI債務疑慮，為何銀行卻不缺錢",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=caijing-20261128#pn-caijing-20261128",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "PodNotes_caijing-20261128_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "PodNotes_caijing-20261128_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "PodNotes_caijing-20261128_IG.png"
+      ]
+    }
+  },
+  "producedBy": "podnotes.yml（GitHub Actions）",
+  "producedAt": "2026-11-28T18:44:06+08:00"
+}

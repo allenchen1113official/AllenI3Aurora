@@ -1,0 +1,8 @@
+Flask 作者一年開 141 個專案，只顧得了 10 多個：AI 寫程式的 3 個做法
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常聽 Podcast 重點筆記 2026/11/28
+🎧 節目來源：AI懶人報〈EP495 – AI 寫程式越強，瓶頸越是你？Flask …〉
+
+最有感的是這個數字：Flask 作者一年開了 141 個專案，固定在顧的只有 10 到 15 個。AI 把「開始」變得超便宜，卻沒讓「維護」變便宜。他每天 prompt 還是 120～190 個，agent 卻忙成好幾個工作日，所以瓶頸變成人的注意力。他的建議很反直覺：不是衝更快，而是知道什麼時候對 agent 說不。你上一個開了就放著的專案是什麼？
+
+📝 筆記：https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261128#pn-ailanren-20261128
+#Podcast重點筆記

@@ -1,0 +1,34 @@
+Flask 作者一年開 141 個專案，只顧得了 10 多個：AI 寫程式的 3 個做法
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常聽 Podcast 重點筆記 2026/11/28（週六）
+
+🎧 節目來源：AI懶人報〈EP495 – AI 寫程式越強，瓶頸越是你？Flask 作者：先別急著蓋軟體工廠｜Armin Ronacher AI Engineer Code Summit 2026 演講重點〉（2026-11-28・10 分）
+
+一年開了 141 個專案，真正固定在顧的只有 10～15 個。
+這不是你的問題，連 Flask 作者自己都這樣 😮
+
+這集 AI懶人報 整理 Armin Ronacher 在 AI Engineer Code Summit 2026 的演講，談 AI 寫程式越來越強之後，真正的瓶頸到底在哪：
+
+1️⃣ 瓶頸是人的注意力：他每天送出的 prompt 一整年都在 120～190 個左右，但 agent 幫他工作的時間，已從不到一個工作日變成好幾個工作日。
+
+2️⃣ 開專案容易，顧專案很難：新專案十分鐘就能跑起來，可是有沒有人真心在乎，才決定專案能不能活下去。
+
+3️⃣ 工具沒變，是模型變強：Pi 的核心一年沒大改，agent 單次自己跑的時間，卻從約 2.5 分鐘變成 14 分鐘以上。
+
+4️⃣ 三個做法：知道什麼時候對 agent 說不；在進度約 70% 時，叫 agent 交一頁 HTML 執行摘要，讓自己留在迴圈裡；少依賴套件，但守住大家共用的標準。
+
+5️⃣ 長任務的兩個挑戰：能暫停、叫回的 durable agents，以及用 JavaScript 安排工具的 code mode。
+
+他的結論很簡單：現在什麼都做得出來，但也許不該什麼都做。
+
+你自己用 AI 寫程式時，有多少專案最後被放著沒人顧？留言聊聊 👇
+
+非投資建議
+
+💡 一句話總結：模型越強、人的注意力越稀缺，先把工坊蓋好，再談要不要蓋工廠。
+
+📝 康乃爾筆記全文：https://allenchen1113official.github.io/AllenI3Aurora/podcast.html?pn=ailanren-20261128#pn-ailanren-20261128
+🎧 收聽原節目：https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/94997f97-a6f1-42af-9c28-1e3d2e84c5d6
+
+以上為個人收聽後整理的重點筆記，非節目逐字轉載；完整內容請收聽原節目並支持創作者。
+
+#AI寫程式 #CodingAgent #ArminRonacher #Flask #AIEngineer #軟體工程 #ClaudeCode #AI工具
