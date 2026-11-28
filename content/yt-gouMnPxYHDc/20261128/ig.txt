@@ -1,0 +1,25 @@
+不寫一行 YAML，用 Mushroom 1 小時做出 9 成像的 Home Assistant 手機儀表板：5 種卡片照著點就好
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/28（週六）
+
+📺 影片來源：Everything Smart Home〈輕鬆打造漂亮的 Home Assistant 手機儀表板！〉（YouTube・2022-04-08・38 分 47 秒｜原標題：Creating a Beautiful Home Assistant Mobile Dashboard Easily!）
+
+📌 重點摘要
+• Mushroom 把 Minimalist 的設計搬進 UI，用滑鼠點選卡片就能做出約九成相似的手機儀表板，作者估計省下約 20 小時。
+• 首頁由 chips 資訊列、依時段問候的 template 卡、導航按鈕列、人物卡與房間卡組成；水平堆疊是排版關鍵。
+• 房間卡用 template 卡可在副標顯示室溫、燈亮時圖示變色；點擊進房、長按開關燈。
+• 每個導航按鈕都要建立對應 view，view 的 URL 必須和按鈕的導航路徑一致。
+• 用 HACS 的 kiosk mode 隱藏頂端分頁列，網址加 ?disable_km 可暫時叫回來編輯。
+
+📝 康乃爾筆記
+🔹 簡單版 vs 困難版：Mushroom 用 UI 點選約 9 成效果；Minimalist 全寫 YAML、耗時數十小時。
+🔹 首頁骨架：chips 資訊列＋時段問候＋導航按鈕＋人物卡＋房間卡。
+🔹 房間卡技巧：template 卡副標放室溫、燈亮圖示變色；點擊進房、長按開關燈。
+🔹 導航設定：按鈕的導航路徑＝view 的 URL，小寫、不含空白。
+🔹 隱藏頂端列：kiosk mode 加 hide_header；網址加 ?disable_km 可救回。
+
+💡 一句話總結：不會 YAML 也能用 Mushroom 照著點出好看的手機儀表板，關鍵是水平堆疊與導航路徑對齊。
+
+🎬 原片搜尋：Everything Smart Home〈Creating a Beautiful Home Assistant Mobile Dashboard Easily!〉（連結見 FB／Threads）
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#HomeAssistant #智慧家庭 #Mushroom #儀表板 #HACS #艾倫極光報報 #YouTube重點筆記

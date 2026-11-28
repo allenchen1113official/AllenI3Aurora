@@ -1,0 +1,27 @@
+Home Assistant 儀表板新手必學的 4 個積木＋3 張自訂卡：從空白頁做出掃地機器人控制卡
+
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜今日關注動態｜常看 YouTube 重點筆記 2026/11/28（週六）
+
+📺 影片來源：Make It Work〈2025 年 Home Assistant 儀表板新手入門（＋自訂卡片）〉（YouTube・2025-06-21・22 分 27 秒｜原標題：Home Assistant Dashboards for Beginners in 2025 (+ custom cards)）
+
+📌 重點摘要
+• 儀表板由 view、section、badge、card 四種積木組成，與其用預設 Overview，不如從零自建。
+• 版面建議用 sections：卡片與整個區塊都能拖拉排列，牆面平板三欄就夠用。
+• Badge 與卡片都能設「條件顯示」，例如信箱有信才跳出提醒，沒事就隱藏。
+• 進階要裝 HACS 並碰 YAML；作者最推 Mushroom、Stack-In-Card、Card Mod 三件組。
+• Jinja 模板可請 ChatGPT 先寫再微調；點擊可設導航，一鍵跳到任何頁面。
+
+📝 康乃爾筆記
+🔹 四種積木：View 是分頁、section 是群組、badge 是頂端小晶片、card 是內容。
+🔹 版面選擇：用 sections 版面，卡片和區塊都能拖拉；三欄適合牆面平板。
+🔹 條件顯示：依實體狀態決定 badge／card／section 要不要出現。
+🔹 自訂三件組：Mushroom 做樣式、Stack-In-Card 合併卡片、Card Mod 改 CSS。
+🔹 實戰範例：3D 印表機進度 badge、掃地機器人一體式控制卡。
+
+💡 一句話總結：先用內建積木把版面排整齊，再用 HACS 三件組把常用控制做成自己的專屬卡片。
+
+🎬 原片：https://www.youtube.com/watch?v=oG8oRUcMbRo
+
+以上為個人觀看後整理的重點筆記，非原片逐字轉載；完整內容請看原片並支持創作者。
+
+#HomeAssistant #智慧家庭 #儀表板 #HACS #Mushroom #艾倫極光報報

@@ -1,0 +1,12 @@
+不寫一行 YAML，用 Mushroom 1 小時做出 9 成像的 Home Assistant 手機儀表板：5 種卡片照著點就好
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/28
+📺 影片來源：Everything Smart Home〈輕鬆打造漂亮的 Home Assistant 手機儀表板〉
+
+① Mushroom 把 Minimalist 的設計搬進 UI，用滑鼠點選卡片就能做出約九成相似的手機儀表板，作者估計省下約 20 小時。
+② 首頁由 chips 資訊列、依時段問候的 template 卡、導航按鈕列、人物卡與房間卡組成；水平堆疊是排版關鍵。
+③ 房間卡用 template 卡可在副標顯示室溫、燈亮時圖示變色；點擊進房、長按開關燈。
+
+💡 一句話總結：不會 YAML 也能用 Mushroom 照著點出好看的手機儀表板，關鍵是水平堆疊與導航路徑對齊。
+
+原片：https://www.youtube.com/watch?v=gouMnPxYHDc
+#YouTube重點筆記

@@ -1,0 +1,12 @@
+Home Assistant 儀表板新手必學的 4 個積木＋3 張自訂卡：從空白頁做出掃地機器人控制卡
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/28
+📺 影片來源：Make It Work〈2025 年 Home Assistant 儀表板新手入〉
+
+① 儀表板由 view、section、badge、card 四種積木組成，與其用預設 Overview，不如從零自建。
+② 版面建議用 sections：卡片與整個區塊都能拖拉排列，牆面平板三欄就夠用。
+③ Badge 與卡片都能設「條件顯示」，例如信箱有信才跳出提醒，沒事就隱藏。
+
+💡 一句話總結：先用內建積木把版面排整齊，再用 HACS 三件組把常用控制做成自己的專屬卡片。
+
+原片：https://www.youtube.com/watch?v=oG8oRUcMbRo
+#YouTube重點筆記

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "topic": "yt-gouMnPxYHDc",
+  "date": "2026-11-28",
+  "title": "不寫一行 YAML，用 Mushroom 1 小時做出 9 成像的 Home Assistant 手機儀表板：5 種卡片照著點就好",
+  "link": "https://allenchen1113official.github.io/AllenI3Aurora/?yt=gouMnPxYHDc#ytnotes",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "YTNotes_gouMnPxYHDc_20261128_FB.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "YTNotes_gouMnPxYHDc_20261128_IG.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "YTNotes_gouMnPxYHDc_20261128_IG.png"
+      ]
+    }
+  },
+  "producedBy": "常看YouTube重點筆記排程",
+  "producedAt": "2026-11-28T21:22:46+08:00"
+}
