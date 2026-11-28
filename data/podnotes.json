@@ -1,6 +1,114 @@
 {
- "updatedAt": "2026-11-27T15:42:45+00:00",
+ "updatedAt": "2026-11-28T10:49:39+00:00",
  "items": [
+  {
+   "id": "caijing-20261128",
+   "code": "caijing",
+   "show": "財經一路發",
+   "title": "財經觀點｜注意！CDS仍在創新高！ 2026.11.27",
+   "url": "https://open.firstory.fm/story/cmwyynd8n04e801y9fzb1anqf",
+   "published": "2026-11-28",
+   "date": "2026.11.28",
+   "duration": "20 分",
+   "category": "理財",
+   "headline": "CDS連創新高！3組數字看懂AI債務疑慮，為何銀行卻不缺錢",
+   "language": "zh",
+   "summary": [
+    "CDS等同公司債保險，保費反映公司還不還得出錢，比股價更直白",
+    "CoreWeave的CDS保費達13%以上，已落入市場認定的違約邊緣等級",
+    "Alphabet等大公司CDS也創高，主因是市場在算AI投資報酬率",
+    "高收益債一週內1934檔中有1753檔下跌，CCC級殖利率達14%",
+    "銀行準備金充裕、拆款利率平穩，與2008年的金融風暴並不相同"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "新規與記憶體",
+      "note": "美方限制遠端存取AI晶片租給中國企業；TrendForce預估NAND合約價明年第一季由漲轉跌。"
+     },
+     {
+      "cue": "CDS是什麼",
+      "note": "可視為公司債保險；保費每天報價，反映公司還不還得出錢，少了股價裡的故事與資金面雜訊。"
+     },
+     {
+      "cue": "CoreWeave保費",
+      "note": "CDS保費達13%以上，一般超過10%即視為違約等級，甲骨文、軟銀等也創高。"
+     },
+     {
+      "cue": "Alphabet為何創高",
+      "note": "不是怕它倒，而是投資人在算AI資本支出能否回收；先反映的是股價評價下修。"
+     },
+     {
+      "cue": "擴散的跡象",
+      "note": "高收益債一週1934檔中1753檔下跌；CCC級利率約14%，仍在創高，需觀察是否往上擴散。"
+     },
+     {
+      "cue": "與2008不同",
+      "note": "銀行準備金近3兆美元，隔夜拆款只高政策利率4個基點，貼現窗口幾乎無人動用。"
+     }
+    ],
+    "summary": "AI債務疑慮讓CDS創高並向高收益債擴散，但銀行體系資金仍充裕，需持續觀察。"
+   },
+   "cards": {
+    "fb": "assets/podnotes/caijing-20261128_FB.png",
+    "ig": "assets/podnotes/caijing-20261128_IG.png"
+   },
+   "added": "20261128"
+  },
+  {
+   "id": "ailanren-20261128",
+   "code": "ailanren",
+   "show": "AI懶人報",
+   "title": "EP495 – AI 寫程式越強，瓶頸越是你？Flask 作者：先別急著蓋軟體工廠｜Armin Ronacher AI Engineer Code Summit 2026 演講重點",
+   "url": "https://player.soundon.fm/p/ca974d36-6fcc-46fc-a339-ba7ed8902c80/episodes/94997f97-a6f1-42af-9c28-1e3d2e84c5d6",
+   "published": "2026-11-28",
+   "date": "2026.11.28",
+   "duration": "10 分",
+   "category": "AI科技",
+   "headline": "Flask 作者一年開 141 個專案，只顧得了 10 多個：AI 寫程式的 3 個做法",
+   "language": "zh",
+   "summary": [
+    "AI 讓開新專案變得很容易，但長期維護一點都沒有變簡單。",
+    "Armin 一年開 141 個專案，固定回去顧的只有 10 到 15 個。",
+    "每天 prompt 約 120–190 個沒變，agent 工作時間卻增加到好幾個工作日。",
+    "三個做法：知道何時說不、留在迴圈裡、少依賴但守住共用標準。",
+    "長任務有兩個挑戰：可暫停續跑的 durable agents，以及 code mode。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "工坊 vs 軟體工廠",
+      "note": "工廠追數量，工坊追每件作品的品質；強力工具該用來放大野心與品質，而不是堆出更多軟體。"
+     },
+     {
+      "cue": "工具沒變，模型變強",
+      "note": "Pi 這類 harness 一年沒大改；換新模型後糾正次數與中途打斷比例下降，agent 單次自跑時間從約 2.5 分鐘增至 14 分鐘以上。"
+     },
+     {
+      "cue": "瓶頸是人的注意力",
+      "note": "每天 prompt 約 120–190 個不變，agent 工作時間卻成了好幾個工作日；141 個專案中固定在顧的只有 10–15 個。"
+     },
+     {
+      "cue": "做法一：學會說不",
+      "note": "agent 被獎勵的是完成目標，但完成不等於半年後仍滿意；功能無限疊加會像拼湊的車。必要時刻意放慢，確保自己看得懂系統。"
+     },
+     {
+      "cue": "做法二、三",
+      "note": "在約 70% 時要 agent 產出一頁 HTML 執行摘要，用來檢查有無走歪；少依賴外部套件，但要守住大家共用的規格與標準。"
+     },
+     {
+      "cue": "長任務兩挑戰",
+      "note": "Durable agents 能暫停、叫回並自動重啟，也省成本；code mode 讓 agent 寫 JavaScript 排程工具，並搭配小模型做判斷。"
+     }
+    ],
+    "summary": "模型越強、人的注意力越稀缺，先把工坊蓋好，再談要不要蓋工廠。"
+   },
+   "cards": {
+    "fb": "assets/podnotes/ailanren-20261128_FB.png",
+    "ig": "assets/podnotes/ailanren-20261128_IG.png"
+   },
+   "added": "20261128"
+  },
   {
    "id": "zhaohua-20261127",
    "code": "zhaohua",
