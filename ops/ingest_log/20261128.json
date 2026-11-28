@@ -4,40 +4,40 @@
     {
       "id": "cs_daily_20261128",
       "topic": "daily",
-      "queueState": "pending",
+      "queueState": "done",
       "fb": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112560253524851",
         "error": null
       },
       "ig": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgRI4Xqkd5x/",
         "error": null
       },
       "th": {
-        "state": "approved",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgRI45UkY2d",
         "error": null
       }
     },
     {
       "id": "cs_tw-whale-weekly_20261128",
       "topic": "tw-whale-weekly",
-      "queueState": "draft",
+      "queueState": "done",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112560811524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.instagram.com/p/DgRJMgTkVlx/",
         "error": null
       },
       "th": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.threads.com/@allenchen1113.official/post/DgRJM4zEdyB",
         "error": null
       }
     }
@@ -70,5 +70,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-28T02:03:41.702Z"
+  "generatedAt": "2026-11-28T02:11:39.543Z"
 }
