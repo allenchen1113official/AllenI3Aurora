@@ -24,19 +24,19 @@
     {
       "id": "cs_noon_20261128",
       "topic": "noon",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
-        "url": null,
+        "state": "published",
+        "url": "https://www.facebook.com/1370390972829118_122112695019524851",
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "processing",
         "url": null,
         "error": null
       }
@@ -124,19 +124,19 @@
     {
       "id": "cs_yt-KyfUysrNaco_20261128",
       "topic": "yt-KyfUysrNaco",
-      "queueState": "draft",
+      "queueState": "pending",
       "fb": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "ig": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       },
       "th": {
-        "state": "draft",
+        "state": "approved",
         "url": null,
         "error": null
       }
@@ -367,5 +367,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-28T13:29:21.425Z"
+  "generatedAt": "2026-11-28T15:24:09.832Z"
 }
