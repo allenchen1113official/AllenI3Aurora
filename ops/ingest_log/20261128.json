@@ -120,6 +120,26 @@
         "url": "https://www.threads.com/@allenchen1113.official/post/DgRVLnnkcJ-",
         "error": null
       }
+    },
+    {
+      "id": "cs_yt-u6UYsl-KEoc_20261128",
+      "topic": "yt-u6UYsl-KEoc",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
@@ -200,7 +220,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_yt-u6UYsl-KEoc_20261128",
+      "topic": "yt-u6UYsl-KEoc",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "DeepMind 新模型 Neon 的 3 個真相：74 頁安全報告裡，AI 少了 2.6 倍可疑行為，卻還沒擺脫「應聲蟲」",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-28T10:52:23.879Z"
+  "generatedAt": "2026-11-28T13:21:56.973Z"
 }
