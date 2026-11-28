@@ -20,6 +20,26 @@
         "url": null,
         "error": null
       }
+    },
+    {
+      "id": "cs_tw-whale-weekly_20261128",
+      "topic": "tw-whale-weekly",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
     }
   ],
   "lastIngest": [
@@ -35,7 +55,20 @@
         "ig",
         "th"
       ]
+    },
+    {
+      "id": "cs_tw-whale-weekly_20261128",
+      "topic": "tw-whale-weekly",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "1 檔大戶一週加碼超過 3 個百分點！想跟著籌碼選股的你，這份集保週報先收藏",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
     }
   ],
-  "generatedAt": "2026-11-28T00:11:44.075Z"
+  "generatedAt": "2026-11-28T01:14:02.708Z"
 }
