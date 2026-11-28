@@ -1,0 +1,10 @@
+DeepMind 新模型 Neon 的 3 個真相：74 頁安全報告裡，AI 少了 2.6 倍可疑行為，卻還沒擺脫「應聲蟲」
+艾倫極光報報 ALLEN I³ AURORA BRIEF｜常看 YouTube 重點筆記 2026/11/28
+📺 影片來源：Two Minute Papers〈DeepMind 新 AI 剛剛改變了 AI 競賽〉
+
+① Gemini Hydrogen 只是支撐 Google 搜尋的平價模型，卻能重現布料碰撞、皮膚渲染等高難度圖學論文，只在液態牛奶場景失手。
+② 旗艦模型 Neon 能做遊戲、材質與日夜循環城市，被作者形容為目前網路上最受喜愛的模型之一。
+③ 安全報告顯示：在數千萬次代理動作監控中，Neon 觸發的可疑警示比 Carbon、Hydrogen 少 2～2.6 倍，並以 209 個真實情境重播驗證修正有效。
+
+原片：https://www.youtube.com/watch?v=u6UYsl-KEoc
+#YouTube重點筆記
