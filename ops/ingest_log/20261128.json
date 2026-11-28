@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-28",
+  "posts": [
+    {
+      "id": "cs_daily_20261128",
+      "topic": "daily",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    }
+  ],
+  "lastIngest": [
+    {
+      "id": "cs_daily_20261128",
+      "topic": "daily",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "今日關注動態｜艾倫極光日報 2026/11/28（週六）",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    }
+  ],
+  "generatedAt": "2026-11-28T00:11:44.075Z"
+}
