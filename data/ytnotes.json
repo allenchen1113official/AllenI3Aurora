@@ -1,6 +1,251 @@
 {
- "updatedAt": "2026-11-28T11:54:25+08:00",
+ "updatedAt": "2026-11-28T21:28:49+08:00",
  "items": [
+  {
+   "id": "u6UYsl-KEoc",
+   "title": "DeepMind 新 AI 剛剛改變了 AI 競賽",
+   "author": "Two Minute Papers",
+   "channelUrl": "https://www.youtube.com/channel/UCbfYPyITQ-7l4upoX8nvctg",
+   "url": "https://www.youtube.com/watch?v=u6UYsl-KEoc",
+   "date": "2026-11-27",
+   "duration": "7 分 58 秒",
+   "category": "AI 應用",
+   "headline": "DeepMind 新模型 Neon 的 3 個真相：74 頁安全報告裡，AI 少了 2.6 倍可疑行為，卻還沒擺脫「應聲蟲」",
+   "thumbnail": "https://i.ytimg.com/vi/u6UYsl-KEoc/hqdefault.jpg",
+   "summary": [
+    "Gemini Hydrogen 只是支撐 Google 搜尋的平價模型，卻能重現布料碰撞、皮膚渲染等高難度圖學論文，只在液態牛奶場景失手。",
+    "旗艦模型 Neon 能做遊戲、材質與日夜循環城市，被作者形容為目前網路上最受喜愛的模型之一。",
+    "安全報告顯示：在數千萬次代理動作監控中，Neon 觸發的可疑警示比 Carbon、Hydrogen 少 2～2.6 倍，並以 209 個真實情境重播驗證修正有效。",
+    "「應聲蟲」問題仍待改善：附和會讓 AI 過度自信、片面甚至編造；壓過頭又變冷淡，報告同時追蹤膚淺與乾澀兩項指標。",
+    "DeepMind 六週連發新模型、價格持續下降，作者認為競爭對使用者最有利，但部分工作 Opus 5.5 仍領先。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "平價模型也很強",
+      "note": "Hydrogen 重現 OGC 布料碰撞與次表面散射論文，極限在液體模擬。"
+     },
+     {
+      "cue": "旗艦 Neon",
+      "note": "能做遊戲、材質、城市日夜循環與虛擬作畫。"
+     },
+     {
+      "cue": "安全監控",
+      "note": "可疑警示少 2～2.6 倍；209 個情境重播證明修正是真的。"
+     },
+     {
+      "cue": "應聲蟲風險",
+      "note": "過度自信、片面、編造；反向壓過頭則冷淡敷衍。"
+     },
+     {
+      "cue": "競爭格局",
+      "note": "DeepMind 每週更新、價格下降；Opus 5.5 某些工作仍較強。"
+     }
+    ],
+    "summary": "DeepMind 用便宜又強的模型重回戰場，但真正值得看的是它怎麼用數據檢驗 AI 是否守規矩、是否只會附和。"
+   },
+   "added": "20261128",
+   "cards": {
+    "fb": "assets/ytnotes/u6UYsl-KEoc-20261128_FB.png",
+    "ig": "assets/ytnotes/u6UYsl-KEoc-20261128_IG.png"
+   }
+  },
+  {
+   "id": "c6xzYNWXVHo",
+   "title": "Home Assistant 2026.12 Beta：你一直在等的更新！",
+   "author": "Smart Home Junkie",
+   "channelUrl": "https://www.youtube.com/channel/UCVtQ4AOSmCFUuvixddYiSxw",
+   "url": "https://www.youtube.com/watch?v=c6xzYNWXVHo",
+   "date": "2026-11-26",
+   "duration": "17 分 16 秒",
+   "category": "科技",
+   "headline": "Home Assistant 2026.12 Beta 必看 7 大更新：窗簾控制終於直覺、語音不用停頓、能源儀表板更細",
+   "thumbnail": "https://i.ytimg.com/vi/c6xzYNWXVHo/hqdefault.jpg",
+   "summary": [
+    "遮蔽設備（窗簾、百葉、鐵捲門）改用直覺滑桿並畫出實際開合狀態，解決多年反直覺的控制方式。",
+    "Labs 可開啟新語音引擎與次世代語音：喚醒後不用停頓，並支援多個語音計時器清單。",
+    "能源儀表板可細分電池來自電網／太陽能的充放電，並主動列出還沒加入的電表與瓦斯表。",
+    "儀表板可複製、view 可拖拉排序；helper 分類、重啟進度、整合健康度與資料庫占用分析都更好用。",
+    "Home Assistant Cloud 改名 Home Assistant Link；更新前務必看發行說明裡的不相容變更。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "遮蔽設備對話框",
+      "note": "窗簾、百葉角度、鐵捲門用滑桿控制，畫面顯示實際開合。"
+     },
+     {
+      "cue": "語音升級",
+      "note": "Labs 開啟次世代語音，喚醒詞後免停頓；可同時設多個計時器。"
+     },
+     {
+      "cue": "能源儀表板",
+      "note": "電池充放電分電網／太陽能／家用；自動列出未加入的電表。"
+     },
+     {
+      "cue": "管理介面",
+      "note": "複製儀表板、拖拉 view、helper 分類、整合健康度、資料庫占用。"
+     },
+     {
+      "cue": "更新前注意",
+      "note": "仍是 Beta；Cloud 改名 Link；先看不相容變更清單。"
+     }
+    ],
+    "summary": "2026.12 是一個把日常操作磨順的版本，窗簾控制與 view 拖拉排序是最有感的兩項。"
+   },
+   "added": "20261128",
+   "cards": {
+    "fb": "assets/ytnotes/c6xzYNWXVHo-20261128_FB.png",
+    "ig": "assets/ytnotes/c6xzYNWXVHo-20261128_IG.png"
+   }
+  },
+  {
+   "id": "oG8oRUcMbRo",
+   "title": "2025 年 Home Assistant 儀表板新手入門（＋自訂卡片）",
+   "author": "Make It Work",
+   "channelUrl": "https://www.youtube.com/channel/UCGoreZKPBtCXCf54F3DF4ug",
+   "url": "https://www.youtube.com/watch?v=oG8oRUcMbRo",
+   "date": "2025-06-21",
+   "duration": "22 分 27 秒",
+   "category": "科技",
+   "headline": "Home Assistant 儀表板新手必學的 4 個積木＋3 張自訂卡：從空白頁做出掃地機器人控制卡",
+   "thumbnail": "https://i.ytimg.com/vi/oG8oRUcMbRo/hqdefault.jpg",
+   "summary": [
+    "儀表板由 view、section、badge、card 四種積木組成，與其用預設 Overview，不如從零自建。",
+    "版面建議用 sections：卡片與整個區塊都能拖拉排列，牆面平板三欄就夠用。",
+    "Badge 與卡片都能設「條件顯示」，例如信箱有信才跳出提醒，沒事就隱藏。",
+    "進階要裝 HACS 並碰 YAML；作者最推 Mushroom、Stack-In-Card、Card Mod 三件組。",
+    "Jinja 模板可請 ChatGPT 先寫再微調；點擊可設導航，一鍵跳到任何頁面。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "四種積木",
+      "note": "View 是分頁、section 是群組、badge 是頂端小晶片、card 是內容。"
+     },
+     {
+      "cue": "版面選擇",
+      "note": "用 sections 版面，卡片和區塊都能拖拉；三欄適合牆面平板。"
+     },
+     {
+      "cue": "條件顯示",
+      "note": "依實體狀態決定 badge／card／section 要不要出現。"
+     },
+     {
+      "cue": "自訂三件組",
+      "note": "Mushroom 做樣式、Stack-In-Card 合併卡片、Card Mod 改 CSS。"
+     },
+     {
+      "cue": "實戰範例",
+      "note": "3D 印表機進度 badge、掃地機器人一體式控制卡。"
+     }
+    ],
+    "summary": "先用內建積木把版面排整齊，再用 HACS 三件組把常用控制做成自己的專屬卡片。"
+   },
+   "added": "20261128",
+   "cards": {
+    "fb": "assets/ytnotes/oG8oRUcMbRo-20261128_FB.png",
+    "ig": "assets/ytnotes/oG8oRUcMbRo-20261128_IG.png"
+   }
+  },
+  {
+   "id": "KyfUysrNaco",
+   "title": "關於人生這場遊戲的 44 個殘酷真相 - Naval Ravikant（4K）",
+   "author": "Chris Williamson",
+   "channelUrl": "https://www.youtube.com/channel/UCIaH-gZIVC432YRjNVvnyCA",
+   "url": "https://www.youtube.com/watch?v=KyfUysrNaco",
+   "date": "2025-03-31",
+   "duration": "3 小時 16 分",
+   "category": "生活",
+   "headline": "Naval 3 小時長談的 5 個人生原則：為什麼「猶豫就說不」、先致富再求名，才能從人生遊戲中解脫？",
+   "thumbnail": "https://i.ytimg.com/vi/KyfUysrNaco/hqdefault.jpg",
+   "summary": [
+    "幸福與成功不衝突：越平靜的人越會去做符合自己天賦的事，反而更成功；贏得遊戲的意義是從遊戲中解脫。",
+    "地位遊戲是零和廝殺，財富創造是正和；建議先把財富賺到，再談名聲，且只在乎你尊重的少數人。",
+    "決策三原則：猶豫就說不、兩者相當選短期較痛的、選長期讓心更平靜的；人生大事是跟誰、做什麼、住哪裡。",
+    "靈感會過期，有靈感就立刻做；找出對你像玩、對別人像工作的事，把自己產品化。",
+    "最根本的資源不是時間而是注意力；不在當下、為無法控制的事焦慮，才是真正的浪費。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "幸福 vs 成功",
+      "note": "不是取捨；更快樂會讓你做更對的事，反而更成功。"
+     },
+     {
+      "cue": "財富 vs 地位",
+      "note": "地位零和、財富正和；先致富，再讓名聲成為副產品。"
+     },
+     {
+      "cue": "決策原則",
+      "note": "猶豫就說不；選短期較痛、長期較平靜的那條路。"
+     },
+     {
+      "cue": "自由與效率",
+      "note": "不排行程、靈感來了立刻做；自由、快樂與產能是一體的。"
+     },
+     {
+      "cue": "注意力",
+      "note": "人生真正的貨幣是注意力，別花在無法影響的事上。"
+     }
+    ],
+    "summary": "Naval 的核心是：誠實面對自己想要什麼，挑剔慾望與問題，把注意力留給真正重要的少數事情。"
+   },
+   "added": "20261128",
+   "cards": {
+    "fb": "assets/ytnotes/KyfUysrNaco-20261128_FB.png",
+    "ig": "assets/ytnotes/KyfUysrNaco-20261128_IG.png"
+   }
+  },
+  {
+   "id": "gouMnPxYHDc",
+   "title": "輕鬆打造漂亮的 Home Assistant 手機儀表板！",
+   "author": "Everything Smart Home",
+   "channelUrl": "https://www.youtube.com/channel/UCrVLgIniVg6jW38uVqDRIiQ",
+   "url": "https://www.youtube.com/watch?v=gouMnPxYHDc",
+   "date": "2022-04-08",
+   "duration": "38 分 47 秒",
+   "category": "科技",
+   "headline": "不寫一行 YAML，用 Mushroom 1 小時做出 9 成像的 Home Assistant 手機儀表板：5 種卡片照著點就好",
+   "thumbnail": "https://i.ytimg.com/vi/gouMnPxYHDc/hqdefault.jpg",
+   "summary": [
+    "Mushroom 把 Minimalist 的設計搬進 UI，用滑鼠點選卡片就能做出約九成相似的手機儀表板，作者估計省下約 20 小時。",
+    "首頁由 chips 資訊列、依時段問候的 template 卡、導航按鈕列、人物卡與房間卡組成；水平堆疊是排版關鍵。",
+    "房間卡用 template 卡可在副標顯示室溫、燈亮時圖示變色；點擊進房、長按開關燈。",
+    "每個導航按鈕都要建立對應 view，view 的 URL 必須和按鈕的導航路徑一致。",
+    "用 HACS 的 kiosk mode 隱藏頂端分頁列，網址加 ?disable_km 可暫時叫回來編輯。"
+   ],
+   "cornell": {
+    "rows": [
+     {
+      "cue": "簡單版 vs 困難版",
+      "note": "Mushroom 用 UI 點選約 9 成效果；Minimalist 全寫 YAML、耗時數十小時。"
+     },
+     {
+      "cue": "首頁骨架",
+      "note": "chips 資訊列＋時段問候＋導航按鈕＋人物卡＋房間卡。"
+     },
+     {
+      "cue": "房間卡技巧",
+      "note": "template 卡副標放室溫、燈亮圖示變色；點擊進房、長按開關燈。"
+     },
+     {
+      "cue": "導航設定",
+      "note": "按鈕的導航路徑＝view 的 URL，小寫、不含空白。"
+     },
+     {
+      "cue": "隱藏頂端列",
+      "note": "kiosk mode 加 hide_header；網址加 ?disable_km 可救回。"
+     }
+    ],
+    "summary": "不會 YAML 也能用 Mushroom 照著點出好看的手機儀表板，關鍵是水平堆疊與導航路徑對齊。"
+   },
+   "added": "20261128",
+   "cards": {
+    "fb": "assets/ytnotes/gouMnPxYHDc-20261128_FB.png",
+    "ig": "assets/ytnotes/gouMnPxYHDc-20261128_IG.png"
+   }
+  },
   {
    "id": "3qHkcs3kG44",
    "title": "Joe Rogan Experience #1309：納瓦爾・拉維肯（Naval Ravikant）",
