@@ -62,6 +62,46 @@
       }
     },
     {
+      "id": "cs_pn-ailanren-20261128_20261128",
+      "topic": "pn-ailanren-20261128",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
+      "id": "cs_pn-caijing-20261128_20261128",
+      "topic": "pn-caijing-20261128",
+      "queueState": "draft",
+      "fb": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "ig": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      },
+      "th": {
+        "state": "draft",
+        "url": null,
+        "error": null
+      }
+    },
+    {
       "id": "cs_yt-3qHkcs3kG44_20261128",
       "topic": "yt-3qHkcs3kG44",
       "queueState": "done",
@@ -110,6 +150,32 @@
       ]
     },
     {
+      "id": "cs_pn-ailanren-20261128_20261128",
+      "topic": "pn-ailanren-20261128",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "Flask 作者一年開 141 個專案，只顧得了 10 多個：AI 寫程式的 3 個做法",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
+      "id": "cs_pn-caijing-20261128_20261128",
+      "topic": "pn-caijing-20261128",
+      "date": "20261128",
+      "status": "created",
+      "auto": false,
+      "title": "CDS連創新高！3組數字看懂AI債務疑慮，為何銀行卻不缺錢",
+      "channels": [
+        "fb",
+        "ig",
+        "th"
+      ]
+    },
+    {
       "id": "cs_tw-whale-weekly_20261128",
       "topic": "tw-whale-weekly",
       "date": "20261128",
@@ -136,5 +202,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-11-28T03:56:27.864Z"
+  "generatedAt": "2026-11-28T10:52:23.879Z"
 }
