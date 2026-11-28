@@ -1,0 +1,27 @@
+給科技人的 11 則午間必讀：Google 讓 AI 訓練快 3 倍、輝達一週蒸發近 6,000 億美元，你的投資組合該怎麼看？
+今日關注動態｜艾倫極光午報 2026/11/28
+
+週六中午，先用 3 分鐘掌握這週最重要的訊號 👇
+AI 研究端持續加速，Google 新架構讓模型訓練最快 3 倍；美股感恩節週五收黑，但 S&P 500 全週仍大漲 2.5%，輝達風波仍是震盪核心。智慧交通與智慧水務，則正被 AI 基礎建設一起推著走。
+
+🤖 AI：Google DeepCrossAttention，模型品質相當、訓練最快 3 倍
+🔗 https://research.google/blog/supercharging-transformer-residual-connections/
+
+🚦 智慧交通：曼谷 74 個路口自適應號誌，幹道旅行時間縮短 10%–41%
+🔗 https://m.gmw.cn/2026-11/19/content_39109057.htm
+
+💧 智慧水務：聯合國大學專家——水務業者應站上 AI 資料中心討論中心
+🔗 https://smartwatermagazine.com/news/unu-inweh/kaveh-madani-director-of-unu-inweh-water-utilities-should-be-central-to-conversations-about-ai-infrastructure
+
+💻 科技：黑色星期五，熱門購物網站被植入 WebRTC 盜刷腳本
+🔗 https://www.infohawk.com/news/2026-11-27-black-friday-webrtc-skimmer
+
+📈 財經：S&P 500 週五 −0.4%、全週 +2.5%；PTT 股板熱議輝達 Blackwell 晶片流入大陸（社群熱議）
+🔗 https://www.ajc.com/news/2026/11/stocks-fall-but-wall-street-notches-a-winning-week-after-several-turbulent-days/
+
+你最關注哪一則？留言告訴我，也歡迎分享給同樣在追 AI、智慧交通與台股／美股的朋友 💬
+
+本文僅供資訊參考，非投資建議。
+艾倫極光報報 ALLEN I³ AURORA
+
+#艾倫極光午報 #AI

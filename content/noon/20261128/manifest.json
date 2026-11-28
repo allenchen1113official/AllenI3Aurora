@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "topic": "noon",
+  "date": "2026-11-28",
+  "title": "給科技人的 11 則午間必讀：Google 讓 AI 訓練快 3 倍、輝達一週蒸發近 6,000 億美元，你的投資組合該怎麼看？",
+  "autoPublish": false,
+  "verified": true,
+  "platforms": {
+    "fb": {
+      "caption": "fb.txt",
+      "images": [
+        "AuroraNoon_FB_2026-11-28.png"
+      ]
+    },
+    "ig": {
+      "caption": "ig.txt",
+      "images": [
+        "AuroraNoon_IG_2026-11-28.png"
+      ]
+    },
+    "threads": {
+      "caption": "threads.txt",
+      "images": [
+        "AuroraNoon_IG_2026-11-28.png"
+      ]
+    }
+  },
+  "producedBy": "trig_01WcXdPLybB5fwsYrYZ6wh5V",
+  "producedAt": "2026-11-28T11:52:11+08:00"
+}
